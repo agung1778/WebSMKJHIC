@@ -13,6 +13,7 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\AchievementController; // Mengimpor AchievementController
 use App\Http\Controllers\ExtracurricularController; // Mengimpor ExtracurricularController
 use App\Http\Controllers\ImageController; // Mengimpor ImageController
+use App\Http\Controllers\WritingController; // Mengimpor WritingController
 
 use App\Models\SchoolProgram;
 
@@ -21,6 +22,10 @@ use App\Http\Controllers\PublicPage\PublicMajorsController;
 use App\Http\Controllers\PublicPage\PublicNewsController;
 use App\Http\Controllers\PublicPage\PublicPartnersController;
 use App\Http\Controllers\PublicPage\PublicFacilityController;
+use App\Http\Controllers\PublicPage\PublicTestimonialController;
+use App\Http\Controllers\PublicPage\PublicTeacherController;
+use App\Http\Controllers\PublicPage\PublicAboutController;
+use App\Http\Controllers\PublicPage\PublicFoundationController;
 
 
 Route::get('/', function () {
@@ -44,6 +49,17 @@ Route::get('/partners/{partner}', [PublicPartnersController::class, 'show'])->na
 
 Route::get('/facilities', [PublicFacilityController::class, 'index'])->name('public.facilities.index');
 Route::get('/facilities/{facility}', [PublicFacilityController::class, 'show'])->name('public.facilities.show');
+
+
+// Route untuk halaman testimoni publik
+Route::get('/testimonials', [PublicTestimonialController::class, 'index'])->name('public.testimonials.index');
+Route::get('/testimonials/{testimonial}', [PublicTestimonialController::class, 'show'])->name('public.testimonials.show');
+
+Route::get('/teachers', [PublicTeacherController::class, 'index'])->name('public.teachers.index');
+Route::get('/teachers/{teacher}', [PublicTeacherController::class, 'show'])->name('public.teachers.show');
+
+Route::get('/about', [PublicAboutController::class, 'index'])->name('public.about.index');
+
 
 
 
@@ -96,6 +112,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('extracurriculars', ExtracurricularController::class);
 
         // Rute untuk Galeri Media (menggunakan nama singular 'image')
-        Route::resource('image', ImageController::class)->except(['create']); // Biasanya create tidak diperlukan karena form upload ada di index
+        Route::resource('image', ImageController::class)->except(['create']);
+
+        Route::resource('writings', WritingController::class);
     });
 });

@@ -111,25 +111,25 @@
                 <div class="relative">
                     <button id="editor-toggle"
                         class="w-full text-left relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700 focus:outline-none
-                            @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*'])) sidebar-link-active @endif">
+                            @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*', 'admin.writings.*'])) sidebar-link-active @endif">
                         <i class="fas fa-pen-alt w-5 text-center"></i>
                         <span class="flex-1">Editor</span>
                         <i id="editor-arrow"
                             class="fas fa-chevron-right text-xs transition-transform duration-300
-                                @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*'])) rotate-90 @endif">
+                                @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*', 'admin.writings.*'])) rotate-90 @endif">
                         </i>
                     </button>
                     <div id="editor-submenu"
                         class="pl-10 space-y-1 collapsible-content
-                            @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*'])) expanded @endif">
+                            @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*', 'admin.writings.*'])) expanded @endif">
                         {{-- Sub-menu items --}}
                         <a id="submenu-mainimage"
                             class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.image.*')) sidebar-link-active @endif"
                             href="{{ route('admin.image.index') }}">
-                            Main Image
+                            Image
                         </a>
-                        <a id="submenu-history" class="block p-2 text-xs rounded-md transition hover:bg-gray-700"
-                            href="#">History</a>
+                        <a id="submenu-history" class="block p-2 text-xs rounded-md transition hover:bg-gray-700  @if(request()->routeIs('admin.writings.*')) sidebar-link-active @endif"
+                            href="{{ route('admin.writings.index') }}">Writing</a>
                         <a id="submenu-facility"
                             class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.facilities.*')) sidebar-link-active @endif"
                             href="{{ route('admin.facilities.index') }}">Facility</a>
@@ -174,12 +174,7 @@
                 </div>
                 <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700" href="#">
                     <i class="fa-solid fa-circle-user w-5 text-center"></i>
-                    <span>Users Management</span>
-                </a>
-
-                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700" href="#">
-                    <i class="fas fa-bullhorn w-5 text-center"></i>
-                    <span>Notification</span>
+                    <span>Users</span>
                 </a>
 
                 <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700" href="#">

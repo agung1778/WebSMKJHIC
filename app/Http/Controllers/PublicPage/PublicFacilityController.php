@@ -19,6 +19,8 @@ class PublicFacilityController extends Controller
 
         // Query dasar untuk fasilitas
         $facilityQuery = Facility::query();
+        // Ambil semua fasilitas dan kelompokkan berdasarkan kolom 'type'
+        $groupedFacilities = Facility::latest()->get()->groupBy('type');
 
         // Terapkan filter jika ada parameter 'type' di URL
         if ($request->has('type') && $request->type != '') {
@@ -28,14 +30,15 @@ class PublicFacilityController extends Controller
         // Ambil data fasilitas yang sudah difilter atau semua data
         $facilities = $facilityQuery->latest()->get();
 
-        // Mengambil gambar hero untuk halaman fasilitas (jika ada)
+        
         $facilityImages = Image::where('title', 'FacilityImage')->first();
 
         return view('PublicSide.facilities.index', [
             'facilities'     => $facilities,
             'types'          => $types,
             'facilityImages' => $facilityImages,
-            'currentType'    => $request->type // Mengirim tipe yang aktif saat ini
+            'currentType'    => $request->type, 
+            'groupedFacilities' => $groupedFacilities
         ]);
     }
 
@@ -46,7 +49,8 @@ class PublicFacilityController extends Controller
     {
         // Ambil semua fasilitas LAIN, dengan eager loading (jika diperlukan untuk sidebar card)
         $otherFacilities = Facility::where('id', '!=', $facility->id)
-            ->latest()
+            ->inRandomOrder()
+            ->take(3)
             ->get();
 
         return view('PublicSide.facilities.show', compact('facility', 'otherFacilities'));

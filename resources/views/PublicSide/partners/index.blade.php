@@ -1,4 +1,4 @@
-@extends('layouts.public-navbar')
+@extends('layouts.public-app')
 
 @section('content')
 
@@ -87,77 +87,69 @@
         {{-- ========================================================== --}}
         {{-- BAGIAN MITRA INDUSTRI --}}
         {{-- ========================================================== --}}
-        <section class="bg-[#333333] py-16 sm:py-24">
+        <section class="bg-gray-50 py-16 sm:py-24">
             <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {{-- KEPALA BAGIAN (JUDUL) --}}
-                <div class="text-center max-w-2xl mx-auto mb-12 lg:mb-16">
-                
-                    {{-- Judul Utama --}}
-                    <h2 class="text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+                <div class="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
+
+                    {{-- Judul Utama dengan sentuhan gradien untuk tampilan modern --}}
+                    <h2 class="text-3xl lg:text-4xl font-extrabold text-[#2D2D2D] tracking-tight">
                         Bermitra dengan Industri Terkemuka
                     </h2>
-                    <p class="mt-4 text-lg text-gray-300">
+                    <p class="mt-4 text-lg text-slate-600">
                         Kami menjalin kerja sama strategis untuk memastikan lulusan siap kerja dan relevan dengan kebutuhan
                         pasar.
                     </p>
                 </div>
 
                 {{-- GRID DAFTAR MITRA --}}
-                {{-- Ganti grid-cols-4 dengan 5 atau 6 jika logo lebih banyak dan kecil --}}
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
 
-                    {{-- Diasumsikan Anda melakukan loop dari data $partners yang dikirim dari controller --}}
+                    {{-- Loop untuk setiap kartu mitra --}}
                     @forelse($partners as $partner)
                         <div
-                            class="group bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col text-center transition-all duration-300 hover:border-white/20 hover:-translate-y-2 hover:shadow-2xl">
+                            class="group bg-white border border-slate-200 rounded-xl p-6 flex flex-col text-center transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-2">
 
                             {{-- Wadah Logo --}}
                             <div
-                                class="h-28 w-full bg-gray-100 rounded-lg flex items-center justify-center p-4 mb-5 shadow-inner">
+                                class="h-28 w-full bg-slate-100 rounded-lg flex items-center justify-center p-4 mb-5 border border-slate-200">
 
-                                {{-- Ubah $partner->logo_path menjadi $partner->logo --}}
                                 @if ($partner->logo)
-
-                                    {{-- Ubah juga di sini --}}
                                     <img src="{{ Storage::url($partner->logo) }}" alt="Logo {{ $partner->name }}"
                                         class="max-h-20 w-auto object-contain">
-
                                 @else
-                                    <div class="w-full h-full bg-gray-200 flex items-center justify-center rounded-md">
-                                        <span class="text-sm font-semibold text-gray-500">Logo</span>
+                                    <div class="w-full h-full bg-slate-200 flex items-center justify-center rounded-md">
+                                        <span class="text-sm font-semibold text-slate-500">Logo</span>
                                     </div>
                                 @endif
                             </div>
 
                             {{-- Nama Mitra --}}
-                            <h3 class="text-lg font-bold text-white mb-2 leading-tight">
+                            <h3 class="text-lg font-bold text-slate-800 mb-2 leading-tight">
                                 {{ $partner->name }}
                             </h3>
 
-                            {{-- Deskripsi Singkat (flex-grow mendorong area aksi ke bawah) --}}
-                            <p class="text-sm text-gray-300 flex-grow mb-4">
-                                {{ Str::limit($partner->description, 60) }}
+                            {{-- Deskripsi Singkat --}}
+                            <p class="text-sm text-slate-500 flex-grow mb-4">
+                                {{ Str::limit($partner->description, 70) }}
                             </p>
 
-                            {{-- ========================================================== --}}
-                            {{-- AREA AKSI BARU (Tombol Detail & Link Website) --}}
-                            {{-- ========================================================== --}}
+                            {{-- AREA AKSI (Tombol) --}}
                             <div
-                                class="w-full mt-auto pt-5 border-t border-white/10 flex items-center justify-center space-x-4">
+                                class="w-full mt-auto pt-5 border-t border-slate-200/80 flex items-center justify-center space-x-3">
 
                                 {{-- Tombol Lihat Detail (Aksi Utama) --}}
-                                {{-- Pastikan route 'public.partners.show' sudah ada dan menerima parameter partner --}}
                                 <a href="{{ route('public.partners.show', $partner) }}"
-                                    class="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-4 py-2 rounded-full transition-colors duration-300">
+                                    class="inline-flex items-center justify-center bg-[#2D2D2D] hover:bg-[#3C3C3C] text-white text-xs font-bold px-4 py-2.5 rounded-full transition-colors duration-300">
                                     Lihat Detail
                                 </a>
 
-                                {{-- Link Website (jika ada, sekarang menjadi ikon) --}}
+                                {{-- Link Website (Ikon) --}}
                                 @if ($partner->website)
                                     <a href="{{ $partner->website }}" target="_blank" rel="noopener noreferrer"
                                         title="Kunjungi Situs Web"
-                                        class="h-9 w-9 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors duration-300">
+                                        class="h-9 w-9 flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors duration-300">
                                         <i class="fas fa-globe text-sm"></i>
                                     </a>
                                 @endif
@@ -165,144 +157,16 @@
 
                         </div>
                     @empty
+                        {{-- Tampilan jika tidak ada data mitra --}}
                         <div
-                            class="col-span-2 md:col-span-3 lg:col-span-4 bg-white/5 border border-dashed border-white/10 rounded-xl p-12 text-center">
-                            <p class="text-gray-400">Data mitra industri belum tersedia.</p>
+                            class="sm:col-span-2 lg:col-span-3 xl:col-span-4 bg-white border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
+                            <p class="text-slate-500">Data mitra industri belum tersedia.</p>
                         </div>
                     @endforelse
-
 
                 </div>
             </div>
         </section>
-
-         <footer style="background-color: {{ $amaliahDark }};">
-            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-
-                {{-- Konten Utama Footer (Multi-kolom) --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-
-                    {{-- Kolom 1: Logo, Deskripsi, dan Sosial Media --}}
-                    <div class="space-y-6">
-                        {{-- 1. Struktur Branding yang lebih rapi --}}
-                        <a href="/" class="flex items-center gap-3">
-                            <img src="{{ asset('assets/logo/amaliah_white.png') }}" alt="Logo SMK Amaliah" class="h-10">
-                            <div>
-                                <span class="text-white font-semibold text-lg leading-tight">SMK Amaliah 1 & 2</span>
-                                <span class="block text-gray-400 text-xs">Ciawi - Bogor</span>
-                            </div>
-                        </a>
-
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            Berkomitmen untuk mencetak lulusan yang kompeten, berakhlak mulia, dan siap bersaing di
-                            dunia industri global.
-                        </p>
-
-                        {{-- 2. Ikon Sosial Media dengan efek hover modern --}}
-                        <div class="flex items-center space-x-3">
-                            <a href="#" target="_blank"
-                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                <i
-                                    class="fab fa-youtube text-gray-400 text-xl group-hover:text-red-600 transition-colors"></i>
-                            </a>
-                            <a href="#" target="_blank"
-                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                <i
-                                    class="fab fa-instagram text-gray-400 text-xl group-hover:text-pink-600 transition-colors"></i>
-                            </a>
-                            <a href="#" target="_blank"
-                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                <i
-                                    class="fab fa-facebook-f text-gray-400 text-xl group-hover:text-blue-600 transition-colors"></i>
-                            </a>
-                            <a href="#" target="_blank"
-                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                <i class="fab fa-tiktok text-gray-400 text-xl group-hover:text-black transition-colors"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    {{-- Kolom 2: Link Navigasi Cepat --}}
-                    <div>
-                        <h4 class="font-semibold text-white tracking-wider uppercase">Jelajahi</h4>
-                        <ul class="mt-4 space-y-3 text-sm">
-                            {{-- 3. Efek hover yang lebih interaktif --}}
-                            <li><a href="#"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Beranda</a>
-                            </li>
-                            <li><a href="#"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Tentang
-                                    Kami</a></li>
-                            <li><a href="#"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Berita</a>
-                            </li>
-                            <li><a href="#"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Jurusan</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {{-- Kolom 3: Link Informasi --}}
-                    <div>
-                        <h4 class="font-semibold text-white tracking-wider uppercase">Informasi</h4>
-                        <ul class="mt-4 space-y-3 text-sm">
-                            <li><a href="#"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Info
-                                    PPDB</a></li>
-                            <li><a href="#"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Fasilitas</a>
-                            </li>
-                            <li><a href="#"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Virtual
-                                    Tour</a></li>
-                            <li><a href="#"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Kontak</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {{-- Kolom 4: Informasi Kontak --}}
-                    <div>
-                        <h4 class="font-semibold text-white tracking-wider uppercase">Hubungi Kami</h4>
-                        <div class="mt-4 flex flex-col gap-4 text-sm">
-                            <div class="flex items-start gap-3 text-gray-400">
-                                <i class="fas fa-map-marker-alt w-4 h-4 mt-1 flex-shrink-0"></i>
-                                <span>{{ $alamat ?? 'Jl. Raya Veteran III, Banjarwaru, Ciawi, Kab. Bogor, Jawa Barat 16720' }}</span>
-                            </div>
-                            <div class="flex items-start gap-3 text-gray-400">
-                                <i class="fas fa-envelope w-4 h-4 mt-1 flex-shrink-0"></i>
-                                <a href="mailto:{{ $email ?? 'info@smkamaliah.sch.id' }}"
-                                    class="hover:text-white transition">{{
-                                    $email ?? 'info@smkamaliah.sch.id' }}</a>
-                            </div>
-                            <div class="flex items-start gap-3 text-gray-400">
-                                <i class="fas fa-phone-alt w-4 h-4 mt-1 flex-shrink-0"></i>
-                                <a href="tel:{{ $phone ?? '+622518241416' }}"
-                                    class="hover:text-white transition">{{ $phone ?? '(0251) 8241416' }}</a>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            {{-- Bagian Copyright di Bawah --}}
-            {{-- 4. Pemisah visual dan struktur copyright yang lebih profesional --}}
-            <div class="border-t border-gray-800">
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4">
-                        <p class="text-sm text-gray-500">
-                            &copy; {{ date('Y') }} Tim IT SMK Amaliah. All Rights Reserved.
-                        </p>
-                        <div class="flex space-x-6 text-sm text-gray-500">
-                            <a href="#" class="hover:text-white transition">Kebijakan Privasi</a>
-                            <a href="#" class="hover:text-white transition">Syarat & Ketentuan</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
 
     </body>
 

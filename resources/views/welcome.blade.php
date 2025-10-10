@@ -1,9 +1,8 @@
-@extends('layouts.public-navbar')
+@extends('layouts.public-app')
 
 @section('title', 'Halaman Utama')
 
 @section('content')
-    {{-- Membungkus seluruh konten dengan tag HTML/Head/Body --}}
     <!DOCTYPE html>
     <html lang="en">
 
@@ -40,50 +39,106 @@
 
         <main style="margin-top: 10px;">
             <section class="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                {{-- Slider Gambar Dinamis --}}
-                @if($hasImages)
-                    <div x-data="{ activeSlide: 1, totalSlides: {{ $mainImages->count() }} }"
-                        x-init="setInterval(() => { activeSlide = activeSlide % totalSlides + 1 }, 5000)">
+                @if($hasImages && $latestNews->isNotEmpty())
+                    {{--
+                    MODIFIKASI #1: Inisialisasi state untuk DUA slider terpisah.
+                    --}}
+                    <div x-data="{
+                                                                                        activeImageSlide: 1,
+                                                                                        totalImageSlides: {{ $mainImages->count() }},
+                                                                                        activeNewsSlide: 1,
+                                                                                        totalNewsSlides: {{ $latestNews->count() }}
+                                                                                     }" {{-- MODIFIKASI #2: Jalankan DUA timer
+                        terpisah. Satu untuk gambar, satu untuk berita. Durasinya bisa Anda bedakan jika mau. --}} x-init="
+                                                                                        setInterval(() => { activeImageSlide = activeImageSlide % totalImageSlides + 1 }, 5000);
+                                                                                        setInterval(() => { activeNewsSlide = activeNewsSlide % totalNewsSlides + 1 }, 5000);
+                                                                                     ">
+
+                        {{-- Kontainer Slider Gambar --}}
                         <div class="relative h-[550px] overflow-hidden hero-clip-path rounded-3xl">
                             @foreach($mainImages as $image)
-                                <div x-show="activeSlide === {{ $loop->iteration }}"
+                                {{-- MODIFIKASI #3: Gunakan 'activeImageSlide' --}}
+                                <div x-show="activeImageSlide === {{ $loop->iteration }}"
                                     x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
                                     x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
                                     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                                     class="absolute inset-0">
-
                                     <img src="{{ Storage::url($image->path) }}" alt="{{ $image->description ?? $image->filename }}"
                                         class="w-full h-full object-cover">
                                 </div>
                             @endforeach
+                        </div>
 
+                        <div class="absolute bottom-12 left-8 md:left-12 z-10 w-[calc(100%-4rem)] max-w-xs">
+                            <div class="bg-white backdrop-blur-sm border-2 rounded-xl p-3 shadow-lg mb-3">
+                                <div class="flex items-center justify-between w-full">
+
+                                    <div class="flex items-center space-x-6">
+
+                                        <img src="{{ asset('assets/logo/infra.png') }}" alt="Logo Partner 1"
+                                            class="h-6 object-contain hover:grayscale transition duration-300">
+                                        <img src="{{ asset('assets/logo/komdigi.png') }}" alt="Logo Partner 2"
+                                            class="h-6 object-contain hover:grayscale transition duration-300">
+                                        <img src="{{ asset('assets/logo/maspionit.png') }}" alt="Logo Partner 3"
+                                            class="h-6 object-contain hover:grayscale transition duration-300">
+                                        <img src="{{ asset('assets/logo/1000.png') }}" alt="Logo Partner 4"
+                                            class="h-6 object-contain hover:grayscale transition duration-300">
+
+                                    </div>
+
+                                    <a href="#" class="text-[#282829] hover:text-gray-600 transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </a>
+
+                                </div>
+                            </div>
+                            {{-- ========================================================== --}}
+                            {{-- AKHIR BAGIAN BARU --}}
+                            {{-- ========================================================== --}}
+
+
+                            {{-- Kontainer Slider Kartu Berita (Sudah Ada Sebelumnya) --}}
+                            <div class="relative w-full h-auto min-h-[250px] overflow-hidden">
+                                @foreach($latestNews as $news)
+                                    <div x-show="activeNewsSlide === {{ $loop->iteration }}"
+                                        x-transition:enter="transition transform ease-in-out duration-500"
+                                        x-transition:enter-start="opacity-0 translate-x-full"
+                                        x-transition:enter-end="opacity-100 translate-x-0"
+                                        x-transition:leave="transition transform ease-in-out duration-500"
+                                        x-transition:leave-start="opacity-100 translate-x-0"
+                                        x-transition:leave-end="opacity-0 -translate-x-full"
+                                        class="absolute bottom-0 left-0 w-full bg-white p-4 md:p-6 rounded-lg shadow-xl">
+
+                                        <h1 class="text-lg md:text-xl font-semibold text-gray-800 leading-snug line-clamp-2">
+                                            {{ $news->title }}
+                                        </h1>
+                                        <p class="text-xs mt-2 mb-4 text-gray-600 line-clamp-3">
+                                            {{ $news->description }}
+                                        </p>
+                                        <p class="text-xs font-medium text-gray-400">
+                                            Diterbitkan
+                                            {{ \Carbon\Carbon::parse($news->date_published)->translatedFormat('d F Y') }}
+                                        </p>
+                                        <div class="flex items-center mt-4">
+                                            <span class="text-sm font-semibold text-[#282829] mr-2">Selengkapnya</span>
+                                            <a href=""
+                                                class="bg-[#282829] rounded-full p-2 hover:opacity-80 transition duration-300">
+                                                <i class="fas fa-arrow-right text-white text-base"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 @else
-                    <div>
-                        <div class="relative h-[550px] overflow-hidden hero-clip-path rounded-3xl bg-black">
-                            {{-- Layar hitam sebagai fallback --}}
-                        </div>
-                    </div>
+                    {{-- Fallback jika tidak ada data --}}
+                    <div class="relative h-[550px] overflow-hidden hero-clip-path rounded-3xl bg-black"></div>
                 @endif
-
-                <div class="absolute bottom-12 left-8 md:left-12 z-10">
-                    <div class="bg-white p-4 md:p-6 max-w-xs w-full rounded-lg shadow-xl">
-                        <h1 class="text-base font-normal text-gray-800 leading-snug">
-                            Menuju Karir Impian Bersama
-                            <br><span class="text-lg md:text-xl font-semibold">SMK AMALIAH 1&2 CIAWI</span>
-                        </h1>
-                        <p class="text-xs mt-2 mb-4 text-gray-500">
-                            Diterbitkan 14 Agustus 2025
-                        </p>
-                        <div class="flex items-center">
-                            <span class="text-sm font-semibold text-[#282829] mr-2">Selengkapnya</span>
-                            <a href="#" class="bg-[#282829] rounded-full p-2 hover:opacity-80 transition duration-300">
-                                <i class="fas fa-arrow-right text-white text-base"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </section>
 
             <section class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-16">
@@ -94,7 +149,7 @@
                         $fitur = [
                             [
                                 'icon' => 'fa-file-lines',
-                                'title' => 'PPDB Online',
+                                'title' => 'SPMB Online',
                                 'desc' => 'Ayo daftarkan dirimu di SMK Amaliah secara mudah melalui sistem online kami.',
                                 'link' => 'http://spmb.smkamaliah.sch.id', // Ganti dengan route atau URL PPDB Anda
                                 'button_text' => 'Daftar Sekarang',
@@ -379,7 +434,7 @@
 
                             {{-- Tombol Selengkapnya --}}
 
-                            <a href="#"
+                            <a href="{{ route('public.partners.index') }}"
                                 class="group mt-8 inline-flex items-center text-white px-6 py-3 rounded-lg font-semibold shadow-lg group/button transition-opacity duration-300 hover:opacity-90"
                                 style="background-color: {{ $amaliahGreen }};">
 
@@ -449,15 +504,15 @@
 
             <section class="py-16 sm:py-24" style="background-color: {{ $amaliahDark }};">
                 <div x-data="{
-                                                                                                                                        scrollSlider(direction) {
-                                                                                                                                            const slider = this.$refs.slider;
-                                                                                                                                            const scrollAmount = slider.querySelector('.slider-item').offsetWidth + 32; // Lebar kartu + gap
-                                                                                                                                            slider.scrollBy({
-                                                                                                                                                left: direction === 'next' ? scrollAmount : -scrollAmount,
-                                                                                                                                                behavior: 'smooth'
-                                                                                                                                            });
-                                                                                                                                        }
-                                                                                                                                    }"
+                                                                                                                                                                                scrollSlider(direction) {
+                                                                                                                                                                                    const slider = this.$refs.slider;
+                                                                                                                                                                                    const scrollAmount = slider.querySelector('.slider-item').offsetWidth + 32; // Lebar kartu + gap
+                                                                                                                                                                                    slider.scrollBy({
+                                                                                                                                                                                        left: direction === 'next' ? scrollAmount : -scrollAmount,
+                                                                                                                                                                                        behavior: 'smooth'
+                                                                                                                                                                                    });
+                                                                                                                                                                                }
+                                                                                                                                                                            }"
                     class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative">
 
                     {{-- Dekorasi Titik --}}
@@ -798,16 +853,16 @@
 
                     {{-- Slider Testimoni (Alpine.js + Tailwind CSS) --}}
                     <div x-data="{
-                                                                                                                                                                                                                                    slider: null,
-                                                                                                                                                                                                                                    init() {
-                                                                                                                                                                                                                                        this.slider = this.$refs.sliderContainer;
-                                                                                                                                                                                                                                    },
-                                                                                                                                                                                                                                    scroll(direction) {
-                                                                                                                                                                                                                                        // Geser sejauh 80% dari lebar area yang terlihat
-                                                                                                                                                                                                                                        let scrollAmount = this.slider.offsetWidth * 0.8;
-                                                                                                                                                                                                                                        this.slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                }"
+                                                                                                                                                                                                                                                                            slider: null,
+                                                                                                                                                                                                                                                                            init() {
+                                                                                                                                                                                                                                                                                this.slider = this.$refs.sliderContainer;
+                                                                                                                                                                                                                                                                            },
+                                                                                                                                                                                                                                                                            scroll(direction) {
+                                                                                                                                                                                                                                                                                // Geser sejauh 80% dari lebar area yang terlihat
+                                                                                                                                                                                                                                                                                let scrollAmount = this.slider.offsetWidth * 0.8;
+                                                                                                                                                                                                                                                                                this.slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                        }"
                         class="mt-12 relative">
                         {{-- Tombol Panah Kiri --}}
                         <button @click="scroll(-1)"
@@ -893,16 +948,16 @@
                         </h2>
                         <div class="flex justify-center items-center space-x-2 mt-8">
                             <button @click="activeTab = 'amaliah1'" :class="{
-                                                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah1',
-                                                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah1'
-                                                    }"
+                                                                                                'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah1',
+                                                                                                'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah1'
+                                                                                            }"
                                 class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 1
                             </button>
                             <button @click="activeTab = 'amaliah2'" :class="{
-                                                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah2',
-                                                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah2'
-                                                    }"
+                                                                                                'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah2',
+                                                                                                'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah2'
+                                                                                            }"
                                 class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 2
                             </button>
@@ -945,10 +1000,10 @@
                                 x-transition:enter-end="opacity-100 transform translate-x-0"
                                 x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
                                 x-transition:leave-end="opacity-0" class="absolute w-full" style="display: none;">
-                                <h3 class="text-2xl lg:text-3xl font-bold text-white">Nama Kepala Sekolah 2</h3>
+                                <h3 class="text-2xl lg:text-3xl font-bold text-white">Dr. Gugun Gunadi, S.Pd.I., M.Pd.</h3>
                                 <p class="text-base text-[#63cd00] mt-1 mb-4">Kepala Sekolah SMK Amaliah 2</p>
                                 <blockquote class="text-md text-gray-300 italic max-w-lg mx-auto lg:mx-0">
-                                    "Quote atau kutipan inspiratif dari kepala sekolah yang kedua ditempatkan di sini."
+                                    "Sekolah adalah rumah untuk tumbuh — di sini kami membimbing peserta didik tidak hanya menguasai kompetensi kerja, tetapi juga membentuk akhlak dan sikap profesional. Bersama orang tua dan mitra industri, kami membuka peluang nyata agar setiap lulusan membangun masa depan yang bermakna."
                                 </blockquote>
                                 <div class="flex items-center space-x-3 mt-6 justify-center lg:justify-start">
                                     <a href="#" aria-label="Facebook"
@@ -972,7 +1027,7 @@
                                 x-transition:enter-end="opacity-100 transform scale-100" class="absolute">
                                 <div
                                     class="w-64 h-64 sm:w-80 sm:h-80 bg-gray-400 rounded-full flex items-center justify-center text-gray-600 shadow-2xl">
-                                    Foto 1
+                                   <img src="{{ asset('assets/image/kepsek1.png') }}" class="w-full h-full object-cover rounded-full items-center" alt="Kepala Sekolah Amaliah 1">
                                 </div>
                             </div>
                             {{-- GAMBAR KEPALA SEKOLAH 2 --}}
@@ -982,7 +1037,7 @@
                                 style="display: none;">
                                 <div
                                     class="w-64 h-64 sm:w-80 sm:h-80 bg-gray-400 rounded-full flex items-center justify-center text-gray-600 shadow-2xl">
-                                    Foto 2
+                                    <img src="{{ asset('assets/image/kepsek2.png') }}" class="w-full h-full object-cover rounded-full items-center" alt="Kepala Sekolah Amaliah 2">
                                 </div>
                             </div>
                         </div>
@@ -1143,132 +1198,7 @@
 
 
 
-            <footer style="background-color: {{ $amaliahDark }};">
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-
-                    {{-- Konten Utama Footer (Multi-kolom) --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-
-                        {{-- Kolom 1: Logo, Deskripsi, dan Sosial Media --}}
-                        <div class="space-y-6">
-                            {{-- 1. Struktur Branding yang lebih rapi --}}
-                            <a href="/" class="flex items-center gap-3">
-                                <img src="{{ asset('assets/logo/amaliah_white.png') }}" alt="Logo SMK Amaliah" class="h-10">
-                                <div>
-                                    <span class="text-white font-semibold text-lg leading-tight">SMK Amaliah 1 & 2</span>
-                                    <span class="block text-gray-400 text-xs">Ciawi - Bogor</span>
-                                </div>
-                            </a>
-
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                Berkomitmen untuk mencetak lulusan yang kompeten, berakhlak mulia, dan siap bersaing di
-                                dunia industri global.
-                            </p>
-
-                            {{-- 2. Ikon Sosial Media dengan efek hover modern --}}
-                            <div class="flex items-center space-x-3">
-                                <a href="#" target="_blank"
-                                    class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                    <i
-                                        class="fab fa-youtube text-gray-400 text-xl group-hover:text-red-600 transition-colors"></i>
-                                </a>
-                                <a href="#" target="_blank"
-                                    class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                    <i
-                                        class="fab fa-instagram text-gray-400 text-xl group-hover:text-pink-600 transition-colors"></i>
-                                </a>
-                                <a href="#" target="_blank"
-                                    class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                    <i
-                                        class="fab fa-facebook-f text-gray-400 text-xl group-hover:text-blue-600 transition-colors"></i>
-                                </a>
-                                <a href="#" target="_blank"
-                                    class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                    <i
-                                        class="fab fa-tiktok text-gray-400 text-xl group-hover:text-black transition-colors"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                        {{-- Kolom 2: Link Navigasi Cepat --}}
-                        <div>
-                            <h4 class="font-semibold text-white tracking-wider uppercase">Jelajahi</h4>
-                            <ul class="mt-4 space-y-3 text-sm">
-                                {{-- 3. Efek hover yang lebih interaktif --}}
-                                <li><a href="#"
-                                        class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Beranda</a>
-                                </li>
-                                <li><a href="#"
-                                        class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Tentang
-                                        Kami</a></li>
-                                <li><a href="#"
-                                        class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Berita</a>
-                                </li>
-                                <li><a href="#"
-                                        class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Jurusan</a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {{-- Kolom 3: Link Informasi --}}
-                        <div>
-                            <h4 class="font-semibold text-white tracking-wider uppercase">Informasi</h4>
-                            <ul class="mt-4 space-y-3 text-sm">
-                                <li><a href="#"
-                                        class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Info
-                                        PPDB</a></li>
-                                <li><a href="#"
-                                        class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Fasilitas</a>
-                                </li>
-                                <li><a href="#"
-                                        class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Virtual
-                                        Tour</a></li>
-                                <li><a href="#"
-                                        class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Kontak</a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {{-- Kolom 4: Informasi Kontak --}}
-                        <div>
-                            <h4 class="font-semibold text-white tracking-wider uppercase">Hubungi Kami</h4>
-                            <div class="mt-4 flex flex-col gap-4 text-sm">
-                                <div class="flex items-start gap-3 text-gray-400">
-                                    <i class="fas fa-map-marker-alt w-4 h-4 mt-1 flex-shrink-0"></i>
-                                    <span>{{ $alamat ?? 'Jl. Raya Veteran III, Banjarwaru, Ciawi, Kab. Bogor, Jawa Barat 16720' }}</span>
-                                </div>
-                                <div class="flex items-start gap-3 text-gray-400">
-                                    <i class="fas fa-envelope w-4 h-4 mt-1 flex-shrink-0"></i>
-                                    <a href="mailto:{{ $email ?? 'info@smkamaliah.sch.id' }}"
-                                        class="hover:text-white transition">{{ $email ?? 'info@smkamaliah.sch.id' }}</a>
-                                </div>
-                                <div class="flex items-start gap-3 text-gray-400">
-                                    <i class="fas fa-phone-alt w-4 h-4 mt-1 flex-shrink-0"></i>
-                                    <a href="tel:{{ $phone ?? '+622518241416' }}"
-                                        class="hover:text-white transition">{{ $phone ?? '(0251) 8241416' }}</a>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                {{-- Bagian Copyright di Bawah --}}
-                {{-- 4. Pemisah visual dan struktur copyright yang lebih profesional --}}
-                <div class="border-t border-gray-800">
-                    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                        <div class="flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4">
-                            <p class="text-sm text-gray-500">
-                                &copy; {{ date('Y') }} Tim IT SMK Amaliah. All Rights Reserved.
-                            </p>
-                            <div class="flex space-x-6 text-sm text-gray-500">
-                                <a href="#" class="hover:text-white transition">Kebijakan Privasi</a>
-                                <a href="#" class="hover:text-white transition">Syarat & Ketentuan</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            
         </main>
     </body>
 
