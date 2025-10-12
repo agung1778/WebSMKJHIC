@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin</title>
+    <title>Reset Password Baru - Admin Panel</title>
+    {{-- Aset disalin dari login.blade.php untuk konsistensi --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -17,12 +18,10 @@
             font-family: 'Times New Roman', Times, serif;
         }
 
-        /* Mengatur transisi untuk semua elemen */
         * {
             transition: all 0.3s ease-in-out;
         }
 
-        /* Hover profesional untuk input field dan ikonnya */
         .input-group:focus-within .input-icon {
             color: #4ED400;
         }
@@ -31,7 +30,6 @@
             box-shadow: 0 0 0 2px #4ED400;
         }
 
-        /* Efek hover untuk kartu informasi */
         .info-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -41,20 +39,19 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
-        /* Efek hover untuk link di dalam kartu */
         .info-card-link {
             transition: color 0.3s ease;
         }
 
         .info-card:hover .info-card-link {
             color: #378E00;
-            /* Warna hijau yang sedikit lebih gelap */
         }
     </style>
 </head>
 
 <body class="min-h-screen flex bg-gray-100">
 
+    {{-- BAGIAN KIRI: PANEL INFORMASI SEKOLAH (SAMA PERSIS SEPERTI LOGIN) --}}
     <div class="hidden md:flex flex-1 bg-white flex-col">
         <header class="flex items-center justify-between px-8 py-6">
             <div class="flex items-center space-x-3">
@@ -67,7 +64,6 @@
                 </div>
             </div>
         </header>
-
         <div class="flex-1 flex flex-col justify-start items-center p-8 space-y-8">
             <div
                 class="w-full max-w-2xl bg-gray-200 rounded-2xl h-[250px] shadow-lg overflow-hidden relative group cursor-pointer">
@@ -86,7 +82,6 @@
                     </a>
                 </div>
             </div>
-
             <div class="flex space-x-4 w-full max-w-2xl">
                 <div
                     class="info-card flex-1 flex items-center p-6 bg-white border border-[#4ED400] rounded-2xl shadow-md space-x-4 cursor-pointer">
@@ -180,90 +175,74 @@
         </div>
     </div>
 
+    {{-- BAGIAN KANAN: FORM RESET PASSWORD --}}
     <div class="w-full max-w-md bg-[#2D2D2D] flex flex-col justify-center px-10 py-16 mx-auto">
         <div class="text-center">
-            <h1 class="text-white text-3xl font-extrabold mb-2">Login As <span class="text-[#4ED400]">Admin</span>
-            </h1>
-            <p class="text-white text-xs font-medium mb-8">Enter Your Email And Password Below To Log In</p>
+            <h1 class="text-white text-3xl font-extrabold mb-2">Reset Password Baru</h1>
+            <p class="text-white text-xs font-medium mb-8">Masukkan password baru Anda di bawah ini</p>
         </div>
 
-        <form id="loginForm" class="space-y-5" action="{{ route('login') }}" method="POST">
+        <form id="resetPasswordForm" class="space-y-5" action="{{ route('password.update') }}" method="POST">
             @csrf
 
-            {{-- Notifikasi Error --}}
-            @if ($errors->any())
-                <div class="bg-red-500 text-white text-xs rounded-lg p-3 font-medium">
-                    @foreach ($errors->all() as $error)
-                        <div>{{ $error }}</div>
-                    @endforeach
+            <input type="hidden" name="token" value="{{ $token }}">
+            <input type="hidden" name="email" value="{{ $email ?? old('email') }}">
 
-                    {{-- TAMPILKAN LINK RESET HANYA JIKA FLAG-NYA ADA --}}
-                    @if (session('show_reset_link'))
-                        <div class="mt-2 pt-2 border-t border-red-400">
-                            <a href="{{ route('password.request') }}" class="font-bold underline hover:text-gray-200">
-                                Lupa Password? Klik di sini untuk reset.
-                            </a>
-                        </div>
-                    @endif
-                    {{-- AKHIR BAGIAN KONDISIONAL --}}
-                </div>
-            @endif
-
-            {{-- Notifikasi Sukses --}}
-            @if (session('status'))
-                <div class="bg-[#4ED400] text-white text-xs rounded-lg p-2 font-medium">
-                    {{ session('status') }}
-                </div>
-            @endif
-
-            {{-- Input Email --}}
-            <div class="relative group input-group">
-                <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 input-icon">
-                    <i class="fas fa-user"></i>
-                </span>
-                <input id="emailField"
-                    class="input-field w-full rounded-xl py-4 pl-12 pr-4 text-gray-200 bg-[#3A3A3A] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4ED400] transition-all duration-300"
-                    placeholder="admin@examples.com" type="email" name="email" value="{{ old('email') }}" required>
-            </div>
-
-            {{-- Input Password --}}
             <div class="relative group input-group">
                 <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 input-icon">
                     <i class="fas fa-lock"></i>
                 </span>
                 <input id="passwordField"
-                    class="input-field w-full rounded-xl py-4 pl-12 pr-12 text-gray-200 bg-[#3A3A3A] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4ED400] transition-all duration-300"
-                    placeholder="password" type="password" name="password" required>
+                    class="input-field w-full rounded-xl py-4 pl-12 pr-4 text-gray-200 bg-[#3A3A3A] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4ED400] transition-all duration-300"
+                    placeholder="Password Baru" type="password" name="password" required>
             </div>
 
-            {{-- Opsi Show Password --}}
-            <div class="flex items-center justify-between text-xs font-medium">
+            @error('password')
+                <div class="text-red-500 text-xs font-medium -mt-3">{{ $message }}</div>
+            @enderror
+
+            <div class="relative group input-group">
+                <span class="absolute inset-y-0 left-4 flex items-center text-gray-400 input-icon">
+                    <i class="fas fa-lock"></i>
+                </span>
+                <input id="passwordConfirmField"
+                    class="input-field w-full rounded-xl py-4 pl-12 pr-4 text-gray-200 bg-[#3A3A3A] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4ED400] transition-all duration-300"
+                    placeholder="Konfirmasi Password Baru" type="password" name="password_confirmation" required>
+            </div>
+
+            {{-- INI BAGIAN YANG DITAMBAHKAN --}}
+            <div class="flex items-center justify-start text-xs font-medium">
                 <div class="flex items-center space-x-2 text-gray-300 cursor-pointer">
                     <input id="showPasswordToggle" type="checkbox"
                         class="form-checkbox h-4 w-4 text-[#4ED400] focus:ring-[#4ED400] rounded" name="show-password">
                     <span>Show Password</span>
                 </div>
-                {{-- Link Lupa Password permanen dihapus dari sini --}}
             </div>
+            {{-- AKHIR BAGIAN YANG DITAMBAHKAN --}}
 
             <button
                 class="w-full py-3 rounded-xl bg-[#4ED400] text-white font-extrabold text-lg transition-transform duration-300 transform hover:scale-105 hover:bg-opacity-90 active:scale-95"
                 type="submit">
-                Login
+                Reset Password
             </button>
         </form>
-
     </div>
+
+    {{-- SCRIPT JAVASCRIPT UNTUK SHOW PASSWORD --}}
     <script>
         const passwordField = document.getElementById("passwordField");
+        const passwordConfirmField = document.getElementById("passwordConfirmField");
         const showPasswordToggle = document.getElementById("showPasswordToggle");
 
-        if (showPasswordToggle && passwordField) {
+        if (showPasswordToggle && passwordField && passwordConfirmField) {
             showPasswordToggle.addEventListener("change", () => {
-                passwordField.type = showPasswordToggle.checked ? "text" : "password";
+                const type = showPasswordToggle.checked ? "text" : "password";
+                passwordField.type = type;
+                passwordConfirmField.type = type;
             });
         }
     </script>
+
 </body>
 
 </html>

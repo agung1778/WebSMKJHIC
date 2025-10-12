@@ -17,6 +17,8 @@ use App\Http\Controllers\WritingController; // Mengimpor WritingController
 
 use App\Models\SchoolProgram;
 
+use App\Http\Controllers\ForgotPasswordController;
+
 use App\Http\Controllers\PublicPage\HomeController;
 use App\Http\Controllers\PublicPage\PublicMajorsController;
 use App\Http\Controllers\PublicPage\PublicNewsController;
@@ -81,6 +83,16 @@ Route::get('/', [HomeController::class, 'index']);
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// 1. Menampilkan form permintaan link reset
+Route::get('lupa-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+// 2. Mengirim link reset ke email
+Route::post('lupa-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+// 3. Menampilkan form untuk memasukkan password baru (diakses dari link email)
+Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+// 4. Memproses dan menyimpan password baru
+Route::post('reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 
 // Rute yang dilindungi oleh middleware 'auth'
 // Semua rute di dalam grup ini hanya bisa diakses setelah login
