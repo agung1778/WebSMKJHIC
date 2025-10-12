@@ -71,9 +71,16 @@
                             </li>
                             <li>
                                 <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-white text-xs"></i>
+                                    <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
                                     <a href="{{ route('public.about.index') }}"
-                                        class="ml-2 font-medium text-white hover:text-white md:ml-3 transition-colors">Vision And Mission</a>
+                                        class="ml-2 font-medium text-gray-300 hover:text-white md:ml-3 transition-colors">About</a>
+                                </div>
+                            </li>
+                            <li aria-current="page">
+                                <div class="flex items-center">
+                                    {{-- Mengganti warna chevron untuk konsistensi --}}
+                                    <i class="fas fa-chevron-right text-white text-xs"></i>
+                                    <span class="ml-2 font-medium md:ml-3 text-[#ffffff]">Vision And Mission</span>
                                 </div>
                             </li>
                         </ol>
@@ -82,12 +89,106 @@
             </div>
         </div>
 
+        <section class="bg-white py-16 sm:py-24">
+            <div class="container mx-auto max-w-4xl px-6 lg:px-8">
+
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                        Visi & Misi SMK Amaliah Ciawi
+                    </h2>
+                    <p class="mt-6 text-xl leading-8 text-gray-600">
+                        "Menjadi Sekolah Menengah Kejuruan Berkualitas Yang Menyatu Dalam Tauhid"
+                    </p>
+                </div>
+
+                <div class="my-12 border-t border-gray-200"></div>
+
+                <div class="mt-12 space-y-10">
+
+                    <div class="relative flex items-start">
+                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
+                            <i class="fas fa-hands-holding-circle text-3xl text-[#59E300]"></i>
+                        </div>
+                        <div class="ml-6">
+                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
+                                Integrasi Nilai Tauhid
+                            </h3>
+                            <p class="mt-2 text-base leading-7 text-gray-600">
+                                Mengintegrasikan nilai-nilai Tauhid pada setiap mata pelajaran untuk membentuk karakter yang
+                                kuat.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="relative flex items-start">
+                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
+                            <i class="fas fa-tools text-3xl text-[#59E300]"></i>
+                        </div>
+                        <div class="ml-6">
+                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
+                                Orientasi Praktik
+                            </h3>
+                            <p class="mt-2 text-base leading-7 text-gray-600">
+                                Fokus pada pembelajaran praktik dengan komposisi 70% praktik dan 30% teori untuk kesiapan
+                                kerja.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="relative flex items-start">
+                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
+                            <i class="fas fa-puzzle-piece text-3xl text-[#59E300]"></i>
+                        </div>
+                        <div class="ml-6">
+                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
+                                Pembelajaran Menyenangkan & Aplikatif
+                            </h3>
+                            <p class="mt-2 text-base leading-7 text-gray-600">
+                                Menciptakan proses belajar yang tidak hanya menyenangkan tetapi juga dapat diterapkan
+                                langsung.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="relative flex items-start">
+                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
+                            <i class="fas fa-clipboard-check text-3xl text-[#59E300]"></i>
+                        </div>
+                        <div class="ml-6">
+                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
+                                Penilaian Berbasis Kompetensi
+                            </h3>
+                            <p class="mt-2 text-base leading-7 text-gray-600">
+                                Setiap penilaian didasarkan pada ketuntasan kompetensi untuk memastikan standar kualitas
+                                lulusan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="relative flex items-start">
+                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
+                            <i class="fas fa-user-graduate text-3xl text-[#59E300]"></i>
+                        </div>
+                        <div class="ml-6">
+                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
+                                Membekali Lulusan yang Terampil
+                            </h3>
+                            <p class="mt-2 text-base leading-7 text-gray-600">
+                                Memberikan bekal keterampilan yang bermanfaat dan relevan bagi masyarakat dan industri.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
         <div class="bg-white py-16 sm:py-24">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <div class="text-center mb-12">
                     <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">
-                        Visi Dan Misi SMK Amaliah 1 & 2
+                        Detail Visi & Misi
                     </h2>
                     <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
                         Informasi mengenai sejarah perkembangan SMK Amaliah 1 & 2 dari masa ke masa.

@@ -227,7 +227,7 @@
                                 <span>Tentang Jurusan</span>
                             </h2>
                             <div class="prose max-w-none text-gray-700 leading-relaxed text-base">
-                                <p>{{ $major->description }}</p>
+                                <div>{!! $major->description !!}</div>
                             </div>
                         </section>
 
@@ -403,7 +403,7 @@
 
                                             {{-- PENAMBAHAN: Deskripsi singkat untuk kartu jurusan lain --}}
                                             <p class="text-sm text-gray-600 mt-3 line-clamp-3">
-                                                {{ Str::limit($otherMajor->description, 100, '...') }}
+                                                {{ Str::limit(strip_tags($otherMajor->description), 100, '...') }}
                                             </p>
 
 

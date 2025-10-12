@@ -166,17 +166,17 @@
                             </button>
 
                             {{-- Tombol "SMK Amaliah 1" --}}
-                            <button @click="activeTab = 'amaliah1'" :class="{
-                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah1',
-                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah1'
+                            <button @click="activeTab = 'SMK Amaliah 1'" :class="{
+                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 1',
+                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'SMK Amaliah 1'
                     }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 1
                             </button>
 
                             {{-- Tombol "SMK Amaliah 2" --}}
-                            <button @click="activeTab = 'amaliah2'" :class="{
-                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah2',
-                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah2'
+                            <button @click="activeTab = 'SMK Amaliah 2'" :class="{
+                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 2',
+                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'SMK Amaliah 2'
                     }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 2
                             </button>

@@ -15,37 +15,37 @@ class PublicAboutController extends Controller
             [
                 'title' => 'Sejarah',
                 'description' => 'Perjalanan kami dari awal hingga sekarang.',
-                'url' => '/tentang-kami/sejarah',
+                'url' => '/about/history',
                 'icon' => 'fa-landmark' // Ikon untuk sejarah/institusi
             ],
             [
                 'title' => 'Visi & Misi',
                 'description' => 'Tujuan dan cita-cita yang menjadi panduan kami.',
-                'url' => '/tentang-kami/visi-misi',
+                'url' => '/about/vision',
                 'icon' => 'fa-bullseye' // Ikon untuk target/visi
             ],
             [
                 'title' => 'Yayasan',
                 'description' => 'Mengenal lebih dalam fondasi yang menaungi kami.',
-                'url' => '/tentang-kami/yayasan',
+                'url' => '/about/foundation',
                 'icon' => 'fa-building-columns' // Ikon untuk fondasi/yayasan
             ],
             [
-                'title' => 'Struktur Organisasi',
-                'description' => 'Tim solid yang bekerja di balik layar kesuksesan.',
+                'title' => 'Organisasi Siswa',
+                'description' => 'Lihat lebih dalam mengenai organisasi siswa kami.',
                 'url' => '/tentang-kami/struktur-organisasi',
                 'icon' => 'fa-sitemap' // Ikon untuk struktur/hierarki
             ],
             [
                 'title' => 'Fasilitas',
                 'description' => 'Sarana dan prasarana penunjang kegiatan.',
-                'url' => '/fasilitas',
+                'url' => '/facilities',
                 'icon' => 'fa-school' // Ikon untuk gedung/fasilitas sekolah
             ],
             [
                 'title' => 'Tenaga Pendidik',
                 'description' => 'Profil para pendidik profesional & berdedikasi kami.',
-                'url' => '/pendidik',
+                'url' => '/teachers',
                 'icon' => 'fa-chalkboard-teacher' // Ikon untuk guru/pendidik
             ],
         ];
@@ -81,7 +81,7 @@ class PublicAboutController extends Controller
 
     public function history()
     {
-        $historyContent = Writing::where('title', 'Sejarah')
+        $historyContent = Writing::where('title', 'History')
             ->orderBy('release_date', 'desc')
             ->first();
 
@@ -90,4 +90,17 @@ class PublicAboutController extends Controller
 
         return view('PublicSide.about.history', compact('hasImages', 'mainImages', 'historyContent'));
     }
+
+    public function foundation()
+    {
+        $foundationContent = Writing::where('title', 'Foundation')
+            ->orderBy('release_date', 'desc')
+            ->first();
+
+        $mainImages = Image::whereIn('title', ['main'])->get();
+        $hasImages = !$mainImages->isEmpty();
+
+        return view('PublicSide.about.foundation', compact('hasImages', 'mainImages', 'foundationContent'));
+    }
+
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class ImageController extends Controller
 {
@@ -14,7 +15,14 @@ class ImageController extends Controller
     public function index()
     {
         $images = Image::latest()->get();
-        return view('admin.tables.image.index', compact('images'));
+
+        $imageCounts = Image::query()
+            ->select('title', DB::raw('count(*) as total'))
+            ->whereNotNull('title')
+            ->groupBy('title')
+            ->pluck('total', 'title');
+
+        return view('admin.tables.image.index', compact('images', 'imageCounts'));
     }
 
     /**

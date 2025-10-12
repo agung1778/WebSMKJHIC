@@ -81,8 +81,77 @@
             </div>
         </div>
 
+        <section class="bg-white py-20 sm:py-24">
+            <div class="container mx-auto max-w-7xl px-6 lg:px-8">
+                <div class="grid grid-cols-1 items-center gap-y-16 gap-x-8 lg:grid-cols-2">
 
-        <section class="bg-white py-16 sm:py-24">
+                    <div class="flex items-end justify-center gap-4 lg:justify-start">
+
+                        {{--
+                        PERUBAHAN DI SINI:
+                        Looping sekarang menggunakan variabel $image untuk setiap objek dari collection.
+                        --}}
+                        @foreach ($gridImages as $image)
+                            @php
+                                // Logika untuk ukuran dinamis tetap sama, menggunakan $loop->iteration
+                                $sizeClasses = [
+                                    1 => 'h-48 w-28 shadow-sm',
+                                    2 => 'h-64 w-32 shadow-md',
+                                    3 => 'h-80 w-36 shadow-lg',
+                                ][$loop->iteration] ?? 'h-48 w-28 shadow-sm';
+                            @endphp
+
+                            <div class="rounded-xl bg-gray-100 {{ $sizeClasses }}">
+                                {{--
+                                PERUBAHAN DI SINI:
+                                - `src` sekarang mengakses properti 'path' dari objek $image.
+                                - `alt` bisa mengambil dari properti 'alt' atau 'title' untuk aksesibilitas yang lebih baik.
+                                --}}
+                                <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $image->alt_text ?? $image->title }}"
+                                    class="h-full w-full rounded-xl object-cover">
+                            </div>
+                        @endforeach
+
+                    </div>
+
+                    <div class="text-center lg:text-left">
+                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                            Fasilitas Modern untuk Pengalaman Belajar Terbaik
+                        </h2>
+                        <p class="mt-4 text-lg leading-8 text-gray-600">
+                            Kami menyediakan perangkat dan platform terkini yang memungkinkan siswa berkolaborasi dalam
+                            proyek-proyek kreatif, sama seperti di industri profesional.
+                        </p>
+
+                        <ul class="mt-8 space-y-4">
+                            {{-- Poin keunggulan tetap sama --}}
+                            <li class="flex items-start justify-center lg:justify-start">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-xl text-[#63cd00]"></i>
+                                </div>
+                                <span class="ml-3 text-base text-gray-700">Laboratorium Berstandar Industri</span>
+                            </li>
+                            <li class="flex items-start justify-center lg:justify-start">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-xl text-[#63cd00]"></i>
+                                </div>
+                                <span class="ml-3 text-base text-gray-700">Proyek Tim yang Kolaboratif</span>
+                            </li>
+                            <li class="flex items-start justify-center lg:justify-start">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-xl text-[#63cd00]"></i>
+                                </div>
+                                <span class="ml-3 text-base text-gray-700">Simulasi Dunia Kerja Nyata</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <section class="bg-white py-16 sm:py-24 mt-[-40px]">
             <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {{-- KEPALA BAGIAN (JUDUL DI KIRI, TAB DI KANAN) --}}
@@ -113,7 +182,7 @@
                     </div>
                 </div>
 
-              
+
                 @foreach($groupedFacilities as $type => $facilities)
                     <div id="{{ Str::slug($type) }}" class="tab-content">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

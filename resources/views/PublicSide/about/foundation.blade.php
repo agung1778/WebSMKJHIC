@@ -80,7 +80,7 @@
                                 <div class="flex items-center">
                                     {{-- Mengganti warna chevron untuk konsistensi --}}
                                     <i class="fas fa-chevron-right text-white text-xs"></i>
-                                    <span class="ml-2 font-medium md:ml-3 text-[#ffffff]">History</span>
+                                    <span class="ml-2 font-medium md:ml-3 text-[#ffffff]">Foundation</span>
                                 </div>
                             </li>
                         </ol>
@@ -94,11 +94,11 @@
 
                 <div class="text-center">
                     <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                        Sejarah SMK Amaliah 1 & 2 Ciawi
+                        Mengenal Yayasan Kami
                     </h2>
                     <p class="mt-4 text-lg leading-8 text-gray-600">
-                        Perjalanan kami dalam membentuk generasi yang cerdas, berkarakter, dan siap menghadapi tantangan
-                        masa depan.
+                        Yayasan Pusat Studi Pengembangan Islam Amaliyah Indonesia (YPSPIAI) adalah fondasi yang menaungi
+                        perjalanan pendidikan kami.
                     </p>
                 </div>
 
@@ -108,62 +108,64 @@
 
                     <div class="relative flex items-start">
                         <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-school text-3xl text-[#59E300]"></i>
+                            <i class="fas fa-building-columns text-3xl text-[#59E300]"></i>
                         </div>
                         <div class="ml-6">
                             <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Filosofi Pendidikan
+                                Profil & Tujuan Utama
                             </h3>
                             <p class="mt-2 text-base leading-7 text-gray-600">
-                                SMK Amaliah lahir dari kesadaran bahwa sekolah adalah komunitas utuh yang berperan
-                                menumbuhkan nilai-nilai luhur. Kami berfokus mencerdaskan bangsa dengan mengembangkan etika,
-                                logika, dan praktika yang berakar pada budaya bangsa.
+                                YPSPIAI didirikan sebagai pusat studi untuk mengembangkan pendidikan Islam yang bersifat
+                                "amaliyah" atau aplikatif, mengintegrasikan ilmu pengetahuan dengan pengamalan nilai-nilai
+                                luhur dalam kehidupan sehari-hari.
                             </p>
                         </div>
                     </div>
 
                     <div class="relative flex items-start">
                         <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-landmark text-3xl text-[#59E300]"></i>
+                            <i class="fas fa-graduation-cap text-3xl text-[#59E300]"></i>
                         </div>
                         <div class="ml-6">
                             <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Fondasi & Pendirian
+                                Pembina Institusi Pendidikan
                             </h3>
                             <p class="mt-2 text-base leading-7 text-gray-600">
-                                Berdiri resmi pada tahun 2008 di bawah naungan <b>YPSPIAI</b> dan pembinaan Universitas
-                                Djuanda (UNIDA). Sejak awal, kami berkomitmen pada Kualitas, Profesionalitas, dan
-                                Pelayanan Prima dalam pendidikan kejuruan.
+                                Yayasan ini menjadi pilar utama yang menaungi dan membina institusi pendidikan berkualitas,
+                                termasuk SMK Amaliah 1 & 2 Ciawi serta Universitas Djuanda (UNIDA), menciptakan
+                                ekosistem pendidikan yang sinergis dari tingkat menengah hingga perguruan tinggi.
                             </p>
                         </div>
                     </div>
 
                     <div class="relative flex items-start">
                         <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-sitemap text-3xl text-[#59E300]"></i>
+                            <i class="fas fa-book-quran text-3xl text-[#59E300]"></i>
                         </div>
                         <div class="ml-6">
                             <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Perkembangan & Program Keahlian
+                                Filosofi Bertauhid
                             </h3>
                             <p class="mt-2 text-base leading-7 text-gray-600">
-                                Untuk menjawab kebutuhan industri, kami membuka 9 konsentrasi keahlian: TKJ, RPL, DKV,
-                                Animasi, MP, Akuntansi, LPS, Desain Busana, dan Bisnis Retail.
+                                Sesuai dengan visi "Menyatu dalam Tauhid", YPSPIAI memastikan bahwa setiap aspek pendidikan
+                                di bawah naungannya berlandaskan pada nilai-nilai keimanan, membentuk lulusan yang tidak
+                                hanya kompeten secara akademis tetapi juga kokoh dalam karakter.
                             </p>
                         </div>
                     </div>
 
                     <div class="relative flex items-start">
                         <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-hands-holding-circle text-3xl text-[#59E300]"></i>
+                            <i class="fas fa-award text-3xl text-[#59E300]"></i>
                         </div>
                         <div class="ml-6">
                             <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Komitmen & Resiliensi
+                                Komitmen pada Kualitas
                             </h3>
                             <p class="mt-2 text-base leading-7 text-gray-600">
-                                Perjalanan kami menghadapi berbagai tantangan. Namun, berkat kerja sama solid seluruh warga
-                                sekolah, kesabaran, dan keikhlasan, kami bersyukur dapat terus berkembang hingga saat ini.
+                                YPSPIAI berkomitmen penuh untuk menjaga dan meningkatkan standar mutu di semua unit
+                                pendidikannya melalui manajemen profesional, pengembangan kurikulum yang relevan, dan
+                                penyediaan layanan pendidikan prima.
                             </p>
                         </div>
                     </div>
@@ -177,16 +179,16 @@
 
                 <div class="text-center mb-12">
                     <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">
-                        Detail Sejarah
+                        Detail Yayasan SMK Amaliah 1 & 2
                     </h2>
                     <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
-                        Informasi mengenai sejarah perkembangan SMK Amaliah 1 & 2 dari masa ke masa.
+                        Informasi mengenai yayasan yang menaungi SMK Amaliah 1 & 2.
                     </p>
                 </div>
 
-                @if ($historyContent)
+                @if ($foundationContent)
                     <article class="prose prose-lg prose-gray max-w-screen">
-                        {!! $historyContent->content !!}
+                        {!! $foundationContent->content !!}
                     </article>
                 @else
                     <div class="text-center py-24 px-6 bg-gray-50 rounded-xl border border-gray-200">

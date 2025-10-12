@@ -95,6 +95,15 @@
 </head>
 
 <body class="bg-gray-50">
+    @php
+
+        $amaliahGreen = '#63cd00';
+        $amaliahDark = '#282829';
+        $amaliahBlue = '#E0E7FF';
+
+        // Cek Variabel
+        $hasImages = isset($mainImages) && $mainImages->isNotEmpty();
+    @endphp
 
     <header x-data="{ mobileMenuOpen: false }" class="sticky top-0 z-50 bg-white shadow-md">
         {{-- TOP BAR --}}
@@ -136,7 +145,7 @@
                     <a href="#"
                         class="bg-[#282829] text-white px-6 py-2.5 rounded-full font-semibold hover:bg-opacity-80 transition-colors whitespace-nowrap text-sm">Contact
                         Us</a>
-                    
+
                 </div>
 
                 {{-- Tombol Hamburger (Mobile) --}}
@@ -159,46 +168,36 @@
                     <div class="absolute dropdown-content bg-white shadow-lg mt-2 rounded-md py-1 w-48 z-10">
                         <a href="{{ route('public.about.index') }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">About</a>
-                        <a href="" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Visi
-                            Misi</a>
                         <a href="{{ route('public.partners.index') }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Industry
                             Partners</a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">School
-                            Life</a>
                         <a href="{{ route('public.teachers.index') }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Teacher
                             & Staff</a>
-
+                        <a href="{{ route('public.testimonials.index') }}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Testimonials</a>
                         <a href="{{ route('public.news.index') }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">
                             News</a>
 
 
+
                     </div>
                 </div>
                 <div class="relative group">
-                    <button class="nav-link">Major Competency<i
-                            class="fa-solid fa-chevron-down ml-1.5 text-xs"></i></button>
-                    <div class="absolute dropdown-content bg-white shadow-lg mt-2 rounded-md py-1 w-48 z-10">
-                        <a href="{{ route('public.majors.index') }}"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">SMK Amaliah 1 &
-                            2</a>
-                        <a href="{{ route('public.testimonials.index') }}"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Testimonials</a>
-                    </div>
-
+                    <button class="nav-link"><a href="{{ route('public.majors.index') }}">Major Competency</a></button>
                 </div>
                 <div class="relative group">
                     <button class="nav-link">Education Preview <i
                             class="fa-solid fa-chevron-down ml-1.5 text-xs"></i></button>
                     <div class="absolute dropdown-content bg-white shadow-lg mt-2 rounded-md py-1 w-48 z-10">
-                        <a href="#"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Gallery</a>
-                        <a href="#"
+                        <a href="{{ route('public.achievement.index') }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Achievements</a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">School
+                        <a href="{{ route('public.program.index') }}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">School
                             Programs</a>
+                        <a href="#"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Extracurricular</a>
                         <a href="#"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Events</a>
                     </div>
@@ -370,17 +369,16 @@
                 <div>
                     <h4 class="font-semibold text-white tracking-wider uppercase">Jelajahi</h4>
                     <ul class="mt-4 space-y-3 text-sm">
-                        {{-- 3. Efek hover yang lebih interaktif --}}
-                        <li><a href="#"
+                        <li><a href="/"
                                 class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Beranda</a>
                         </li>
-                        <li><a href="#"
+                        <li><a href="{{ route('public.about.index') }}"
                                 class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Tentang
                                 Kami</a></li>
-                        <li><a href="#"
+                        <li><a href="{{ route('public.news.index') }}"
                                 class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Berita</a>
                         </li>
-                        <li><a href="#"
+                        <li><a href="{{ route('public.majors.index') }}"
                                 class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Jurusan</a>
                         </li>
                     </ul>
@@ -393,7 +391,7 @@
                         <li><a href="#"
                                 class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Info
                                 PPDB</a></li>
-                        <li><a href="#"
+                        <li><a href="{{ route('public.facilities.index') }}"
                                 class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Fasilitas</a>
                         </li>
                         <li><a href="#"
@@ -411,17 +409,16 @@
                     <div class="mt-4 flex flex-col gap-4 text-sm">
                         <div class="flex items-start gap-3 text-gray-400">
                             <i class="fas fa-map-marker-alt w-4 h-4 mt-1 flex-shrink-0"></i>
-                            <span>{{ $alamat ?? 'Jl. Raya Veteran III, Banjarwaru, Ciawi, Kab. Bogor, Jawa Barat 16720' }}</span>
+                            <span>Jl. Raya Veteran III, Banjarwaru, Ciawi, Kab. Bogor, Jawa Barat 16720</span>
                         </div>
                         <div class="flex items-start gap-3 text-gray-400">
                             <i class="fas fa-envelope w-4 h-4 mt-1 flex-shrink-0"></i>
-                            <a href="mailto:{{ $email ?? 'info@smkamaliah.sch.id' }}"
-                                class="hover:text-white transition">{{
-                                $email ?? 'info@smkamaliah.sch.id' }}</a>
+                            <a href="mailto:{{ $email ?? 'smkamaliahciawi@gmail.com' }}"
+                                class="hover:text-white transition">smkamaliahciawi@gmail.com</a>
                         </div>
                         <div class="flex items-start gap-3 text-gray-400">
                             <i class="fas fa-phone-alt w-4 h-4 mt-1 flex-shrink-0"></i>
-                            <a href="tel:{{ $phone ?? '+622518241416' }}"
+                            <a href="tel:{{ $phone ?? '' }}"
                                 class="hover:text-white transition">{{ $phone ?? '(0251) 8241416' }}</a>
                         </div>
                     </div>

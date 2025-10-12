@@ -17,6 +17,8 @@ class PublicFacilityController extends Controller
         // Mengambil semua tipe fasilitas yang unik untuk tombol filter
         $types = Facility::select('type')->distinct()->pluck('type');
 
+        $gridImages = Image::where('title', 'PortraitImage')->take(3)->get();
+
         // Query dasar untuk fasilitas
         $facilityQuery = Facility::query();
         // Ambil semua fasilitas dan kelompokkan berdasarkan kolom 'type'
@@ -30,15 +32,16 @@ class PublicFacilityController extends Controller
         // Ambil data fasilitas yang sudah difilter atau semua data
         $facilities = $facilityQuery->latest()->get();
 
-        
+
         $facilityImages = Image::where('title', 'FacilityImage')->first();
 
         return view('PublicSide.facilities.index', [
             'facilities'     => $facilities,
             'types'          => $types,
             'facilityImages' => $facilityImages,
-            'currentType'    => $request->type, 
-            'groupedFacilities' => $groupedFacilities
+            'currentType'    => $request->type,
+            'groupedFacilities' => $groupedFacilities,
+            'gridImages' => $gridImages,
         ]);
     }
 

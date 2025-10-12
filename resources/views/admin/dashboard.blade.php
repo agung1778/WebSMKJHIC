@@ -61,133 +61,163 @@
 
             <main>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    <a href="#"
+
+                    <a href="{{ route('admin.image.index') }}"
                         class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
                         <div class="text-green-custom">
                             <i class="fas fa-home fa-lg"></i>
                         </div>
-                        <h2 class="font-semibold text-base">Main Page</h2>
-                        <p class="text-sm text-gray-600 leading-tight">Kelola tampilan dan konten utama yang dilihat
-                            pengunjung pertama kali.</p>
-                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1">
-                            <span>Kustomisasi</span>
+                        <h2 class="font-semibold text-base">Gambar Utama</h2>
+                        <p class="text-sm text-gray-600 leading-tight">Kelola gambar utama (hero section) yang tampil di
+                            halaman depan website.</p>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
                             <i class="fas fa-arrow-right text-[10px]"></i>
                         </span>
                     </a>
 
-                    <a href="#"
+                    <a href="{{ route('admin.writings.index') }}"
                         class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
                         <div class="text-green-custom">
                             <i class="fas fa-globe-asia fa-lg"></i>
                         </div>
-                        <h2 class="font-semibold text-base">Discover Amaliah</h2>
-                        <p class="text-sm text-gray-600 leading-tight">Atur dan perbarui informasi profil sekolah serta
-                            visi-misi.</p>
-                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1">
-                            <span>Kustomisasi</span>
+                        <h2 class="font-semibold text-base">Profil & Tulisan</h2>
+                        <p class="text-sm text-gray-600 leading-tight">Atur tulisan seperti profil sekolah, sejarah, serta
+                            visi & misi.</p>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
                             <i class="fas fa-arrow-right text-[10px]"></i>
                         </span>
                     </a>
 
-                    <a href="#"
+                    <a href="{{ route('admin.testimonials.index') }}"
                         class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
                         <div class="text-green-custom">
                             <i class="fas fa-quote-right fa-lg"></i>
                         </div>
-                        <h2 class="font-semibold text-base">Testimonials</h2>
-                        <p class="text-sm text-gray-600 leading-tight">Kelola ulasan dan testimoni inspiratif dari siswa,
-                            orang tua, dan alumni.</p>
-                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1">
-                            <span>Kustomisasi</span>
+                        <h2 class="font-semibold text-base">Testimoni</h2>
+                        <p class="text-sm text-gray-600 leading-tight">Kelola ulasan inspiratif dari siswa, orang tua, dan
+                            alumni.</p>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
                             <i class="fas fa-arrow-right text-[10px]"></i>
                         </span>
                     </a>
 
-                    <a href="#"
+                    <a href="{{ route('admin.facilities.index') }}"
                         class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
                         <div class="text-green-custom">
                             <i class="fas fa-building fa-lg"></i>
                         </div>
-                        <h2 class="font-semibold text-base">Facilities</h2>
+                        <h2 class="font-semibold text-base">Fasilitas</h2>
                         <p class="text-sm text-gray-600 leading-tight">Perbarui informasi dan galeri foto fasilitas sekolah
                             yang tersedia.</p>
-                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1">
-                            <span>Kustomisasi</span>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
                             <i class="fas fa-arrow-right text-[10px]"></i>
                         </span>
                     </a>
 
-                    <a href="#"
+                    <a href="{{ route('admin.programs.index') }}"
                         class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
                         <div class="text-green-custom">
                             <i class="fas fa-book fa-lg"></i>
                         </div>
-                        <h2 class="font-semibold text-base">Education Preview</h2>
-                        <p class="text-sm text-gray-600 leading-tight">Tinjau dan sesuaikan pratinjau kurikulum dan program
-                            pendidikan.</p>
-                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1">
-                            <span>Kustomisasi</span>
+                        <h2 class="font-semibold text-base">Program Pendidikan</h2>
+                        <p class="text-sm text-gray-600 leading-tight">Sesuaikan pratinjau kurikulum dan program pendidikan
+                            sekolah.</p>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
                             <i class="fas fa-arrow-right text-[10px]"></i>
                         </span>
                     </a>
 
-                    <a href="#"
-                        class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
-                        <div class="text-green-custom">
-                            <i class="fas fa-chart-bar fa-lg"></i>
-                        </div>
-                        <h2 class="font-semibold text-base">Statistics</h2>
-                        <p class="text-sm text-gray-600 leading-tight">Lihat data dan statistik penting untuk memantau
-                            performa website.</p>
-                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1">
-                            <span>Kustomisasi</span>
-                            <i class="fas fa-arrow-right text-[10px]"></i>
-                        </span>
-                    </a>
-
-                    <a href="#"
+                    <a href="{{ route('admin.majors.index') }}"
                         class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
                         <div class="text-green-custom">
                             <i class="fas fa-star fa-lg"></i>
                         </div>
-                        <h2 class="font-semibold text-base">Major Competency</h2>
+                        <h2 class="font-semibold text-base">Jurusan / Kompetensi</h2>
                         <p class="text-sm text-gray-600 leading-tight">Kelola informasi detail tentang jurusan dan
-                            kompetensi unggulan sekolah.</p>
-                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1">
-                            <span>Kustomisasi</span>
+                            kompetensi unggulan.</p>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
                             <i class="fas fa-arrow-right text-[10px]"></i>
                         </span>
                     </a>
 
-                    <a href="#"
+                    <a href="{{ route('admin.news.index') }}"
                         class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
                         <div class="text-green-custom">
                             <i class="fas fa-newspaper fa-lg"></i>
                         </div>
-                        <h2 class="font-semibold text-base">Discover News</h2>
+                        <h2 class="font-semibold text-base">Berita & Artikel</h2>
                         <p class="text-sm text-gray-600 leading-tight">Buat, sunting, dan publikasikan berita atau artikel
                             terbaru sekolah.</p>
-                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1">
-                            <span>Kustomisasi</span>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
                             <i class="fas fa-arrow-right text-[10px]"></i>
                         </span>
                     </a>
 
-                    <a href="#"
+                    <a href="{{ route('admin.partners.index') }}"
                         class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
                         <div class="text-green-custom">
                             <i class="fas fa-handshake fa-lg"></i>
                         </div>
-                        <h2 class="font-semibold text-base">Industry Partners</h2>
+                        <h2 class="font-semibold text-base">Mitra Industri</h2>
                         <p class="text-sm text-gray-600 leading-tight">Kelola dan tampilkan daftar mitra industri dan
-                            kolaborasi.</p>
-                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1">
-                            <span>Kustomisasi</span>
+                            kolaborasi sekolah.</p>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
                             <i class="fas fa-arrow-right text-[10px]"></i>
                         </span>
                     </a>
+
+                    <a href="{{ route('admin.teachers.index') }}"
+                        class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
+                        <div class="text-green-custom">
+                            <i class="fas fa-users fa-lg"></i>
+                        </div>
+                        <h2 class="font-semibold text-base">Guru & Staf</h2>
+                        <p class="text-sm text-gray-600 leading-tight">Kelola data dan profil guru serta staf pengajar di
+                            sekolah.</p>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-[10px]"></i>
+                        </span>
+                    </a>
+
+                    <a href="{{ route('admin.achievements.index') }}"
+                        class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
+                        <div class="text-green-custom">
+                            <i class="fas fa-trophy fa-lg"></i>
+                        </div>
+                        <h2 class="font-semibold text-base">Prestasi</h2>
+                        <p class="text-sm text-gray-600 leading-tight">Publikasikan dan kelola daftar pencapaian dan
+                            prestasi sekolah.</p>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-[10px]"></i>
+                        </span>
+                    </a>
+
+                    <a href="{{ route('admin.extracurriculars.index') }}"
+                        class="bg-white rounded-lg p-4 flex flex-col space-y-3 shadow-md border border-[#D9D9D9] transition-transform duration-300 hover:scale-[1.02]">
+                        <div class="text-green-custom">
+                            <i class="fas fa-running fa-lg"></i>
+                        </div>
+                        <h2 class="font-semibold text-base">Ekstrakurikuler</h2>
+                        <p class="text-sm text-gray-600 leading-tight">Kelola informasi mengenai kegiatan ekstrakurikuler
+                            yang tersedia.</p>
+                        <span class="text-xs text-green-custom font-semibold flex items-center space-x-1 mt-auto pt-2">
+                            <span>Kelola Sekarang</span>
+                            <i class="fas fa-arrow-right text-[10px]"></i>
+                        </span>
+                    </a>
+
                 </div>
-            </main>
+            </main> 
         </div>
 
         <script>

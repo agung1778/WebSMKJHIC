@@ -26,6 +26,8 @@ use App\Http\Controllers\PublicPage\PublicTestimonialController;
 use App\Http\Controllers\PublicPage\PublicTeacherController;
 use App\Http\Controllers\PublicPage\PublicAboutController;
 use App\Http\Controllers\PublicPage\PublicFoundationController;
+use App\Http\Controllers\PublicPage\PublicAchievementController;
+use App\Http\Controllers\PublicPage\PublicProgramController;
 
 
 Route::get('/', function () {
@@ -59,6 +61,15 @@ Route::get('/teachers', [PublicTeacherController::class, 'index'])->name('public
 Route::get('/teachers/{teacher}', [PublicTeacherController::class, 'show'])->name('public.teachers.show');
 
 Route::get('/about', [PublicAboutController::class, 'index'])->name('public.about.index');
+Route::get('/about/vision', [PublicAboutController::class, 'vision'])->name('public.about.vision');
+Route::get('/about/history', [PublicAboutController::class, 'history'])->name('public.about.history');
+Route::get('/about/foundation', [PublicAboutController::class, 'foundation'])->name('public.about.foundation');
+
+Route::get('/achievements', [PublicAchievementController::class, 'index'])->name('public.achievement.index');
+Route::get('/achievements/{achievement}', [PublicAchievementController::class, 'show'])->name('public.achievement.show');
+
+Route::get('/programs', [PublicProgramController::class, 'index'])->name('public.program.index');
+Route::get('/programs/{program}', [PublicProgramController::class, 'show'])->name('public.program.show');
 
 
 
@@ -81,6 +92,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Rute untuk dashboard admin yang hanya bisa diakses setelah login
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+    Route::get('/admin/curator', [AdminController::class, 'curator'])->name('admin.curator');
 
     // Grup rute untuk manajemen konten di dashboard admin
     Route::prefix('admin')->name('admin.')->group(function () {

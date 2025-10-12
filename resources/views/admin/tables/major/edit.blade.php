@@ -11,11 +11,44 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+        <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
         <style>
             body {
                 font-family: 'Poppins', sans-serif;
                 background-color: #f0f2f5;
             }
+
+            /* === 2. TAMBAHKAN INI: Styling Kustom untuk Trix Editor === */
+            trix-toolbar [data-trix-button-group="file-tools"] {
+                display: none;
+                /* Sembunyikan tombol upload file bawaan */
+            }
+
+            trix-editor {
+                background-color: white;
+                min-height: 200px;
+                /* Atur tinggi minimal editor */
+                border-radius: 0.5rem;
+                border-width: 1px;
+                border-color: #D1D5DB;
+            }
+
+            /* Efek focus ring agar konsisten */
+            trix-editor:focus-within {
+                outline: 2px solid transparent;
+                outline-offset: 2px;
+                border-color: #6CF600;
+                box-shadow: 0 0 0 2px #6CF600;
+            }
+
+            /* Style untuk error state */
+            trix-editor.border-red-500 {
+                border-color: #EF4444;
+            }
+
+            /* ======================================================== */
         </style>
     </head>
 
@@ -48,14 +81,17 @@
 
                     <div class="mb-4">
                         <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-                        <textarea name="description" id="description" rows="5"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('description') border-red-500 @enderror">{{ old('description', $major->description) }}</textarea>
+
+                        <input id="description" type="hidden" name="description"
+                            value="{{ old('description', $major->description) }}">
+
+                        <trix-editor input="description"
+                            class="@error('description') border-red-500 @enderror"></trix-editor>
+
                         @error('description')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-
-                    {{-- INPUT TAG (BARU) --}}
                     <div class="mb-4">
                         <label for="tag" class="block text-sm font-medium text-gray-700 mb-1">Tag/Kata Kunci (Dipisahkan
                             koma)</label>
@@ -66,7 +102,6 @@
                         @enderror
                     </div>
 
-                    {{-- INPUT ADVANTAGE (BARU) --}}
                     <div class="mb-4">
                         <label for="advantage" class="block text-sm font-medium text-gray-700 mb-1">Poin Keunggulan
                             (Dipisahkan baris baru)</label>
@@ -76,13 +111,12 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    {{-- AKHIR INPUT FIELD BARU --}}
 
                     <div class="mb-4">
                         <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Gambar Jurusan</label>
                         <input type="file" name="image" id="image"
                             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('image') border-red-500 @enderror">
-                        @if($major->image)
+                        @if ($major->image)
                             <p class="text-xs text-gray-500 mt-2">Gambar saat ini:</p>
                             <img src="{{ asset('storage/' . $major->image) }}" alt="Gambar Jurusan"
                                 class="w-32 h-32 object-cover rounded-md mt-2">
@@ -92,13 +126,12 @@
                         @enderror
                     </div>
 
-                    {{-- INPUT DAN PREVIEW LOGO JURUSAN --}}
                     <div class="mb-4">
                         <label for="logo" class="block text-sm font-medium text-gray-700 mb-1">Logo Jurusan
                             (PNG/SVG)</label>
                         <input type="file" name="logo" id="logo"
                             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('logo') border-red-500 @enderror">
-                        @if($major->logo)
+                        @if ($major->logo)
                             <p class="text-xs text-gray-500 mt-2">Logo saat ini:</p>
                             <img src="{{ asset('storage/' . $major->logo) }}" alt="Logo Jurusan"
                                 class="w-20 h-20 object-contain rounded-md mt-2 border border-gray-200 p-1">
@@ -107,7 +140,6 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                    {{-- AKHIR INPUT LOGO --}}
 
                     <div class="mb-4">
                         <label for="competency_head" class="block text-sm font-medium text-gray-700 mb-1">Kepala
@@ -125,7 +157,7 @@
                             Kompetensi</label>
                         <input type="file" name="competency_head_photo" id="competency_head_photo"
                             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('competency_head_photo') border-red-500 @enderror">
-                        @if($major->competency_head_photo)
+                        @if ($major->competency_head_photo)
                             <p class="text-xs text-gray-500 mt-2">Foto saat ini:</p>
                             <img src="{{ asset('storage/' . $major->competency_head_photo) }}" alt="Foto Kepala Kompetensi"
                                 class="w-32 h-32 object-cover rounded-md mt-2">
