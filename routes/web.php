@@ -16,6 +16,7 @@ use App\Http\Controllers\ImageController; // Mengimpor ImageController
 use App\Http\Controllers\WritingController; // Mengimpor WritingController
 
 use App\Models\SchoolProgram;
+use App\Http\Controllers\SearchController;
 
 use App\Http\Controllers\ForgotPasswordController;
 
@@ -31,6 +32,7 @@ use App\Http\Controllers\PublicPage\PublicFoundationController;
 use App\Http\Controllers\PublicPage\PublicAchievementController;
 use App\Http\Controllers\PublicPage\PublicProgramController;
 use App\Http\Controllers\PublicPage\PublicExtracurricularController;
+use App\Http\Controllers\PublicPage\PublicHelpcenterController;
 
 
 Route::get('/', function () {
@@ -77,8 +79,10 @@ Route::get('/programs/{program}', [PublicProgramController::class, 'show'])->nam
 Route::get('/extracurriculars', [PublicExtracurricularController::class, 'index'])->name('public.extracurricular.index');
 Route::get('/extracurriculars/{extracurricular}', [PublicExtracurricularController::class, 'show'])->name('public.extracurricular.show');
 
+Route::get('/help/faq', [PublicHelpcenterController::class, 'faq'])->name('public.help.faq');
+Route::get('/help/feedback', [PublicHelpcenterController::class, 'feedback'])->name('public.help.feedback');
 
-
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 Route::get('/', [HomeController::class, 'index']);
 

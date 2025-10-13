@@ -87,13 +87,13 @@
         {{-- ========================================================== --}}
         {{-- BAGIAN MITRA INDUSTRI --}}
         {{-- ========================================================== --}}
+        {{-- Anda bisa menempatkan section ini di dalam view public Anda --}}
+
         <section class="bg-gray-50 py-16 sm:py-24">
             <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {{-- KEPALA BAGIAN (JUDUL) --}}
                 <div class="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
-
-                    {{-- Judul Utama dengan sentuhan gradien untuk tampilan modern --}}
                     <h2 class="text-3xl lg:text-4xl font-extrabold text-[#2D2D2D] tracking-tight">
                         Bermitra dengan Industri Terkemuka
                     </h2>
@@ -103,13 +103,39 @@
                     </p>
                 </div>
 
+                {{-- STATISTIK & PENCARIAN --}}
+                <div class="mb-10 max-w-2xl mx-auto">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+                        {{-- Statistik Total Mitra --}}
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                            <div
+                                class="bg-blue-100 text-blue-600 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-handshake fa-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500">Total Mitra Industri</p>
+                                <p class="text-2xl font-bold text-slate-800">{{ $partners->count() }}</p>
+                            </div>
+                        </div>
+                        {{-- Fitur Pencarian --}}
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-4">
+                                <i class="fas fa-search text-slate-400"></i>
+                            </span>
+                            <input type="search" id="partnerSearchInput" placeholder="Cari nama mitra..."
+                                class="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition">
+                        </div>
+                    </div>
+                </div>
+
+
                 {{-- GRID DAFTAR MITRA --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+                <div id="partnersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
 
                     {{-- Loop untuk setiap kartu mitra --}}
                     @forelse($partners as $partner)
-                        <div
-                            class="group bg-white border border-slate-200 rounded-xl p-6 flex flex-col text-center transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-2">
+                        <div data-name="{{ strtolower($partner->name) }}"
+                            class="partner-card group bg-white border border-slate-200 rounded-xl p-6 flex flex-col text-center transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-2">
 
                             {{-- Wadah Logo --}}
                             <div
@@ -164,9 +190,93 @@
                         </div>
                     @endforelse
 
+                    {{-- Pesan jika pencarian tidak ditemukan --}}
+                    <div id="noResultsMessage"
+                        class="hidden sm:col-span-2 lg:col-span-3 xl:col-span-4 bg-white border-2 border-dashed border-slate-300 rounded-xl p-12 text-center">
+                        <p class="text-slate-500">Mitra yang Anda cari tidak ditemukan.</p>
+                    </div>
+
                 </div>
+
+                {{-- Tombol Load More --}}
+                <div id="loadMoreContainer" class="text-center mt-12">
+                    <button id="loadMoreBtn"
+                        class="bg-white hover:bg-slate-100 text-slate-700 font-bold py-3 px-8 rounded-full border border-slate-300 transition-colors duration-300 shadow-sm">
+                        Tampilkan Lebih Banyak
+                    </button>
+                </div>
+
             </div>
         </section>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const searchInput = document.getElementById('partnerSearchInput');
+                const partnerCards = Array.from(document.querySelectorAll('.partner-card'));
+                const noResultsMessage = document.getElementById('noResultsMessage');
+                const loadMoreBtn = document.getElementById('loadMoreBtn');
+                const loadMoreContainer = document.getElementById('loadMoreContainer');
+
+                const itemsPerLoad = 20;
+                let itemsShown = itemsPerLoad;
+
+                // Fungsi untuk memperbarui kartu yang terlihat
+                function updateVisibleCards() {
+                    partnerCards.forEach((card, index) => {
+                        card.style.display = index < itemsShown ? 'flex' : 'none';
+                    });
+
+                    // Tampilkan atau sembunyikan tombol "Load More"
+                    if (itemsShown >= partnerCards.length) {
+                        loadMoreContainer.style.display = 'none';
+                    } else {
+                        loadMoreContainer.style.display = 'block';
+                    }
+                }
+
+                // Fungsi untuk menangani logika pencarian
+                function handleSearch() {
+                    const searchTerm = searchInput.value.toLowerCase().trim();
+
+                    if (searchTerm) {
+                        // Saat mencari, sembunyikan "Load More" dan filter semua kartu
+                        loadMoreContainer.style.display = 'none';
+                        let visibleCount = 0;
+
+                        partnerCards.forEach(card => {
+                            const partnerName = card.dataset.name;
+                            if (partnerName.includes(searchTerm)) {
+                                card.style.display = 'flex';
+                                visibleCount++;
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        });
+
+                        noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+                    } else {
+                        // Jika pencarian kosong, kembalikan ke state "Load More"
+                        noResultsMessage.style.display = 'none';
+                        itemsShown = itemsPerLoad; // Reset jumlah item
+                        updateVisibleCards(); // Terapkan kembali tampilan awal
+                    }
+                }
+
+                // Event listener untuk tombol "Load More"
+                loadMoreBtn.addEventListener('click', () => {
+                    itemsShown += itemsPerLoad;
+                    updateVisibleCards();
+                });
+
+                // Event listener untuk input pencarian
+                searchInput.addEventListener('keyup', handleSearch);
+
+                // Inisialisasi tampilan awal
+                updateVisibleCards();
+            });
+        </script>
+
+
 
     </body>
 

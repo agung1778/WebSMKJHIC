@@ -16,7 +16,7 @@ class HomeController extends Controller
     public function index()
     {
         $latestNews = News::latest('date_published')->take(4)->get();
-        $partners = Partner::latest()->take(8)->get();
+        $partners = Partner::latest()->get();
         $testimonials = Testimonial::with('major')->latest()->take(6)->get();
 
         // 1. Ambil semua gambar dari database yang memiliki title 'MainImage'

@@ -43,96 +43,133 @@
             <section class="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 mt-4">
                 @if($hasImages && $latestNews->isNotEmpty())
                     {{--
-                    MODIFIKASI #1: Inisialisasi state untuk DUA slider terpisah.
+                    Modifikasi AlpineJS:
+                    - Menambahkan 'showVideo' untuk mengontrol tampilan antara slider dan video.
+                    - Logika slider gambar dan berita tetap dipertahankan.
                     --}}
                     <div x-data="{
-                                                                                                                                                                                                                                activeImageSlide: 1,
-                                                                                                                                                                                                                                totalImageSlides: {{ $mainImages->count() }},
-                                                                                                                                                                                                                                activeNewsSlide: 1,
-                                                                                                                                                                                                                                totalNewsSlides: {{ $latestNews->count() }}
-                                                                                                                                                                                                                             }"
-                        {{-- MODIFIKASI #2: Jalankan DUA timer terpisah. Satu untuk gambar, satu untuk berita. Durasinya bisa
-                        Anda bedakan jika mau. --}}
-                        x-init="
-                                                                                                                                                                                                                                setInterval(() => { activeImageSlide = activeImageSlide % totalImageSlides + 1 }, 5000);
-                                                                                                                                                                                                                                setInterval(() => { activeNewsSlide = activeNewsSlide % totalNewsSlides + 1 }, 5000);
-                                                                                                                                                                                                                             ">
+                                        showVideo: false,
+                                        activeImageSlide: 1,
+                                        totalImageSlides: {{ $mainImages->count() }},
+                                        activeNewsSlide: 1,
+                                        totalNewsSlides: {{ $latestNews->count() }}
+                                     }" x-init="
+                                        setInterval(() => { 
+                                            if (!showVideo) { // Animasi gambar hanya berjalan jika video tidak ditampilkan
+                                                activeImageSlide = activeImageSlide % totalImageSlides + 1 
+                                            }
+                                        }, 5000);
+                                        setInterval(() => { activeNewsSlide = activeNewsSlide % totalNewsSlides + 1 }, 5000);
+                                     ">
 
-                        {{-- Kontainer Slider Gambar --}}
                         <div class="relative h-[550px] overflow-hidden hero-clip-path rounded-3xl">
-                            @foreach($mainImages as $image)
-                                {{-- MODIFIKASI #3: Gunakan 'activeImageSlide' --}}
-                                <div x-show="activeImageSlide === {{ $loop->iteration }}"
-                                    x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
-                                    x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
-                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                                    class="absolute inset-0">
-                                    <img src="{{ Storage::url($image->path) }}" alt="{{ $image->description ?? $image->filename }}"
-                                        class="w-full h-full object-cover">
-                                </div>
-                            @endforeach
+
+                            {{-- Kontainer Slider Gambar (Hanya tampil jika showVideo false) --}}
+                            <div x-show="!showVideo" class="w-full h-full">
+                                @foreach($mainImages as $image)
+                                    <div x-show="activeImageSlide === {{ $loop->iteration }}"
+                                        x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
+                                        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
+                                        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                                        class="absolute inset-0">
+                                        <img src="{{ Storage::url($image->path) }}"
+                                            alt="{{ $image->description ?? $image->filename }}" class="w-full h-full object-cover">
+                                    </div>
+                                @endforeach
+
+                                {{-- Tombol "Watch Video" di Pojok Kanan Atas --}}
+                                <button @click="showVideo = true"
+                                    class="absolute top-6 right-6 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full hover:bg-black/70 transition-all duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span class="text-sm font-semibold">Watch Video</span>
+                                </button>
+                            </div>
+
+                            {{-- Kontainer Iframe YouTube (Hanya tampil jika showVideo true) --}}
+                            <div x-show="showVideo" x-cloak class="w-full h-full">
+                                {{-- Iframe yang sudah dimodifikasi --}}
+                                <iframe class="w-full h-full"
+                                    :src="showVideo ? 'https://www.youtube.com/embed/STOhZZmY6Co?autoplay=1&rel=0' : ''"
+                                    title="YouTube video player" frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                                </iframe>
+
+                                {{-- Tombol "Close" untuk Video --}}
+                                <button @click="showVideo = false"
+                                    class="absolute top-6 right-6 z-20 flex items-center justify-center w-10 h-10 bg-black/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-all duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="absolute bottom-12 left-8 md:left-12 z-10 w-[calc(100%-4rem)] max-w-xs">
-                            <div class="bg-white backdrop-blur-sm border-2 rounded-xl p-3 shadow-lg mb-3">
+                        {{-- Bagian bawah (kartu berita dan logo) tidak diubah --}}
+                        <div class="absolute bottom-12 left-8 md:left-12 z-10 w-[calc(100%-4rem)] max-w-md">
+
+                            <div class="bg-white/90 backdrop-blur-md border border-white/30 rounded-xl p-3 shadow-lg mb-4">
                                 <div class="flex items-center justify-between w-full">
-
-                                    <div class="flex items-center space-x-6">
-
+                                    <div class="flex items-center justify-between w-full pr-2">
                                         <img src="{{ asset('assets/logo/infra.png') }}" alt="Logo Partner 1"
-                                            class="h-6 object-contain hover:grayscale transition duration-300">
+                                            class="h-7 object-contain transition duration-300">
+                                        <img src="{{ asset('assets/logo/jh.png') }}" alt="Logo Partner 5"
+                                            class="h-7 object-contain transition duration-300">
                                         <img src="{{ asset('assets/logo/komdigi.png') }}" alt="Logo Partner 2"
-                                            class="h-6 object-contain hover:grayscale transition duration-300">
+                                            class="h-7 object-contain transition duration-300">
                                         <img src="{{ asset('assets/logo/maspionit.png') }}" alt="Logo Partner 3"
-                                            class="h-6 object-contain hover:grayscale transition duration-300">
-                                        <img src="{{ asset('assets/logo/1000.png') }}" alt="Logo Partner 4"
-                                            class="h-6 object-contain hover:grayscale transition duration-300">
-
+                                            class="h-7 object-contain transition duration-300">
+                                        <img src="{{ asset('assets/logo/gspark.png') }}" alt="Logo Partner 4"
+                                            class="h-7 object-contain transition duration-300">
                                     </div>
 
-                                    <a href="#" class="text-[#282829] hover:text-gray-600 transition-colors">
+                                    <a href="#" class="text-[#282829] hover:text-gray-600 transition-colors flex-shrink-0">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                             stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M9 5l7 7-7 7" />
                                         </svg>
                                     </a>
-
                                 </div>
                             </div>
-                            {{-- ========================================================== --}}
-                            {{-- AKHIR BAGIAN BARU --}}
-                            {{-- ========================================================== --}}
 
-
-                            {{-- Kontainer Slider Kartu Berita (Sudah Ada Sebelumnya) --}}
-                            <div class="relative w-full h-auto min-h-[250px] overflow-hidden">
+                            {{-- Kontainer Slider Kartu Berita --}}
+                            <div class="relative w-full h-auto min-h-[250px] overflow-hidden hero-clip-path ">
                                 @foreach($latestNews as $news)
                                     <div x-show="activeNewsSlide === {{ $loop->iteration }}"
                                         x-transition:enter="transition transform ease-in-out duration-500"
-                                        x-transition:enter-start="opacity-0 translate-x-full"
-                                        x-transition:enter-end="opacity-100 translate-x-0"
+                                        x-transition:enter-start="opacity-0 translate-y-10"
+                                        x-transition:enter-end="opacity-100 translate-y-0"
                                         x-transition:leave="transition transform ease-in-out duration-500"
-                                        x-transition:leave-start="opacity-100 translate-x-0"
-                                        x-transition:leave-end="opacity-0 -translate-x-full"
-                                        class="absolute bottom-0 left-0 w-full bg-white p-4 md:p-6 rounded-lg shadow-xl">
+                                        x-transition:leave-start="opacity-100 translate-y-0"
+                                        x-transition:leave-end="opacity-0 -translate-y-10" class="absolute inset-0 w-full">
 
-                                        <h1 class="text-lg md:text-xl font-semibold text-gray-800 leading-snug line-clamp-2">
-                                            {{ $news->title }}
-                                        </h1>
-                                        <p class="text-xs mt-2 mb-4 text-gray-600 line-clamp-3">
-                                            {{ strip_tags($news->description) }}
-                                        </p>
-                                        <p class="text-xs font-medium text-gray-400">
-                                            Diterbitkan
-                                            {{ \Carbon\Carbon::parse($news->date_published)->translatedFormat('d F Y') }}
-                                        </p>
-                                        <div class="flex items-center mt-4">
-                                            <span class="text-sm font-semibold text-[#282829] mr-2">Selengkapnya</span>
-                                            <a href="{{ route('public.news.show', $news) }}"
-                                                class="bg-[#282829] rounded-full p-2 hover:opacity-80 transition duration-300">
-                                                <i class="fas fa-arrow-right text-white text-base"></i>
-                                            </a>
+                                        <div
+                                            class="flex flex-col h-full bg-white/90 backdrop-blur-lg p-6 rounded-2xl shadow-2xl border border-white/30">
+                                            <h1 class="text-xl font-bold text-gray-900 leading-tight line-clamp-2">
+                                                {{ $news->title }}
+                                            </h1>
+                                            <p class="text-sm mt-2 text-gray-700 line-clamp-3 flex-grow">
+                                                {{ strip_tags($news->description) }}
+                                            </p>
+                                            <p class="text-xs font-medium text-gray-500 mt-4">
+                                                Diterbitkan
+                                                {{ \Carbon\Carbon::parse($news->date_published)->translatedFormat('d F Y') }}
+                                            </p>
+                                            <div class="mt-4">
+                                                <a href="{{ route('public.news.show', $news) }}"
+                                                    class="inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#282829] px-4 py-2 rounded-full hover:bg-black transition-all duration-300 group">
+                                                    Selengkapnya
+                                                    <i
+                                                        class="fas fa-arrow-right transition-transform duration-300 group-hover:translate-x-1"></i>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -254,7 +291,7 @@
                         <div
                             class="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 mt-8">
 
-                            <a href="#"
+                            <a href="https://ppdb.smkamaliah.sch.id/"
                                 class="group inline-flex items-center justify-between text-white pl-6 pr-2 py-2 rounded-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-xl hover:opacity-90"
                                 style="background-color: {{ $amaliahGreen }};">
 
@@ -266,7 +303,7 @@
                                 </span>
                             </a>
 
-                            <a href="#"
+                            <a href="{{ route('public.about.index') }}"
                                 class="group inline-flex items-center justify-between text-white pl-6 pr-2 py-2 rounded-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-xl hover:opacity-90"
                                 style="background-color: {{ $amaliahGreen }};">
 
@@ -327,8 +364,6 @@
                     </div>
                 </div>
             </section>
-
-
 
 
 
@@ -414,17 +449,22 @@
 
 
 
+
+
+
+
+
+
             <section class="bg-white py-16 sm:py-24">
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-                        {{-- Kolom Kiri: Teks & Tombol --}}
+                        {{-- Kolom Kiri: Teks & Tombol (Tidak ada perubahan) --}}
                         <div class="text-left">
                             <h2 class="text-4xl md:text-5xl font-bold" style="color: {{ $amaliahDark }};">
                                 Here Is Our<br>Industry Partner
                             </h2>
 
-                            {{-- Dekorasi Garis Bawah --}}
                             <div class="flex items-center gap-x-2 mt-4">
                                 <div class="w-20 h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
                                 <div class="w-4 h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
@@ -436,14 +476,10 @@
                                 internships, industrial visits, training, and career opportunities after graduation.
                             </p>
 
-                            {{-- Tombol Selengkapnya --}}
-
                             <a href="{{ route('public.partners.index') }}"
                                 class="group mt-8 inline-flex items-center text-white px-6 py-3 rounded-lg font-semibold shadow-lg group/button transition-opacity duration-300 hover:opacity-90"
                                 style="background-color: {{ $amaliahGreen }};">
-
                                 <span class="mr-4 text-lg">Selengkapnya</span>
-
                                 <div
                                     class="bg-white rounded-full p-2 flex items-center justify-center transition-transform duration-300 group-hover/button:translate-x-1 ease-in-out group-hover:translate-x-1">
                                     <i class="fas fa-arrow-right text-base " style="color: {{ $amaliahGreen }};"></i>
@@ -451,29 +487,45 @@
                             </a>
                         </div>
 
-                        {{-- Kolom Kanan: Grid Logo Mitra (Sekarang Dinamis) --}}
-                        <div>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10">
+                        {{-- Kolom Kanan: Grid Logo Mitra dengan Animasi Scroll --}}
+                        <div class="group relative h-[28rem] overflow-hidden">
+                            {{-- Kontainer untuk item yang akan dianimasikan --}}
+                            <div
+                                class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10 animate-scroll-vertical group-hover:[animation-play-state:paused]">
 
-                                {{-- Loop data dari controller --}}
+                                {{-- Loop data dari controller (DUPLIKASI 1) --}}
                                 @forelse ($partners as $partner)
                                     <div class="text-center">
-                                        {{-- Tampilkan Logo Mitra --}}
                                         <div
                                             class="bg-gray-100 h-24 w-full rounded-lg mb-3 flex items-center justify-center p-4">
                                             <img src="{{ asset('storage/' . $partner->logo) }}" alt="Logo {{ $partner->name }}"
                                                 class="max-h-full max-w-full object-contain">
                                         </div>
-
-                                        {{-- Tampilkan Nama Mitra --}}
                                         <p class="text-sm text-gray-600 font-medium">{{ $partner->name }}</p>
                                     </div>
                                 @empty
-                                    {{-- Tampilan jika tidak ada data mitra --}}
                                     <div class="col-span-2 md:col-span-4 text-center">
                                         <p class="text-gray-500">Belum ada mitra yang ditambahkan.</p>
                                     </div>
                                 @endforelse
+
+                                {{-- Loop data dari controller (DUPLIKASI 2 - Untuk Efek Mulus) --}}
+                                @forelse ($partners as $partner)
+                                    <div class="text-center">
+                                        <div
+                                            class="bg-gray-100 h-24 w-full rounded-lg mb-3 flex items-center justify-center p-4">
+                                            <img src="{{ asset('storage/' . $partner->logo) }}" alt="Logo {{ $partner->name }}"
+                                                class="max-h-full max-w-full object-contain">
+                                        </div>
+                                        <p class="text-sm text-gray-600 font-medium">{{ $partner->name }}</p>
+                                    </div>
+                                @empty
+                                    {{-- Tidak perlu pesan empty di duplikasi --}}
+                                @endforelse
+                            </div>
+                            {{-- Efek fade di bagian bawah untuk transisi yang lebih halus --}}
+                            <div
+                                class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-white to-transparent pointer-events-none">
                             </div>
                         </div>
 
@@ -481,6 +533,23 @@
                 </div>
             </section>
 
+            {{-- Tambahkan CSS untuk Animasi di bagian bawah file blade atau di file CSS utama --}}
+            <style>
+                @keyframes scroll-vertical {
+                    from {
+                        transform: translateY(0);
+                    }
+
+                    to {
+                        transform: translateY(-50%);
+                    }
+                }
+
+                .animate-scroll-vertical {
+                    /* Sesuaikan durasi (misal: 60s) untuk mengatur kecepatan scroll */
+                    animation: scroll-vertical 120s linear infinite;
+                }
+            </style>
 
 
 
@@ -508,15 +577,15 @@
 
             <section class="py-16 sm:py-24" style="background-color: {{ $amaliahDark }};">
                 <div x-data="{
-                                                                                                                                                                                                                                                    scrollSlider(direction) {
-                                                                                                                                                                                                                                                        const slider = this.$refs.slider;
-                                                                                                                                                                                                                                                        const scrollAmount = slider.querySelector('.slider-item').offsetWidth + 32; // Lebar kartu + gap
-                                                                                                                                                                                                                                                        slider.scrollBy({
-                                                                                                                                                                                                                                                            left: direction === 'next' ? scrollAmount : -scrollAmount,
-                                                                                                                                                                                                                                                            behavior: 'smooth'
-                                                                                                                                                                                                                                                        });
-                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                }"
+                                                                                                                                                                                                                                                                                    scrollSlider(direction) {
+                                                                                                                                                                                                                                                                                        const slider = this.$refs.slider;
+                                                                                                                                                                                                                                                                                        const scrollAmount = slider.querySelector('.slider-item').offsetWidth + 32; // Lebar kartu + gap
+                                                                                                                                                                                                                                                                                        slider.scrollBy({
+                                                                                                                                                                                                                                                                                            left: direction === 'next' ? scrollAmount : -scrollAmount,
+                                                                                                                                                                                                                                                                                            behavior: 'smooth'
+                                                                                                                                                                                                                                                                                        });
+                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                }"
                     class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative">
 
                     {{-- Dekorasi Titik --}}
@@ -660,6 +729,7 @@
 
 
 
+
             <section class="bg-gray-50 py-16 sm:py-24">
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -733,6 +803,39 @@
 
 
 
+
+            <section class="bg-[#ffffff] py-16 sm:py-24 mt-[-50px]">
+                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                    <!-- Judul dan Deskripsi Section -->
+                    <div class="max-w-3xl mx-auto text-center mt-[-30px]">
+                        <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+                            Discover Our Story
+                        </h2>
+                        <p class="mt-4 text-lg text-gray-600">
+                            Watch the video below to get a glimpse into our values, mission, and the people behind our
+                            success.
+                        </p>
+                    </div>
+
+                    <!-- Kontainer Video Responsif 16:9 -->
+                    <div class="mt-12 max-w-4xl mx-auto">
+                        <div class="relative w-full" style="padding-top: 56.25%;">
+                            <!-- 
+                          Catatan: padding-top: 56.25% adalah hasil dari 9 / 16, 
+                          yang menciptakan rasio aspek 16:9 yang responsif.
+                        -->
+                            <iframe class="absolute top-0 left-0 w-full h-full rounded-xl shadow-2xl"
+                                src="https://www.youtube.com/embed/STOhZZmY6Co?si=R8Ls8KpM6XQORwZa"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
 
 
 
@@ -865,16 +968,16 @@
 
                     {{-- Slider Testimoni (Alpine.js + Tailwind CSS) --}}
                     <div x-data="{
-                                                                                                                                                                                                                                                                                                                                                slider: null,
-                                                                                                                                                                                                                                                                                                                                                init() {
-                                                                                                                                                                                                                                                                                                                                                    this.slider = this.$refs.sliderContainer;
-                                                                                                                                                                                                                                                                                                                                                },
-                                                                                                                                                                                                                                                                                                                                                scroll(direction) {
-                                                                                                                                                                                                                                                                                                                                                    // Geser sejauh 80% dari lebar area yang terlihat
-                                                                                                                                                                                                                                                                                                                                                    let scrollAmount = this.slider.offsetWidth * 0.8;
-                                                                                                                                                                                                                                                                                                                                                    this.slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                            }"
+                                                                                                                                                                                                                                                                                                                                                                                slider: null,
+                                                                                                                                                                                                                                                                                                                                                                                init() {
+                                                                                                                                                                                                                                                                                                                                                                                    this.slider = this.$refs.sliderContainer;
+                                                                                                                                                                                                                                                                                                                                                                                },
+                                                                                                                                                                                                                                                                                                                                                                                scroll(direction) {
+                                                                                                                                                                                                                                                                                                                                                                                    // Geser sejauh 80% dari lebar area yang terlihat
+                                                                                                                                                                                                                                                                                                                                                                                    let scrollAmount = this.slider.offsetWidth * 0.8;
+                                                                                                                                                                                                                                                                                                                                                                                    this.slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                            }"
                         class="mt-12 relative">
                         {{-- Tombol Panah Kiri --}}
                         <button @click="scroll(-1)"
@@ -961,17 +1064,17 @@
                         <div class="flex justify-center items-center space-x-2 mt-8">
                             <button @click="activeTab = 'amaliah1'"
                                 :class="{
-                                                                                                                                                                    'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah1',
-                                                                                                                                                                    'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah1'
-                                                                                                                                                                }"
+                                                                                                                                                                                                    'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah1',
+                                                                                                                                                                                                    'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah1'
+                                                                                                                                                                                                }"
                                 class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 1
                             </button>
                             <button @click="activeTab = 'amaliah2'"
                                 :class="{
-                                                                                                                                                                    'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah2',
-                                                                                                                                                                    'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah2'
-                                                                                                                                                                }"
+                                                                                                                                                                                                    'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah2',
+                                                                                                                                                                                                    'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah2'
+                                                                                                                                                                                                }"
                                 class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 2
                             </button>
@@ -1100,31 +1203,12 @@
                         </div>
                     </div>
 
-                    {{-- Wadah untuk slider Curator.io. Diletakkan di luar container agar bisa full-width --}}
-                    <div id="curator-feed-slider-layout" class="mt-12">
-                        <!-- Place <div> tag where you want the feed to appear -->
-                        <div id="curator-feed-select"><a href="https://curator.io" target="_blank"
-                                class="crt-logo crt-tag"></a></div>
-
-                        <!-- The Javascript can be moved to the end of the html page before the </body> tag -->
-                        <script type="text/javascript">
-                            /* curator-feed-select */
-                            (function () {
-                                var i, e, d = document, s = "script"; i = d.createElement("script"); i.async = 1; i.charset = "UTF-8";
-                                i.src = "https://cdn.curator.io/published/9b122a7e-d39e-40c4-abc3-8ab6bc446899_k6zp370w.js";
-                                e = d.getElementsByTagName(s)[0]; e.parentNode.insertBefore(i, e);
-                            })();
-                        </script>
-                    </div>
+                   
                 </div>
 
                 {{-- BAGIAN 2: GRID --}}
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8  ">
-                    <div class="text-center mb-12 mt-[-50px]">
-                        <h3 class="text-2xl font-bold text-gray-800">
-                            Lebih Banyak di Feed Kami
-                        </h3>
-                    </div>
+                   
 
                     {{-- Wadah untuk grid Curator.io --}}
                     <div id="curator-feed-grid-layout">

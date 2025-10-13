@@ -143,8 +143,7 @@
                                     <a href="{{ route('public.achievement.show', $achievement->id) }}"
                                         class="text-sm font-semibold text-blue-600 transition-colors hover:text-blue-800">
                                         Lihat Detail
-                                        <span aria-hidden="true"
-                                            class="transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
+                                         <i class="fas fa-arrow-right ml-2 text-xs"></i>
                                     </a>
                                 </div>
                             </div>

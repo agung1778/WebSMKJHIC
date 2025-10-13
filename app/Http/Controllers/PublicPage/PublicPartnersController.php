@@ -17,7 +17,7 @@ class PublicPartnersController extends Controller
     public function index()
     {
         // Mengambil semua partner, diurutkan dari yang terbaru
-        $partners = Partner::latest()->paginate(10);
+        $partners = Partner::latest()->get();
 
         $partnersImages = Image::whereIn('title', ['PartnersImage', 'main'])->get();
 
