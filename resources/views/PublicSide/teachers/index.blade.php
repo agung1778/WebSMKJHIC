@@ -179,7 +179,7 @@
                                 <div class="p-5 flex flex-col flex-grow">
                                     {{-- POSISI & IKON --}}
                                     <div
-                                        class="flex items-center text-xs font-semibold text-emerald-600 mb-2 uppercase tracking-wider">
+                                        class="flex items-center text-xs font-semibold text-[#63cd00] mb-2 uppercase tracking-wider">
                                         <i class="fas fa-chalkboard-teacher mr-2 w-4 text-center"></i>
                                         <span>{{ $teacher->position }}</span>
                                     </div>

@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Daftar Program Sekolah</title>
+    <title>Daftar Admin</title>
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
     {{-- Font Awesome untuk ikon --}}
@@ -37,7 +37,7 @@
         <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
             {{-- Header: Judul, Cari, dan Tombol Tambah --}}
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                <h1 class="text-2xl font-bold text-[#292929]">Daftar Program Sekolah</h1>
+                <h1 class="text-2xl font-bold text-[#292929]">Daftar Admin</h1>
                 <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                     {{-- Fitur Pencarian --}}
                     <div class="relative w-full sm:w-64">
@@ -47,12 +47,6 @@
                         <input type="search" id="searchInput" placeholder="Cari berdasarkan nama..."
                             class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6CF600]">
                     </div>
-                    {{-- Tombol Tambah --}}
-                    <a href="{{ route('admin.programs.create') }}"
-                        class="bg-[#6CF600] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200 flex items-center justify-center space-x-2 w-full sm:w-auto">
-                        <i class="fas fa-plus"></i>
-                        <span>Tambah Program</span>
-                    </a>
                 </div>
             </div>
 
@@ -66,19 +60,33 @@
 
             {{-- Menghitung statistik --}}
             @php
-                $totalPrograms = $programs->count();
+                $totalUsers = $users->count();
+                // Asumsi admin online jika aktivitas terakhir dalam 5 menit (300 detik)
+                $onlineUsers = $users->filter(function ($user) {
+                    return optional($user->session)->last_activity && (time() - $user->session->last_activity) < 300;
+                })->count();
             @endphp
 
             {{-- Bagian Statistik Ringkas --}}
-            <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {{-- Card Total --}}
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200 sm:col-span-1 lg:col-span-3">
-                    <div class="bg-green-100 text-green-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-tasks fa-lg"></i>
+            <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {{-- Card Total Admin --}}
+                <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
+                    <div class="bg-gray-200 text-gray-600 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-users-cog fa-lg"></i>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-500">Total Program</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $totalPrograms }}</p>
+                        <p class="text-sm text-gray-500">Total Admin</p>
+                        <p class="text-2xl font-bold text-gray-800">{{ $totalUsers }}</p>
+                    </div>
+                </div>
+                {{-- Card Admin Online --}}
+                <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
+                    <div class="bg-green-100 text-green-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-wifi fa-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Admin Online</p>
+                        <p class="text-2xl font-bold text-gray-800">{{ $onlineUsers }}</p>
                     </div>
                 </div>
             </div>
@@ -89,57 +97,50 @@
                     <thead>
                         <tr class="bg-[#292929] text-white uppercase text-sm leading-normal">
                             <th class="py-3 px-6 text-left w-16">No.</th>
-                            <th class="py-3 px-6 text-left">Nama Program</th>
-                            <th class="py-3 px-6 text-left">Gambar</th>
-                            <th class="py-3 px-6 text-left">Deskripsi</th>
-                            <th class="py-3 px-6 text-left">Penerbit</th>
+                            <th class="py-3 px-6 text-left">Admin</th>
+                            <th class="py-3 px-6 text-left">Tanggal Dibuat</th>
+                            <th class="py-3 px-6 text-left">Aktivitas Terakhir</th>
                             <th class="py-3 px-6 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-600 text-sm font-light" id="programTableBody">
-                        @forelse($programs as $program)
+                    <tbody class="text-gray-600 text-sm font-light" id="adminTableBody">
+                        @forelse($users as $user)
                             <tr class="border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200">
                                 <td class="py-4 px-6 text-left font-medium">{{ $loop->iteration }}</td>
-                                <td class="py-4 px-6 text-left font-semibold break-words">{{ $program->name }}</td>
+                                <td class="py-4 px-6 text-left font-semibold">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0">
+                                            <span class="font-bold text-gray-500">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-gray-800">{{ $user->name }}</div>
+                                            <div class="text-xs text-gray-500">{{ $user->email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-left">{{ $user->created_at->format('d M Y, H:i') }}</td>
                                 <td class="py-4 px-6 text-left">
-                                    <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->name }}"
-                                        class="w-16 h-16 object-cover rounded-md shadow-sm bg-gray-50">
+                                    @if (optional($user->session)->last_activity)
+                                        {{ \Carbon\Carbon::createFromTimestamp($user->session->last_activity)->diffForHumans() }}
+                                    @else
+                                        <span class="text-gray-400 italic">Belum pernah login</span>
+                                    @endif
                                 </td>
-                                <td class="py-4 px-6 text-left max-w-sm break-words">
-                                    <p class="line-clamp-3">{{ $program->description }}</p>
-                                </td>
-                                <td class="py-4 px-6 text-left break-words">{{ $program->publisher }}</td>
                                 <td class="py-4 px-6 text-center">
                                     <div class="flex items-center justify-center space-x-2">
-                                        <a href="{{ route('admin.programs.show', $program->id) }}"
-                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Lihat">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('admin.programs.edit', $program->id) }}"
-                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('admin.programs.destroy', $program->id) }}" method="POST"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus program ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Hapus">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
+                                       
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr id="no-data">
-                                <td colspan="6" class="py-8 text-center text-gray-500">Belum ada program yang ditambahkan.</td>
+                                <td colspan="5" class="py-8 text-center text-gray-500">Belum ada admin yang ditambahkan.</td>
                             </tr>
                         @endforelse
                         {{-- Baris ini akan muncul jika pencarian tidak menemukan hasil --}}
                         <tr id="no-results" class="hidden">
-                             <td colspan="6" class="py-8 text-center text-gray-500">
-                                Program tidak ditemukan.
+                             <td colspan="5" class="py-8 text-center text-gray-500">
+                                Admin tidak ditemukan.
                             </td>
                         </tr>
                     </tbody>
@@ -151,7 +152,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('searchInput');
-            const tableBody = document.getElementById('programTableBody');
+            const tableBody = document.getElementById('adminTableBody');
             const allRows = tableBody.querySelectorAll('tr:not(#no-results)');
             const noResultsRow = document.getElementById('no-results');
             const noDataRow = document.getElementById('no-data');
@@ -161,7 +162,7 @@
                 let visibleRows = 0;
 
                 allRows.forEach(row => {
-                    // Kolom "Nama Program" adalah kolom kedua (index 1)
+                    // Kolom "Admin" adalah kolom kedua (index 1)
                     const nameCell = row.cells[1];
                     if (nameCell) {
                         const name = nameCell.textContent.toLowerCase();

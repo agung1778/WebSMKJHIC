@@ -126,7 +126,7 @@
                     <div x-data="{ modalOpen: false, modalImage: '' }">
                         {{-- Isi Konten Artikel --}}
                         <article class="prose prose-lg max-w-none text-gray-800 leading-relaxed mb-12">
-                            {!! nl2br(e($news->description)) !!}
+                           {!! $news->description !!}
                         </article>
 
                         {{-- BAGIAN GALERI MINI (THUMBNAILS) --}}

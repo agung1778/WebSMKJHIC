@@ -116,12 +116,12 @@
                         <span class="flex-1">Editor</span>
                         <i id="editor-arrow"
                             class="fas fa-chevron-right text-xs transition-transform duration-300
-                                @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*', 'admin.writings.*', 'admin.curator'])) rotate-90 @endif">
+                                @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*', 'admin.writings.*'])) rotate-90 @endif">
                         </i>
                     </button>
                     <div id="editor-submenu"
                         class="pl-10 space-y-1 collapsible-content
-                            @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*', 'admin.writings.*', 'admin.curator'])) expanded @endif">
+                            @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*', 'admin.writings.*'])) expanded @endif">
                         {{-- Sub-menu items --}}
                         <a id="submenu-mainimage"
                             class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.image.*')) sidebar-link-active @endif"
@@ -173,7 +173,8 @@
 
                     </div>
                 </div>
-                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700" href="#">
+                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700 @if(request()->routeIs(['admin.users'])) sidebar-link-active
+                    @endif" href="{{ route('admin.users') }}">
                     <i class="fa-solid fa-circle-user w-5 text-center"></i>
                     <span>Users</span>
                 </a>

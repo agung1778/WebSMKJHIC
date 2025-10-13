@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne; // <-- TAMBAHKAN INI
 
 class User extends Authenticatable
 {
@@ -44,5 +45,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Mendefinisikan relasi one-to-one ke sesi terakhir pengguna.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function session(): HasOne
+    {
+        return $this->hasOne(\App\Models\Session::class)->latestOfMany();
     }
 }

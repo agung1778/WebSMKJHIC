@@ -30,6 +30,7 @@ use App\Http\Controllers\PublicPage\PublicAboutController;
 use App\Http\Controllers\PublicPage\PublicFoundationController;
 use App\Http\Controllers\PublicPage\PublicAchievementController;
 use App\Http\Controllers\PublicPage\PublicProgramController;
+use App\Http\Controllers\PublicPage\PublicExtracurricularController;
 
 
 Route::get('/', function () {
@@ -73,6 +74,9 @@ Route::get('/achievements/{achievement}', [PublicAchievementController::class, '
 Route::get('/programs', [PublicProgramController::class, 'index'])->name('public.program.index');
 Route::get('/programs/{program}', [PublicProgramController::class, 'show'])->name('public.program.show');
 
+Route::get('/extracurriculars', [PublicExtracurricularController::class, 'index'])->name('public.extracurricular.index');
+Route::get('/extracurriculars/{extracurricular}', [PublicExtracurricularController::class, 'show'])->name('public.extracurricular.show');
+
 
 
 
@@ -106,6 +110,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::get('/admin/curator', [AdminController::class, 'curator'])->name('admin.curator');
+
+    // routes/web.php
+    Route::get('/admin/users', [AdminController::class, 'user'])->name('admin.users');
 
     // Grup rute untuk manajemen konten di dashboard admin
     Route::prefix('admin')->name('admin.')->group(function () {

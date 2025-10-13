@@ -6,6 +6,7 @@
     <html lang="id">
 
     <head>
+        {{-- Aset dan style disalin dari view galeri untuk konsistensi --}}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Galeri Media</title>
@@ -20,7 +21,7 @@
                 background-color: #f0f2f5;
             }
 
-            .poppins{
+            .poppins {
                 font-family: 'Poppins', sans-serif;
             }
         </style>
@@ -58,6 +59,52 @@
                 {{-- BAGIAN KONTEN UTAMA --}}
                 <div class="p-6">
 
+                    {{-- Notifikasi --}}
+                    @if(session('success'))
+                        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg shadow-sm"
+                            role="alert">
+                            <p>{{ session('success') }}</p>
+                        </div>
+                    @endif
+                    @if(session('error'))
+                        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg shadow-sm"
+                            role="alert">
+                            <p>{{ session('error') }}</p>
+                        </div>
+                    @endif
+
+                    @php
+                        $totalImages = $images->count();
+                        $totalSizeMB = $images->sum('size') / 1024 / 1024;
+                    @endphp
+
+                    {{-- Bagian Statistik Ringkas --}}
+                    <div class="mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {{-- Card Total Gambar --}}
+                        <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
+                            <div
+                                class="bg-blue-100 text-blue-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-images fa-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Total Gambar</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ $totalImages }}</p>
+                            </div>
+                        </div>
+                        {{-- Card Total Ukuran --}}
+                        <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
+                            <div
+                                class="bg-purple-100 text-purple-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-hdd fa-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Total Ukuran File</p>
+                                <p class="text-2xl font-bold text-gray-800">{{ number_format($totalSizeMB, 2) }} MB</p>
+                            </div>
+                        </div>
+                    </div>
+
+
                     {{-- 1. PANEL STATISTIK GAMBAR --}}
                     <div id="stats-box" class="mb-8">
                         <h2 class="text-lg font-semibold text-gray-700 mb-3">Statistik Gambar Terpakai</h2>
@@ -81,23 +128,11 @@
                         </div>
                     </div>
 
+                    <div class="border-t border-gray-200 my-8"></div>
+
                     {{-- 2. FORM UPLOAD BARU --}}
                     <div id="upload-form-container">
                         <h2 class="text-lg font-semibold text-gray-700 mb-3">Unggah Gambar Baru</h2>
-
-                        {{-- Notifikasi --}}
-                        @if(session('success'))
-                            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg shadow-sm"
-                                role="alert">
-                                <p>{{ session('success') }}</p>
-                            </div>
-                        @endif
-                        @if(session('error'))
-                            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-lg shadow-sm"
-                                role="alert">
-                                <p>{{ session('error') }}</p>
-                            </div>
-                        @endif
 
                         <form action="{{ route('admin.image.store') }}" method="POST" enctype="multipart/form-data"
                             class="space-y-5">
@@ -188,7 +223,7 @@
 
                     <div class="border-t border-gray-200 my-8"></div>
 
-                    {{-- 3. DAFTAR GAMBAR (Tabel tetap sama) --}}
+                    {{-- 3. DAFTAR GAMBAR --}}
                     <h2 class="text-xl font-semibold mb-4 mt-6">Daftar Gambar Tersedia</h2>
                     <div class="overflow-x-auto">
                         <table class="min-w-full rounded-lg overflow-hidden border-collapse">
@@ -319,7 +354,11 @@
                 });
 
                 customTitleInput.addEventListener('input', updateFinalTitle);
-                updateFinalTitle(); // Inisialisasi
+                // Inisialisasi untuk memastikan nilai awal sudah benar
+                if (tomSelect.getValue() !== 'custom') {
+                    updateFinalTitle();
+                }
+
 
                 // === LOGIKA UNTUK DRAG & DROP FILE INPUT ===
                 const dropZone = document.getElementById('drop-zone');

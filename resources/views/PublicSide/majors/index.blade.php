@@ -261,16 +261,7 @@
                                                 <i class="fas fa-arrow-right text-xs" style="color: {{ $amaliahDark }};"></i>
                                             </div>
                                         </a>
-                                        <a href="{{ route('public.majors.show', $major) }}"
-                                            class="inline-flex items-center text-white px-5 py-2.5 rounded-lg text-sm font-semibold relative overflow-hidden group/button transition-opacity duration-300 hover:opacity-90"
-                                            style="background-color: {{ $amaliahDark }};">
-                                            <span>Laboratorium</span>
-                                            <div
-                                                class="ml-2 bg-white rounded-full p-1 flex items-center justify-center relative z-10 transition-transform duration-300 group-hover/button:translate-x-1">
-                                                <i class="fas fa-arrow-right text-xs" style="color: {{ $amaliahDark }};"></i>
-                                            </div>
-                                        </a>
-                                    </div>
+                                    </div>  
                                 </div>
                             </div>
                         @empty

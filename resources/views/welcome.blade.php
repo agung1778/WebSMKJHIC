@@ -1,6 +1,6 @@
 @extends('layouts.public-app')
 
-@section('title', 'Halaman Utama')
+@section('title', 'SMK Amaliah 1 & 2')
 
 @section('content')
     <!DOCTYPE html>
@@ -10,7 +10,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>@yield('title')</title>
+        <link rel="icon" type="image/png" href="{{ asset('assets/logo/am.png') }}">
+
+        <title>@yield('title', 'SMK Amaliah 1 & 2')</title>
 
         {{-- Link Extensions --}}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -44,16 +46,17 @@
                     MODIFIKASI #1: Inisialisasi state untuk DUA slider terpisah.
                     --}}
                     <div x-data="{
-                                                                                                        activeImageSlide: 1,
-                                                                                                        totalImageSlides: {{ $mainImages->count() }},
-                                                                                                        activeNewsSlide: 1,
-                                                                                                        totalNewsSlides: {{ $latestNews->count() }}
-                                                                                                     }" {{-- MODIFIKASI #2:
-                        Jalankan DUA timer terpisah. Satu untuk gambar, satu untuk berita. Durasinya bisa Anda bedakan jika mau.
-                        --}} x-init="
-                                                                                                        setInterval(() => { activeImageSlide = activeImageSlide % totalImageSlides + 1 }, 5000);
-                                                                                                        setInterval(() => { activeNewsSlide = activeNewsSlide % totalNewsSlides + 1 }, 5000);
-                                                                                                     ">
+                                                                                                                                                                                                                                activeImageSlide: 1,
+                                                                                                                                                                                                                                totalImageSlides: {{ $mainImages->count() }},
+                                                                                                                                                                                                                                activeNewsSlide: 1,
+                                                                                                                                                                                                                                totalNewsSlides: {{ $latestNews->count() }}
+                                                                                                                                                                                                                             }"
+                        {{-- MODIFIKASI #2: Jalankan DUA timer terpisah. Satu untuk gambar, satu untuk berita. Durasinya bisa
+                        Anda bedakan jika mau. --}}
+                        x-init="
+                                                                                                                                                                                                                                setInterval(() => { activeImageSlide = activeImageSlide % totalImageSlides + 1 }, 5000);
+                                                                                                                                                                                                                                setInterval(() => { activeNewsSlide = activeNewsSlide % totalNewsSlides + 1 }, 5000);
+                                                                                                                                                                                                                             ">
 
                         {{-- Kontainer Slider Gambar --}}
                         <div class="relative h-[550px] overflow-hidden hero-clip-path rounded-3xl">
@@ -118,7 +121,7 @@
                                             {{ $news->title }}
                                         </h1>
                                         <p class="text-xs mt-2 mb-4 text-gray-600 line-clamp-3">
-                                            {{ $news->description }}
+                                            {{ strip_tags($news->description) }}
                                         </p>
                                         <p class="text-xs font-medium text-gray-400">
                                             Diterbitkan
@@ -126,7 +129,7 @@
                                         </p>
                                         <div class="flex items-center mt-4">
                                             <span class="text-sm font-semibold text-[#282829] mr-2">Selengkapnya</span>
-                                            <a href=""
+                                            <a href="{{ route('public.news.show', $news) }}"
                                                 class="bg-[#282829] rounded-full p-2 hover:opacity-80 transition duration-300">
                                                 <i class="fas fa-arrow-right text-white text-base"></i>
                                             </a>
@@ -505,15 +508,15 @@
 
             <section class="py-16 sm:py-24" style="background-color: {{ $amaliahDark }};">
                 <div x-data="{
-                                                                                                                                                                                        scrollSlider(direction) {
-                                                                                                                                                                                            const slider = this.$refs.slider;
-                                                                                                                                                                                            const scrollAmount = slider.querySelector('.slider-item').offsetWidth + 32; // Lebar kartu + gap
-                                                                                                                                                                                            slider.scrollBy({
-                                                                                                                                                                                                left: direction === 'next' ? scrollAmount : -scrollAmount,
-                                                                                                                                                                                                behavior: 'smooth'
-                                                                                                                                                                                            });
-                                                                                                                                                                                        }
-                                                                                                                                                                                    }"
+                                                                                                                                                                                                                                                    scrollSlider(direction) {
+                                                                                                                                                                                                                                                        const slider = this.$refs.slider;
+                                                                                                                                                                                                                                                        const scrollAmount = slider.querySelector('.slider-item').offsetWidth + 32; // Lebar kartu + gap
+                                                                                                                                                                                                                                                        slider.scrollBy({
+                                                                                                                                                                                                                                                            left: direction === 'next' ? scrollAmount : -scrollAmount,
+                                                                                                                                                                                                                                                            behavior: 'smooth'
+                                                                                                                                                                                                                                                        });
+                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                }"
                     class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative">
 
                     {{-- Dekorasi Titik --}}
@@ -575,7 +578,6 @@
                         </div>
 
                         @php
-                            // Opsional: Pastikan helper Str tersedia di view (umumnya tidak perlu di Laravel baru)
                             use Illuminate\Support\Str;
                         @endphp
 
@@ -863,16 +865,16 @@
 
                     {{-- Slider Testimoni (Alpine.js + Tailwind CSS) --}}
                     <div x-data="{
-                                                                                                                                                                                                                                                                                    slider: null,
-                                                                                                                                                                                                                                                                                    init() {
-                                                                                                                                                                                                                                                                                        this.slider = this.$refs.sliderContainer;
-                                                                                                                                                                                                                                                                                    },
-                                                                                                                                                                                                                                                                                    scroll(direction) {
-                                                                                                                                                                                                                                                                                        // Geser sejauh 80% dari lebar area yang terlihat
-                                                                                                                                                                                                                                                                                        let scrollAmount = this.slider.offsetWidth * 0.8;
-                                                                                                                                                                                                                                                                                        this.slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                }"
+                                                                                                                                                                                                                                                                                                                                                slider: null,
+                                                                                                                                                                                                                                                                                                                                                init() {
+                                                                                                                                                                                                                                                                                                                                                    this.slider = this.$refs.sliderContainer;
+                                                                                                                                                                                                                                                                                                                                                },
+                                                                                                                                                                                                                                                                                                                                                scroll(direction) {
+                                                                                                                                                                                                                                                                                                                                                    // Geser sejauh 80% dari lebar area yang terlihat
+                                                                                                                                                                                                                                                                                                                                                    let scrollAmount = this.slider.offsetWidth * 0.8;
+                                                                                                                                                                                                                                                                                                                                                    this.slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                            }"
                         class="mt-12 relative">
                         {{-- Tombol Panah Kiri --}}
                         <button @click="scroll(-1)"
@@ -957,17 +959,19 @@
                             Get To Know Our School Leaders
                         </h2>
                         <div class="flex justify-center items-center space-x-2 mt-8">
-                            <button @click="activeTab = 'amaliah1'" :class="{
-                                                                                                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah1',
-                                                                                                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah1'
-                                                                                                    }"
+                            <button @click="activeTab = 'amaliah1'"
+                                :class="{
+                                                                                                                                                                    'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah1',
+                                                                                                                                                                    'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah1'
+                                                                                                                                                                }"
                                 class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 1
                             </button>
-                            <button @click="activeTab = 'amaliah2'" :class="{
-                                                                                                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah2',
-                                                                                                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah2'
-                                                                                                    }"
+                            <button @click="activeTab = 'amaliah2'"
+                                :class="{
+                                                                                                                                                                    'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah2',
+                                                                                                                                                                    'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah2'
+                                                                                                                                                                }"
                                 class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 2
                             </button>
@@ -1076,11 +1080,15 @@
 
 
 
+            {{-- ================================================================= --}}
+            {{-- SECTION INSTAGRAM (SLIDER + GRID DARI CURATOR.IO) --}}
+            {{-- ================================================================= --}}
+            <section class="bg-white py-16 sm:py-24 space-y-20">
 
-            <section class="bg-white py-16 sm:py-24">
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                    {{-- Header Section --}}
+                {{-- BAGIAN 1: SLIDER (SWIPE) --}}
+                <div>
+                    {{-- Header untuk slider diletakkan di dalam container agar rapi --}}
+                    {{-- Header Section (Tidak ada perubahan) --}}
                     <div class="text-center">
                         <h2 class="text-3xl md:text-4xl font-bold" style="color: {{ $amaliahDark }};">
                             Our Latest Instagram Post
@@ -1092,44 +1100,48 @@
                         </div>
                     </div>
 
-                    {{-- Konten Utama (Layout Dua Kolom) --}}
-                    <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    {{-- Wadah untuk slider Curator.io. Diletakkan di luar container agar bisa full-width --}}
+                    <div id="curator-feed-slider-layout" class="mt-12">
+                        <!-- Place <div> tag where you want the feed to appear -->
+                        <div id="curator-feed-select"><a href="https://curator.io" target="_blank"
+                                class="crt-logo crt-tag"></a></div>
 
-                        {{-- Kolom Kiri: Statis --}}
-                        <div class="lg:col-span-1">
-                            {{-- Placeholder untuk Post Utama --}}
-                            <div class="bg-gray-200 aspect-square w-full rounded-2xl flex items-center justify-center">
-                                <i class="fas fa-image text-5xl text-gray-400"></i>
-                            </div>
-                            <div class="mt-6 flex items-start gap-4">
-                                <i class="fab fa-instagram text-4xl" style="color: {{ $amaliahDark }};"></i>
-                                <div>
-                                    <p class="text-gray-600 leading-relaxed">
-                                        Read our latest news, and know about smk amaliah. Read our latest news, and know
-                                        about smk amaliah.
-                                    </p>
-                                    <a href="#"
-                                        class="inline-flex items-center mt-4 text-blue-600 font-semibold hover:underline">
-                                        <span>Buka Instagram</span>
-                                        <i class="fas fa-external-link-alt ml-2 text-xs"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- The Javascript can be moved to the end of the html page before the </body> tag -->
+                        <script type="text/javascript">
+                            /* curator-feed-select */
+                            (function () {
+                                var i, e, d = document, s = "script"; i = d.createElement("script"); i.async = 1; i.charset = "UTF-8";
+                                i.src = "https://cdn.curator.io/published/9b122a7e-d39e-40c4-abc3-8ab6bc446899_k6zp370w.js";
+                                e = d.getElementsByTagName(s)[0]; e.parentNode.insertBefore(i, e);
+                            })();
+                        </script>
+                    </div>
+                </div>
 
-                        {{-- Kolom Kanan: Untuk Widget Curator.io --}}
-                        <div class="lg:col-span-2">
-                            {{--
-                            KOTAK UNTUK WIDGET CURATOR.IO ANDA
-                            - Ganti div ini dengan kode embed dari Curator.io.
-                            - Jika kode gagal dimuat, div ini akan tampil sebagai kotak hitam sesuai permintaan.
-                            --}}
-                            <div id="curator-feed-default-layout"
-                                class="bg-black w-full min-h-[600px] rounded-2xl flex items-center justify-center">
-                                <p class="text-gray-500 text-center">Menunggu koneksi dari Curator.io...</p>
-                            </div>
-                        </div>
+                {{-- BAGIAN 2: GRID --}}
+                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8  ">
+                    <div class="text-center mb-12 mt-[-50px]">
+                        <h3 class="text-2xl font-bold text-gray-800">
+                            Lebih Banyak di Feed Kami
+                        </h3>
+                    </div>
 
+                    {{-- Wadah untuk grid Curator.io --}}
+                    <div id="curator-feed-grid-layout">
+
+                        <!-- Place <div> tag where you want the feed to appear -->
+                        <div id="curator-feed-default-feed-layout"><a href="https://curator.io" target="_blank"
+                                class="crt-logo crt-tag">Powered by Curator.io</a></div>
+
+                        <!-- The Javascript can be moved to the end of the html page before the </body> tag -->
+                        <script type="text/javascript">
+                            /* curator-feed-default-feed-layout */
+                            (function () {
+                                var i, e, d = document, s = "script"; i = d.createElement("script"); i.async = 1; i.charset = "UTF-8";
+                                i.src = "https://cdn.curator.io/published/9b122a7e-d39e-40c4-abc3-8ab6bc446899.js";
+                                e = d.getElementsByTagName(s)[0]; e.parentNode.insertBefore(i, e);
+                            })();
+                        </script>
                     </div>
                 </div>
             </section>
@@ -1153,8 +1165,8 @@
 
                 // Definisikan informasi kontak
                 $alamat = 'Jl. Raya Jl. Tol Jagorawi No.1, Ciawi, Kec. Ciawi, Kabupaten Bogor, Jawa Barat 16720';
-                $email = 'example@email.com';
-                $phone = '123-456-7890';
+                $email = 'smkamaliahciawi@gmail.com';
+                $phone = '0856-1922-827 / 0856-4901-1449';
             @endphp
 
             <section class="bg-gray-50 py-16 sm:py-24">

@@ -38,7 +38,7 @@ class NewsController extends Controller
         // ... (Logika validasi dan penyimpanan tidak berubah)
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+            'image' => 'required|image|mimes:png,jpg,jpeg|max:5048',
             'description' => 'required|string',
             'date_published' => 'required|date',
         ]);
@@ -84,7 +84,7 @@ class NewsController extends Controller
         // ... (Logika validasi dan update tidak berubah)
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'image' => 'nullable|image|mimes:png,jpg,jpeg|max:5048',
             'description' => 'required|string',
             'date_published' => 'required|date',
         ]);

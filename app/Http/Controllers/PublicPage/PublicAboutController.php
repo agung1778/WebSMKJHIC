@@ -31,9 +31,9 @@ class PublicAboutController extends Controller
                 'icon' => 'fa-building-columns' // Ikon untuk fondasi/yayasan
             ],
             [
-                'title' => 'Organisasi Siswa',
-                'description' => 'Lihat lebih dalam mengenai organisasi siswa kami.',
-                'url' => '/tentang-kami/struktur-organisasi',
+                'title' => 'Major Competency',
+                'description' => 'Lihat lebih dalam mengenai jurusan disekolah kami.',
+                'url' => '/majors',
                 'icon' => 'fa-sitemap' // Ikon untuk struktur/hierarki
             ],
             [

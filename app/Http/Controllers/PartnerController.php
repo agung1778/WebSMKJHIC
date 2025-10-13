@@ -33,10 +33,10 @@ class PartnerController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'logo' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
-            'sector' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
+            'description' => 'string',
+            'logo' => 'image|mimes:jpeg,png,jpg,svg|max:2048',
+            'sector' => 'string|max:255',
+            'city' => 'string|max:255',
             'company_contact' => 'nullable|string|max:255',
             'partnership_date' => 'required|date',
         ], [

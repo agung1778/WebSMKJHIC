@@ -121,7 +121,7 @@
                                 {{ $item->title }}
                             </a>
                             <p class="text-gray-600 text-sm line-clamp-3 mb-4">
-                                {{ $item->description }}
+                                {{ strip_tags($item->description) }}
                             </p>
                             <a href="{{ route('public.news.show', $item) }}"
                                 class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
