@@ -190,7 +190,7 @@
 
                             {{-- Bagian Kanan: Ikon --}}
                             <div class="ml-4 flex-shrink-0 w-14 h-14 bg-white rounded-full flex items-center justify-center
-                                group-hover:scale-110 group-hover:bg-[#59E300] transition-all duration-300">
+                                        group-hover:scale-110 group-hover:bg-[#59E300] transition-all duration-300">
 
                                 <i
                                     class="fas {{ $item['icon'] }} text-2xl text-gray-800 group-hover:text-white transition-colors"></i>
@@ -206,38 +206,38 @@
         </section>
 
 
-         <section class="bg-[#ffffff] py-16 sm:py-24 mt-[-50px]">
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section class="bg-[#ffffff] py-16 sm:py-24 mt-[-50px]">
+            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                    <!-- Judul dan Deskripsi Section -->
-                    <div class="max-w-3xl mx-auto text-center mt-[-30px]">
-                        <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">
-                            Discover Our Story
-                        </h2>
-                        <p class="mt-4 text-lg text-gray-600">
-                            Watch the video below to get a glimpse into our values, mission, and the people behind our
-                            success.
-                        </p>
-                    </div>
-
-                    <!-- Kontainer Video Responsif 16:9 -->
-                    <div class="mt-12 max-w-4xl mx-auto">
-                        <div class="relative w-full" style="padding-top: 56.25%;">
-                            <!-- 
-                          Catatan: padding-top: 56.25% adalah hasil dari 9 / 16, 
-                          yang menciptakan rasio aspek 16:9 yang responsif.
-                        -->
-                            <iframe class="absolute top-0 left-0 w-full h-full rounded-xl shadow-2xl"
-                                src="https://www.youtube.com/embed/STOhZZmY6Co?si=R8Ls8KpM6XQORwZa"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-                            </iframe>
-                        </div>
-                    </div>
-
+                <!-- Judul dan Deskripsi Section -->
+                <div class="max-w-3xl mx-auto text-center mt-[-30px]">
+                    <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+                        Discover Our Story
+                    </h2>
+                    <p class="mt-4 text-lg text-gray-600">
+                        Watch the video below to get a glimpse into our values, mission, and the people behind our
+                        success.
+                    </p>
                 </div>
-            </section>
+
+                <!-- Kontainer Video Responsif 16:9 -->
+                <div class="mt-12 max-w-4xl mx-auto">
+                    <div class="relative w-full" style="padding-top: 56.25%;">
+                        <!-- 
+                              Catatan: padding-top: 56.25% adalah hasil dari 9 / 16, 
+                              yang menciptakan rasio aspek 16:9 yang responsif.
+                            -->
+                        <iframe class="absolute top-0 left-0 w-full h-full rounded-xl shadow-2xl"
+                            src="https://www.youtube-nocookie.com/embed/STOhZZmY6Co?si=34QAmdyIwXbAXs-7&amp;controls=0"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+
+            </div>
+        </section>
 
 
 

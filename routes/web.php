@@ -34,6 +34,12 @@ use App\Http\Controllers\PublicPage\PublicProgramController;
 use App\Http\Controllers\PublicPage\PublicExtracurricularController;
 use App\Http\Controllers\PublicPage\PublicHelpcenterController;
 
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/buat-storage-link', function () {
+    $exitCode = Artisan::call('storage:link');
+    return 'Storage link berhasil dibuat.';
+});
 
 Route::get('/', function () {
     return view('welcome');

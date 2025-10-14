@@ -320,11 +320,12 @@
                 <div class="mt-12 max-w-4xl mx-auto">
                     <div class="relative w-full" style="padding-top: 56.25%;">
                         <!-- 
-                                  Catatan: padding-top: 56.25% adalah hasil dari 9 / 16, 
-                                  yang menciptakan rasio aspek 16:9 yang responsif.
-                                -->
+                                      Catatan: padding-top: 56.25% adalah hasil dari 9 / 16, 
+                                      yang menciptakan rasio aspek 16:9 yang responsif.
+                                    -->
                         <iframe class="absolute top-0 left-0 w-full h-full rounded-xl shadow-2xl" <iframe width="560"
-                            height="315" src="https://www.youtube.com/embed/V1itS-cUH4M?si=gZTgNTlOSOeZ-NBB"
+                            height="315"
+                            src="https://www.youtube-nocookie.com/embed/V1itS-cUH4M?si=uZIO58_CPQb9nwDA&amp;controls=0"
                             title="YouTube video player" frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>>

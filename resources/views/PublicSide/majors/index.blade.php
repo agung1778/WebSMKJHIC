@@ -159,25 +159,25 @@
 
                             {{-- Tombol "Semua" (Ditambahkan kembali) --}}
                             <button @click="activeTab = 'all'" :class="{
-                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'all',
-                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'all'
-                    }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
+                            'bg-[#63cd00] text-white shadow-lg': activeTab === 'all',
+                            'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'all'
+                        }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 Semua
                             </button>
 
                             {{-- Tombol "SMK Amaliah 1" --}}
                             <button @click="activeTab = 'SMK Amaliah 1'" :class="{
-                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 1',
-                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'SMK Amaliah 1'
-                    }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
+                            'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 1',
+                            'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'SMK Amaliah 1'
+                        }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 1
                             </button>
 
                             {{-- Tombol "SMK Amaliah 2" --}}
                             <button @click="activeTab = 'SMK Amaliah 2'" :class="{
-                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 2',
-                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'SMK Amaliah 2'
-                    }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
+                            'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 2',
+                            'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'SMK Amaliah 2'
+                        }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 2
                             </button>
 
@@ -261,7 +261,7 @@
                                                 <i class="fas fa-arrow-right text-xs" style="color: {{ $amaliahDark }};"></i>
                                             </div>
                                         </a>
-                                    </div>  
+                                    </div>
                                 </div>
                             </div>
                         @empty
@@ -279,10 +279,12 @@
             $amaliahDark = '#282829';
         @endphp
 
-        <section class="bg-white py-16 sm:py-24">
-            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section class="bg-white py-16 sm:py-24 space-y-20">
 
-                {{-- Header Section --}}
+            {{-- BAGIAN 1: SLIDER (SWIPE) --}}
+            <div>
+                {{-- Header untuk slider diletakkan di dalam container agar rapi --}}
+                {{-- Header Section (Tidak ada perubahan) --}}
                 <div class="text-center">
                     <h2 class="text-3xl md:text-4xl font-bold" style="color: {{ $amaliahDark }};">
                         Our Latest Instagram Post
@@ -294,44 +296,29 @@
                     </div>
                 </div>
 
-                {{-- Konten Utama (Layout Dua Kolom) --}}
-                <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
 
-                    {{-- Kolom Kiri: Statis --}}
-                    <div class="lg:col-span-1">
-                        {{-- Placeholder untuk Post Utama --}}
-                        <div class="bg-gray-200 aspect-square w-full rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-image text-5xl text-gray-400"></i>
-                        </div>
-                        <div class="mt-6 flex items-start gap-4">
-                            <i class="fab fa-instagram text-4xl" style="color: {{ $amaliahDark }};"></i>
-                            <div>
-                                <p class="text-gray-600 leading-relaxed">
-                                    Read our latest news, and know about smk amaliah. Read our latest news, and know
-                                    about smk amaliah.
-                                </p>
-                                <a href="#"
-                                    class="inline-flex items-center mt-4 text-blue-600 font-semibold hover:underline">
-                                    <span>Buka Instagram</span>
-                                    <i class="fas fa-external-link-alt ml-2 text-xs"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+            </div>
 
-                    {{-- Kolom Kanan: Untuk Widget Curator.io --}}
-                    <div class="lg:col-span-2">
-                        {{--
-                        KOTAK UNTUK WIDGET CURATOR.IO ANDA
-                        - Ganti div ini dengan kode embed dari Curator.io.
-                        - Jika kode gagal dimuat, div ini akan tampil sebagai kotak hitam sesuai permintaan.
-                        --}}
-                        <div id="curator-feed-default-layout"
-                            class="bg-black w-full min-h-[600px] rounded-2xl flex items-center justify-center">
-                            <p class="text-gray-500 text-center">Menunggu koneksi dari Curator.io...</p>
-                        </div>
-                    </div>
+            {{-- BAGIAN 2: GRID --}}
+            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8  ">
 
+
+                {{-- Wadah untuk grid Curator.io --}}
+                <div id="curator-feed-grid-layout">
+
+                    <!-- Place <div> tag where you want the feed to appear -->
+                    <div id="curator-feed-default-feed-layout"><a href="https://curator.io" target="_blank"
+                            class="crt-logo crt-tag">Powered by Curator.io</a></div>
+
+                    <!-- The Javascript can be moved to the end of the html page before the </body> tag -->
+                    <script type="text/javascript">
+                        /* curator-feed-default-feed-layout */
+                        (function () {
+                            var i, e, d = document, s = "script"; i = d.createElement("script"); i.async = 1; i.charset = "UTF-8";
+                            i.src = "https://cdn.curator.io/published/9b122a7e-d39e-40c4-abc3-8ab6bc446899.js";
+                            e = d.getElementsByTagName(s)[0]; e.parentNode.insertBefore(i, e);
+                        })();
+                    </script>
                 </div>
             </div>
         </section>
@@ -343,7 +330,7 @@
 
             // Definisikan informasi kontak
             $alamat = 'Jl. Raya Jl. Tol Jagorawi No.1, Ciawi, Kec. Ciawi, Kabupaten Bogor, Jawa Barat 16720';
-            $email = 'example@email.com';
+            $email = 'smkamaliahciawi@gmail.com';
             $phone = '123-456-7890';
         @endphp
 
