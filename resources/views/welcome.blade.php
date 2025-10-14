@@ -26,6 +26,13 @@
         .hero-clip-path {
             clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4rem), calc(100% - 4rem) 100%, 0 100%);
         }
+
+        /* Aturan ini akan aktif jika lebar layar 768px atau kurang */
+        @media (max-width: 768px) {
+            .custom-none{
+                display: none;
+            }
+        }
     </style>
 
     <body class="font-['Poppins'] bg-gray-100">
@@ -48,19 +55,19 @@
                     - Logika slider gambar dan berita tetap dipertahankan.
                     --}}
                     <div x-data="{
-                                        showVideo: false,
-                                        activeImageSlide: 1,
-                                        totalImageSlides: {{ $mainImages->count() }},
-                                        activeNewsSlide: 1,
-                                        totalNewsSlides: {{ $latestNews->count() }}
-                                     }" x-init="
-                                        setInterval(() => { 
-                                            if (!showVideo) { // Animasi gambar hanya berjalan jika video tidak ditampilkan
-                                                activeImageSlide = activeImageSlide % totalImageSlides + 1 
-                                            }
-                                        }, 5000);
-                                        setInterval(() => { activeNewsSlide = activeNewsSlide % totalNewsSlides + 1 }, 5000);
-                                     ">
+                                                showVideo: false,
+                                                activeImageSlide: 1,
+                                                totalImageSlides: {{ $mainImages->count() }},
+                                                activeNewsSlide: 1,
+                                                totalNewsSlides: {{ $latestNews->count() }}
+                                             }" x-init="
+                                                setInterval(() => { 
+                                                    if (!showVideo) { // Animasi gambar hanya berjalan jika video tidak ditampilkan
+                                                        activeImageSlide = activeImageSlide % totalImageSlides + 1 
+                                                    }
+                                                }, 5000);
+                                                setInterval(() => { activeNewsSlide = activeNewsSlide % totalNewsSlides + 1 }, 5000);
+                                             ">
 
                         <div class="relative h-[550px] overflow-hidden hero-clip-path rounded-3xl">
 
@@ -383,8 +390,8 @@
 
                 // Data untuk bagian statistik, disesuaikan dengan referensi gambar
                 $stats = [
-                    ['icon' => 'fa-users', 'number' => '1150 +', 'label' => 'Peserta Didik'],
-                    ['icon' => 'fa-rocket', 'number' => '100 +', 'label' => 'Tenaga Pendidik'],
+                    ['icon' => 'fa-users', 'number' => '1160 +', 'label' => 'Peserta Didik'],
+                    ['icon' => 'fa-rocket', 'number' => '80 +', 'label' => 'Tenaga Pendidik'],
                     ['icon' => 'fa-star', 'number' => '40 +', 'label' => 'Fasilitas Unggulan'],
                     ['icon' => 'fa-graduation-cap', 'number' => '85%', 'label' => 'Alumni cepat dapat kerja'],
                 ];
@@ -577,19 +584,19 @@
 
             <section class="py-16 sm:py-24" style="background-color: {{ $amaliahDark }};">
                 <div x-data="{
-                                                                                                                                                                                                                                                                                    scrollSlider(direction) {
-                                                                                                                                                                                                                                                                                        const slider = this.$refs.slider;
-                                                                                                                                                                                                                                                                                        const scrollAmount = slider.querySelector('.slider-item').offsetWidth + 32; // Lebar kartu + gap
-                                                                                                                                                                                                                                                                                        slider.scrollBy({
-                                                                                                                                                                                                                                                                                            left: direction === 'next' ? scrollAmount : -scrollAmount,
-                                                                                                                                                                                                                                                                                            behavior: 'smooth'
-                                                                                                                                                                                                                                                                                        });
-                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                }"
+                                                                                                                                                                                                                                                                                        scrollSlider(direction) {
+                                                                                                                                                                                                                                                                                            const slider = this.$refs.slider;
+                                                                                                                                                                                                                                                                                            const scrollAmount = slider.querySelector('.slider-item').offsetWidth + 32; // Lebar kartu + gap
+                                                                                                                                                                                                                                                                                            slider.scrollBy({
+                                                                                                                                                                                                                                                                                                left: direction === 'next' ? scrollAmount : -scrollAmount,
+                                                                                                                                                                                                                                                                                                behavior: 'smooth'
+                                                                                                                                                                                                                                                                                            });
+                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                    }"
                     class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative">
 
                     {{-- Dekorasi Titik --}}
-                    <div class="absolute top-8 left-8 md:left-12 flex items-center space-x-2">
+                    <div class="absolute top-8 left-8 md:left-12 flex items-center space-x-2 custom-none">
                         <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
                         <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
                         <div class="w-3 h-3 bg-white rounded-full"></div>
@@ -822,9 +829,9 @@
                     <div class="mt-12 max-w-4xl mx-auto">
                         <div class="relative w-full" style="padding-top: 56.25%;">
                             <!-- 
-                          Catatan: padding-top: 56.25% adalah hasil dari 9 / 16, 
-                          yang menciptakan rasio aspek 16:9 yang responsif.
-                        -->
+                              Catatan: padding-top: 56.25% adalah hasil dari 9 / 16, 
+                              yang menciptakan rasio aspek 16:9 yang responsif.
+                            -->
                             <iframe class="absolute top-0 left-0 w-full h-full rounded-xl shadow-2xl"
                                 src="https://www.youtube.com/embed/STOhZZmY6Co?si=R8Ls8KpM6XQORwZa"
                                 title="YouTube video player" frameborder="0"
@@ -847,7 +854,7 @@
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative">
 
                     {{-- Dekorasi Titik --}}
-                    <div class="absolute top-8 left-8 md:left-12 flex items-center space-x-2">
+                    <div class="absolute top-8 left-8 md:left-12 flex items-center space-x-2 custom-none">
                         <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
                         <div class="w-3 h-3 bg-gray-600 rounded-full"></div>
                         <div class="w-3 h-3 bg-white rounded-full"></div>
@@ -968,16 +975,16 @@
 
                     {{-- Slider Testimoni (Alpine.js + Tailwind CSS) --}}
                     <div x-data="{
-                                                                                                                                                                                                                                                                                                                                                                                slider: null,
-                                                                                                                                                                                                                                                                                                                                                                                init() {
-                                                                                                                                                                                                                                                                                                                                                                                    this.slider = this.$refs.sliderContainer;
-                                                                                                                                                                                                                                                                                                                                                                                },
-                                                                                                                                                                                                                                                                                                                                                                                scroll(direction) {
-                                                                                                                                                                                                                                                                                                                                                                                    // Geser sejauh 80% dari lebar area yang terlihat
-                                                                                                                                                                                                                                                                                                                                                                                    let scrollAmount = this.slider.offsetWidth * 0.8;
-                                                                                                                                                                                                                                                                                                                                                                                    this.slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                            }"
+                                                                                                                                                                                                                                                                                                                                                                                    slider: null,
+                                                                                                                                                                                                                                                                                                                                                                                    init() {
+                                                                                                                                                                                                                                                                                                                                                                                        this.slider = this.$refs.sliderContainer;
+                                                                                                                                                                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                                                                                                                                                                                                    scroll(direction) {
+                                                                                                                                                                                                                                                                                                                                                                                        // Geser sejauh 80% dari lebar area yang terlihat
+                                                                                                                                                                                                                                                                                                                                                                                        let scrollAmount = this.slider.offsetWidth * 0.8;
+                                                                                                                                                                                                                                                                                                                                                                                        this.slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                }"
                         class="mt-12 relative">
                         {{-- Tombol Panah Kiri --}}
                         <button @click="scroll(-1)"
@@ -1064,17 +1071,17 @@
                         <div class="flex justify-center items-center space-x-2 mt-8">
                             <button @click="activeTab = 'amaliah1'"
                                 :class="{
-                                                                                                                                                                                                    'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah1',
-                                                                                                                                                                                                    'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah1'
-                                                                                                                                                                                                }"
+                                                                                                                                                                                                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah1',
+                                                                                                                                                                                                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah1'
+                                                                                                                                                                                                    }"
                                 class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 1
                             </button>
                             <button @click="activeTab = 'amaliah2'"
                                 :class="{
-                                                                                                                                                                                                    'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah2',
-                                                                                                                                                                                                    'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah2'
-                                                                                                                                                                                                }"
+                                                                                                                                                                                                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah2',
+                                                                                                                                                                                                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah2'
+                                                                                                                                                                                                    }"
                                 class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 2
                             </button>
@@ -1203,12 +1210,12 @@
                         </div>
                     </div>
 
-                   
+
                 </div>
 
                 {{-- BAGIAN 2: GRID --}}
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8  ">
-                   
+
 
                     {{-- Wadah untuk grid Curator.io --}}
                     <div id="curator-feed-grid-layout">

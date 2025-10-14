@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->string('position');
             $table->string('subject');
-            $table->enum('school', ['Amaliah 1', 'Amaliah 2']);
-            $table->enum('category', ['Produktif', 'Normatif', 'Adaptif', 'Umum']);
+            $table->enum('school', ['Amaliah 1', 'Amaliah 2', 'Amaliah 1 & 2']);
+            $table->string('category', 50)->nullable();
             $table->timestamps();
         });
     }

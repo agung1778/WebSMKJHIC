@@ -163,7 +163,7 @@
                                             {{-- PERUBAHAN: Ukuran tombol diperkecil --}}
                                             <a href="{{ route('public.facilities.show', $other) }}"
                                                 class="inline-block bg-[#2D2D2D] text-white text-sm font-semibold px-4 py-2 rounded-lg mt-4 hover:bg-[#2D2D2D] transition-all duration-200 transform hover:scale-105">
-                                                Selengkapnya <span class="ml-1 font-light">→</span>
+                                                Selengkapnya <span class="ml-1 font-light"><i class="fas fa-chevron-right"></i></span>
                                             </a>
                                         </div>
                                     </div>

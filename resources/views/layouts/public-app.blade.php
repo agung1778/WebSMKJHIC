@@ -248,9 +248,6 @@
                             <a href="{{ route('public.partners.index') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Industry
                                 Partners</a>
-                            <a href="{{ route('public.program.index') }}"
-                                class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">School
-                                Life</a>
                             <a href="{{ route('public.teachers.index') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Teacher
                                 & Staff</a>
@@ -274,12 +271,12 @@
                                 Preview</span><i class="fa-solid fa-chevron-down text-xs transition-transform"
                                 :class="{ 'rotate-180': open }"></i></button>
                         <div x-show="open" x-transition class="pl-6 pt-2 pb-1 space-y-1">
-                            <a href="#"
+                            <a href="{{ route('public.achievement.index') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Achievements</a>
-                            <a href="#"
+                            <a href="{{ route('public.program.index') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">School
                                 Programs</a>
-                            <a href="#"
+                            <a href="{{ route('public.extracurricular.index') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Extracurriculars</a>
                         </div>
                     </div>
@@ -290,26 +287,24 @@
                             class="w-full flex justify-between items-center px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]"><span>Help
                                 Center</span><i class="fa-solid fa-chevron-down text-xs transition-transform"
                                 :class="{ 'rotate-180': open }"></i></button>
-                        <div x-show="open" x-transition class="pl-6 pt-2 pb-1 space-y-1"><a href="#"
+                        <div x-show="open" x-transition class="pl-6 pt-2 pb-1 space-y-1"><a href="{{ route('public.help.faq') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">FAQs</a><a
                                 href="#"
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Contact</a>
                         </div>
                     </div>
 
+                     
                     <hr class="my-2">
-                    <a href="#"
+                    <a href="http://spmb.smkamaliah.sch.id"
                         class="block px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Info
                         PPDB</a>
-                    <a href="#"
+                    <a href="https://www.instagram.com/bkksmkamaliah/"
                         class="block px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Info
                         BKK</a>
-                    <a href="#"
+                    <a href="http://lms.smkamaliah.sch.id"
                         class="block px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]">E-Learning</a>
-                    <a href="#"
-                        class="block px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Teaching
-                        Factory</a>
-                    <a href="#"
+                    <a href="https://linktr.ee/smkamaliah"
                         class="block px-4 py-3 text-[#50B70E] font-semibold rounded-md hover:bg-gray-100">Contact
                         Us</a>
                 </div>
@@ -321,7 +316,7 @@
             x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-start justify-center pt-16 sm:pt-24">
+            class="fixed inset-0 z-50 bg-opacity-50 flex items-start justify-center pt-16 sm:pt-24">
 
             <div @click.away="searchModalOpen = false" x-show="searchModalOpen"
                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
@@ -331,14 +326,13 @@
 
                 <form action="{{ route('search') }}" method="GET" class="relative">
                     <input type="search" name="query"
-                        class="w-full border-0 rounded-xl py-4 pl-12 pr-6 text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#63cd00] text-lg"
+                        class="w-full border-0 rounded-xl py-4 pl-12 pr-6 text-black placeholder-gray-400 focus:ring-2 focus:ring-[#63cd00] text-lg"
                         placeholder="Ketikkan pencarian Anda..." autocomplete="off" autofocus>
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
                     <button type="button" @click="searchModalOpen = false"
                         class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                        <i class="fa-solid fa-times"></i>
                     </button>
                 </form>
             </div>

@@ -34,7 +34,7 @@ class FacilityController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:5048',
             'type' => 'required|string|max:255',
         ], [
             'name.required' => 'Nama fasilitas harus diisi.',
@@ -42,7 +42,7 @@ class FacilityController extends Controller
             'image.required' => 'Foto fasilitas harus diunggah.',
             'image.image' => 'File harus berupa gambar.',
             'image.mimes' => 'Format gambar yang diizinkan adalah jpeg, png, jpg, gif, atau svg.',
-            'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
+            'image.max' => 'Ukuran gambar tidak boleh lebih dari 5MB.',
             'type.required' => 'Jenis fasilitas harus diisi.',
         ]);
 
@@ -82,14 +82,14 @@ class FacilityController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5048',
             'type' => 'required|string|max:255',
         ], [
             'name.required' => 'Nama fasilitas harus diisi.',
             'description.required' => 'Deskripsi harus diisi.',
             'image.image' => 'File harus berupa gambar.',
             'image.mimes' => 'Format gambar yang diizinkan adalah jpeg, png, jpg, gif, atau svg.',
-            'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
+            'image.max' => 'Ukuran gambar tidak boleh lebih dari 5MB.',
             'type.required' => 'Jenis fasilitas harus diisi.',
         ]);
 

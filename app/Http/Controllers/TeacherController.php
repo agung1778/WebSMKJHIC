@@ -33,17 +33,17 @@ class TeacherController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo' => 'image|mimes:jpeg,png,jpg,gif|max:5048',
             'position' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
-            'school' => 'required|in:Amaliah 1,Amaliah 2',
-            'category' => 'required|in:Produktif,Normatif,Adaptif,Umum',
+            'school' => 'required|in:Amaliah 1,Amaliah 2, Amaliah 1 & 2',
+            'category' => 'required|in:Produktif,Normatif,Adaptif,Umum,Struktural',
         ], [
             'name.required' => 'Nama guru harus diisi.',
             'photo.required' => 'Foto guru harus diunggah.',
             'photo.image' => 'File harus berupa gambar.',
             'photo.mimes' => 'Format gambar yang diizinkan adalah jpeg, png, jpg, atau gif.',
-            'photo.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
+            'photo.max' => 'Ukuran gambar tidak boleh lebih dari 5MB.',
             'position.required' => 'Jabatan harus diisi.',
             'subject.required' => 'Mata pelajaran harus diisi.',
             'school.required' => 'Sekolah mengajar harus dipilih.',
@@ -83,16 +83,16 @@ class TeacherController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048',
             'position' => 'required|string|max:255',
             'subject' => 'required|string|max:255',
-            'school' => 'required|in:Amaliah 1,Amaliah 2',
-            'category' => 'required|in:Produktif,Normatif,Adaptif,Umum',
+            'school' => 'required|in:Amaliah 1,Amaliah 2, Amaliah 1 & 2',
+            'category' => 'required|in:Produktif,Normatif,Adaptif,Umum,Struktural',
         ], [
             'name.required' => 'Nama guru harus diisi.',
             'photo.image' => 'File harus berupa gambar.',
             'photo.mimes' => 'Format gambar yang diizinkan adalah jpeg, png, jpg, atau gif.',
-            'photo.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
+            'photo.max' => 'Ukuran gambar tidak boleh lebih dari 5MB.',
             'position.required' => 'Jabatan harus diisi.',
             'subject.required' => 'Mata pelajaran harus diisi.',
             'school.required' => 'Sekolah mengajar harus dipilih.',

@@ -103,6 +103,10 @@
                     {{-- Kolom Kanan: Tombol Filter (Adaptasi dari Tab) --}}
                     <div class="flex-shrink-0">
                         <div id="tabs-container" class="flex flex-wrap items-center justify-start md:justify-end gap-3">
+                            <button data-tab="semua"
+                                class="tab-button px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-200">
+                                Semua
+                            </button>
                             <button data-tab="amaliah1"
                                 class="tab-button px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-200">
                                 Amaliah 1
@@ -120,6 +124,47 @@
                     // Mengubah koleksi yang dikelompokkan menjadi satu daftar flat untuk perulangan yang lebih sederhana
                     $allTeachers = isset($groupedTeachers) ? $groupedTeachers->flatten() : collect();
                 @endphp
+
+                {{-- Konten untuk Amaliah 1 --}}
+                <div id="semua" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        @forelse ($allTeachers as $teacher)
+                            <div
+                                class="group bg-white border border-gray-200 rounded-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+                                {{-- GAMBAR GURU --}}
+                                <div class="relative h-64 w-full">
+                                    <img src="{{ $teacher->photo ? asset('storage/' . $teacher->photo) : 'https://placehold.co/400x500/e2e8f0/64748b?text=' . urlencode(substr($teacher->name, 0, 1)) }}"
+                                        alt="Foto {{ $teacher->name }}" class="w-full h-full object-cover object-top"
+                                        onerror="this.onerror=null;this.src='https://placehold.co/400x500/e2e8f0/64748b?text=Error';">
+                                </div>
+
+                                {{-- KONTEN CARD --}}
+                                <div class="p-5 flex flex-col flex-grow">
+                                    {{-- POSISI & IKON --}}
+                                    <div
+                                        class="flex items-center text-xs font-semibold text-[#63cd00] mb-2 uppercase tracking-wider">
+                                        <i class="fas fa-chalkboard-teacher mr-2 w-4 text-center"></i>
+                                        <span>{{ $teacher->position }}</span>
+                                    </div>
+
+                                    {{-- NAMA GURU --}}
+                                    <h3 class="text-lg font-bold text-gray-900 mb-2 leading-tight">
+                                        {{ $teacher->name }}
+                                    </h3>
+
+                                    {{-- MATA PELAJARAN --}}
+                                    <p class="text-gray-600 text-sm flex-grow">
+                                        {{ $teacher->subject }}
+                                    </p>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-span-full border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
+                                <p class="text-gray-500 font-medium">Data guru untuk tidak ditemukan.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
 
                 {{-- Konten untuk Amaliah 1 --}}
                 <div id="amaliah1" class="tab-content">
@@ -246,7 +291,7 @@
                     });
 
                     // Atur tab default saat halaman dimuat
-                    switchTab('amaliah1');
+                    switchTab('semua');
                 });
             </script>
         </section>
