@@ -27,6 +27,12 @@
         .custom-mt {
             margin-top: -30px;
         }
+
+        @media (max-width: 768px) {
+            .custom-none {
+                border-radius: 0px:
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
 
@@ -85,10 +91,10 @@
 
                 </div>
                 {{-- BAGIAN 2: CARD FOKUS SEKOLAH --}}
-                <div class="relative z-20 -mt-16 max-w-5xl mx-auto">
-                    <div class="rounded-2xl shadow-xl p-8" style="background-color: {{ $amaliahDark }};">
+                <div class="relative z-20 -mt-16 max-w-5xl mx-auto fade-in-section">
+                    <div class="shadow-xl p-8 custom-none bg-[{{ $amaliahDark }}] rounded-none md:rounded-2xl">
 
-                        {{-- MODIFIKASI: Grid 2 kolom (md:grid-cols-2) --}}
+                        {{-- Grid 2 kolom di layar sedang ke atas --}}
                         <div
                             class="grid grid-cols-1 md:grid-cols-2 gap-8 text-white divide-y divide-gray-700 md:divide-y-0">
                             @foreach ($schoolFocus as $item)
@@ -109,11 +115,12 @@
                     </div>
                 </div>
 
+
             </div>
         </section>
 
 
-        <section class="bg-white py-16 sm:py-24">
+        <section class="bg-white py-16 sm:py-24 fade-in-section">
             <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {{-- Header Section --}}
@@ -129,23 +136,23 @@
 
                     {{-- Bar Logo Jurusan --}}
                     <div class="mt-12 flex flex-wrap justify-center items-center gap-x-10 sm:gap-x-12 gap-y-6">
-                        <img src="{{ asset('assets/logo/Logo_Jurusan/pplg.png') }}" alt="Logo PPLG"
+                        <img src="{{ asset('assets/logo/Logo_Jurusan/pplg.webp') }}" alt="Logo PPLG"
                             class="h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-110">
-                        <img src="{{ asset('assets/logo/Logo_Jurusan/tjkt.png') }}" alt="Logo TJKT"
+                        <img src="{{ asset('assets/logo/Logo_Jurusan/tjkt.webp') }}" alt="Logo TJKT"
                             class="h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-110">
-                        <img src="{{ asset('assets/logo/Logo_Jurusan/animasi.png') }}" alt="Logo Animasi"
+                        <img src="{{ asset('assets/logo/Logo_Jurusan/animasi.webp') }}" alt="Logo Animasi"
                             class="h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-110">
-                        <img src="{{ asset('assets/logo/Logo_Jurusan/dkv.png') }}" alt="Logo DKV"
+                        <img src="{{ asset('assets/logo/Logo_Jurusan/dkv.webp') }}" alt="Logo DKV"
                             class="h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-110">
-                        <img src="{{ asset('assets/logo/Logo_Jurusan/mp.png') }}" alt="Logo MP"
+                        <img src="{{ asset('assets/logo/Logo_Jurusan/mp.webp') }}" alt="Logo MP"
                             class="h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-110">
-                        <img src="{{ asset('assets/logo/Logo_Jurusan/ak.png') }}" alt="Logo AK"
+                        <img src="{{ asset('assets/logo/Logo_Jurusan/ak.webp') }}" alt="Logo AK"
                             class="h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-110">
-                        <img src="{{ asset('assets/logo/Logo_Jurusan/lps.png') }}" alt="Logo LPS"
+                        <img src="{{ asset('assets/logo/Logo_Jurusan/lps.webp') }}" alt="Logo LPS"
                             class="h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-110">
-                        <img src="{{ asset('assets/logo/Logo_Jurusan/br.png') }}" alt="Logo BR"
+                        <img src="{{ asset('assets/logo/Logo_Jurusan/br.webp') }}" alt="Logo BR"
                             class="h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-110">
-                        <img src="{{ asset('assets/logo/Logo_Jurusan/dpb.png') }}" alt="Logo DPB"
+                        <img src="{{ asset('assets/logo/Logo_Jurusan/dpb.webp') }}" alt="Logo DPB"
                             class="h-12 lg:h-14 object-contain transition-transform duration-300 hover:scale-110">
                         {{-- Anda bisa menambahkan logo lainnya di sini --}}
                     </div>
@@ -159,25 +166,25 @@
 
                             {{-- Tombol "Semua" (Ditambahkan kembali) --}}
                             <button @click="activeTab = 'all'" :class="{
-                            'bg-[#63cd00] text-white shadow-lg': activeTab === 'all',
-                            'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'all'
-                        }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
+                                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'all',
+                                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'all'
+                                    }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 Semua
                             </button>
 
                             {{-- Tombol "SMK Amaliah 1" --}}
                             <button @click="activeTab = 'SMK Amaliah 1'" :class="{
-                            'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 1',
-                            'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'SMK Amaliah 1'
-                        }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
+                                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 1',
+                                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'SMK Amaliah 1'
+                                    }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 1
                             </button>
 
                             {{-- Tombol "SMK Amaliah 2" --}}
                             <button @click="activeTab = 'SMK Amaliah 2'" :class="{
-                            'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 2',
-                            'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'SMK Amaliah 2'
-                        }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
+                                        'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 2',
+                                        'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'SMK Amaliah 2'
+                                    }" class="px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300">
                                 SMK Amaliah 2
                             </button>
 
@@ -186,7 +193,7 @@
 
 
                     {{-- 2. Grid Kartu Jurusan --}}
-                    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 fade-in-section">
                         @forelse ($majors as $major)
                             {{-- Tambahkan x-show dan x-transition di sini --}}
                             <div x-show="activeTab === 'all' || activeTab === '{{ $major->tag }}'"
@@ -279,7 +286,7 @@
             $amaliahDark = '#282829';
         @endphp
 
-        <section class="bg-white py-16 sm:py-24 space-y-20">
+        <section class="bg-white py-16 sm:py-24 space-y-20 fade-in-section">
 
             {{-- BAGIAN 1: SLIDER (SWIPE) --}}
             <div>
@@ -334,12 +341,12 @@
             $phone = '123-456-7890';
         @endphp
 
-        <section class="bg-gray-50 py-16 sm:py-24">
+        <section class="bg-gray-50 py-16 sm:py-24 fade-in-section">
             <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {{-- Tombol Virtual Tour di Atas --}}
                 <div class="text-center mb-10">
-                    <a href="#"
+                    <a href="https://yourdisc710.itch.io/amaliah-tour"
                         class="inline-flex items-center bg-white border border-gray-300 rounded-full px-8 py-4 text-base font-semibold shadow-md hover:shadow-lg hover:border-gray-400 transition-all duration-300 group">
                         <span class="text-gray-800">Mau Lihat SMK Amaliah?</span>
                         <span class="ml-2 font-bold" style="color: {{ $amaliahGreen }};">Masuk Ke Virtual Tour!</span>
@@ -360,28 +367,6 @@
                         width="1280" height="600" style="border:0;" allowfullscreen="" loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"></iframe>
                     {{-- KARTU INFORMASI DI ATAS PETA --}}
-                    <div class="absolute bottom-10 left-10 right-10 bg-white rounded-2xl shadow-xl p-8">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {{-- Alamat --}}
-                            <div>
-                                <h4 class="text-sm font-bold text-gray-400 tracking-wider uppercase">Alamat</h4>
-                                <p class="mt-2 text-gray-800 leading-relaxed">{{ $alamat }}</p>
-                            </div>
-                            {{-- Email & Phone --}}
-                            <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-8">
-                                <div>
-                                    <h4 class="text-sm font-bold text-gray-400 tracking-wider uppercase">Email</h4>
-                                    <a href="mailto:{{ $email }}"
-                                        class="mt-2 text-gray-800 hover:text-green-600 transition-colors">{{ $email }}</a>
-                                </div>
-                                <div>
-                                    <h4 class="text-sm font-bold text-gray-400 tracking-wider uppercase">Phone</h4>
-                                    <a href="tel:{{ $phone }}"
-                                        class="mt-2 text-gray-800 hover:text-green-600 transition-colors">{{ $phone }}</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
             </div>

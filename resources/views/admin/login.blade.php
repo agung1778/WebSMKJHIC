@@ -97,7 +97,7 @@
                             Kembali ke halaman utama website<br>
                             SMK Amaliah 1&2
                         </p>
-                        <a href="#"
+                        <a href="/"
                             class="info-card-link text-xs font-bold text-[#4ED400] mt-2 inline-flex items-center">
                             Kembali
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -117,7 +117,7 @@
                             Hubungi admin/tim IT SMK Amaliah<br>
                             1 & 2
                         </p>
-                        <a href="#"
+                        <a href="https://wa.me/6281319768889"
                             class="info-card-link text-xs font-bold text-[#4ED400] mt-2 inline-flex items-center">
                             Hubungi
                             <svg xmlns="http://www.w3.org/2000/svg"

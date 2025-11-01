@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <title>@yield('title', 'Admin Dashboard')</title>
@@ -174,21 +175,20 @@
                     </div>
                 </div>
                 <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700 @if(request()->routeIs(['admin.users'])) sidebar-link-active
-                    @endif" href="{{ route('admin.users') }}">
+                @endif" href="{{ route('admin.users') }}">
                     <i class="fa-solid fa-circle-user w-5 text-center"></i>
                     <span>Users</span>
                 </a>
                 <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700 @if(request()->routeIs(['admin.curator'])) sidebar-link-active
-                    @endif"
-                    href="{{ route('admin.curator') }}" >
+                @endif" href="{{ route('admin.curator') }}">
                     <i class="fa-solid fa-link w-5 text-center"></i>
                     <span>CuratorIO</span>
                 </a>
-                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700" href="#">
+                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700" href="https://forms.gle/sveGZa9nd9uX62YE9">
                     <i class="fas fa-comments w-5 text-center"></i>
                     <span>Feedback</span>
                 </a>
-                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700" href="#">
+                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700" href="https://app.jagoan.cloud/">
                     <i class="fas fa-cog w-5 text-center"></i>
                     <span>Settings</span>
                 </a>

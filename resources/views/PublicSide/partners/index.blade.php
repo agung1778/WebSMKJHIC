@@ -29,7 +29,7 @@
     @endphp
 
     <body>
-        <section class="relative max-w-screen">
+        <section class="relative max-w-screen fade-in-section">
             {{-- Slider Gambar Dinamis --}}
             @if($hasImages)
                 <div x-data="{ activeSlide: 1, totalSlides: {{ $partnersImages->count() }} }"
@@ -130,7 +130,7 @@
 
 
                 {{-- GRID DAFTAR MITRA --}}
-                <div id="partnersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+                <div id="partnersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 fade-in-section">
 
                     {{-- Loop untuk setiap kartu mitra --}}
                     @forelse($partners as $partner)

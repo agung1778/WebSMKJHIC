@@ -1,26 +1,19 @@
-import './bootstrap';
-import '../css/app.css';
+import './bootstrap'; 
 
-// === DARK MODE TOGGLE ===
-document.addEventListener("DOMContentLoaded", () => {
-    const html = document.documentElement;
-    const toggleBtn = document.querySelector("#theme-toggle");
+import Alpine from 'alpinejs';
 
-    // Saat pertama kali load, ambil preferensi dari localStorage
-    if (localStorage.theme === "dark") {
-        html.classList.add("dark");
-    } else {
-        html.classList.remove("dark");
+
+window.Alpine = Alpine;
+
+Alpine.start();
+
+import Splide from '@splidejs/splide';
+
+document.addEventListener('DOMContentLoaded', () => {
+    const splideElements = document.querySelectorAll('.splide');
+    if (splideElements.length) {
+        splideElements.forEach(element => {
+            new Splide(element).mount();
+        });
     }
-
-    // Saat tombol diklik, toggle mode dan simpan preferensi
-    toggleBtn?.addEventListener("click", () => {
-        if (html.classList.contains("dark")) {
-            html.classList.remove("dark");
-            localStorage.theme = "light";
-        } else {
-            html.classList.add("dark");
-            localStorage.theme = "dark";
-        }
-    });
 });

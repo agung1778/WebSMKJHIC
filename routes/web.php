@@ -34,12 +34,6 @@ use App\Http\Controllers\PublicPage\PublicProgramController;
 use App\Http\Controllers\PublicPage\PublicExtracurricularController;
 use App\Http\Controllers\PublicPage\PublicHelpcenterController;
 
-use Illuminate\Support\Facades\Artisan;
-
-Route::get('/buat-storage-link', function () {
-    $exitCode = Artisan::call('storage:link');
-    return 'Storage link berhasil dibuat.';
-});
 
 Route::get('/', function () {
     return view('welcome');
@@ -146,6 +140,8 @@ Route::middleware(['auth'])->group(function () {
 
         // Rute untuk Guru
         Route::resource('teachers', TeacherController::class);
+
+        Route::post('/teachers/{teacher}/upload-photo', [App\Http\Controllers\TeacherController::class, 'uploadPhoto'])->name('teachers.uploadPhoto');
 
         // Rute untuk Prestasi
         Route::resource('achievements', AchievementController::class);

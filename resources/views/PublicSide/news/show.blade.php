@@ -1,23 +1,6 @@
 @extends('layouts.public-app') {{-- Sesuaikan dengan nama file layout utama Anda --}}
 
 @section('content')
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>@yield('title')</title>
-
-        {{-- Link Extensions --}}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    </head>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-
     @php
         $amaliahGreen = '#63cd00';
         $amaliahDark = '#282829';
@@ -27,7 +10,7 @@
         $hasImages = isset($newsImages) && $newsImages->isNotEmpty();
     @endphp
 
-    <body>
+    <div>
 
 
         {{-- ================================================================= --}}
@@ -46,40 +29,33 @@
                 </div>
             @endif
         </header>
-        <div style="background-color: #2D2D2D;">
-            <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-                {{-- Menggunakan h-full dan flex items-center untuk membuat konten di tengah vertikal --}}
-                <div class="h-full flex items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        {{-- Text-lg untuk memperbesar teks --}}
-                        <ol class="inline-flex items-center space-x-2 md:space-x-3 text-lg">
+        <div class="bg-[#2D2D2D]">
+            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto py-3">
+                <div class="flex items-center overflow-hidden">
+                    <nav class="flex w-full text-sm sm:text-base md:text-lg" aria-label="Breadcrumb">
+                        <ol class="flex items-center space-x-1 sm:space-x-2 md:space-x-3 w-full overflow-hidden">
                             {{-- 1. Home --}}
-                            <li class="inline-flex items-center">
-                                <a href="/"
-                                    class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
+                            <li class="inline-flex items-center flex-shrink-0">
+                                <a href="/" class="font-medium text-gray-300 hover:text-white transition-colors">
                                     Home
                                 </a>
                             </li>
 
-                            {{-- 2. News (Diperbaiki agar mengarah ke index berita) --}}
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-white text-xs"></i>
-                                    {{-- Menggunakan route('public.news.index') --}}
-                                    <a href="{{ route('public.news.index') }}"
-                                        class="ml-2 font-medium text-gray-300 hover:text-white md:ml-3 transition-colors">News</a>
-                                </div>
+                            {{-- 2. News --}}
+                            <li class="inline-flex items-center flex-shrink-0">
+                                <i class="fas fa-chevron-right text-gray-300 text-xs mx-1 sm:mx-2"></i>
+                                <a href="{{ route('public.news.index') }}"
+                                    class="font-medium text-gray-300 hover:text-white transition-colors">
+                                    News
+                                </a>
                             </li>
 
-                            {{-- 3. Judul Berita Saat Ini (Aktif) --}}
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-white text-xs"></i>
-                                    {{-- Menggunakan Judul Berita dan warna aktif (hijau) --}}
-                                    <span class="ml-2 font-medium md:ml-3 truncate max-w-xs" style="color: #ffffff;">
-                                        {{ $news->title }}
-                                    </span>
-                                </div>
+                            {{-- 3. Judul berita --}}
+                            <li class="inline-flex items-center min-w-0 flex-1">
+                                <i class="fas fa-chevron-right text-gray-300 text-xs flex-shrink-0 mx-1 sm:mx-2"></i>
+                                <span class="font-medium text-white truncate block" title="{{ $news->title }}">
+                                    {{ $news->title }}
+                                </span>
                             </li>
                         </ol>
                     </nav>
@@ -126,7 +102,7 @@
                     <div x-data="{ modalOpen: false, modalImage: '' }">
                         {{-- Isi Konten Artikel --}}
                         <article class="prose prose-lg max-w-none text-gray-800 leading-relaxed mb-12">
-                           {!! $news->description !!}
+                            {!! $news->description !!}
                         </article>
 
                         {{-- BAGIAN GALERI MINI (THUMBNAILS) --}}
@@ -225,11 +201,7 @@
 
             </div>
         </div>
-        </div>
-    </body>
-
-    </html>
-
-
+    </div>
+    </div>
 
 @endsection

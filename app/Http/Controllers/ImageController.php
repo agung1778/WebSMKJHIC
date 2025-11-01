@@ -41,21 +41,18 @@ class ImageController extends Controller
     {
         // 1. Validasi
         $request->validate([
-            'image_file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:5120',
-            'title' => 'required|string|max:255', // Diubah dari nullable
+            'image_file' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
         ], [
             'image_file.required' => 'File gambar harus diunggah.',
             'image_file.image' => 'File harus berupa gambar.',
-            'image_file.mimes' => 'Format yang diizinkan: jpeg, png, jpg, gif, svg.',
+            'image_file.mimes' => 'Format yang diizinkan: jpeg, png, jpg, gif, svg, webp.',
             'image_file.max' => 'Ukuran file maksimal 5MB.',
         ]);
 
-        // 2. Proses Upload
         if ($request->hasFile('image_file')) {
             $file = $request->file('image_file');
-
-            // Simpan file di folder 'uploads/media' di public disk
             $filePath = $file->store('uploads/media', 'public');
 
             // 3. Simpan Metadata ke Database

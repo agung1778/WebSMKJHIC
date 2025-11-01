@@ -28,7 +28,13 @@
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
 
     <body class="font-['Poppins'] bg-gray-100">
-        <section class="relative bg-white overflow-hidden mt-[-30px]">
+        <div id="loader-wrapper">
+            <div class="loader-content">
+                <div class="loader-spinner"></div>
+                <p class="loader-message">Tenang, pengalaman terbaik sedang kami siapkan untuk Anda.</p>
+            </div>
+        </div>  
+        <section class="relative bg-white overflow-hidden mt-[-30px] fade-in-section">
             {{-- Elemen Dekoratif: Gradasi di Latar Belakang --}}
             <div class="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2">
                 <div
@@ -58,11 +64,11 @@
 
                         {{-- Tombol Aksi (CTA) --}}
                         <div class="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                            <a href="#explore-programs"
+                            <a href="href=" {{ route('public.about.index') }}
                                 class="inline-flex items-center justify-center px-7 py-3 border border-transparent text-base font-semibold rounded-lg shadow-lg text-white bg-[#63cd00] hover:bg-[#52a800] transition-all duration-300 transform hover:-translate-y-0.5">
-                                Jelajahi Program
+                                About
                             </a>
-                            <a href="#contact-us"
+                            <a href="https://wa.me/6285649011449"
                                 class="inline-flex items-center justify-center px-7 py-3 border-2 border-gray-300 text-base font-semibold rounded-lg text-gray-700 bg-transparent hover:border-[#63cd00] hover:text-[#63cd00] transition-all duration-300">
                                 Hubungi Kami
                             </a>
@@ -84,13 +90,14 @@
                 </div>
             </div>
         </section>
-        
-        <section class="bg-white mt-[-50px]">
+
+        <section class="bg-white mt-[-50px] fade-in-section">
             <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
 
                 <div class="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
                     <h2 class="text-2xl font-bold md:text-4xl md:leading-tight">Pendekatan Program Kami</h2>
-                    <p class="mt-1 text-gray-600">Kami tidak hanya mengajar, kami membentuk profesional masa depan melalui program pendidikan yang terintegrasi.</p>
+                    <p class="mt-1 text-gray-600">Kami tidak hanya mengajar, kami membentuk profesional masa depan melalui
+                        program pendidikan yang terintegrasi.</p>
                 </div>
 
                 <!-- Grid -->
@@ -99,7 +106,7 @@
                     {{-- Loop untuk setiap program dari database --}}
                     @forelse ($programs as $program)
                         <!-- Card -->
-                        <a class="group block rounded-xl overflow-hidden focus:outline-hidden"
+                        <a class="group block rounded-xl overflow-hidden focus:outline-hidden fade-in-section"
                             href="{{ route('public.program.show', $program->id) }}"> {{-- Ganti dengan route Anda --}}
                             <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
                                 <div class="shrink-0 relative rounded-xl overflow-hidden w-full sm:w-56 h-44">

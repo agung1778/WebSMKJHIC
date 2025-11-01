@@ -140,13 +140,11 @@
         {{-- ================================================================= --}}
         {{-- BAGIAN 2: BREADCRUMB NAVIGASI --}}
         {{-- ================================================================= --}}
-        <div style="background-color: #2D2D2D;">
-            <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-                {{-- Container ditambahkan flex items-center untuk menengahkan secara vertikal --}}
-                <div class="h-full flex items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        {{-- Text-lg untuk memperbesar ukuran teks --}}
-                        <ol class="inline-flex items-center space-x-2 md:space-x-3 text-lg">
+        <div class="bg-[#2D2D2D]">
+            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto py-3">
+                <div class="flex items-center">
+                    <nav class="flex flex-wrap text-sm sm:text-base md:text-lg" aria-label="Breadcrumb">
+                        <ol class="flex flex-wrap items-center space-x-1 sm:space-x-2 md:space-x-3 break-words">
                             <li class="inline-flex items-center">
                                 <a href="/"
                                     class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
@@ -154,19 +152,19 @@
                                 </a>
                             </li>
                             <li>
-                                <div class="flex items-center">
+                                <div class="flex items-center flex-wrap">
                                     <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
                                     <a href="{{ route('public.majors.index') }}"
-                                        class="ml-2 font-medium text-gray-300 hover:text-white md:ml-3 transition-colors">Major
-                                        Competency</a>
+                                        class="ml-1 sm:ml-2 md:ml-3 font-medium text-gray-300 hover:text-white transition-colors">
+                                        Major Competency
+                                    </a>
                                 </div>
                             </li>
                             <li aria-current="page">
-                                <div class="flex items-center">
-                                    {{-- Mengganti warna chevron untuk konsistensi --}}
+                                <div class="flex items-center flex-wrap">
                                     <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
                                     <span
-                                        class="ml-2 font-medium md:ml-3 text-[#ffffff]">{{ $major->abbreviation ?? $major->name }}</span>
+                                        class="ml-1 sm:ml-2 md:ml-3 font-medium text-white break-words max-w-full">{{ $major->abbreviation ?? $major->name }}</span>
                                 </div>
                             </li>
                         </ol>

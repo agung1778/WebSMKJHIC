@@ -14,11 +14,11 @@
             // Mengambil semua berita, diurutkan dari yang terbaru
             $extracurriculars = Extracurricular::latest()->paginate(10);
 
-            $extracurricularImages = Image::whereIn('title', ['ExtracurricularImage', 'main'])->get();
+            $mainImages = Image::whereIn('title', ['ExtracurricularImage', 'main'])->get();
 
             return view('PublicSide.extracurricular.index', [
                 'extracurriculars' => $extracurriculars,
-                'extracurricularImages' => $extracurricularImages,
+                'mainImages' => $mainImages,
             ]);
         }
 

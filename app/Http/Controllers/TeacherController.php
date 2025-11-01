@@ -12,6 +12,33 @@ class TeacherController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function uploadPhoto(Request $request, Teacher $teacher)
+    {
+        // Validasi file yang di-upload
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Hapus foto lama jika ada
+        if ($teacher->photo) {
+            Storage::disk('public')->delete($teacher->photo);
+        }
+
+        // Simpan foto baru
+        $path = $request->file('photo')->store('teacher_photos', 'public');
+
+        // Update path foto di database
+        $teacher->photo = $path;
+        $teacher->save();
+
+        // Kirim kembali URL foto baru agar bisa ditampilkan langsung di frontend
+        return response()->json([
+            'success' => true,
+            'photo_url' => asset('storage/' . $path)
+        ]);
+    }
+
     public function index()
     {
         $teachers = Teacher::latest()->get();

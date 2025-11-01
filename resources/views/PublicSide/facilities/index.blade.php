@@ -23,17 +23,20 @@
         $amaliahDark = '#282829';
         $amaliahBlue = '#E0E7FF';
 
-        // Cek Variabel 
-        $hasImages = isset($facilityImages) && $facilityImages->isNotEmpty();
     @endphp
 
     <body>
         <section class="relative max-w-screen">
             {{-- Slider Gambar Dinamis --}}
-            @if($hasImages)
+
+            {{-- Gunakan isNotEmpty() langsung di @if. Ini lebih bersih. --}}
+            @if($facilityImages->isNotEmpty())
+
                 <div x-data="{ activeSlide: 1, totalSlides: {{ $facilityImages->count() }} }"
                     x-init="setInterval(() => { activeSlide = activeSlide % totalSlides + 1 }, 5000)">
                     <div class="relative w-full h-[300px] overflow-hidden">
+
+                        {{-- Loop ini sekarang akan berjalan dengan benar --}}
                         @foreach($facilityImages as $image)
                             <div x-show="activeSlide === {{ $loop->iteration }}"
                                 x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
@@ -48,6 +51,7 @@
                     </div>
                 </div>
             @else
+                {{-- Bagian ini akan tampil jika tidak ada gambar dengan title 'FacilityImage' --}}
                 <div>
                     <div class="relative h-[300px] overflow-hidden bg-black">
                         {{-- Layar hitam sebagai fallback --}}
@@ -320,9 +324,9 @@
                 <div class="mt-12 max-w-4xl mx-auto">
                     <div class="relative w-full" style="padding-top: 56.25%;">
                         <!-- 
-                                      Catatan: padding-top: 56.25% adalah hasil dari 9 / 16, 
-                                      yang menciptakan rasio aspek 16:9 yang responsif.
-                                    -->
+                                          Catatan: padding-top: 56.25% adalah hasil dari 9 / 16, 
+                                          yang menciptakan rasio aspek 16:9 yang responsif.
+                                        -->
                         <iframe class="absolute top-0 left-0 w-full h-full rounded-xl shadow-2xl" <iframe width="560"
                             height="315"
                             src="https://www.youtube-nocookie.com/embed/V1itS-cUH4M?si=uZIO58_CPQb9nwDA&amp;controls=0"
