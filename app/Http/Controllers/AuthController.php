@@ -31,7 +31,7 @@ class AuthController extends Controller
     {
         // 1. Validasi input
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'not_regex:/[\r\n]/'],
             'password' => ['required'],
         ]);
 
@@ -58,18 +58,9 @@ class AuthController extends Controller
         // **[IMPROVEMENT]** Tambahkan 1 percobaan gagal ke rate limiter
         RateLimiter::hit($throttleKey);
 
-        // 3. Logika jika autentikasi gagal
-        $userExists = User::where('email', $credentials['email'])->exists();
-
-        if ($userExists) {
-            return back()
-                ->withErrors(['email' => 'Password yang Anda masukkan salah.'])
-                ->with('show_reset_link', true)
-                ->onlyInput('email');
-        }
-
+        // 3. Logika jika autentikasi gagal - pesan satu untuk both user-not-exists & wrong password
         return back()
-            ->withErrors(['email' => 'Email tidak terdaftar di sistem kami.'])
+            ->withErrors(['email' => 'Email atau password salah.'])
             ->onlyInput('email');
     }
 

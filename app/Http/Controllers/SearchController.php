@@ -17,30 +17,33 @@ class SearchController extends Controller
         // Ambil query pencarian dari input
         $query = $request->input('query');
 
+        // Escape karakter wildcard % dan _ untuk mencegah wildcard injection
+        $escapedQuery = addcslashes($query, '%_');
+
         // Lakukan pencarian jika ada query
         if ($query) {
-            $newsResults = News::where('title', 'LIKE', "%{$query}%")
-                               ->orWhere('description', 'LIKE', "%{$query}%")
+            $newsResults = News::where('title', 'LIKE', "%{$escapedQuery}%")
+                               ->orWhere('description', 'LIKE', "%{$escapedQuery}%")
                                ->latest()->limit(10)->get();
 
-            $teacherResults = Teacher::where('name', 'LIKE', "%{$query}%")
-                                     ->orWhere('subject', 'LIKE', "%{$query}%")
+            $teacherResults = Teacher::where('name', 'LIKE', "%{$escapedQuery}%")
+                                     ->orWhere('subject', 'LIKE', "%{$escapedQuery}%")
                                      ->limit(10)->get();
 
-            $majorResults = Major::where('name', 'LIKE', "%{$query}%")
-                                   ->orWhere('description', 'LIKE', "%{$query}%")
+            $majorResults = Major::where('name', 'LIKE', "%{$escapedQuery}%")
+                                   ->orWhere('description', 'LIKE', "%{$escapedQuery}%")
                                    ->limit(10)->get();
             
-            $partnerResults = Partner::where('name', 'LIKE', "%{$query}%")
-                                     ->orWhere('description', 'LIKE', "%{$query}%")
+            $partnerResults = Partner::where('name', 'LIKE', "%{$escapedQuery}%")
+                                     ->orWhere('description', 'LIKE', "%{$escapedQuery}%")
                                      ->limit(10)->get();
 
-            $extracurricularResults = Extracurricular::where('name', 'LIKE', "%{$query}%")
-                                                     ->orWhere('description', 'LIKE', "%{$query}%")
+            $extracurricularResults = Extracurricular::where('name', 'LIKE', "%{$escapedQuery}%")
+                                                     ->orWhere('description', 'LIKE', "%{$escapedQuery}%")
                                                      ->limit(10)->get();
             
-            $facilityResults = Facility::where('name', 'LIKE', "%{$query}%")
-                                       ->orWhere('description', 'LIKE', "%{$query}%")
+            $facilityResults = Facility::where('name', 'LIKE', "%{$escapedQuery}%")
+                                       ->orWhere('description', 'LIKE', "%{$escapedQuery}%")
                                        ->limit(10)->get();
 
         } else {

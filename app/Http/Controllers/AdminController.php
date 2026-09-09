@@ -30,4 +30,22 @@ class AdminController extends Controller
 
         return view('admin.user', compact('users'));
     }
+
+    public function updateRole(Request $request, $id)
+    {
+        // Hanya superadmin yang boleh mengubah role
+        if (Auth::user()->role !== 'superadmin') {
+            return redirect()->route('admin.users')->with('error', 'Akses ditolak.');
+        }
+
+        $request->validate([
+            'role' => 'required|in:superadmin,admin,curator',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->role = $request->input('role');
+        $user->save();
+
+        return redirect()->route('admin.users')->with('success', 'Role user berhasil diupdate.');
+    }
 }

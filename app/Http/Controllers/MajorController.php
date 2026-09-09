@@ -6,6 +6,7 @@ use App\Models\Major;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Support\HtmlSanitizer;
 
 class MajorController extends Controller
 {
@@ -31,11 +32,15 @@ class MajorController extends Controller
      */
     public function store(Request $request)
     {
+        $description = HtmlSanitizer::clean($request->input('description'));
+        $tag = HtmlSanitizer::clean($request->input('tag'));
+        $advantage = HtmlSanitizer::clean($request->input('advantage'));
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'tag' => 'nullable|string', // BARU
-            'advantage' => 'nullable|string', // BARU
+            'tag' => 'nullable|string',
+            'advantage' => 'nullable|string',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'logo' => 'required|image|mimes:jpeg,png,jpg,svg,webp|max:512',
             'competency_head' => 'required|string|max:255',
@@ -58,6 +63,9 @@ class MajorController extends Controller
             'competency_head_photo.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
         ]);
 
+        $validatedData['description'] = $description;
+        $validatedData['tag'] = $tag;
+        $validatedData['advantage'] = $advantage;
         $validatedData['publisher'] = Auth::user()->name;
 
         // Proses Uploads
@@ -100,11 +108,15 @@ class MajorController extends Controller
      */
     public function update(Request $request, Major $major)
     {
+        $description = HtmlSanitizer::clean($request->input('description'));
+        $tag = HtmlSanitizer::clean($request->input('tag'));
+        $advantage = HtmlSanitizer::clean($request->input('advantage'));
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'tag' => 'nullable|string', // BARU
-            'advantage' => 'nullable|string', // BARU
+            'tag' => 'nullable|string',
+            'advantage' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:3048',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|max:512',
             'competency_head' => 'required|string|max:255',
@@ -124,6 +136,9 @@ class MajorController extends Controller
             'competency_head_photo.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
         ]);
 
+        $validatedData['description'] = $description;
+        $validatedData['tag'] = $tag;
+        $validatedData['advantage'] = $advantage;
         $validatedData['publisher'] = Auth::user()->name;
 
         // Logika Upload dan Penghapusan Gambar Lama

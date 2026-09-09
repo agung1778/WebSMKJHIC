@@ -22,7 +22,7 @@ class ForgotPasswordController extends Controller
     public function sendResetLinkEmail(Request $request)
     {
         // 1. Validasi email
-        $request->validate(['email' => 'required|email']);
+        $request->validate(['email' => 'required|email|not_regex:/[\r\n]/']);
 
         // 2. Kirim link reset (Laravel akan menangani pembuatan token & pengiriman email)
         $status = Password::sendResetLink($request->only('email'));
@@ -51,7 +51,7 @@ class ForgotPasswordController extends Controller
         // 1. Validasi input (data yang divalidasi disimpan dalam variabel)
         $validatedData = $request->validate([
             'token' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|not_regex:/[\r\n]/',
             'password' => 'required|confirmed|min:8',
         ]);
 

@@ -6,6 +6,7 @@ use App\Models\SchoolProgram;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Support\HtmlSanitizer;
 
 class SchoolProgramController extends Controller
 {
@@ -31,6 +32,8 @@ class SchoolProgramController extends Controller
      */
     public function store(Request $request)
     {
+        $description = HtmlSanitizer::clean($request->input('description'));
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -44,6 +47,7 @@ class SchoolProgramController extends Controller
             'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
         ]);
 
+        $validatedData['description'] = $description;
         $validatedData['publisher'] = Auth::user()->name;
 
         if ($request->hasFile('image')) {
@@ -77,6 +81,8 @@ class SchoolProgramController extends Controller
      */
     public function update(Request $request, SchoolProgram $program)
     {
+        $description = HtmlSanitizer::clean($request->input('description'));
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -89,6 +95,7 @@ class SchoolProgramController extends Controller
             'image.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
         ]);
 
+        $validatedData['description'] = $description;
         $validatedData['publisher'] = Auth::user()->name;
 
         if ($request->hasFile('image')) {

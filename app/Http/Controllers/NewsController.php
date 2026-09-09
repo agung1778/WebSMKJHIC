@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Support\HtmlSanitizer;
 
 class NewsController extends Controller
 {
@@ -36,6 +37,8 @@ class NewsController extends Controller
     public function store(Request $request)
     {
         // ... (Logika validasi dan penyimpanan tidak berubah)
+        $description = HtmlSanitizer::clean($request->input('description'));
+
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'image' => 'required|image|mimes:png,jpg,jpeg|max:5048',
@@ -43,6 +46,7 @@ class NewsController extends Controller
             'date_published' => 'required|date',
         ]);
 
+        $validatedData['description'] = $description;
         $validatedData['publisher'] = Auth::user()->name;
 
         if ($request->hasFile('image')) {
@@ -82,14 +86,16 @@ class NewsController extends Controller
     public function update(Request $request, string $id)
     {
         // ... (Logika validasi dan update tidak berubah)
+        $description = HtmlSanitizer::clean($request->input('description'));
+
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:png,jpg,jpeg|max:5048',
             'description' => 'required|string',
             'date_published' => 'required|date',
         ]);
-        
-        $newsItem = News::findOrFail($id);
+
+        $validatedData['description'] = $description;
         $validatedData['publisher'] = Auth::user()->name;
 
         if ($request->hasFile('image')) {
@@ -97,6 +103,7 @@ class NewsController extends Controller
             $validatedData['image'] = $imagePath;
         }
 
+        $newsItem = News::findOrFail($id);
         $newsItem->update($validatedData);
 
         // Mengubah redirect ke rute dengan nama yang benar (admin.news.index)

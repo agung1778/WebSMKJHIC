@@ -10,26 +10,27 @@ class AdminSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     *
+     * @return void
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Pandu',
-            'email' => 'pandunurasih@gmail.com',
-            'password' => Hash::make('AmdevJHIC090406_#'),
-        ]); 
+        for ($i = 1; $i <= 3; $i++) {
+            $prefix = 'ADMIN_USER_' . $i;
 
-        User::create([
-            'name' => 'Admin',
-            'email' => 'smkamaliahciawi@gmail.com',
-            'password' => Hash::make('smkamaliah12_'),
-        ]); 
+            $name = env($prefix . '_NAME');
+            $email = env($prefix . '_EMAIL');
+            $password = env($prefix . '_PASSWORD');
+            $role = env($prefix . '_ROLE');
 
-        User::create([
-            'name' => 'Amdev',
-            'email' => 'amdevjhic@gmail.com',
-            'password' => Hash::make('AmdevJHIC090406_#'),
-        ]); 
-
+            if ($name && $email && $password && $role) {
+                User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => Hash::make($password),
+                    'role' => $role,
+                ]);
+            }
+        }
     }
 }

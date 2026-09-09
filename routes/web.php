@@ -35,12 +35,7 @@ use App\Http\Controllers\PublicPage\PublicExtracurricularController;
 use App\Http\Controllers\PublicPage\PublicHelpcenterController;
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [App\Http\Controllers\PublicPage\HomeController::class, 'index'])->name('home');
 
 
 // Rute Halaman Publik Jurusan
@@ -102,9 +97,14 @@ Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showRese
 // 4. Memproses dan menyimpan password baru
 Route::post('reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 
+// Public traffic routes
+Route::get('/traffic', [App\Http\Controllers\TrafficController::class, 'index'])->name('public.traffic.index');
+
+// Rute yang dilindungi oleh middleware 'auth'
+
 // Rute yang dilindungi oleh middleware 'auth'
 // Semua rute di dalam grup ini hanya bisa diakses setelah login
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:superadmin,admin,curator'])->group(function () {
     // Jika pengguna mengakses '/admin', arahkan ke '/admin/dashboard'
     Route::get('/admin', function () {
         return redirect()->route('admin.dashboard');
@@ -115,7 +115,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/admin/curator', [AdminController::class, 'curator'])->name('admin.curator');
 
-    // routes/web.php
+    // Rute traffic admin
+    Route::get('/admin/traffic', [TrafficController::class, 'index'])->name('admin.traffic.index');
+    Route::get('/admin/traffic/export', [TrafficController::class, 'export'])->name('admin.traffic.export');
+
     Route::get('/admin/users', [AdminController::class, 'user'])->name('admin.users');
 
     // Grup rute untuk manajemen konten di dashboard admin

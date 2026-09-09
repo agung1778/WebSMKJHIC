@@ -697,12 +697,6 @@
                                 3. Ukuran <img> diubah dari h-8 menjadi h-12.
                                 --}}
 
-                                {{-- Contoh Placeholder 2 (Infra) --}}
-                                <a href="#" target="_blank" rel="noopener" aria-label="Infra"
-                                    class="block bg-white p-2 rounded-md opacity-70 hover:opacity-100 transition-opacity duration-300">
-                                    <img src="{{ asset('assets/logo/infra.webp') }}" alt="Logo Infra" class="h-12">
-                                </a>
-
                                 {{-- Contoh Placeholder 1 (Jagoan Hosting) --}}
                                 <a href="#" target="_blank" rel="noopener" aria-label="Jagoan Hosting"
                                     class="block bg-white p-2 rounded-md opacity-70 hover:opacity-100 transition-opacity duration-300">
@@ -712,20 +706,20 @@
 
 
 
-                                {{-- Contoh Placeholder 3 (Galileo) --}}
+                                
                                 <a href="#" target="_blank" rel="noopener" aria-label="Galileo"
                                     class="block bg-white p-2 rounded-md opacity-70 hover:opacity-100 transition-opacity duration-300">
                                     <img src="{{ asset('assets/logo/komdigi.webp') }}" alt="Logo Galileo" class="h-12">
                                 </a>
 
-                                {{-- Contoh Placeholder 4 (Kominfo) --}}
+                                
                                 <a href="#" target="_blank" rel="noopener" aria-label="Kominfo"
                                     class="block bg-white p-2 rounded-md opacity-70 hover:opacity-100 transition-opacity duration-300">
                                     <img src="{{ asset('assets/logo/maspionit.webp') }}" alt="Logo Kominfo"
                                         class="h-12">
                                 </a>
 
-                                {{-- Contoh Placeholder 5 (Spark) --}}
+                                
                                 <a href="#" target="_blank" rel="noopener" aria-label="Spark"
                                     class="block bg-white p-2 rounded-md opacity-70 hover:opacity-100 transition-opacity duration-300">
                                     <img src="{{ asset('assets/logo/gspark.webp') }}" alt="Logo Spark" class="h-12">
