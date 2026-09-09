@@ -1,0 +1,104 @@
+[28-Aug-2026 03:12:48 UTC] PHP Warning:  require(/home/smkamali/tmp/opencode/vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/tmp/opencode/test_validator.php on line 5
+[28-Aug-2026 03:12:48 UTC] PHP Warning:  require(/home/smkamali/tmp/opencode/vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/tmp/opencode/test_validator.php on line 5
+[28-Aug-2026 03:12:48 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/smkamali/tmp/opencode/vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/smkamali/tmp/opencode/test_validator.php:5
+Stack trace:
+#0 {main}
+  thrown in /home/smkamali/tmp/opencode/test_validator.php on line 5
+[28-Aug-2026 03:12:50 UTC] PHP Warning:  require(/home/smkamali/tmp/opencode/vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/tmp/opencode/test_validator.php on line 5
+[28-Aug-2026 03:12:50 UTC] PHP Warning:  require(/home/smkamali/tmp/opencode/vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/tmp/opencode/test_validator.php on line 5
+[28-Aug-2026 03:12:50 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/smkamali/tmp/opencode/vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/smkamali/tmp/opencode/test_validator.php:5
+Stack trace:
+#0 {main}
+  thrown in /home/smkamali/tmp/opencode/test_validator.php on line 5
+[31-Aug-2026 04:18:45 UTC] PHP Parse error:  syntax error, unexpected token ")" in Command line code on line 4
+[31-Aug-2026 04:31:13 UTC] PHP Warning:  require(/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 04:31:13 UTC] PHP Warning:  require(/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 04:31:13 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/smkamali/laravel-WebSMKJHIC/render_view.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 06:01:23 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Application" not found in /home/smkamali/laravel-WebSMKJHIC/bootstrap/app.php:14
+Stack trace:
+#0 Command line code(2): require_once()
+#1 {main}
+  thrown in /home/smkamali/laravel-WebSMKJHIC/bootstrap/app.php on line 14
+[31-Aug-2026 06:01:27 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Application" not found in /home/smkamali/laravel-WebSMKJHIC/bootstrap/app.php:14
+Stack trace:
+#0 Command line code(2): require_once()
+#1 {main}
+  thrown in /home/smkamali/laravel-WebSMKJHIC/bootstrap/app.php on line 14
+[31-Aug-2026 06:01:32 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Application" not found in /home/smkamali/laravel-WebSMKJHIC/bootstrap/app.php:14
+Stack trace:
+#0 Command line code(2): require_once()
+#1 {main}
+  thrown in /home/smkamali/laravel-WebSMKJHIC/bootstrap/app.php on line 14
+[31-Aug-2026 06:01:43 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Foundation\Application" not found in /home/smkamali/laravel-WebSMKJHIC/bootstrap/app.php:14
+Stack trace:
+#0 Command line code(2): require_once()
+#1 {main}
+  thrown in /home/smkamali/laravel-WebSMKJHIC/bootstrap/app.php on line 14
+[31-Aug-2026 06:45:33 UTC] PHP Warning:  require(/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 06:45:33 UTC] PHP Warning:  require(/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 06:45:33 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/smkamali/laravel-WebSMKJHIC/render_view.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 06:45:36 UTC] PHP Warning:  require(/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 06:45:36 UTC] PHP Warning:  require(/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 06:45:36 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/smkamali/laravel-WebSMKJHIC/render_view.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 06:45:38 UTC] PHP Warning:  require(/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 06:45:38 UTC] PHP Warning:  require(/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[31-Aug-2026 06:45:38 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/smkamali/laravel-WebSMKJHIC/render_view.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[02-Sep-2026 02:05:55 UTC] PHP Warning:  require(/tmp/vendor/autoload.php): Failed to open stream: No such file or directory in /tmp/render_test.php on line 2
+[02-Sep-2026 02:05:55 UTC] PHP Warning:  require(/tmp/vendor/autoload.php): Failed to open stream: No such file or directory in /tmp/render_test.php on line 2
+[02-Sep-2026 02:05:55 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/tmp/vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /tmp/render_test.php:2
+Stack trace:
+#0 {main}
+  thrown in /tmp/render_test.php on line 2
+[02-Sep-2026 02:05:58 UTC] PHP Warning:  require(/tmp/vendor/autoload.php): Failed to open stream: No such file or directory in /tmp/render_test.php on line 2
+[02-Sep-2026 02:05:58 UTC] PHP Warning:  require(/tmp/vendor/autoload.php): Failed to open stream: No such file or directory in /tmp/render_test.php on line 2
+[02-Sep-2026 02:05:58 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/tmp/vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /tmp/render_test.php:2
+Stack trace:
+#0 {main}
+  thrown in /tmp/render_test.php on line 2
+[02-Sep-2026 02:46:00 UTC] PHP Parse error:  syntax error, unexpected token "\", expecting end of file in Command line code on line 2
+[05-Sep-2026 05:39:45 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function config() in Command line code:1
+Stack trace:
+#0 {main}
+  thrown in Command line code on line 1
+[07-Sep-2026 00:25:13 UTC] PHP Fatal error:  Uncaught ReflectionException: Class "path.config" does not exist in /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php:912
+Stack trace:
+#0 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php(912): ReflectionClass->__construct()
+#1 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php(795): Illuminate\Container\Container->build()
+#2 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\Container\Container->resolve()
+#3 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\Foundation\Application->resolve()
+#4 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\Container\Container->make()
+#5 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php(608): Illuminate\Foundation\Application->make()
+#6 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php(481): Illuminate\Container\Container->rebound()
+#7 Command line code(1): Illuminate\Container\Container->instance()
+#8 {main}
+
+Next Illuminate\Contracts\Container\BindingResolutionException: Target class [path.config] does not exist. in /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php:914
+Stack trace:
+#0 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php(795): Illuminate\Container\Container->build()
+#1 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(986): Illuminate\Container\Container->resolve()
+#2 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php(731): Illuminate\Foundation\Application->resolve()
+#3 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(971): Illuminate\Container\Container->make()
+#4 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php(608): Illuminate\Foundation\Application->make()
+#5 /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php(481): Illuminate\Container\Container->rebound()
+#6 Command line code(1): Illuminate\Container\Container->instance()
+#7 {main}
+  thrown in /home/smkamali/laravel-WebSMKJHIC/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 914
+[07-Sep-2026 07:29:31 UTC] PHP Warning:  require(/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[07-Sep-2026 07:29:31 UTC] PHP Warning:  require(/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[07-Sep-2026 07:29:31 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/smkamali/laravel-WebSMKJHIC/../vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/smkamali/laravel-WebSMKJHIC/render_view.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/smkamali/laravel-WebSMKJHIC/render_view.php on line 2
+[09-Sep-2026 02:47:22 UTC] PHP Parse error:  syntax error, unexpected token "\", expecting end of file in Command line code on line 1
