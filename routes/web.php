@@ -92,8 +92,8 @@ Route::get('/traffic', [PublicTrafficController::class, 'index'])->name('public.
 
 // Authentication Routes
 // Tambahkan rute untuk menampilkan form login dan beri nama 'login'
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+Route::get('/developer', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/developer', [AuthController::class, 'login'])->name('login.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
