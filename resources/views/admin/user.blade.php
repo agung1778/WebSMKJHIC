@@ -135,20 +135,27 @@
                                     @endif
                                 </td>
                                 <td class="py-4 px-6 text-center">
-                                    @if (auth()->user()->role === 'superadmin')
-                                        <form method="POST" action="{{ route('admin.users.updateRole', $user) }}" class="inline-flex items-center gap-2">
-                                            @csrf
-                                            <select name="role"
-                                                class="text-xs border border-gray-300 rounded-lg px-2 py-1.5 text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#6CF600]"
-                                                onchange="this.form.submit()">
-                                                @foreach (['admin', 'superadmin'] as $role)
-                                                    <option value="{{ $role }}" @selected($user->role === $role)>{{ $role }}</option>
-                                                @endforeach
-                                            </select>
-                                        </form>
-                                    @else
-                                        <span class="text-xs text-gray-400">-</span>
-                                    @endif
+                                    <div class="flex items-center justify-center gap-2 flex-wrap">
+                                        @if (auth()->user()->role === 'superadmin')
+                                            <a href="{{ route('admin.users.edit', $user) }}"
+                                                class="inline-flex items-center gap-1.5 bg-[#e8fbf0] text-[#16A34A] text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-[#16A34A] hover:text-white transition-colors duration-200"
+                                                title="Edit profil admin">
+                                                <i class="fas fa-pen-to-square"></i> Edit
+                                            </a>
+                                            <form method="POST" action="{{ route('admin.users.updateRole', $user) }}" class="inline-flex items-center gap-2">
+                                                @csrf
+                                                <select name="role"
+                                                    class="text-xs border border-gray-300 rounded-lg px-2 py-1.5 text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#6CF600]"
+                                                    onchange="this.form.submit()">
+                                                    @foreach (['admin', 'superadmin'] as $role)
+                                                        <option value="{{ $role }}" @selected($user->role === $role)>{{ $role }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </form>
+                                        @else
+                                            <span class="text-xs text-gray-400">—</span>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty

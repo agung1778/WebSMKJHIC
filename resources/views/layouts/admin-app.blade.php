@@ -80,7 +80,7 @@
                         ['title' => 'Feeds CuratorIO', 'icon' => 'fa-solid fa-link', 'routes' => ['admin.curator'], 'name' => 'admin.curator'],
                     ],
                     auth()->user()->role === 'superadmin' ? [
-                        ['title' => 'Manajemen Admin', 'icon' => 'fa-solid fa-users', 'routes' => ['admin.users', 'admin.users.updateRole'], 'name' => 'admin.users'],
+                        ['title' => 'Manajemen Admin', 'icon' => 'fa-solid fa-users', 'routes' => ['admin.users', 'admin.users.updateRole', 'admin.users.edit', 'admin.users.update'], 'name' => 'admin.users'],
                     ] : []
                 ),
             ],

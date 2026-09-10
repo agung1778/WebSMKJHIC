@@ -92,8 +92,8 @@ Route::get('/traffic', [PublicTrafficController::class, 'index'])->name('public.
 
 // Authentication Routes
 // Tambahkan rute untuk menampilkan form login dan beri nama 'login'
-Route::get('/developer', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/developer', [AuthController::class, 'login'])->name('login.process');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
@@ -122,6 +122,8 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
     // Manajemen user & role HANYA untuk superadmin
     Route::middleware('role:superadmin')->group(function () {
         Route::get('/admin/users', [AdminController::class, 'user'])->name('admin.users');
+        Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+        Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
         Route::post('/admin/users/{user}/role', [AdminController::class, 'updateRole'])->name('admin.users.updateRole');
     });
 

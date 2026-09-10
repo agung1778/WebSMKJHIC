@@ -51,6 +51,22 @@ class AuthController extends Controller
             RateLimiter::clear($throttleKey);
 
             $request->session()->regenerate();
+
+            // Simpan info login terakhir
+            $user = Auth::user();
+            $ua = $request->userAgent();
+            $browser = 'Unknown';
+            if (str_contains($ua, 'Edg/')) $browser = 'Microsoft Edge';
+            elseif (str_contains($ua, 'Chrome') && !str_contains($ua, 'Edg/')) $browser = 'Google Chrome';
+            elseif (str_contains($ua, 'Firefox')) $browser = 'Mozilla Firefox';
+            elseif (str_contains($ua, 'Safari') && !str_contains($ua, 'Chrome')) $browser = 'Safari';
+
+            $user->update([
+                'last_login_at'      => now(),
+                'last_login_ip'      => $request->ip(),
+                'last_login_browser' => $browser,
+            ]);
+
             return redirect()->intended('/admin/dashboard')->with('status', 'Login berhasil!');
         }
 
@@ -78,6 +94,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/developer')->with('success', 'Anda Berhasil Logout');
+        return redirect('/login')->with('success', 'Anda Berhasil Logout');
     }
 }

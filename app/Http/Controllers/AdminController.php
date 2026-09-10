@@ -88,4 +88,57 @@ class AdminController extends Controller
 
         return back()->with('success', "Role {$user->name} berhasil diubah menjadi {$request->input('role')}.");
     }
+
+    /**
+     * Tampilkan form edit profil admin.
+     */
+    public function editUser(User $user)
+    {
+        return view('admin.users.edit', compact('user'));
+    }
+
+    /**
+     * Perbarui data profil admin.
+     */
+    public function updateUser(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'username' => ['nullable', 'string', 'max:100', 'unique:users,username,' . $user->id],
+            'phone'    => ['nullable', 'string', 'max:20'],
+            'avatar'   => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'role'     => ['required', 'string', 'in:admin,superadmin'],
+            'status'   => ['required', 'string', 'in:active,inactive'],
+        ]);
+
+        // Cegah superadmin menonaktifkan diri sendiri
+        if (
+            auth()->user()->is($user)
+            && auth()->user()->role === 'superadmin'
+            && $validated['role'] !== 'superadmin'
+        ) {
+            return back()->withErrors(['role' => 'Kamu tidak dapat menurunkan role kamu sendiri.']);
+        }
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            // Hapus avatar lama jika ada
+            if ($user->avatar && \Storage::disk('public')->exists($user->avatar)) {
+                \Storage::disk('public')->delete($user->avatar);
+            }
+            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        // Password hanya diupdate jika diisi
+        if (!empty($validated['password'])) {
+            $user->fill($validated)->save();
+        } else {
+            unset($validated['password']);
+            $user->fill($validated)->save();
+        }
+
+        return redirect()->route('admin.users')->with('success', "Data admin \"{$user->name}\" berhasil diperbarui.");
+    }
 }

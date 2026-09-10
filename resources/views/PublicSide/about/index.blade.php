@@ -16,17 +16,16 @@
             @php
                 $stats = $stats ?? ['founded' => 2008, 'majors' => 0, 'teachers' => 0, 'facilities' => 0, 'programs' => 0];
                 $statItems = [
-                    ['value' => $stats['founded'], 'suffix' => '', 'label' => 'Tahun Berdiri', 'icon' => 'fa-landmark', 'url' => route('public.about.history')],
-                    ['value' => $stats['majors'], 'suffix' => '', 'label' => 'Kompetensi Keahlian', 'icon' => 'fa-sitemap', 'url' => route('public.majors.index')],
-                    ['value' => $stats['teachers'], 'suffix' => '+', 'label' => 'Pendidik & Tenaga Kependidikan', 'icon' => 'fa-chalkboard-user', 'url' => route('public.teachers.index')],
-                    ['value' => $stats['facilities'], 'suffix' => '', 'label' => 'Fasilitas Penunjang', 'icon' => 'fa-school', 'url' => route('public.facilities.index')],
-                    ['value' => $stats['programs'], 'suffix' => '', 'label' => 'Program Sekolah', 'icon' => 'fa-layer-group', 'url' => route('public.program.index')],
+                    ['value' => $stats['founded'], 'suffix' => '', 'label' => 'Tahun Berdiri', 'icon' => 'fa-landmark'],
+                    ['value' => $stats['majors'], 'suffix' => '', 'label' => 'Kompetensi Keahlian', 'icon' => 'fa-sitemap'],
+                    ['value' => $stats['teachers'], 'suffix' => '+', 'label' => 'Pendidik & Tenaga Kependidikan', 'icon' => 'fa-chalkboard-user'],
+                    ['value' => $stats['facilities'], 'suffix' => '', 'label' => 'Fasilitas Penunjang', 'icon' => 'fa-school'],
+                    ['value' => $stats['programs'], 'suffix' => '', 'label' => 'Program Sekolah', 'icon' => 'fa-layer-group'],
                 ];
             @endphp
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 @foreach($statItems as $item)
-                    <a href="{{ $item['url'] }}"
-                        class="fade-in-section group bg-gray-50 border border-gray-200 rounded-2xl p-5 text-center hover:border-[#63cd00] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 block">
+                    <div class="fade-in-section group bg-gray-50 border border-gray-200 rounded-2xl p-5 text-center hover:border-[#63cd00] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                         <div class="mx-auto w-11 h-11 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-[#63cd00] group-hover:border-[#63cd00] transition-colors duration-300">
                             <i class="fa-solid {{ $item['icon'] }} text-[#63cd00] group-hover:text-white transition-colors duration-300"></i>
                         </div>
@@ -34,7 +33,7 @@
                             {{ $item['value'] }}<span class="text-[#63cd00]">{{ $item['suffix'] }}</span>
                         </div>
                         <div class="mt-1 text-[11px] lg:text-xs font-semibold uppercase tracking-wide text-gray-500">{{ $item['label'] }}</div>
-                    </a>
+                    </div>
                 @endforeach
             </div>
         </div>

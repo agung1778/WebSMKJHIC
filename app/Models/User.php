@@ -20,9 +20,16 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
+        'phone',
+        'avatar',
+        'status',
         'password',
         'role',
+        'last_login_at',
+        'last_login_ip',
+        'last_login_browser',
     ];
 
     /**
@@ -45,6 +52,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_login_at' => 'datetime',
         ];
     }
 
@@ -56,5 +64,18 @@ class User extends Authenticatable
     public function session(): HasOne
     {
         return $this->hasOne(\App\Models\Session::class)->latestOfMany();
+    }
+
+    /**
+     * Ambil info browser dari user_agent string.
+     */
+    public function getBrowserAttribute(): string
+    {
+        $ua = optional($this->session)->user_agent ?? '';
+        if (str_contains($ua, 'Edg/')) return 'Microsoft Edge';
+        if (str_contains($ua, 'Chrome') && !str_contains($ua, 'Edg/')) return 'Google Chrome';
+        if (str_contains($ua, 'Firefox')) return 'Mozilla Firefox';
+        if (str_contains($ua, 'Safari') && !str_contains($ua, 'Chrome')) return 'Safari';
+        return 'Unknown Browser';
     }
 }

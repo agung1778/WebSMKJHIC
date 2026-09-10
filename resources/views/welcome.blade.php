@@ -120,6 +120,33 @@
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 translate-y-10">
 
+        {{-- KODE LOGO ANDA (LENGKAP) --}}
+        <div class="bg-white/90 backdrop-blur-md border border-white/30 rounded-xl p-3 shadow-lg mb-4">
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center justify-between w-full pr-2">
+                    <img src="{{ asset('assets/logo/infra.webp') }}" alt="Logo Partner 1"
+                        class="h-7 object-contain transition duration-300">
+                    <img src="{{ asset('assets/logo/jh.webp') }}" alt="Logo Partner 5"
+                        class="h-7 object-contain transition duration-300">
+                    <img src="{{ asset('assets/logo/komdigi.webp') }}" alt="Logo Partner 2"
+                        class="h-7 object-contain transition duration-300">
+                    <img src="{{ asset('assets/logo/maspionit.webp') }}" alt="Logo Partner 3"
+                        class="h-7 object-contain transition duration-300">
+                    <img src="{{ asset('assets/logo/gspark.webp') }}" alt="Logo Partner 4"
+                        class="h-7 object-contain transition duration-300">
+                </div>
+
+                <a href="https://jagoanhosting.com/" aria-label="Lihat semua partner industri"
+                    class="text-[#282829] hover:text-gray-600 transition-colors flex-shrink-0">
+                    <svg xmlns="https://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
         {{-- Kontainer Slider Kartu Berita --}}
         <div class="relative w-full h-auto min-h-[250px] overflow-hidden hero-clip-path ">
 
@@ -336,14 +363,11 @@
                 $amaliahDark = '#282829';
 
                 // Data untuk bagian statistik, disesuaikan dengan referensi gambar
-                $studentCountDisplay = number_format($studentCount ?? 0) . ' +';
-                $teacherCountDisplay = number_format($teacherCount ?? 0) . ' +';
-                $facilityCountDisplay = number_format($facilityCount ?? 0) . ' +';
                 $stats = [
-                    ['icon' => 'fa-users', 'number' => $studentCountDisplay, 'label' => 'Peserta Didik'],
-                    ['icon' => 'fa-rocket', 'number' => $teacherCountDisplay, 'label' => 'Tenaga Pendidik'],
-                    ['icon' => 'fa-star', 'number' => $facilityCountDisplay, 'label' => 'Fasilitas Unggulan'],
-                    ['icon' => 'fa-award', 'number' => 'A+', 'label' => 'Akreditasi Unggul'],
+                    ['icon' => 'fa-users', 'number' => '1160 +', 'label' => 'Peserta Didik'],
+                    ['icon' => 'fa-rocket', 'number' => '80 +', 'label' => 'Tenaga Pendidik'],
+                    ['icon' => 'fa-star', 'number' => '40 +', 'label' => 'Fasilitas Unggulan'],
+                    ['icon' => 'fa-graduation-cap', 'number' => '85%', 'label' => 'Alumni cepat dapat kerja'],
                 ];
             @endphp
             {{-- SECTION STATS BAR --}}
@@ -1043,92 +1067,63 @@
                         </div>
                     </div>
 
-{{-- Slider Testimoni (Alpine.js) — 1 kartu per slide, otomatis --}}
+                    {{-- Slider Testimoni (Alpine.js + Tailwind CSS) --}}
                     <div x-data="{
-                        current: 0,
-                        total: @json($testimonials->count()),
-                        timer: null,
-                        init() {
-                            if (this.total > 1) this.start();
-                        },
-                        start() {
-                            this.stop();
-                            this.timer = setInterval(() => { this.next(); }, 5000);
-                        },
-                        stop() {
-                            if (this.timer) { clearInterval(this.timer); this.timer = null; }
-                        },
-                        next() {
-                            if (this.total < 2) return;
-                            this.current = (this.current + 1) % this.total;
-                            this.start();
-                        },
-                        prev() {
-                            if (this.total < 2) return;
-                            this.current = (this.current - 1 + this.total) % this.total;
-                            this.start();
-                        },
-                        go(i) { this.current = i; this.start(); }
-                    }"
-                        class="mt-12 relative" @mouseenter="stop()" @mouseleave="start()">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    slider: null,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    init() {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        this.slider = this.$refs.sliderContainer;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    scroll(direction) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        // Geser sejauh 80% dari lebar area yang terlihat
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        let scrollAmount = this.slider.offsetWidth * 0.8;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        this.slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                }"
+                        class="mt-12 relative">
                         {{-- Tombol Panah Kiri --}}
-                        <button @click="prev()"
+                        <button @click="scroll(-1)"
                             class="absolute top-1/2 -left-2 md:-left-8 -translate-y-1/2 w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-10 hover:bg-opacity-80 transition"
                             style="background-color: {{ $amaliahDark }};" id="testimonialbutton" role="presentation"
                             aria-label="Testimoni sebelumnya">
                             <i class="fas fa-chevron-left text-white"></i>
                         </button>
+                        {{-- Container yang bisa di-scroll --}}
+                        <div x-ref="sliderContainer"
+                            class="flex space-x-8 overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide py-4">
 
-                        {{-- Viewport carousel --}}
-                        <div class="overflow-hidden py-4">
-                            <div class="flex transition-transform duration-700 ease-out"
-                                :style="'transform: translateX(-' + (current * 100) + '%)'">
-
-                                @forelse ($testimonials as $testimonial)
-                                    {{-- Setiap Kartu Testimoni (satu per slide) --}}
-                                    <div class="w-full flex-shrink-0 px-4 sm:px-8">
-                                        <div
-                                            class="bg-white border border-gray-200 rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-8 h-full max-w-3xl mx-auto">
-                                            {{-- Kolom Teks --}}
-                                            <div class="flex-1 text-center sm:text-left">
-                                                <p class="text-gray-700 leading-relaxed">"{{ $testimonial->description }}"</p>
-                                                <p class="mt-4 text-gray-800 font-semibold italic">-{{ $testimonial->name }}</p>
-                                                <div class="mt-6 flex flex-col sm:flex-row justify-between items-center text-sm">
-                                                    <span class="font-semibold mt-2 sm:mt-0" style="color: {{ $amaliahGreen }};">
-                                                        Alumni Jurusan {{ $testimonial->major->name ?? 'N/A' }}
-                                                        {{ $testimonial->alumni_year }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            {{-- Kolom Gambar --}}
-                                            <div class="flex-shrink-0 order-first sm:order-last">
-                                                <img src="{{ asset('storage/' . $testimonial->photo) }}"
-                                                    alt="Foto {{ $testimonial->name }}"
-                                                    class="w-32 h-32 rounded-full object-cover shadow-md">
+                            @forelse ($testimonials as $testimonial)
+                                {{-- Setiap Kartu Testimoni --}}
+                                <div class="flex-shrink-0 w-full sm:w-[48%] snap-start">
+                                    <div
+                                        class="bg-white border border-gray-200 rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-8 h-full">
+                                        {{-- Kolom Teks --}}
+                                        <div class="flex-1 text-center sm:text-left">
+                                            <p class="text-gray-700 leading-relaxed">"{{ $testimonial->description }}"</p>
+                                            <p class="mt-4 text-gray-800 font-semibold italic">-{{ $testimonial->name }}</p>
+                                            <div class="mt-6 flex flex-col sm:flex-row justify-between items-center text-sm">
+                                                <span class="font-semibold mt-2 sm:mt-0" style="color: {{ $amaliahGreen }};">
+                                                    Alumni Jurusan {{ $testimonial->major->name ?? 'N/A' }}
+                                                    {{ $testimonial->alumni_year }}
+                                                </span>
                                             </div>
                                         </div>
+                                        {{-- Kolom Gambar --}}
+                                        <div class="flex-shrink-0 order-first sm:order-last">
+                                            <img src="{{ asset('storage/' . $testimonial->photo) }}"
+                                                alt="Foto {{ $testimonial->name }}"
+                                                class="w-32 h-32 rounded-full object-cover shadow-md">
+                                        </div>
                                     </div>
-                                @empty
-                                    <div class="w-full text-center py-12">
-                                        <p class="text-gray-500">Belum ada testimoni untuk ditampilkan.</p>
-                                    </div>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        {{-- Indikator titik --}}
-                        <div x-show="total > 1" class="flex items-center justify-center gap-2 mt-4">
-                            <template x-for="i in total" :key="i">
-                                <button @click="go(i - 1)"
-                                    class="h-2.5 rounded-full transition-all duration-300"
-                                    :class="current === i - 1 ? 'w-8' : 'w-2.5'"
-                                    :style="current === i - 1 ? 'background-color: {{ $amaliahGreen }};' : 'background-color: #d1d5db;'"
-                                    :aria-label="'Masuk ke testimoni ' + i"></button>
-                            </template>
+                                </div>
+                            @empty
+                                <div class="w-full text-center py-12">
+                                    <p class="text-gray-500">Belum ada testimoni untuk ditampilkan.</p>
+                                </div>
+                            @endforelse
                         </div>
 
                         {{-- Tombol Panah Kanan --}}
-                        <button @click="next()"
+                        <button @click="scroll(1)"
                             class="absolute top-1/2 -right-2 md:-right-8 -translate-y-1/2 w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-10 hover:bg-opacity-80 transition"
                             style="background-color: {{ $amaliahDark }};" id="testimonialbutton" role="presentation"
                             aria-label="Testimoni berikutnya">
