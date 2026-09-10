@@ -3,183 +3,184 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="animate-fadein">
-        {{-- Greeting --}}
-        <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
-            <div>
-                <h2 class="text-[22px] font-extrabold text-[#222]" style="color:var(--text);font-weight:800">Halo, {{ Auth::user()->name }} 👋</h2>
-                <p class="text-[13px] mt-1" style="color:var(--text-3)">Pantau dan kelola konten website SMK Amaliah 1 &amp; 2 di satu tempat.</p>
-            </div>
-            <div class="flex items-center gap-3">
-                @if ($spmb)
-                    <span class="badge @if ($spmb->status === 'Buka') badge-published @else badge-archived @endif">
-                        <i class="fa-solid fa-door-open"></i>
-                        Info SPMB: {{ $spmb->status }}
-                    </span>
-                @endif
-                <span class="badge badge-info hide-mob"><i class="fa-regular fa-calendar"></i><span id="current-date"></span></span>
-            </div>
-        </div>
+    @php
+        $tc = $trafficCards['avg'] ?? [];
+        $fmt = fn ($n) => number_format((float) $n, 0, ',', '.');
+        $sections = [
+            [
+                'label' => '🏫 Sekolah',
+                'cards' => [
+                    ['title' => 'Profil & Tulisan', 'desc' => 'Konten profil sekolah', 'emoji' => '📖', 'count' => $stats['writings'], 'route' => route('admin.writings.index'), 'c' => 'green'],
+                    ['title' => 'Jurusan / Kompetensi', 'desc' => 'Bidang keahlian & jurusan', 'emoji' => '🧭', 'count' => $stats['majors'], 'route' => route('admin.majors.index'), 'c' => 'violet'],
+                    ['title' => 'Program Pendidikan', 'desc' => 'Program unggulan sekolah', 'emoji' => '🎓', 'count' => $stats['programs'], 'route' => route('admin.programs.index'), 'c' => 'amber'],
+                    ['title' => 'Info SPMB', 'desc' => 'Pengaturan SPMB', 'emoji' => '🗒️', 'count' => null, 'route' => route('admin.spmb_settings.edit'), 'c' => 'blue'],
+                    ['title' => 'Jumlah Siswa', 'desc' => 'Statistik siswa sekolah', 'emoji' => '🧑‍🎓', 'count' => $stats['students'], 'route' => route('admin.school_settings.edit'), 'c' => 'teal'],
+                    ['title' => 'Menu Navigasi', 'desc' => 'Navigasi menu website', 'emoji' => '🗂️', 'count' => $stats['navigations'], 'route' => route('admin.navigations.index'), 'c' => 'orange'],
+                    ['title' => 'Galeri P5/PKK', 'desc' => 'Dokumentasi projek', 'emoji' => '💡', 'count' => $stats['pkk'], 'route' => route('admin.pkk.index'), 'c' => 'fuchsia'],
+                ],
+            ],
+            [
+                'label' => '📢 Media & Berita',
+                'cards' => [
+                    ['title' => 'Berita', 'desc' => 'Artikel & informasi terbaru', 'emoji' => '📰', 'count' => $stats['news'], 'route' => route('admin.news.index'), 'c' => 'blue'],
+                    ['title' => 'Hero Images', 'desc' => 'Banner gambar utama', 'emoji' => '🖼️', 'count' => $stats['images'], 'route' => route('admin.image.index'), 'c' => 'sky'],
+                    ['title' => 'Galeri Instagram', 'desc' => 'Feed media sosial', 'emoji' => '📸', 'count' => $stats['instaPosts'], 'route' => route('admin.insta-posts.index'), 'c' => 'rose'],
+                ],
+            ],
+            [
+                'label' => '🎖️ Akademik & Kegiatan',
+                'cards' => [
+                    ['title' => 'Guru & Staf', 'desc' => 'Tenaga pendidik sekolah', 'emoji' => '👨‍🏫', 'count' => $stats['teachers'], 'route' => route('admin.teachers.index'), 'c' => 'sky'],
+                    ['title' => 'Prestasi', 'desc' => 'Pencapaian siswa', 'emoji' => '🏆', 'count' => $stats['achievements'], 'route' => route('admin.achievements.index'), 'c' => 'amber'],
+                    ['title' => 'Ekstrakurikuler', 'desc' => 'Kegiatan siswa', 'emoji' => '⚽', 'count' => $stats['extracurriculars'], 'route' => route('admin.extracurriculars.index'), 'c' => 'fuchsia'],
+                ],
+            ],
+            [
+                'label' => '🤝 Aset & Relasi',
+                'cards' => [
+                    ['title' => 'Fasilitas', 'desc' => 'Sarana & prasarana', 'emoji' => '🏫', 'count' => $stats['facilities'], 'route' => route('admin.facilities.index'), 'c' => 'teal'],
+                    ['title' => 'Testimoni', 'desc' => 'Kata orang tua / alumni', 'emoji' => '💬', 'count' => $stats['testimonials'], 'route' => route('admin.testimonials.index'), 'c' => 'indigo'],
+                    ['title' => 'Mitra Industri', 'desc' => 'Kerja sama industri', 'emoji' => '🤝', 'count' => $stats['partners'], 'route' => route('admin.partners.index'), 'c' => 'violet'],
+                ],
+            ],
+        ];
 
-        {{-- Stat cards --}}
-        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
-            @php
-                $cards = [
-                    ['label' => 'Program Pendidikan', 'value' => $stats['programs'], 'icon' => 'fa-solid fa-graduation-cap', 'c' => 'violet', 'meta' => $stats['programsPublished'] . ' publik · ' . $stats['programsDraft'] . ' draft', 'route' => route('admin.programs.index')],
-                    ['label' => 'Berita', 'value' => $stats['news'], 'icon' => 'fa-solid fa-newspaper', 'c' => 'blue', 'meta' => 'Artikel terbaru sekolah', 'route' => route('admin.news.index')],
-                    ['label' => 'Guru & Staf', 'value' => $stats['teachers'], 'icon' => 'fa-solid fa-user-tie', 'c' => 'sky', 'meta' => 'Tenaga pendidik', 'route' => route('admin.teachers.index')],
-                    ['label' => 'Jumlah Siswa', 'value' => number_format($stats['students']), 'icon' => 'fa-solid fa-user-graduate', 'c' => 'green', 'meta' => 'Statistik sekolah', 'route' => route('admin.school_settings.edit')],
-                    ['label' => 'Prestasi', 'value' => $stats['achievements'], 'icon' => 'fa-solid fa-trophy', 'c' => 'amber', 'meta' => 'Pencapaian siswa', 'route' => route('admin.achievements.index')],
-                    ['label' => 'Fasilitas', 'value' => $stats['facilities'], 'icon' => 'fa-solid fa-building', 'c' => 'teal', 'meta' => 'Sarana sekolah', 'route' => route('admin.facilities.index')],
-                ];
-            @endphp
-            @foreach ($cards as $card)
-                <a href="{{ $card['route'] }}" class="stat-card">
-                    <div class="stat-top">
-                        <div>
-                            <div class="stat-value">{{ $card['value'] }}</div>
-                            <div class="stat-label">{{ $card['label'] }}</div>
+        $extraCards = [
+            ['title' => 'Traffic Website', 'desc' => 'Statistik pengunjung', 'emoji' => '📊', 'count' => $fmt($tc['total_visitors'] ?? 0), 'route' => route('admin.traffic.index'), 'c' => 'green'],
+        ];
+        if (auth()->user()->role === 'superadmin') {
+            $extraCards[] = ['title' => 'Manajemen Admin', 'desc' => 'Kelola akun pengguna', 'emoji' => '👥', 'count' => $stats['users'], 'route' => route('admin.users'), 'c' => 'amber'];
+        }
+    @endphp
+
+    <div class="animate-fadein space-y-8">
+        {{-- ============ BANNER ============ --}}
+        <div class="dashboard-banner">
+            <div class="banner-grid"></div>
+            <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 lg:p-8">
+                <div class="flex items-center gap-4 min-w-0">
+                    <div class="banner-logo">
+                        <img src="{{ asset('assets/logo/amaliah_white.png') }}" alt="Logo SMK Amaliah" />
+                    </div>
+                    <div class="min-w-0">
+                        <div class="banner-greet">Halo, {{ Auth::user()->name }} 👋</div>
+                        <div class="banner-sub">Selamat datang di Panel Admin SMK Amaliah 1 &amp; 2. Kelola seluruh konten website dengan mudah.</div>
+                        <div class="flex items-center gap-2 mt-4" style="font-size:20px">
+                            <span title="Sekolah">🏫</span>
+                            <span title="Belajar">📚</span>
+                            <span title="Lulus">🎓</span>
+                            <span title="Semangat">⭐</span>
+                            <span title="Sukses">🚀</span>
                         </div>
-                        <span style="width:40px;height:40px;border-radius:12px;background:var(--{{ $card['c'] }}-soft);color:var(--{{ $card['c'] }});display:flex;align-items:center;justify-content:center;font-size:16px">
-                            <i class="{{ $card['icon'] }}"></i>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 shrink-0">
+                    <div class="banner-emoji">🏫</div>
+                    <div class="flex flex-col items-start gap-2">
+                        @if ($spmb)
+                            <span class="badge @if ($spmb->status === 'Buka') badge-published @else badge-archived @endif" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff">
+                                <i class="fa-solid fa-door-open"></i>
+                                Info SPMB: {{ $spmb->status }}
+                            </span>
+                        @endif
+                        <span class="badge" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff">
+                            <i class="fa-regular fa-calendar"></i><span id="current-date"></span>
                         </span>
-                    </div>
-                    <div class="stat-meta">{{ $card['meta'] }}</div>
-                </a>
-            @endforeach
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {{-- Kiri (2/3) --}}
-            <div class="lg:col-span-2 space-y-6">
-                {{-- Quick actions --}}
-                <div class="app-card app-card-pad">
-                    <div class="card-title"><i class="fa-solid fa-bolt" style="color:var(--brand)"></i>Aksi Cepat</div>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
-                        @php
-                            $quick = [
-                                ['Tambah Berita', 'fa-solid fa-newspaper', route('admin.news.create'), 'blue'],
-                                ['Tambah Program', 'fa-solid fa-graduation-cap', route('admin.programs.create'), 'violet'],
-                                ['Tambah Guru', 'fa-solid fa-user-tie', route('admin.teachers.create'), 'sky'],
-                                ['Tambah Prestasi', 'fa-solid fa-trophy', route('admin.achievements.create'), 'amber'],
-                                ['Tambah Fasilitas', 'fa-solid fa-building', route('admin.facilities.create'), 'teal'],
-                                ['Atur Info SPMB', 'fa-solid fa-file-circle-check', route('admin.spmb_settings.edit'), 'green'],
-                            ];
-                        @endphp
-                        @foreach ($quick as $q)
-                            <a href="{{ $q[2] }}" class="flex items-center gap-3 p-3 rounded-xl" style="border:1px solid var(--border);background:var(--surface-2);transition:all .18s ease" onmouseover="this.style.borderColor='var(--brand-strong)';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
-                                <span style="width:34px;height:34px;border-radius:10px;background:var(--{{ $q[3] }}-soft);color:var(--{{ $q[3] }});display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="{{ $q[1] }}"></i></span>
-                                <span class="text-[12.5px] font-semibold" style="color:var(--text)">{{ $q[0] }}</span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- Berita terbaru --}}
-                <div class="app-card">
-                    <div class="flex items-center justify-between px-5 pt-5">
-                        <div class="card-title"><i class="fa-solid fa-newspaper" style="color:var(--blue)"></i>Berita Terbaru</div>
-                        <a href="{{ route('admin.news.index') }}" class="text-[12.5px] font-semibold" style="color:var(--brand)">Lihat semua <i class="fa-solid fa-arrow-right ml-1" style="font-size:10px"></i></a>
-                    </div>
-                    <div class="mt-3">
-                        @forelse ($latestNews as $n)
-                            <a href="{{ route('admin.news.edit', $n->id) }}" class="flex items-center gap-4 px-5 py-3 transition" style="border-top:1px solid var(--border)" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='transparent'">
-                                @if ($n->image)
-                                    <img src="{{ asset('storage/' . $n->image) }}" alt="" loading="lazy" class="w-12 h-12 rounded-xl object-cover" style="border:1px solid var(--border)">
-                                @else
-                                    <span style="width:48px;height:48px;border-radius:12px;background:var(--blue-soft);color:var(--blue);display:flex;align-items:center;justify-content:center"><i class="fa-regular fa-file-lines"></i></span>
-                                @endif
-                                <div style="min-width:0;flex:1">
-                                    <div class="text-[13.5px] font-semibold truncate" style="color:var(--text)">{{ $n->title }}</div>
-                                    <div class="text-[11.5px]" style="color:var(--text-3)">{{ \Carbon\Carbon::parse($n->date_published)->locale('id')->translatedFormat('d M Y') }} · oleh {{ $n->publisher }}</div>
-                                </div>
-                                <i class="fa-solid fa-chevron-right text-[11px]" style="color:var(--text-3)"></i>
-                            </a>
-                        @empty
-                            <div class="px-5 py-8 text-center text-[13px]" style="color:var(--text-3);border-top:1px solid var(--border)">Belum ada berita. <a href="{{ route('admin.news.create') }}" style="color:var(--brand);font-weight:600">Tulis yang pertama →</a></div>
-                        @endforelse
-                    </div>
-                </div>
-
-                {{-- Program terbaru --}}
-                <div class="app-card">
-                    <div class="flex items-center justify-between px-5 pt-5">
-                        <div class="card-title"><i class="fa-solid fa-graduation-cap" style="color:var(--violet)"></i>Program Pendidikan Terbaru</div>
-                        <a href="{{ route('admin.programs.index') }}" class="text-[12.5px] font-semibold" style="color:var(--brand)">Lihat semua <i class="fa-solid fa-arrow-right ml-1" style="font-size:10px"></i></a>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-5">
-                        @forelse ($latestPrograms as $p)
-                            <a href="{{ route('admin.programs.edit', $p->id) }}" class="app-card overflow-hidden transition" onmouseover="this.style.boxShadow='var(--shadow)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='';this.style.transform='none'">
-                                <div style="aspect-ratio:16/8;overflow:hidden;background:var(--surface-3)">
-                                    <img src="{{ asset('storage/' . $p->image) }}" alt="" loading="lazy" class="w-full h-full object-cover" onerror="this.style.display='none'">
-                                </div>
-                                <div class="p-4">
-                                    <div class="flex items-center justify-between gap-2">
-                                        <span class="text-[13px] font-bold truncate" style="color:var(--text)">{{ $p->name }}</span>
-                                        @include('admin.components.status-badge', ['status' => $p->status])
-                                    </div>
-                                </div>
-                            </a>
-                        @empty
-                            <div class="col-span-full py-8 text-center text-[13px]" style="color:var(--text-3)">Belum ada program.</div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
-
-            {{-- Kanan (1/3) --}}
-            <div class="space-y-6">
-                {{-- Content status --}}
-                <div class="app-card app-card-pad">
-                    <div class="card-title"><i class="fa-solid fa-diagram-project" style="color:var(--teal)"></i>Status Konten</div>
-                    <div class="mini-stats mt-4">
-                        @php
-                            $statuses = [
-                                ['Jurusan', $stats['majors'], 'fa-solid fa-layer-group', 'violet'],
-                                ['Ekstrakurikuler', $stats['extracurriculars'], 'fa-solid fa-futbol', 'fuchsia'],
-                                ['Hero Images', $stats['images'], 'fa-solid fa-image', 'sky'],
-                                ['Tulisan', $stats['writings'], 'fa-solid fa-book-open', 'green'],
-                                ['Admin Terdaftar', $stats['users'], 'fa-solid fa-users', 'amber'],
-                                ['Visitor Hari Ini', $stats['visitorsToday'], 'fa-solid fa-eye', 'indigo'],
-                            ];
-                        @endphp
-                        @foreach ($statuses as $s)
-                            <div class="mini-stat">
-                                <div class="flex items-center gap-2">
-                                    <i class="{{ $s[2] }}" style="color:var(--{{ $s[3] }})"></i>
-                                    <span class="ms-label">{{ $s[0] }}</span>
-                                </div>
-                                <div class="ms-value">{{ $s[1] }}</div>
-                            </div>
-                        @endforeach
-                    </div>
-                    <div class="mt-4 pt-4" style="border-top:1px solid var(--border)">
-                        <a href="{{ route('admin.traffic.index') }}" class="flex items-center justify-between text-[13px] font-semibold" style="color:var(--text-2)">
-                            <span><i class="fa-solid fa-chart-line mr-2" style="color:var(--brand)"></i>Buka Traffic Website</span>
-                            <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                        <a href="{{ url('/') }}" target="_blank" class="banner-cta">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            Lihat Website
                         </a>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                {{-- Aktivitas admin terbaru --}}
-                <div class="app-card">
-                    <div class="card-title px-5 pt-5"><i class="fa-solid fa-user-clock" style="color:var(--amber)"></i>Aktivitas Admin</div>
-                    <div class="mt-3">
-                        @forelse ($recentUsers as $u)
-                            <div class="flex items-center gap-3 px-5 py-3" style="border-top:1px solid var(--border)">
-                                <span style="width:34px;height:34px;border-radius:10px;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">{{ strtoupper(collect(explode(' ', trim($u->name)))->take(2)->map(fn($w) => mb_substr($w, 0, 1))->implode('')) }}</span>
-                                <div style="min-width:0">
-                                    <div class="text-[12.5px] font-semibold truncate" style="color:var(--text)">{{ $u->name }}</div>
-                                    <div class="text-[11.5px]" style="color:var(--text-3)">Bergabung {{ \Carbon\Carbon::parse($u->created_at)->locale('id')->diffForHumans() }} · {{ $u->role }}</div>
-                                </div>
+        {{-- ============ TRAFFIC ============ --}}
+        <section>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="section-emoji">📈</span>
+                <h2 class="dashboard-section-title">Lalu Lintas Website</h2>
+                <span class="ml-auto">
+                    <a href="{{ route('admin.traffic.index') }}" class="text-[12.5px] font-semibold inline-flex items-center gap-1.5 transition" style="color:var(--brand)">
+                        Detail Traffic <i class="fa-solid fa-arrow-right" style="font-size:10px"></i>
+                    </a>
+                </span>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 dash-traffic">
+                @php
+                    $traffic = [
+                        ['label' => 'Pengunjung Hari Ini', 'value' => $fmt($tc['today_visitors'] ?? 0), 'emoji' => '👀', 'c' => 'green'],
+                        ['label' => 'Pengunjung 7 Hari', 'value' => $fmt($tc['week_visitors'] ?? 0), 'emoji' => '📅', 'c' => 'sky'],
+                        ['label' => 'Pengunjung 30 Hari', 'value' => $fmt($tc['month_visitors'] ?? 0), 'emoji' => '🗓️', 'c' => 'amber'],
+                        ['label' => 'Total Pengunjung', 'value' => $fmt($tc['total_visitors'] ?? 0), 'emoji' => '👥', 'c' => 'violet'],
+                        ['label' => 'Klik Link', 'value' => $fmt($tc['total_link_clicks'] ?? 0), 'emoji' => '🔗', 'c' => 'blue'],
+                        ['label' => 'Klik Button', 'value' => $fmt($tc['total_button_clicks'] ?? 0), 'emoji' => '🖱️', 'c' => 'teal'],
+                    ];
+                @endphp
+                @foreach ($traffic as $t)
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <div>
+                                <div class="stat-value">{{ $t['value'] }}</div>
+                                <div class="stat-label">{{ $t['label'] }}</div>
                             </div>
-                        @empty
-                            <div class="px-5 py-6 text-center text-[13px]" style="color:var(--text-3);border-top:1px solid var(--border)">Belum ada admin lain.</div>
-                        @endforelse
+                            <span style="width:40px;height:40px;border-radius:12px;background:var(--{{ $t['c'] }}-soft);display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1">
+                                {{ $t['emoji'] }}
+                            </span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+
+        {{-- ============ FITUR CRUD ============ --}}
+        <section>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="section-emoji">🧰</span>
+                <h2 class="dashboard-section-title">Fitur Konten</h2>
+                <span class="ml-auto text-[12px] font-medium" style="color:var(--text-3)">Klik kartu untuk mengelola</span>
+            </div>
+
+            <div class="space-y-8">
+                @foreach ($sections as $section)
+                    <div>
+                        <div class="dashboard-subsection">{{ $section['label'] }}</div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                            @foreach ($section['cards'] as $card)
+                                <a href="{{ $card['route'] }}" class="feature-card">
+                                    <span class="feature-icon" style="background:var(--{{ $card['c'] }}-soft)">{{ $card['emoji'] }}</span>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="feature-title">{{ $card['title'] }}</div>
+                                        <div class="feature-desc">{{ $card['desc'] }}</div>
+                                    </div>
+                                    @if ($card['count'] !== null)
+                                        <span class="feature-count">{{ $fmt($card['count']) }}</span>
+                                    @endif
+                                    <i class="fa-solid fa-chevron-right feature-arrow"></i>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+
+                <div>
+                    <div class="dashboard-subsection">📋 Monitoring &amp; Lainnya</div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                        @foreach ($extraCards as $card)
+                            <a href="{{ $card['route'] }}" class="feature-card">
+                                <span class="feature-icon" style="background:var(--{{ $card['c'] }}-soft)">{{ $card['emoji'] }}</span>
+                                <div class="min-w-0 flex-1">
+                                    <div class="feature-title">{{ $card['title'] }}</div>
+                                    <div class="feature-desc">{{ $card['desc'] }}</div>
+                                </div>
+                                <span class="feature-count">{{ $fmt($card['count']) }}</span>
+                                <i class="fa-solid fa-chevron-right feature-arrow"></i>
+                            </a>
+                        @endforeach
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 @endsection
 

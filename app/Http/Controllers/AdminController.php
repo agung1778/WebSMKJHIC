@@ -16,6 +16,12 @@ use App\Models\Writing;
 use App\Models\SchoolSetting;
 use App\Models\SpmbSetting;
 use App\Models\TrafficVisitor;
+use App\Models\Partner;
+use App\Models\Testimonial;
+use App\Models\PkkProject;
+use App\Models\Navigation;
+use App\Models\InstaPost;
+use App\Services\TrafficService;
 
 class AdminController extends Controller
 {
@@ -24,7 +30,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function dashboard()
+    public function dashboard(TrafficService $traffic)
     {
         $stats = [
             'programs'        => SchoolProgram::count(),
@@ -39,17 +45,23 @@ class AdminController extends Controller
             'images'          => Image::count(),
             'writings'        => Writing::count(),
             'users'           => User::count(),
+            'partners'        => Partner::count(),
+            'testimonials'    => Testimonial::count(),
+            'pkk'             => PkkProject::count(),
+            'navigations'     => Navigation::count(),
+            'instaPosts'      => InstaPost::count(),
             'students'        => optional(SchoolSetting::first())->jumlah_siswa ?? 0,
             'visitorsToday'   => TrafficVisitor::whereDate('created_at', today())->count(),
         ];
 
-        $latestNews = News::latest('date_published')->take(5)->get();
-        $latestPrograms = SchoolProgram::latest()->take(5)->get();
-        $recentUsers = User::latest('created_at')->take(6)->get();
+        $trafficCards = $traffic->summaryCards();
+
+        $latestNews = News::latest('date_published')->take(4)->get();
+        $recentUsers = User::latest('created_at')->take(4)->get();
 
         $spmb = SpmbSetting::first();
 
-        return view('admin.dashboard', compact('stats', 'latestNews', 'latestPrograms', 'recentUsers', 'spmb'));
+        return view('admin.dashboard', compact('stats', 'trafficCards', 'latestNews', 'recentUsers', 'spmb'));
     }
 
     public function curator()

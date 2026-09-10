@@ -18,6 +18,7 @@
         };
     </script>
     <link rel="stylesheet" href="{{ asset('admin/admin.css') }}" />
+    @stack('styles')
     <script src="{{ asset('admin/admin.js') }}" defer></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 </head>
