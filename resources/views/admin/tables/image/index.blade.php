@@ -2,32 +2,7 @@
 
 @section('content')
 
-    <!DOCTYPE html>
-    <html lang="id">
-
-    <head>
-        {{-- Aset dan style disalin dari view galeri untuk konsistensi --}}
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Galeri Media</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-        <style>
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: #f0f2f5;
-            }
-
-            .poppins {
-                font-family: 'Poppins', sans-serif;
-            }
-        </style>
-    </head>
-
-    <body class="bg-gray-100">
+    
 
         <style>
             /* Styling untuk Tom Select agar cocok dengan tema */

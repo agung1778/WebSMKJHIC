@@ -2,24 +2,9 @@
 
 @section('content')
 
-    <!DOCTYPE html>
-    <html lang="id">
-
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Tambah Berita</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-        
-        <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
-        <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
+    
         <style>
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: #f0f2f5;
-            }
+            
 
             /* === 2. TAMBAHKAN INI: Styling Kustom untuk Trix Editor === */
             trix-toolbar [data-trix-button-group="file-tools"] {
@@ -48,9 +33,7 @@
             }
             /* ======================================================== */
         </style>
-    </head>
 
-    <body class="bg-gray-100">
 
         <div class="main-content flex-1 p-6">
             <div class="bg-white rounded-lg shadow-md p-6">

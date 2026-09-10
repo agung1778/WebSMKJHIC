@@ -1,21 +1,9 @@
 @extends('layouts.admin-app')
 @section('content')
 
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="utf-8" />
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
-        <title>Dashboard</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    
         <style>
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: #f0f2f5;
-            }
+            
 
             .scrollbar-hide::-webkit-scrollbar {
                 display: none;
@@ -30,18 +18,7 @@
                 color: #6CF600;
             }
         </style>
-    </head>
 
-    @php
-        $amaliahGreen = '#63cd00';
-        $amaliahDark = '#282829';
-        $amaliahBlue = '#E0E7FF';
-
-        // Cek Variabel 
-        $hasImages = isset($mainImages) && $mainImages->isNotEmpty();
-    @endphp
-
-    <body class="bg-[#f0f2f5] text-[#292929] font-sans p-6 md:p-10">
         <section class="bg-white py-16 sm:py-24 space-y-20">
 
             {{-- BAGIAN 1: SLIDER (SWIPE) --}}
