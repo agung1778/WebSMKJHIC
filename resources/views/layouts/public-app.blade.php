@@ -10,8 +10,8 @@
     <link rel="icon" type="image/webp" href="{{ asset('assets/logo/am.webp') }}">
 
     <title>@yield('title', 'SMK Amaliah 1 & 2')</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <script type="module" src="{{ asset('js/app.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ @filemtime(public_path('css/app.css')) }}">
+    <script type="module" src="{{ asset('js/app.js') }}?v={{ @filemtime(public_path('js/app.js')) }}"></script>
 
 
     {{-- 2. PERFORMA: Preconnect ke domain penting untuk mempercepat handshake DNS, TCP, dan TLS --}}

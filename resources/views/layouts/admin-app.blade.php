@@ -32,8 +32,8 @@
         };
     </script>
     <link rel="stylesheet" href="https://unpkg.com/trix@2.0.8/dist/trix.css" />
-    <link rel="stylesheet" href="{{ asset('admin/admin.css') }}" />
-    <script defer src="{{ asset('admin/admin.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('admin/admin.css') }}?v={{ @filemtime(public_path('admin/admin.css')) }}" />
+    <script defer src="{{ asset('admin/admin.js') }}?v={{ @filemtime(public_path('admin/admin.js')) }}"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
