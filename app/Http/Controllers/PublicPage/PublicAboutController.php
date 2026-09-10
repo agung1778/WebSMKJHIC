@@ -59,12 +59,21 @@ class PublicAboutController extends Controller
             ->orderBy('release_date', 'desc')
             ->first();
 
+        // Statistik singkat (data faktual) untuk memperkaya halaman About
+        $stats = [
+            'founded'   => 2008,
+            'majors'    => \App\Models\Major::count(),
+            'teachers'  => \App\Models\Teacher::count(),
+            'facilities'=> \App\Models\Facility::count(),
+            'programs'  => \App\Models\SchoolProgram::where('status', 'published')->count(),
+        ];
+
         // 2. Logika Pengambilan Gambar (yang sudah ada)
         $mainImages = Image::whereIn('title', ['main'])->get();
         $hasImages = !$mainImages->isEmpty();
 
 
-        return view('PublicSide.about.index', compact('hasImages', 'mainImages', 'aboutContent', 'visionContent', 'aboutLinks',));
+        return view('PublicSide.about.index', compact('hasImages', 'mainImages', 'aboutContent', 'visionContent', 'aboutLinks', 'stats'));
     }
 
     public function vision()

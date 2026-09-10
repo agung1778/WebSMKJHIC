@@ -1,163 +1,89 @@
 @extends('layouts.public-app')
 
+@section('title', 'Visi & Misi — SMK Amaliah 1 & 2')
+
 @section('content')
+    @include('PublicSide.partials.about-hero', [
+        'active' => 'vision',
+        'title' => 'Visi & Misi',
+        'lead' => 'Tujuan dan cita-cita yang menjadi panduan seluruh ekosistem SMK Amaliah 1 & 2 dalam mendidik generasi berkualitas.',
+        'showCta' => false,
+    ])
 
-    @php
-        $hasImages = isset($mainImages) && $mainImages->isNotEmpty();
-    @endphp
-    <div>
-        <section class="relative max-w-screen">
-            {{-- Slider Gambar Dinamis --}}
-            @if($hasImages)
-                <div x-data="{ activeSlide: 1, totalSlides: {{ $mainImages->count() }} }"
-                    x-init="setInterval(() => { activeSlide = activeSlide % totalSlides + 1 }, 5000)">
-                    <div class="relative w-full h-[300px] overflow-hidden">
-                        @foreach($mainImages as $image)
-                            <div x-show="activeSlide === {{ $loop->iteration }}"
-                                x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
-                                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
-                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0">
+    {{-- ===================== VISI ===================== --}}
+    <section class="bg-white py-16 lg:py-24">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center fade-in-section">
+                <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">Visi</span>
+                <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829]">Visi SMK Amaliah 1 & 2</h2>
+            </div>
 
-                                <img src="{{ Storage::url($image->path) }}" alt="{{ $image->description ?? $image->filename }}"
-                                    class="w-full h-full object-cover">
-                            </div>
-                        @endforeach
-
-                    </div>
-                </div>
-            @else
-                <div>
-                    <div class="relative h-[300px] overflow-hidden bg-black">
-                        {{-- Layar hitam sebagai fallback --}}
-                    </div>
-                </div>
-            @endif
-        </section>
-        <div style="background-color: #2D2D2D;">
-            <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-                {{-- Menggunakan h-full dan flex items-center untuk membuat konten di tengah vertikal --}}
-                <div class="h-full flex items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        {{-- Text-lg untuk memperbesar teks --}}
-                        <ol class="inline-flex items-center space-x-2 md:space-x-3 text-lg">
-                            <li class="inline-flex items-center">
-                                <a href="/"
-                                    class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-                                    <a href="{{ route('public.about.index') }}"
-                                        class="ml-2 font-medium text-gray-300 hover:text-white md:ml-3 transition-colors">About</a>
-                                </div>
-                            </li>
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    {{-- Mengganti warna chevron untuk konsistensi --}}
-                                    <i class="fas fa-chevron-right text-white text-xs"></i>
-                                    <span class="ml-2 font-medium md:ml-3 text-[#ffffff]">Vision And Mission</span>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
+            <div class="mt-10 max-w-3xl mx-auto fade-in-section relative bg-[#282829] rounded-3xl p-8 lg:p-12 text-center overflow-hidden shadow-2xl">
+                <div class="absolute top-0 right-0 w-60 h-60 rounded-full opacity-20"
+                    style="background: radial-gradient(circle, #63cd00 0%, transparent 70%)"></div>
+                <i class="fa-solid fa-quote-left text-4xl text-[#63cd00]"></i>
+                <p class="mt-6 text-2xl lg:text-3xl text-white font-medium leading-relaxed">
+                    "Menjadi Sekolah Menengah Kejuruan Berkualitas Yang Menyatu Dalam Tauhid"
+                </p>
+                <div class="mt-8 inline-flex items-center gap-2 text-sm text-gray-300">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
+                    Visi SMK Amaliah 1 &amp; 2 Ciawi
                 </div>
             </div>
         </div>
+    </section>
 
-        <section class="bg-white py-16 sm:py-24">
-            <div class="container mx-auto max-w-4xl px-6 lg:px-8">
+    {{-- ===================== MISI ===================== --}}
+    <section class="bg-gray-50 py-16 lg:py-24">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto fade-in-section">
+                <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">Misi</span>
+                <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829]">Langkah Mewujudkan Visi</h2>
+                <p class="mt-4 text-gray-600 text-base lg:text-lg">Komitmen kami dalam proses pendidikan sehari-hari.</p>
+            </div>
 
-                <div class="text-center">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                        Visi & Misi SMK Amaliah Ciawi
-                    </h2>
-                    <p class="mt-6 text-xl leading-8 text-gray-600">
-                        "Menjadi Sekolah Menengah Kejuruan Berkualitas Yang Menyatu Dalam Tauhid"
-                    </p>
-                </div>
-
-                <div class="my-12 border-t border-gray-200"></div>
-
-                <div class="mt-12 space-y-10">
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-hands-holding-circle text-3xl text-[#59E300]"></i>
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @php
+                    $missions = [
+                        ['icon' => 'fa-hands-holding-circle', 'title' => 'Integrasi Nilai Tauhid', 'desc' => 'Mengintegrasikan nilai-nilai Tauhid pada setiap mata pelajaran untuk membentuk karakter yang kuat.'],
+                        ['icon' => 'fa-tools', 'title' => 'Orientasi Praktik', 'desc' => 'Pembelajaran praktik dengan komposisi 70% praktik dan 30% teori untuk kesiapan kerja.'],
+                        ['icon' => 'fa-puzzle-piece', 'title' => 'Pembelajaran Menyenangkan', 'desc' => 'Proses belajar yang menyenangkan namun tetap aplikatif dan dapat diterapkan langsung.'],
+                        ['icon' => 'fa-clipboard-check', 'title' => 'Penilaian Berbasis Kompetensi', 'desc' => 'Penilaian berdasarkan ketuntasan kompetensi untuk menjaga standar kualitas lulusan.'],
+                        ['icon' => 'fa-user-graduate', 'title' => 'Lulusan Terampil', 'desc' => 'Memberikan bekal keterampilan yang bermanfaat dan relevan bagi masyarakat dan industri.'],
+                        ['icon' => 'fa-handshake-angle', 'title' => 'Kerja Sama Industri', 'desc' => 'Menjalin kemitraan dengan dunia usaha dan industri untuk magang maupun penempatan kerja.'],
+                    ];
+                @endphp
+                @foreach($missions as $i => $m)
+                    <div class="fade-in-section flex gap-4 bg-white border border-gray-200 rounded-2xl p-6 hover:border-[#63cd00] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-11 h-11 rounded-xl bg-[#eafad7] flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid {{ $m['icon'] }} text-lg text-[#3f9b00]"></i>
                         </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Integrasi Nilai Tauhid
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                Mengintegrasikan nilai-nilai Tauhid pada setiap mata pelajaran untuk membentuk karakter yang
-                                kuat.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-tools text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Orientasi Praktik
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                Fokus pada pembelajaran praktik dengan komposisi 70% praktik dan 30% teori untuk kesiapan
-                                kerja.
-                            </p>
+                        <div>
+                            <div class="text-xs font-bold text-[#63cd00]">Misi {{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</div>
+                            <h3 class="mt-1 font-bold text-[#282829] text-base">{{ $m['title'] }}</h3>
+                            <p class="mt-1.5 text-sm text-gray-600 leading-relaxed">{{ $m['desc'] }}</p>
                         </div>
                     </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
 
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-puzzle-piece text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Pembelajaran Menyenangkan & Aplikatif
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                Menciptakan proses belajar yang tidak hanya menyenangkan tetapi juga dapat diterapkan
-                                langsung.
-                            </p>
-                        </div>
+    {{-- ===================== DETAIL (konten dinamis) ===================== --}}
+    @if(isset($visionContent) && $visionContent && trim(strip_tags($visionContent->content)) !== '')
+        <section class="bg-white py-16 lg:py-24">
+            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <div class="fade-in-section lg:col-span-1">
+                        <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">Detail</span>
+                        <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829]">Lebih Jauh Tentang Visi & Misi</h2>
+                        <div class="mt-4 w-20 h-1.5 rounded-full bg-[#63cd00]"></div>
                     </div>
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-clipboard-check text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Penilaian Berbasis Kompetensi
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                Setiap penilaian didasarkan pada ketuntasan kompetensi untuk memastikan standar kualitas
-                                lulusan.
-                            </p>
-                        </div>
+                    <div class="lg:col-span-2 fade-in-section text-base lg:text-lg text-gray-600 leading-relaxed">
+                        {!! \App\Support\HtmlSanitizer::clean($visionContent->content) !!}
                     </div>
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-user-graduate text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Membekali Lulusan yang Terampil
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                Memberikan bekal keterampilan yang bermanfaat dan relevan bagi masyarakat dan industri.
-                            </p>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </section>
-    </div>
+    @endif
 @endsection

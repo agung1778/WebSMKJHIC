@@ -1,186 +1,133 @@
 @extends('layouts.public-app')
 
+@section('title', 'Yayasan — SMK Amaliah 1 & 2')
+
 @section('content')
-    @php
-        // Cek Variabel 
-        $hasImages = isset($mainImages) && $mainImages->isNotEmpty();
-    @endphp
-    <div>
-        <section class="relative max-w-screen">
-            {{-- Slider Gambar Dinamis --}}
-            @if($hasImages)
-                <div x-data="{ activeSlide: 1, totalSlides: {{ $mainImages->count() }} }"
-                    x-init="setInterval(() => { activeSlide = activeSlide % totalSlides + 1 }, 5000)">
-                    <div class="relative w-full h-[300px] overflow-hidden">
-                        @foreach($mainImages as $image)
-                            <div x-show="activeSlide === {{ $loop->iteration }}"
-                                x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
-                                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
-                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0">
+    @include('PublicSide.partials.about-hero', [
+        'active' => 'foundation',
+        'title' => 'Yayasan Kami',
+        'lead' => 'Yayasan Pusat Studi Pengembangan Islam Amaliyah Indonesia (YPSPIAI) — fondasi yang menaungi perjalanan pendidikan kami.',
+        'showCta' => false,
+    ])
 
-                                <img src="{{ Storage::url($image->path) }}" alt="{{ $image->description ?? $image->filename }}"
-                                    class="w-full h-full object-cover">
+    {{-- ===================== PROFIL YAYASAN ===================== --}}
+    <section class="bg-white py-16 lg:py-24">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="fade-in-section">
+                    <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">YPSPIAI</span>
+                    <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829] leading-tight">Mengenal Yayasan Kami</h2>
+                    <div class="mt-4 w-20 h-1.5 rounded-full bg-[#63cd00]"></div>
+                    <p class="mt-6 text-base lg:text-lg text-gray-600 leading-relaxed">
+                        YPSPIAI didirikan sebagai pusat studi untuk mengembangkan pendidikan Islam yang bersifat
+                        <span class="font-semibold text-[#282829]">"amaliyah"</span> — mengintegrasikan ilmu pengetahuan
+                        dengan pengamalan nilai-nilai luhur dalam kehidupan sehari-hari, sesuai filosofi utama kami:
+                        <span class="font-bold text-[#3f9b00]">Menyatu dalam Tauhid</span>.
+                    </p>
+                </div>
+
+                <div class="fade-in-section grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    @php
+                        $facts = [
+                            ['icon' => 'fa-graduation-cap', 'label' => 'Menaungi', 'value' => 'SMK & Kampus'],
+                            ['icon' => 'fa-building-columns', 'label' => 'Pembina', 'value' => 'SMK Amaliah 1 & 2'],
+                            ['icon' => 'fa-university', 'label' => 'Sinergi', 'value' => 'Universitas Djuanda'],
+                            ['icon' => 'fa-book-quran', 'label' => 'Pondasi', 'value' => 'Pendidikan Bertauhid'],
+                        ];
+                    @endphp
+                    @foreach($facts as $f)
+                        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6 hover:border-[#63cd00] hover:shadow-lg transition-all duration-300">
+                            <div class="w-11 h-11 rounded-xl bg-[#eafad7] flex items-center justify-center">
+                                <i class="fa-solid {{ $f['icon'] }} text-lg text-[#3f9b00]"></i>
                             </div>
-                        @endforeach
-
-                    </div>
-                </div>
-            @else
-                <div>
-                    <div class="relative h-[300px] overflow-hidden bg-black">
-                        {{-- Layar hitam sebagai fallback --}}
-                    </div>
-                </div>
-            @endif
-        </section>
-        <div style="background-color: #2D2D2D;">
-            <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-                {{-- Menggunakan h-full dan flex items-center untuk membuat konten di tengah vertikal --}}
-                <div class="h-full flex items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        {{-- Text-lg untuk memperbesar teks --}}
-                        <ol class="inline-flex items-center space-x-2 md:space-x-3 text-lg">
-                            <li class="inline-flex items-center">
-                                <a href="/"
-                                    class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-                                    <a href="{{ route('public.about.index') }}"
-                                        class="ml-2 font-medium text-gray-300 hover:text-white md:ml-3 transition-colors">About</a>
-                                </div>
-                            </li>
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    {{-- Mengganti warna chevron untuk konsistensi --}}
-                                    <i class="fas fa-chevron-right text-white text-xs"></i>
-                                    <span class="ml-2 font-medium md:ml-3 text-[#ffffff]">Foundation</span>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
+                            <div class="mt-3 text-xs font-semibold uppercase tracking-wide text-gray-500">{{ $f['label'] }}</div>
+                            <div class="mt-0.5 font-bold text-[#282829]">{{ $f['value'] }}</div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
+    </section>
 
-        <section class="bg-white py-16 sm:py-24">
-            <div class="container mx-auto max-w-4xl px-6 lg:px-8">
-
-                <div class="text-center">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                        Mengenal Yayasan Kami
-                    </h2>
-                    <p class="mt-4 text-lg leading-8 text-gray-600">
-                        Yayasan Pusat Studi Pengembangan Islam Amaliyah Indonesia (YPSPIAI) adalah fondasi yang menaungi
-                        perjalanan pendidikan kami.
-                    </p>
-                </div>
-
-                <div class="my-12 border-t border-gray-200"></div>
-
-                <div class="space-y-12">
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-building-columns text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Profil & Tujuan Utama
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                YPSPIAI didirikan sebagai pusat studi untuk mengembangkan pendidikan Islam yang bersifat
-                                "amaliyah" atau aplikatif, mengintegrasikan ilmu pengetahuan dengan pengamalan nilai-nilai
-                                luhur dalam kehidupan sehari-hari.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-graduation-cap text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Pembina Institusi Pendidikan
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                Yayasan ini menjadi pilar utama yang menaungi dan membina institusi pendidikan berkualitas,
-                                termasuk SMK Amaliah 1 & 2 Ciawi serta Universitas Djuanda (UNIDA), menciptakan
-                                ekosistem pendidikan yang sinergis dari tingkat menengah hingga perguruan tinggi.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-book-quran text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Filosofi Bertauhid
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                Sesuai dengan visi "Menyatu dalam Tauhid", YPSPIAI memastikan bahwa setiap aspek pendidikan
-                                di bawah naungannya berlandaskan pada nilai-nilai keimanan, membentuk lulusan yang tidak
-                                hanya kompeten secara akademis tetapi juga kokoh dalam karakter.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-award text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Komitmen pada Kualitas
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                YPSPIAI berkomitmen penuh untuk menjaga dan meningkatkan standar mutu di semua unit
-                                pendidikannya melalui manajemen profesional, pengembangan kurikulum yang relevan, dan
-                                penyediaan layanan pendidikan prima.
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
+    {{-- ===================== PILAR YAYASAN ===================== --}}
+    <section class="bg-gray-50 py-16 lg:py-24">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto fade-in-section">
+                <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">Pilar Yayasan</span>
+                <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829]">Nilai yang Kami Pegang</h2>
+                <p class="mt-4 text-gray-600 text-base lg:text-lg">Empat prinsip yang menjadi nafas seluruh unit pendidikan di bawah YPSPIAI.</p>
             </div>
-        </section>
 
-        <div class="bg-white py-16 sm:py-24">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">
-                        Detail Yayasan SMK Amaliah 1 & 2
-                    </h2>
-                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
-                        Informasi mengenai yayasan yang menaungi SMK Amaliah 1 & 2.
-                    </p>
-                </div>
-
-                @if ($foundationContent)
-                    <article class="prose prose-lg prose-gray max-w-screen">
-                        {!! \App\Support\HtmlSanitizer::clean($foundationContent->content) !!}
-                    </article>
-                @else
-                    <div class="text-center py-24 px-6 bg-gray-50 rounded-xl border border-gray-200">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            aria-hidden="true">
-                            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <h3 class="mt-2 text-sm font-semibold text-gray-900">Konten Belum Tersedia</h3>
-                        <p class="mt-1 text-sm text-gray-500">Halaman ini sedang dalam pengembangan.</p>
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+                @php
+                    $vals = [
+                        ['icon' => 'fa-building-columns', 'title' => 'Profil & Tujuan Utama', 'desc' => 'Pusat studi pengembangan pendidikan Islam aplikatif yang mengintegrasikan ilmu dengan pengamalan nilai luhur.'],
+                        ['icon' => 'fa-graduation-cap', 'title' => 'Pembina Institusi Pendidikan', 'desc' => 'Menjadi pilar utama yang menaungi dan membina SMK Amaliah 1 & 2 serta Universitas Djuanda, menciptakan ekosistem pendidikan yang sinergis.'],
+                        ['icon' => 'fa-book-quran', 'title' => 'Filosofi Bertauhid', 'desc' => 'Setiap aspek pendidikan berlandaskan nilai keimanan, membentuk lulusan yang kompeten secara akademis dan kokoh dalam karakter.'],
+                        ['icon' => 'fa-award', 'title' => 'Komitmen pada Kualitas', 'desc' => 'Menjaga dan meningkatkan standar mutu melalui manajemen profesional, kurikulum relevan, dan layanan pendidikan prima.'],
+                    ];
+                @endphp
+                @foreach($vals as $i => $v)
+                    <div class="fade-in-section group flex gap-5 bg-white border border-gray-200 rounded-2xl p-7 hover:border-transparent hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-14 h-14 rounded-2xl bg-[#2D2D2D] flex items-center justify-center flex-shrink-0 group-hover:bg-[#63cd00] transition-colors duration-300">
+                            <i class="fa-solid {{ $v['icon'] }} text-xl text-white"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-[#63cd00]">Pilar {{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</div>
+                            <h3 class="mt-1 font-bold text-[#282829] text-lg">{{ $v['title'] }}</h3>
+                            <p class="mt-2 text-sm text-gray-600 leading-relaxed">{{ $v['desc'] }}</p>
+                        </div>
                     </div>
-                @endif
-
+                @endforeach
             </div>
         </div>
-    </div>
+    </section>
+
+    {{-- ===================== DETAIL YAYASAN ===================== --}}
+    <section class="bg-white py-16 lg:py-24">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div class="fade-in-section lg:col-span-1">
+                    <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">Detail Yayasan</span>
+                    <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829]">Informasi Lengkap</h2>
+                    <div class="mt-4 w-20 h-1.5 rounded-full bg-[#63cd00]"></div>
+                </div>
+                <div class="lg:col-span-2 fade-in-section bg-gray-50 border border-gray-200 rounded-2xl p-8 lg:p-10">
+                    @if(isset($foundationContent) && $foundationContent && trim(strip_tags($foundationContent->content)) !== '')
+                        <div class="text-base lg:text-lg text-gray-600 leading-relaxed">
+                            {!! \App\Support\HtmlSanitizer::clean($foundationContent->content) !!}
+                        </div>
+                    @else
+                        <div class="text-center py-12">
+                            <div class="mx-auto w-16 h-16 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-400">
+                                <i class="fa-solid fa-file-lines text-2xl"></i>
+                            </div>
+                            <h3 class="mt-4 font-semibold text-gray-800">Konten Belum Tersedia</h3>
+                            <p class="mt-1 text-sm text-gray-500">Informasi yayasan sedang dilengkapi oleh tim kami.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ===================== CTA ===================== --}}
+    <section class="bg-[#282829] relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-80 h-80 rounded-full opacity-20"
+            style="background: radial-gradient(circle, #63cd00 0%, transparent 70%)"></div>
+        <div class="relative max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center fade-in-section">
+            <h2 class="text-3xl lg:text-4xl font-bold text-white">Lanjut Jelajahi Bagian Lain</h2>
+            <p class="mt-3 text-white/75">Kenali sejarah, visi, dan jurusan yang kami miliki.</p>
+            <div class="mt-7 flex flex-wrap justify-center gap-3">
+                <a href="{{ route('public.about.history') }}"
+                    class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300">
+                    <i class="fa-solid fa-landmark"></i> Lihat Sejarah
+                </a>
+                <a href="{{ route('public.majors.index') }}"
+                    class="inline-flex items-center gap-2 bg-white text-[#282829] font-semibold px-6 py-3 rounded-full hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-300">
+                    <i class="fa-solid fa-sitemap"></i> Jurusan
+                </a>
+            </div>
+        </div>
+    </section>
 @endsection

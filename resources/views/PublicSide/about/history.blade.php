@@ -1,185 +1,98 @@
 @extends('layouts.public-app')
 
+@section('title', 'Sejarah — SMK Amaliah 1 & 2')
+
 @section('content')
-    @php
-        // Cek Variabel 
-        $hasImages = isset($mainImages) && $mainImages->isNotEmpty();
-    @endphp
+    @include('PublicSide.partials.about-hero', [
+        'active' => 'history',
+        'title' => 'Sejarah Sekolah',
+        'lead' => 'Perjalanan kami dalam membentuk generasi yang cerdas, berkarakter, dan siap menghadapi tantangan masa depan.',
+        'showCta' => false,
+    ])
 
-    <div>
-        <section class="relative max-w-screen">
-            {{-- Slider Gambar Dinamis --}}
-            @if($hasImages)
-                <div x-data="{ activeSlide: 1, totalSlides: {{ $mainImages->count() }} }"
-                    x-init="setInterval(() => { activeSlide = activeSlide % totalSlides + 1 }, 5000)">
-                    <div class="relative w-full h-[300px] overflow-hidden">
-                        @foreach($mainImages as $image)
-                            <div x-show="activeSlide === {{ $loop->iteration }}"
-                                x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
-                                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
-                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0">
+    {{-- ===================== TIMELINE ===================== --}}
+    <section class="bg-white py-16 lg:py-24">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto fade-in-section">
+                <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">Perjalanan Kami</span>
+                <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829]">Tonggak Perjalanan</h2>
+                <p class="mt-4 text-gray-600 text-base lg:text-lg">Dari cita-cita sederhana hingga institusi yang terus berkembang.</p>
+            </div>
 
-                                <img src="{{ Storage::url($image->path) }}" alt="{{ $image->description ?? $image->filename }}"
-                                    class="w-full h-full object-cover">
+            <div class="mt-14 relative mx-auto max-w-3xl">
+                {{-- garis timeline --}}
+                <div class="absolute left-5 lg:left-1/2 lg:-translate-x-1/2 top-0 bottom-0 w-0.5 bg-[#d9f2b8]"></div>
+
+                @php
+                    $milestones = [
+                        ['year' => '2008', 'icon' => 'fa-landmark', 'title' => 'Fondasi & Pendirian', 'desc' => 'Berdiri resmi pada tahun 2008 di bawah naungan YPSPIAI dan pembinaan Universitas Djuanda (UNIDA) dengan komitmen Kualitas, Profesionalitas, dan Pelayanan Prima.'],
+                        ['year' => 'Berkembang', 'icon' => 'fa-sitemap', 'title' => 'Perluasan Program Keahlian', 'desc' => 'Membuka 9 konsentrasi keahlian: TKJ, RPL, DKV, Animasi, MP, Akuntansi, LPS, Desain Busana, dan Bisnis Retail untuk menjawab kebutuhan industri.'],
+                        ['year' => 'Kini', 'icon' => 'fa-hands-holding-circle', 'title' => 'Komitmen & Resiliensi', 'desc' => 'Terus berkembang menghadapi tantangan berkat kerja sama solid warga sekolah, kesabaran, dan keikhlasan hingga menjadi SMK Amaliah 1 & 2 hari ini.'],
+                    ];
+                @endphp
+                @foreach($milestones as $i => $ms)
+                    <div class="fade-in-section relative pl-16 lg:pl-0 mb-12 last:mb-0 {{ $i % 2 === 0 ? 'lg:pr-[calc(50%+2.5rem)] lg:text-right' : 'lg:pl-[calc(50%+2.5rem)]' }}">
+                        {{-- titik timeline --}}
+                        <span class="absolute left-5 lg:left-1/2 lg:-translate-x-1/2 top-2 w-5 h-5 -ml-2.5 lg:ml-0 rounded-full bg-white border-4 border-[#63cd00] shadow"></span>
+
+                        <div class="lg:inline-block bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            <div class="flex items-center gap-2 {{ $i % 2 === 0 ? 'lg:justify-end' : '' }}">
+                                <span class="bg-[#eafad7] text-[#3f9b00] text-xs font-bold rounded-full px-3 py-1"><i class="fa-solid {{ $ms['icon'] }} mr-1.5"></i>{{ $ms['year'] }}</span>
                             </div>
-                        @endforeach
+                            <h3 class="mt-3 font-bold text-[#282829] text-lg">{{ $ms['title'] }}</h3>
+                            <p class="mt-2 text-sm text-gray-600 leading-relaxed">{{ $ms['desc'] }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
 
-                    </div>
+    {{-- ===================== DETAIL SEJARAH ===================== --}}
+    <section class="bg-gray-50 py-16 lg:py-24">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div class="fade-in-section lg:col-span-1">
+                    <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">Detail Sejarah</span>
+                    <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829]">Sejarah Selengkapnya</h2>
+                    <div class="mt-4 w-20 h-1.5 rounded-full bg-[#63cd00]"></div>
                 </div>
-            @else
-                <div>
-                    <div class="relative h-[300px] overflow-hidden bg-black">
-                        {{-- Layar hitam sebagai fallback --}}
-                    </div>
-                </div>
-            @endif
-        </section>
-        <div style="background-color: #2D2D2D;">
-            <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-                {{-- Menggunakan h-full dan flex items-center untuk membuat konten di tengah vertikal --}}
-                <div class="h-full flex items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        {{-- Text-lg untuk memperbesar teks --}}
-                        <ol class="inline-flex items-center space-x-2 md:space-x-3 text-lg">
-                            <li class="inline-flex items-center">
-                                <a href="/"
-                                    class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-                                    <a href="{{ route('public.about.index') }}"
-                                        class="ml-2 font-medium text-gray-300 hover:text-white md:ml-3 transition-colors">About</a>
-                                </div>
-                            </li>
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    {{-- Mengganti warna chevron untuk konsistensi --}}
-                                    <i class="fas fa-chevron-right text-white text-xs"></i>
-                                    <span class="ml-2 font-medium md:ml-3 text-[#ffffff]">History</span>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
+                <div class="lg:col-span-2 fade-in-section bg-white border border-gray-200 rounded-2xl p-8 lg:p-10">
+                    @if(isset($historyContent) && $historyContent && trim(strip_tags($historyContent->content)) !== '')
+                        <div class="text-base lg:text-lg text-gray-600 leading-relaxed">
+                            {!! \App\Support\HtmlSanitizer::clean($historyContent->content) !!}
+                        </div>
+                    @else
+                        <div class="text-center py-12">
+                            <div class="mx-auto w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
+                                <i class="fa-solid fa-file-lines text-2xl"></i>
+                            </div>
+                            <h3 class="mt-4 font-semibold text-gray-800">Konten Belum Tersedia</h3>
+                            <p class="mt-1 text-sm text-gray-500">Detail sejarah sedang dilengkapi oleh tim kami.</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
+    </section>
 
-        <section class="bg-white py-16 sm:py-24">
-            <div class="container mx-auto max-w-4xl px-6 lg:px-8">
-
-                <div class="text-center">
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                        Sejarah SMK Amaliah 1 & 2 Ciawi
-                    </h2>
-                    <p class="mt-4 text-lg leading-8 text-gray-600">
-                        Perjalanan kami dalam membentuk generasi yang cerdas, berkarakter, dan siap menghadapi tantangan
-                        masa depan.
-                    </p>
-                </div>
-
-                <div class="my-12 border-t border-gray-200"></div>
-
-                <div class="space-y-12">
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-school text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Filosofi Pendidikan
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                SMK Amaliah lahir dari kesadaran bahwa sekolah adalah komunitas utuh yang berperan
-                                menumbuhkan nilai-nilai luhur. Kami berfokus mencerdaskan bangsa dengan mengembangkan etika,
-                                logika, dan praktika yang berakar pada budaya bangsa.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-landmark text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Fondasi & Pendirian
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                Berdiri resmi pada tahun 2008 di bawah naungan <b>YPSPIAI</b> dan pembinaan Universitas
-                                Djuanda (UNIDA). Sejak awal, kami berkomitmen pada Kualitas, Profesionalitas, dan
-                                Pelayanan Prima dalam pendidikan kejuruan.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-sitemap text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Perkembangan & Program Keahlian
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                Untuk menjawab kebutuhan industri, kami membuka 9 konsentrasi keahlian: TKJ, RPL, DKV,
-                                Animasi, MP, Akuntansi, LPS, Desain Busana, dan Bisnis Retail.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="relative flex items-start">
-                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center">
-                            <i class="fas fa-hands-holding-circle text-3xl text-[#59E300]"></i>
-                        </div>
-                        <div class="ml-6">
-                            <h3 class="text-lg font-semibold leading-6 text-gray-900">
-                                Komitmen & Resiliensi
-                            </h3>
-                            <p class="mt-2 text-base leading-7 text-gray-600">
-                                Perjalanan kami menghadapi berbagai tantangan. Namun, berkat kerja sama solid seluruh warga
-                                sekolah, kesabaran, dan keikhlasan, kami bersyukur dapat terus berkembang hingga saat ini.
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <div class="bg-white py-16 sm:py-24">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">
-                        Detail Sejarah
-                    </h2>
-                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">
-                        Informasi mengenai sejarah perkembangan SMK Amaliah 1 & 2 dari masa ke masa.
-                    </p>
-                </div>
-
-                @if ($historyContent)
-                    <article class="prose prose-lg prose-gray max-w-screen">
-                        {!! \App\Support\HtmlSanitizer::clean($historyContent->content) !!}
-                    </article>
-                @else
-                    <div class="text-center py-24 px-6 bg-gray-50 rounded-xl border border-gray-200">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            aria-hidden="true">
-                            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <h3 class="mt-2 text-sm font-semibold text-gray-900">Konten Belum Tersedia</h3>
-                        <p class="mt-1 text-sm text-gray-500">Halaman ini sedang dalam pengembangan.</p>
-                    </div>
-                @endif
-
+    {{-- ===================== CTA ===================== --}}
+    <section class="bg-[#282829] relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-80 h-80 rounded-full opacity-20"
+            style="background: radial-gradient(circle, #63cd00 0%, transparent 70%)"></div>
+        <div class="relative max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center fade-in-section">
+            <h2 class="text-3xl lg:text-4xl font-bold text-white">Lanjut Jelajahi Bagian Lain</h2>
+            <p class="mt-3 text-white/75">Kenali visi, yayasan, dan jurusan yang kami miliki.</p>
+            <div class="mt-7 flex flex-wrap justify-center gap-3">
+                <a href="{{ route('public.about.vision') }}"
+                    class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300">
+                    <i class="fa-solid fa-bullseye"></i> Visi & Misi
+                </a>
+                <a href="{{ route('public.majors.index') }}"
+                    class="inline-flex items-center gap-2 bg-white text-[#282829] font-semibold px-6 py-3 rounded-full hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-300">
+                    <i class="fa-solid fa-sitemap"></i> Jurusan
+                </a>
             </div>
         </div>
-    </div>
+    </section>
 @endsection
