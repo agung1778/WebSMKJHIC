@@ -1,37 +1,8 @@
 @extends('layouts.admin-app')
 
+@section('title', 'Daftar Jurusan')
+
 @section('content')
-
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Daftar Jurusan</title>
-    {{-- Tailwind CSS --}}
-    <script src="https://cdn.tailwindcss.com"></script>
-    {{-- Font Awesome untuk ikon --}}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    {{-- Google Fonts: Poppins --}}
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
-        }
-
-        /* Menyembunyikan panah default pada input search */
-        input[type='search']::-webkit-search-decoration,
-        input[type='search']::-webkit-search-cancel-button,
-        input[type='search']::-webkit-search-results-button,
-        input[type='search']::-webkit-search-results-decoration {
-            -webkit-appearance: none;
-        }
-    </style>
-</head>
-
-<body class="bg-gray-100">
 
     <div class="main-content flex-1 p-4 sm:p-6">
         <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
@@ -112,6 +83,7 @@
                         <tr class="bg-[#292929] text-white uppercase text-sm leading-normal">
                             <th class="py-3 px-6 text-left w-16">No.</th>
                             <th class="py-3 px-6 text-left">Nama Jurusan</th>
+                            <th class="py-3 px-6 text-left">Singkatan</th>
                             <th class="py-3 px-6 text-left">Logo</th>
                             <th class="py-3 px-6 text-left">Deskripsi</th>
                             <th class="py-3 px-6 text-left">Kepala Kompetensi</th>
@@ -125,11 +97,22 @@
                                 <td class="py-4 px-6 text-left font-medium">{{ $loop->iteration }}</td>
                                 <td class="py-4 px-6 text-left font-semibold break-words">{{ $major->name }}</td>
                                 <td class="py-4 px-6 text-left">
-                                    <img src="{{ asset('storage/' . $major->logo) }}" alt="{{ $major->name }}"
-                                        class="w-16 h-16 object-contain rounded-md shadow-sm bg-gray-50">
+                                    @if($major->abbreviation)
+                                        <span class="inline-block bg-[#6CF600]/20 text-[#4a8f00] text-xs font-bold px-2.5 py-1 rounded-full">{{ $major->abbreviation }}</span>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </td>
+                                <td class="py-4 px-6 text-left">
+                                    @if($major->logo)
+                                        <img src="{{ Storage::url($major->logo) }}" alt="{{ $major->name }}"
+                                            class="w-16 h-16 object-contain rounded-md shadow-sm bg-gray-50">
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
                                 </td>
                                 <td class="py-4 px-6 text-left max-w-sm break-words">
-                                    <p class="line-clamp-3">{{ $major->description }}</p>
+                                    <p class="line-clamp-3">{{ strip_tags($major->description) }}</p>
                                 </td>
                                 <td class="py-4 px-6 text-left break-words">{{ $major->competency_head }}</td>
                                 <td class="py-4 px-6 text-left break-words">{{ $major->publisher }}</td>
@@ -157,12 +140,12 @@
                             </tr>
                         @empty
                             <tr id="no-data">
-                                <td colspan="7" class="py-8 text-center text-gray-500">Belum ada jurusan yang ditambahkan.</td>
+                                <td colspan="8" class="py-8 text-center text-gray-500">Belum ada jurusan yang ditambahkan.</td>
                             </tr>
                         @endforelse
                         {{-- Baris ini akan muncul jika pencarian tidak menemukan hasil --}}
                         <tr id="no-results" class="hidden">
-                             <td colspan="7" class="py-8 text-center text-gray-500">
+                             <td colspan="8" class="py-8 text-center text-gray-500">
                                 Jurusan tidak ditemukan.
                             </td>
                         </tr>
@@ -185,7 +168,6 @@
                 let visibleRows = 0;
 
                 allRows.forEach(row => {
-                    // Kolom "Nama Jurusan" adalah kolom kedua (index 1)
                     const nameCell = row.cells[1];
                     if (nameCell) {
                         const name = nameCell.textContent.toLowerCase();
@@ -198,7 +180,6 @@
                     }
                 });
 
-                // Tampilkan pesan "tidak ditemukan" jika tidak ada baris yang cocok
                 if (visibleRows === 0 && !noDataRow) {
                     noResultsRow.style.display = '';
                 } else {
@@ -207,9 +188,5 @@
             });
         });
     </script>
-
-</body>
-
-</html>
 
 @endsection

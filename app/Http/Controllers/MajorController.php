@@ -33,6 +33,7 @@ class MajorController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
+            'abbreviation' => 'nullable|string|max:30',
             'description' => 'required|string',
             'tag' => 'nullable|string', // BARU
             'advantage' => 'nullable|string', // BARU
@@ -104,6 +105,7 @@ class MajorController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
+            'abbreviation' => 'nullable|string|max:30',
             'description' => 'required|string',
             'tag' => 'nullable|string', // BARU
             'advantage' => 'nullable|string', // BARU

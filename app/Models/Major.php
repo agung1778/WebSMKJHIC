@@ -17,6 +17,7 @@ class Major extends Model
      */
     protected $fillable = [
         'name',
+        'abbreviation',
         'description',
         'tag',          // BARU: Tag atau kata kunci
         'advantage',    // BARU: Poin-poin keunggulan
