@@ -1,58 +1,41 @@
 @extends('layouts.admin-app')
 
+@section('title', $testimonial->name)
+
 @section('content')
+    <div class="fade-up mx-auto max-w-3xl space-y-6">
+        <x-admin-components::page-header
+            icon="fa-solid fa-comment-dots"
+            kicker="Testimoni"
+            :title="Str::limit($testimonial->name, 60)"
+            :subtitle="'Alumni ' . $testimonial->alumni_year . ($testimonial->major ? ' · ' . $testimonial->major->name : '')">
 
-    
+            <x-slot:actions>
+                <a class="app-btn app-btn-lg" href="{{ route('admin.testimonials.edit', $testimonial->id) }}"><i class="fa-solid fa-pen"></i> Edit</a>
+                <button class="app-btn app-btn-lg app-btn-danger" type="button" x-data="{}" @click="AppConfirm({ title:'Hapus Testimoni', message:'Hapus testimoni <b>{{ addslashes($testimonial->name) }}</b>? Tindakan ini tidak dapat dibatalkan.', danger:true, confirmText:'Ya, hapus', onConfirm(){ const f=document.createElement('form'); f.method='POST'; f.action='{{ route('admin.testimonials.destroy', $testimonial->id) }}'; f.innerHTML='<input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"><input type=\"hidden\" name=\"_method\" value=\"DELETE\">'; document.body.appendChild(f); f.submit(); } })"><i class="fa-solid fa-trash"></i></button>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
-        <div class="main-content flex-1 p-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold text-[#292929]">Testimoni dari {{ $testimonial->name }}</h1>
-                    <a href="{{ route('admin.testimonials.index') }}"
-                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span>Kembali</span>
-                    </a>
+        <div class="app-card p-6 md:p-8">
+            <div class="flex items-center gap-4 mb-6">
+                @if($testimonial->photo)
+                    <img src="{{ asset('storage/' . $testimonial->photo) }}" alt="{{ $testimonial->name }}" class="rounded-full" style="width:64px;height:64px;object-fit:cover">
+                @else
+                    <div class="initials-avatar" style="width:64px;height:64px;border-radius:50%;font-size:20px">{{ collect(explode(' ', $testimonial->name))->map(fn ($w) => strtoupper(Str::substr($w, 0, 1)))->take(2)->implode('') }}</div>
+                @endif
+                <div>
+                    <div class="cell-main" style="font-size:16px">{{ $testimonial->name }}</div>
+                    <div class="cell-sub">Angkatan {{ $testimonial->alumni_year }} · {{ $testimonial->major->name ?? '-' }}</div>
                 </div>
-
-                <div class="flex flex-col items-center justify-center mb-6">
-                    <img src="{{ asset('storage/' . $testimonial->photo) }}" alt="Foto {{ $testimonial->name }}"
-                        class="w-48 h-48 object-cover rounded-full shadow-md">
-                </div>
-
-                <div class="prose max-w-none text-gray-700">
-                    <h2 class="text-lg font-semibold text-[#292929]">Detail Testimoni</h2>
-                    <hr class="my-2 border-gray-300">
-                    <p><strong>Nama:</strong> {{ $testimonial->name }}</p>
-                    <p><strong>Jurusan:</strong> {{ $testimonial->major->name }}</p>
-                    <p><strong>Tahun Alumni:</strong> {{ $testimonial->alumni_year }}</p>
-                    <p><strong>Dipublikasikan oleh:</strong> {{ $testimonial->publisher }}</p>
-
-                    <h2 class="text-lg font-semibold text-[#292929] mt-6">Deskripsi</h2>
-                    <hr class="my-2 border-gray-300">
-                    <p>{{ $testimonial->description }}</p>
-                </div>
-
-                <div class="mt-8 flex justify-end space-x-2">
-                    <a href="{{ route('admin.testimonials.edit', $testimonial->id) }}"
-                        class="bg-[#6CF600] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200">
-                        <i class="fas fa-edit mr-2"></i>Edit
-                    </a>
-                    <form action="{{ route('admin.testimonials.destroy', $testimonial->id) }}" method="POST"
-                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus testimoni ini?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200">
-                            <i class="fas fa-trash-alt mr-2"></i>Hapus
-                        </button>
-                    </form>
-                </div>
+                <span class="ml-auto text-[var(--amber)]"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
             </div>
+            <blockquote class="rich-content" style="border-left:3px solid var(--brand);background:var(--brand-soft);padding:16px 20px;border-radius:0 16px 16px 0;font-style:italic">
+                <x-admin-components::rich-text :content="$testimonial->description" />
+            </blockquote>
         </div>
 
-    </body>
-
-    </html>
-
+        <div class="flex flex-wrap items-center justify-center gap-3">
+            <a class="app-btn" href="{{ route('admin.testimonials.index') }}"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        </div>
+    </div>
 @endsection

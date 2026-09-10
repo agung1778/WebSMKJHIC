@@ -1,152 +1,127 @@
 @extends('layouts.admin-app')
 
-@section('content')
-    <style>
-        input[type='search']::-webkit-search-decoration,
-        input[type='search']::-webkit-search-cancel-button,
-        input[type='search']::-webkit-search-results-button,
-        input[type='search']::-webkit-search-results-decoration {
-            -webkit-appearance: none;
-        }
-    </style>
+@section('title', 'Menu Navigasi')
 
-    <div class="max-w-7xl mx-auto space-y-6">
-        <div
-            class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 border-b border-slate-200 gap-4">
-            <h1 class="text-2xl font-bold text-slate-800">{{ __('Manajemen Navigasi') }}</h1>
-            <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                <div class="relative w-full sm:w-64">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <i class="fa-regular fa-search text-slate-400"></i>
-                    </span>
-                    <input type="search" id="searchInput" placeholder="{{ __('Cari menu...') }}"
-                        class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition-shadow">
-                </div>
-                <a href="{{ route('admin.navigations.create') }}"
-                    class="bg-[#6CF600] text-black px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#5bd300] transition-colors flex items-center justify-center gap-2 w-full sm:w-auto shadow-sm">
-                    <i class="fa-solid fa-plus"></i> {{ __('Tambah Menu') }}
+@section('content')
+    @php
+        $items = $navigations->map(function ($n) {
+            return [
+                'id' => $n->id,
+                'name' => $n->title,
+                'sub' => $n->url,
+                'by' => str_replace('_', ' ', $n->position),
+                'type' => ucfirst($n->type),
+                'target' => $n->target ?? '_self',
+                'order' => $n->order,
+                'status' => $n->is_active ? 'active' : 'inactive',
+                'ts' => $n->created_at->timestamp,
+                'updated' => \Carbon\Carbon::parse($n->updated_at)->locale('id')->diffForHumans(),
+            ];
+        })->values();
+        $total = $navigations->count();
+    @endphp
+
+    <div class="fade-up space-y-6" x-data="tableIndex({
+        raw: @json($items),
+        statuses: {
+            active: { label: 'Aktif', class: 'badge-published' },
+            inactive: { label: 'Nonaktif', class: 'badge-archived' }
+        },
+        searchKeys: ['name', 'sub', 'by', 'type'],
+        perPage: 10,
+        emptyHead: 'Belum ada menu',
+        emptyBody: 'Tambahkan menu navigasi pertama untuk website sekolah.'
+    })">
+
+        <x-admin-components::page-header
+            icon="fa-solid fa-bars"
+            kicker="Website"
+            title="Menu Navigasi"
+            subtitle="Kelola menu top bar, menu utama, dan footer website.">
+            <x-slot:actions>
+                <a class="app-btn app-btn-primary app-btn-lg" href="{{ route('admin.navigations.create') }}">
+                    <i class="fa-solid fa-plus"></i><span class="hide-mob">Tambah Menu</span>
                 </a>
-            </div>
+            </x-slot:actions>
+        </x-admin-components::page-header>
+
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <x-admin-components::stat-card label="Total Menu" :value="$total" icon="fa-solid fa-bars" tone="brand" />
+            <x-admin-components::stat-card label="Aktif" :value="$navigations->where('is_active', 1)->count()" icon="fa-solid fa-circle-check" tone="green" />
+            <x-admin-components::stat-card label="Button" :value="$navigations->where('type', 'button')->count()" icon="fa-solid fa-square" tone="blue" />
+            <x-admin-components::stat-card label="Posisi" :value="$navigations->pluck('position')->unique()->count()" icon="fa-solid fa-layer-group" tone="amber" />
         </div>
 
-        @if (session('success'))
-            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3">
-                <i class="fa-solid fa-circle-check"></i>
-                <p class="text-sm font-medium">{{ session('success') }}</p>
+        <div class="app-card overflow-hidden">
+            <div class="toolbar">
+                <div class="search-field">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input class="app-input" type="search" placeholder="Cari menu, URL, posisi…" x-model="q">
+                </div>
+                <span class="toolbar-spacer"></span>
+                <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
             </div>
-        @endif
 
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden mt-4">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+            <div class="table-wrap" x-show="!loading" x-cloak>
+                <table class="table-app">
                     <thead>
-                        <tr
-                            class="bg-slate-50 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-500 font-bold">
-                            <th class="py-4 px-6 w-16 text-center">{{ __('Urutan') }}</th>
-                            <th class="py-4 px-6">{{ __('Label Menu') }}</th>
-                            <th class="py-4 px-6">{{ __('URL / Link') }}</th>
-                            <th class="py-4 px-6 text-center">{{ __('Posisi') }}</th>
-                            <th class="py-4 px-6 text-center">{{ __('Tipe') }}</th>
-                            <th class="py-4 px-6 text-center">{{ __('Status') }}</th>
-                            <th class="py-4 px-6 text-center">{{ __('Aksi') }}</th>
+                        <tr>
+                            <th style="width:64px">Urutan</th>
+                            <th>Label Menu</th>
+                            <th>URL / Link</th>
+                            <th>Posisi</th>
+                            <th>Tipe</th>
+                            <th>Status</th>
+                            <th class="text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-sm text-slate-600 divide-y divide-slate-100" id="navTableBody">
-                        @forelse($navigations as $nav)
-                            <tr class="hover:bg-slate-50 transition-colors nav-row">
-                                <td class="py-4 px-6 text-center font-bold text-slate-800">{{ $nav->order }}</td>
-                                <td class="py-4 px-6 font-semibold text-slate-800">{{ $nav->title }}</td>
-                                <td class="py-4 px-6 text-xs font-mono text-blue-500">{{ $nav->url }}</td>
-                                <td class="py-4 px-6 text-center">
-                                    <span
-                                        class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase">
-                                        {{ str_replace('_', ' ', $nav->position) }}
-                                    </span>
+                    <tbody>
+                        <template x-for="n in paged" :key="n.id">
+                            <tr>
+                                <td><span class="badge badge-info" x-text="'#' + n.order"></span></td>
+                                <td><div class="cell-main" x-text="n.name"></div></td>
+                                <td><code class="cell-sub" style="font-size:12px" x-text="n.sub"></code></td>
+                                <td><span class="badge badge-info" x-text="n.by"></span></td>
+                                <td>
+                                    <span class="badge" :class="n.type === 'Button' ? 'badge-archived' : 'badge-published'" x-text="n.type"></span>
                                 </td>
-                                <td class="py-4 px-6 text-center">
-                                    @if ($nav->type == 'button')
-                                        <span
-                                            class="px-2 py-1 bg-slate-800 text-white rounded text-[10px] font-bold uppercase">{{ __('Button') }}</span>
-                                    @else
-                                        <span
-                                            class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase">{{ __('Link') }}</span>
-                                    @endif
-                                </td>
-                                <td class="py-4 px-6 text-center">
-                                    @if ($nav->is_active)
-                                        <i class="fa-solid fa-check-circle text-green-500 text-lg" title="{{ __('Aktif') }}"></i>
-                                    @else
-                                        <i class="fa-solid fa-times-circle text-red-500 text-lg" title="{{ __('Nonaktif') }}"></i>
-                                    @endif
-                                </td>
-                                <td class="py-4 px-6 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <a href="{{ route('admin.navigations.edit', $nav->id) }}"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors"
-                                            title="{{ __('Edit') }}">
-                                            <i class="fa-regular fa-pen-to-square text-xs"></i>
-                                        </a>
-                                        <form action="{{ route('admin.navigations.destroy', $nav->id) }}" method="POST"
-                                            onsubmit="return confirm('{{ __('Yakin ingin menghapus menu ini?') }}');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-                                                title="{{ __('Hapus') }}">
-                                                <i class="fa-regular fa-trash-can text-xs"></i>
-                                            </button>
-                                        </form>
+                                <td><span class="badge" :class="badgeClass(n.status)" x-text="statusLabel(n.status)"></span></td>
+                                <td>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a class="app-btn app-btn-sm app-btn-primary" :href="'/admin/navigations/' + n.id + '/edit'"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
+                                        <div class="dropdown">
+                                            <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
+                                            <div class="dropdown-menu">
+                                                <button class="dropdown-item danger" type="button" @click="askDelete(n, '/admin/navigations/' + n.id)"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr id="no-data">
-                                <td colspan="7" class="py-8 text-center text-slate-500 text-sm">{{ __('Belum ada navigasi terdaftar.') }}</td>
-                            </tr>
-                        @endforelse
-                        <tr id="no-results" class="hidden">
-                            <td colspan="7" class="py-8 text-center text-slate-500 text-sm">{{ __('Menu tidak ditemukan.') }}</td>
-                        </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
+
+            <div x-show="loading" class="p-5 grid gap-4">
+                <template x-for="i in 4" :key="i">
+                    <div class="flex items-center gap-4">
+                        <div class="skeleton" style="width:48px;height:48px;border-radius:12px"></div>
+                        <div style="flex:1">
+                            <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
+                            <div class="skeleton" style="height:11px;width:70%"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div x-show="!loading && empty" x-cloak>
+                <x-admin-components::empty-state icon="fa-bars" :title="'Belum ada menu'" description="Tambahkan menu navigasi pertama untuk website sekolah.">
+                    <a class="app-btn app-btn-primary" href="{{ route('admin.navigations.create') }}"><i class="fa-solid fa-plus"></i>Tambah Menu</a>
+                </x-admin-components::empty-state>
+            </div>
+
+            <x-admin-components::pagination client countLabel="menu" />
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('searchInput');
-            const dataRows = document.querySelectorAll('.nav-row');
-            const noResultsRow = document.getElementById('no-results');
-            const noDataRow = document.getElementById('no-data');
-
-            if (searchInput) {
-                searchInput.addEventListener('input', function(e) {
-                    const searchTerm = e.target.value.toLowerCase();
-                    let visibleRows = 0;
-
-                    dataRows.forEach(row => {
-                        const titleCell = row.cells[1];
-                        if (titleCell) {
-                            const title = titleCell.textContent.toLowerCase();
-                            if (title.includes(searchTerm)) {
-                                row.style.display = '';
-                                visibleRows++;
-                            } else {
-                                row.style.display = 'none';
-                            }
-                        }
-                    });
-
-                    if (!noDataRow) {
-                        if (visibleRows === 0) {
-                            noResultsRow.classList.remove('hidden');
-                        } else {
-                            noResultsRow.classList.add('hidden');
-                        }
-                    }
-                });
-            }
-        });
-    </script>
 @endsection

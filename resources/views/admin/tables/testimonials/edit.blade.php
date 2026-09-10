@@ -1,93 +1,24 @@
 @extends('layouts.admin-app')
+
+@section('title', 'Edit Testimoni')
+
 @section('content')
+    <div class="fade-up mx-auto space-y-6 max-w-4xl">
+        <x-admin-components::page-header
+            icon="fa-solid fa-comment-dots"
+            kicker="Konten"
+            title="Edit Testimoni"
+            :subtitle="'Perbarui testimoni: ' . Str::limit($testimonial->name, 60)">
 
-    
+            <x-slot:actions>
+                <a class="app-btn app-btn-lg" href="{{ route('admin.testimonials.show', $testimonial->id) }}"><i class="fa-regular fa-eye"></i> Lihat</a>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
-        <div class="main-content flex-1 p-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold text-[#292929]">Edit Testimoni</h1>
-                    <a href="{{ route('admin.testimonials.index') }}"
-                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span>Kembali</span>
-                    </a>
-                </div>
-
-                <form action="{{ route('admin.testimonials.update', $testimonial->id) }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="mb-4">
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
-                        <input type="text" name="name" id="name"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('name') border-red-500 @enderror"
-                            value="{{ old('name', $testimonial->name) }}">
-                        @error('name')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="alumni_year" class="block text-sm font-medium text-gray-700 mb-1">Tahun Alumni</label>
-                        <input type="number" name="alumni_year" id="alumni_year"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('alumni_year') border-red-500 @enderror"
-                            value="{{ old('alumni_year', $testimonial->alumni_year) }}">
-                        @error('alumni_year')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="major_id" class="block text-sm font-medium text-gray-700 mb-1">Jurusan</label>
-                        <select name="major_id" id="major_id"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('major_id') border-red-500 @enderror">
-                            @foreach($majors as $major)
-                                <option value="{{ $major->id }}" @if($major->id == $testimonial->major_id) selected @endif>
-                                    {{ $major->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('major_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-                        <textarea name="description" id="description" rows="5"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('description') border-red-500 @enderror">{{ old('description', $testimonial->description) }}</textarea>
-                        @error('description')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-6">
-                        <label for="photo" class="block text-sm font-medium text-gray-700 mb-1">Foto</label>
-                        <input type="file" name="photo" id="photo"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('photo') border-red-500 @enderror">
-                        @if($testimonial->photo)
-                            <p class="text-xs text-gray-500 mt-2">Foto saat ini:</p>
-                            <img src="{{ asset('storage/' . $testimonial->photo) }}" alt="Foto {{ $testimonial->name }}"
-                                class="w-32 h-32 object-cover rounded-md mt-2">
-                        @endif
-                        @error('photo')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="flex items-center justify-end">
-                        <button type="submit"
-                            class="bg-[#6CF600] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200">
-                            Perbarui Testimoni
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    </body>
-
-    </html>
-
+        <form action="{{ route('admin.testimonials.update', $testimonial->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            @include('admin.tables.testimonials._form', ['testimonial' => $testimonial])
+        </form>
+    </div>
 @endsection

@@ -1,105 +1,18 @@
 @extends('layouts.admin-app')
 
+@section('title', 'Tambah Mitra')
+
 @section('content')
+    <div class="fade-up mx-auto space-y-6 max-w-4xl">
+        <x-admin-components::page-header
+            icon="fa-solid fa-handshake"
+            kicker="Konten"
+            title="Tambah Mitra Industri"
+            subtitle="Tambahkan mitra industri & dunia kerja baru." />
 
-    
-
-        <div class="main-content flex-1 p-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold text-[#292929]">Tambah Mitra Industri</h1>
-                    <a href="{{ route('admin.partners.index') }}"
-                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span>Kembali</span>
-                    </a>
-                </div>
-
-                <form action="{{ route('admin.partners.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-
-                    <div class="mb-4">
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Mitra</label>
-                        <input type="text" name="name" id="name"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('name') border-red-500 @enderror"
-                            value="{{ old('name') }}">
-                        @error('name')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="logo" class="block text-sm font-medium text-gray-700 mb-1">Logo Mitra</label>
-                        <input type="file" name="logo" id="logo"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('logo') border-red-500 @enderror">
-                        @error('logo')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-                        <textarea name="description" id="description" rows="5"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
-                        @error('description')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="sector" class="block text-sm font-medium text-gray-700 mb-1">Sektor</label>
-                        <input type="text" name="sector" id="sector"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('sector') border-red-500 @enderror"
-                            value="{{ old('sector') }}">
-                        @error('sector')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="city" class="block text-sm font-medium text-gray-700 mb-1">Kota</label>
-                        <input type="text" name="city" id="city"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('city') border-red-500 @enderror"
-                            value="{{ old('city') }}">
-                        @error('city')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="company_contact" class="block text-sm font-medium text-gray-700 mb-1">Kontak
-                            Perusahaan</label>
-                        <input type="text" name="company_contact" id="company_contact"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('company_contact') border-red-500 @enderror"
-                            value="{{ old('company_contact') }}">
-                        @error('company_contact')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-6">
-                        <label for="partnership_date" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Kerja
-                            Sama</label>
-                        <input type="date" name="partnership_date" id="partnership_date"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('partnership_date') border-red-500 @enderror"
-                            value="{{ old('partnership_date') }}">
-                        @error('partnership_date')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="flex items-center justify-end">
-                        <button type="submit"
-                            class="bg-[#6CF600] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200">
-                            Simpan Mitra
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    </body>
-
-    </html>
-
+        <form action="{{ route('admin.partners.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @include('admin.tables.partners._form', ['partner' => null])
+        </form>
+    </div>
 @endsection

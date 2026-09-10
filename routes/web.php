@@ -119,6 +119,9 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
 
     Route::get('/admin/curator', [AdminController::class, 'curator'])->name('admin.curator');
 
+    // Ekspor data tabel ke CSV
+    Route::get('/admin/export/{resource}', [App\Http\Controllers\ExportController::class, 'export'])->name('admin.export');
+
     // Manajemen user & role HANYA untuk superadmin
     Route::middleware('role:superadmin')->group(function () {
         Route::get('/admin/users', [AdminController::class, 'user'])->name('admin.users');

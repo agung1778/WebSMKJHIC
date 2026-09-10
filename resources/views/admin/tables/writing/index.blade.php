@@ -1,201 +1,129 @@
 @extends('layouts.admin-app')
 
+@section('title', 'Home & Tulisan')
+
 @section('content')
+    @php
+        $items = $writings->map(function ($w) {
+            return [
+                'id' => $w->id,
+                'name' => $w->title,
+                'sub' => \Illuminate\Support\Str::limit(strip_tags($w->content ?? ''), 160),
+                'img' => null,
+                'by' => $w->publisher ?? '-',
+                'date' => $w->release_date ? \Carbon\Carbon::parse($w->release_date)->translatedFormat('d M Y') : '-',
+                'ts' => $w->created_at->timestamp,
+                'updated' => \Carbon\Carbon::parse($w->updated_at)->locale('id')->diffForHumans(),
+            ];
+        })->values();
+        $total = $writings->count();
+        $wordCount = $writings->sum(fn ($w) => str_word_count(strip_tags($w->content ?? '')));
+    @endphp
 
+    <div class="fade-up space-y-6" x-data="tableIndex({
+        raw: @json($items),
+        searchKeys: ['name', 'sub', 'by'],
+        perPage: 8,
+        exportUrl: @json(route('admin.export', ['resource' => 'writings'])),
+        emptyHead: 'Belum ada tulisan',
+        emptyBody: 'Mulai tulis konten pertama untuk halaman home & tulisan website.'
+    })">
 
-        <style>
-        
-
-        /* Menyembunyikan panah default pada input search */
-        input[type='search']::-webkit-search-decoration,
-        input[type='search']::-webkit-search-cancel-button,
-        input[type='search']::-webkit-search-results-button,
-        input[type='search']::-webkit-search-results-decoration {
-            -webkit-appearance: none;
-        }
-    </style>
-
-
-<div class="main-content flex-1 p-4 sm:p-6">
-    <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
-        {{-- Header: Judul, Cari, dan Tombol Tambah --}}
-        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-            <h1 class="text-2xl font-bold text-[#292929]">Daftar Konten</h1>
-            <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                 {{-- Fitur Pencarian --}}
-                 <div class="relative w-full sm:w-64">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <i class="fas fa-search text-gray-400"></i>
-                    </span>
-                    <input type="search" id="searchInput" placeholder="Cari berdasarkan judul..."
-                        class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6CF600]">
-                </div>
-                {{-- Tombol Buat Konten --}}
-                <a href="{{ route('admin.writings.create') }}" class="bg-[#6CF600] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200 flex items-center justify-center space-x-2 w-full sm:w-auto">
-                    <i class="fas fa-plus"></i>
-                    <span>Buat Konten</span>
+        <x-admin-components::page-header
+            icon="fa-solid fa-pen-nib"
+            kicker="Website"
+            title="Home & Tulisan"
+            subtitle="Kelola tulisan dan konten halaman beranda website sekolah.">
+            <x-slot:actions>
+                <a class="app-btn app-btn-primary app-btn-lg" href="{{ route('admin.writings.create') }}">
+                    <i class="fa-solid fa-plus"></i><span class="hide-mob">Tulis Baru</span>
                 </a>
-            </div>
+            </x-slot:actions>
+        </x-admin-components::page-header>
+
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <x-admin-components::stat-card label="Total Tulisan" :value="$total" icon="fa-solid fa-pen-nib" tone="brand" />
+            <x-admin-components::stat-card label="Total Kata" :value="number_format($wordCount)" icon="fa-solid fa-font" tone="green" />
+            <x-admin-components::stat-card label="Kontributor" :value="$writings->pluck('publisher')->unique()->count()" icon="fa-solid fa-user-pen" tone="blue" />
+            <x-admin-components::stat-card label="Terakhir Diperbarui" :value="$writings->max('updated_at') ? \Carbon\Carbon::parse($writings->max('updated_at'))->locale('id')->diffForHumans() : '-'" icon="fa-solid fa-clock-rotate-left" tone="amber" />
         </div>
 
-        {{-- Notifikasi Sukses --}}
-        @if(session('success'))
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg shadow-sm" role="alert">
-                <p>{{ session('success') }}</p>
+        <div class="app-card overflow-hidden">
+            <div class="toolbar">
+                <div class="search-field">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input class="app-input" type="search" placeholder="Cari judul, penerbit…" x-model="q">
+                </div>
+                <select class="app-select" style="width:auto" x-model="sortBy">
+                    <option value="newest">Terbaru</option>
+                    <option value="oldest">Terlama</option>
+                    <option value="az">Judul A–Z</option>
+                    <option value="za">Judul Z–A</option>
+                </select>
+                <span class="toolbar-spacer"></span>
+                <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
+                <a class="app-btn app-btn-md" :href="exportUrl" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
             </div>
-        @endif
 
-        {{-- Menghitung statistik --}}
-        @php
-            $totalWritings = $writings->count();
-            // Cek keberadaan konten berdasarkan judul spesifik (case-insensitive)
-            $sejarahExists = $writings->first(fn($w) => strcasecmp(trim($w->title), 'History') === 0) ? 1 : 0;
-            $achievementExists = $writings->first(fn($w) => strcasecmp(trim($w->title), 'Achievement') === 0) ? 1 : 0;
-            $foundationExists = $writings->first(fn($w) => strcasecmp(trim($w->title), 'Foundation') === 0) ? 1 : 0;
-        @endphp
-
-        {{-- Bagian Statistik --}}
-        <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {{-- Card Total Konten --}}
-            <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                <div class="bg-indigo-100 text-indigo-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-pencil-alt fa-lg"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500">Total Konten</p>
-                    <p class="text-2xl font-bold text-gray-800">{{ $totalWritings }}</p>
-                </div>
-            </div>
-             {{-- Card Sejarah --}}
-             <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                <div class="{{ $sejarahExists ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500' }} rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-landmark fa-lg"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500">Sejarah</p>
-                    <p class="text-2xl font-bold {{ $sejarahExists ? 'text-gray-800' : 'text-red-500' }}">{{ $sejarahExists ? 'Added' : 'Empty' }}</p>
-                </div>
-            </div>
-            {{-- Card Achievement --}}
-            <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                <div class="{{ $achievementExists ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500' }} rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-trophy fa-lg"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500">Achievement</p>
-                    <p class="text-2xl font-bold {{ $achievementExists ? 'text-gray-800' : 'text-red-500' }}">{{ $achievementExists ? 'Added' : 'Empty' }}</p>
-                </div>
-            </div>
-            {{-- Card Foundation --}}
-            <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                <div class="{{ $foundationExists ? 'bg-green-100 text-green-500' : 'bg-red-100 text-red-500' }} rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-building fa-lg"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500">Foundation</p>
-                    <p class="text-2xl font-bold {{ $foundationExists ? 'text-gray-800' : 'text-red-500' }}">{{ $foundationExists ? 'Added' : 'Empty' }}</p>
-                </div>
-            </div>
-        </div>
-
-        {{-- Tabel Data Konten --}}
-        <div class="overflow-x-auto rounded-lg">
-            <table class="w-full table-fixed border-collapse">
-                <thead>
-                    <tr class="bg-[#292929] text-white uppercase text-sm leading-normal">
-                        <th class="py-3 px-6 text-left w-16">No.</th>
-                        <th class="py-3 px-6 text-left">Judul</th>
-                        <th class="py-3 px-6 text-left">Kategori</th>
-                        <th class="py-3 px-6 text-left">Isi Konten</th>
-                        <th class="py-3 px-6 text-left">Publisher</th>
-                        <th class="py-3 px-6 text-left">Tanggal Rilis</th>
-                        <th class="py-3 px-6 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600 text-sm font-light" id="writingTableBody">
-                    @forelse($writings as $writing)
-                        <tr class="border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200">
-                            <td class="py-4 px-6 text-left font-medium">{{ $loop->iteration }}</td>
-                            <td class="py-4 px-6 text-left font-semibold break-words">{{ $writing->title }}</td>
-                            <td class="py-4 px-6 text-left break-words">{{ $writing->category ?? 'N/A' }}</td>
-                            <td class="py-4 px-6 text-left max-w-xs break-words">
-                                <p class="line-clamp-3">{{ strip_tags($writing->content) }}</p>
-                            </td>
-                            <td class="py-4 px-6 text-left break-words">{{ $writing->publisher }}</td>
-                            <td class="py-4 px-6 text-left">{{ \Carbon\Carbon::parse($writing->release_date)->format('d M Y') }}</td>
-                            <td class="py-4 px-6 text-center">
-                                <div class="flex items-center justify-center space-x-2">
-                                    <a href="{{ route('admin.writings.show', $writing->id) }}" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Lihat">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('admin.writings.edit', $writing->id) }}" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('admin.writings.destroy', $writing->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus konten ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Hapus">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
+            <div class="table-wrap" x-show="!loading" x-cloak>
+                <table class="table-app">
+                    <thead>
+                        <tr>
+                            <th>Judul</th>
+                            <th>Terbit</th>
+                            <th>Penerbit</th>
+                            <th>Diperbarui</th>
+                            <th class="text-right">Aksi</th>
                         </tr>
-                    @empty
-                        <tr id="no-data">
-                            <td colspan="7" class="py-8 text-center text-gray-500">Belum ada konten yang dibuat.</td>
-                        </tr>
-                    @endforelse
-                    {{-- Baris ini akan muncul jika pencarian tidak menemukan hasil --}}
-                    <tr id="no-results" class="hidden">
-                        <td colspan="7" class="py-8 text-center text-gray-500">
-                           Konten tidak ditemukan.
-                       </td>
-                   </tr>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <template x-for="w in paged" :key="w.id">
+                            <tr>
+                                <td style="min-width:320px">
+                                    <div class="cell-main truncate" x-text="w.name"></div>
+                                    <div class="cell-sub truncate" style="max-width:440px" x-text="w.sub"></div>
+                                </td>
+                                <td><span class="badge badge-published" style="white-space:nowrap" x-text="w.date"></span></td>
+                                <td><span style="white-space:nowrap"><i class="fa-regular fa-user mr-1" style="color:var(--text-3)"></i><span x-text="w.by"></span></span></td>
+                                <td><span class="cell-sub" style="white-space:nowrap" x-text="w.updated"></span></td>
+                                <td>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a class="app-btn app-btn-sm app-btn-primary" :href="'/admin/writings/' + w.id + '/edit'"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
+                                        <div class="dropdown">
+                                            <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" :href="'/admin/writings/' + w.id"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
+                                                <div class="dropdown-sep"></div>
+                                                <button class="dropdown-item danger" type="button" @click="askDelete(w, '/admin/writings/' + w.id)"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <div x-show="loading" class="p-5 grid gap-4">
+                <template x-for="i in 4" :key="i">
+                    <div class="flex items-center gap-4">
+                        <div class="skeleton" style="width:48px;height:48px;border-radius:12px"></div>
+                        <div style="flex:1">
+                            <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
+                            <div class="skeleton" style="height:11px;width:70%"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div x-show="!loading && empty" x-cloak>
+                <x-admin-components::empty-state icon="fa-pen-nib" :title="'Belum ada tulisan'" description="Mulai tulis konten pertama untuk halaman home & tulisan website.">
+                    <a class="app-btn app-btn-primary" href="{{ route('admin.writings.create') }}"><i class="fa-solid fa-plus"></i>Tulis Baru</a>
+                </x-admin-components::empty-state>
+            </div>
+
+            <x-admin-components::pagination client countLabel="tulisan" />
         </div>
     </div>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('searchInput');
-        const tableBody = document.getElementById('writingTableBody');
-        const allRows = tableBody.querySelectorAll('tr:not(#no-results)');
-        const noResultsRow = document.getElementById('no-results');
-        const noDataRow = document.getElementById('no-data');
-
-        searchInput.addEventListener('keyup', function (e) {
-            const searchTerm = e.target.value.toLowerCase();
-            let visibleRows = 0;
-
-            allRows.forEach(row => {
-                // Kolom "Judul" adalah kolom kedua (index 1)
-                const titleCell = row.cells[1];
-                if (titleCell) {
-                    const title = titleCell.textContent.toLowerCase();
-                    if (title.includes(searchTerm)) {
-                        row.style.display = '';
-                        visibleRows++;
-                    } else {
-                        row.style.display = 'none';
-                    }
-                }
-            });
-
-            // Tampilkan pesan "tidak ditemukan" jika tidak ada baris yang cocok
-            if (visibleRows === 0 && !noDataRow) {
-                noResultsRow.style.display = '';
-            } else {
-                noResultsRow.style.display = 'none';
-            }
-        });
-    });
-</script>
-
-</body>
-</html>
-
 @endsection
-

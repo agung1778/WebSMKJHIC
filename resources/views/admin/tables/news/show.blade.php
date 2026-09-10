@@ -1,53 +1,55 @@
 @extends('layouts.admin-app')
 
+@section('title', $newsItem->title)
+
 @section('content')
+    <div class="fade-up mx-auto max-w-4xl space-y-6">
+        @php
+            $parsed = \Carbon\Carbon::parse($newsItem->date_published);
+        @endphp
 
-    
+        <x-admin-components::page-header
+            icon="fa-solid fa-newspaper"
+            kicker="Berita"
+            :title="Str::limit($newsItem->title, 60)"
+            subtitle="Diterbitkan {{ $parsed->translatedFormat('l, d F Y') }} · oleh {{ $newsItem->publisher }}">
 
-        <div class="main-content flex-1 p-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold text-[#292929]">{{ $newsItem->title }}</h1>
-                    <a href="{{ route('admin.news.index') }}"
-                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span>Kembali</span>
-                    </a>
+            <x-slot:actions>
+                <a class="app-btn app-btn-lg" href="{{ route('admin.news.edit', $newsItem->id) }}"><i class="fa-solid fa-pen"></i> Edit</a>
+                <button class="app-btn app-btn-lg app-btn-danger" type="button" x-data="{}" @click="AppConfirm({ title:'Hapus Berita', message:'Hapus berita <b>{{ addslashes($newsItem->title) }}</b>? Tindakan ini tidak dapat dibatalkan.', danger:true, confirmText:'Ya, hapus', onConfirm(){ const f=document.createElement('form'); f.method='POST'; f.action='{{ route('admin.news.destroy', $newsItem->id) }}'; f.innerHTML='<input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"><input type=\"hidden\" name=\"_method\" value=\"DELETE\">'; document.body.appendChild(f); f.submit(); } })"><i class="fa-solid fa-trash"></i></button>
+            </x-slot:actions>
+        </x-admin-components::page-header>
+
+        <div class="app-card overflow-hidden">
+            @if($newsItem->image)
+                <div class="relative">
+                    <img src="{{ asset('storage/' . $newsItem->image) }}" alt="{{ $newsItem->title }}" class="w-full" style="max-height:420px;object-fit:cover">
+                    <div class="absolute top-4 left-4">
+                        <span class="badge badge-published px-3 py-1.5 text-[12px]"><i class="fa-regular fa-calendar mr-1"></i>{{ $parsed->translatedFormat('d M Y') }}</span>
+                    </div>
                 </div>
-
-                <div class="mb-6">
-                    <img src="{{ asset('storage/' . $newsItem->image) }}" alt="{{ $newsItem->title }}"
-                        class="w-full h-80 object-cover rounded-lg shadow-md">
+            @endif
+            <div class="p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="initials-avatar">{{ collect(explode(' ', $newsItem->publisher))->map(fn ($w) => strtoupper(Str::substr($w, 0, 1)))->take(2)->implode('') }}</div>
+                    <div>
+                        <div class="cell-main" style="font-size:14px">{{ $newsItem->publisher }}</div>
+                        <div class="cell-sub">{{ $parsed->diffForHumans() }} · {{ $parsed->translatedFormat('H:i') }}</div>
+                    </div>
                 </div>
-
-                <div class="prose max-w-none text-gray-700">
-                    <p class="text-sm font-medium text-gray-500">Dipublikasikan oleh: <span
-                            class="text-gray-700">{{ $newsItem->publisher }}</span> pada
-                        {{ \Carbon\Carbon::parse($newsItem->date_published)->format('d F Y') }}</p>
-                    <hr class="my-4 border-gray-300">
-                    <p>{{ $newsItem->description }}</p>
-                </div>
-
-                <div class="mt-8 flex justify-end space-x-2">
-                    <a href="{{ route('admin.news.edit', $newsItem->id) }}"
-                        class="bg-[#6CF600] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200">
-                        <i class="fas fa-edit mr-2"></i>Edit
-                    </a>
-                    <form action="{{ route('admin.news.destroy', $newsItem->id) }}" method="POST"
-                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus berita ini?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200">
-                            <i class="fas fa-trash-alt mr-2"></i>Hapus
-                        </button>
-                    </form>
-                </div>
+                <h1 class="text-2xl md:text-[30px] font-extrabold leading-tight mb-5" style="color:var(--text)">{{ $newsItem->title }}</h1>
+                <article class="rich-content">
+                    <x-admin-components::rich-text :content="$newsItem->description" />
+                </article>
             </div>
         </div>
 
-    </body>
-
-    </html>
-
+        <div class="flex flex-wrap items-center justify-center gap-3">
+            <a class="app-btn" href="{{ route('admin.news.index') }}"><i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar</a>
+            <a class="app-btn app-btn-primary" href="{{ route('admin.news.edit', $newsItem->id) }}"><i class="fa-solid fa-pen"></i> Edit Berita</a>
+            @if($newsItem->image)
+                <a class="app-btn" href="{{ asset('storage/' . $newsItem->image) }}" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Gambar</a>
+            @endif
+        </div>
+    </div>
 @endsection

@@ -5,128 +5,146 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>@yield('title', 'Admin Dashboard') — SMK Amaliah 1 & 2</title>
+    <title>@yield('title', 'Dashboard') · SMK Amaliah 1 &amp; 2</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             corePlugins: { preflight: false },
-            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'Poppins', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+                    colors: {
+                        brand: '#63CD00',
+                        'brand-strong': '#4FB800',
+                        'brand-deep': '#3E9B00',
+                        'brand-soft': '#EFF9E3',
+                        dark: '#282829',
+                        ink: '#1C1C1D',
+                        'app-bg': '#F6F8FB'
+                    }
+                }
+            }
         };
     </script>
+    <link rel="stylesheet" href="https://unpkg.com/trix@2.0.8/dist/trix.css" />
     <link rel="stylesheet" href="{{ asset('admin/admin.css') }}" />
-    <script src="{{ asset('admin/admin.js') }}" defer></script>
+    <script defer src="{{ asset('admin/admin.js') }}"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+    @stack('styles')
 </head>
 
-<body>
+<body class="font-sans">
     @php
         // -----------------------------------------------------------------
         // Struktur menu admin (data-driven — mudah ditambah menu baru)
         // routes : pola route yang membuat item aktif (request()->routeIs)
-        // url    : nama route untuk tautan
+        // url    : nama route untuk tautan (nama route, bukan URL)
+        // icon   : kelas Font Awesome
         // -----------------------------------------------------------------
         $menu = [
             [
-                'label' => 'Umum',
+                'label' => 'Dashboard',
                 'items' => [
-                    ['title' => 'Dashboard', 'icon' => 'fa-solid fa-gauge-high', 'routes' => ['admin.dashboard'], 'name' => 'admin.dashboard'],
+                    ['title' => 'Dashboard', 'icon' => 'fa-solid fa-gauge-high', 'routes' => ['admin.dashboard'], 'url' => 'admin.dashboard'],
                 ],
             ],
             [
-                'label' => 'Sekolah',
+                'label' => 'Website',
                 'items' => [
-                    ['title' => 'Profil & Tulisan', 'icon' => 'fa-solid fa-book-open', 'routes' => ['admin.writings.index', 'admin.writings.create', 'admin.writings.edit', 'admin.writings.show'], 'name' => 'admin.writings.index'],
-                    ['title' => 'Jurusan / Kompetensi', 'icon' => 'fa-solid fa-layer-group', 'routes' => ['admin.majors.*'], 'name' => 'admin.majors.index'],
-                    ['title' => 'Program Pendidikan', 'icon' => 'fa-solid fa-graduation-cap', 'routes' => ['admin.programs.*'], 'name' => 'admin.programs.index'],
-                    ['title' => 'Info SPMB', 'icon' => 'fa-solid fa-file-circle-check', 'routes' => ['admin.spmb_settings.*'], 'name' => 'admin.spmb_settings.edit'],
-                    ['title' => 'Jumlah Siswa', 'icon' => 'fa-solid fa-user-graduate', 'routes' => ['admin.school_settings.*'], 'name' => 'admin.school_settings.edit'],
-                    ['title' => 'Menu Navigasi', 'icon' => 'fa-solid fa-bars-staggered', 'routes' => ['admin.navigations.*'], 'name' => 'admin.navigations.index'],
-                    ['title' => 'Galeri P5/PKK', 'icon' => 'fa-solid fa-lightbulb', 'routes' => ['admin.pkk.*'], 'name' => 'admin.pkk.index'],
+                    ['title' => 'Home & Tulisan', 'icon' => 'fa-solid fa-house', 'routes' => ['admin.writings.*'], 'url' => 'admin.writings.index'],
+                    ['title' => 'Hero & Media', 'icon' => 'fa-solid fa-images', 'routes' => ['admin.image.*'], 'url' => 'admin.image.index'],
+                    ['title' => 'Menu Navigasi', 'icon' => 'fa-solid fa-bars-staggered', 'routes' => ['admin.navigations.*'], 'url' => 'admin.navigations.index'],
+                    ['title' => 'Feed Instagram', 'icon' => 'fa-brands fa-instagram', 'routes' => ['admin.insta-posts.*'], 'url' => 'admin.insta-posts.index'],
                 ],
             ],
             [
-                'label' => 'Media & Berita',
+                'label' => 'Konten',
                 'items' => [
-                    ['title' => 'Berita', 'icon' => 'fa-solid fa-newspaper', 'routes' => ['admin.news.*'], 'name' => 'admin.news.index'],
-                    ['title' => 'Hero Images', 'icon' => 'fa-solid fa-image', 'routes' => ['admin.image.*'], 'name' => 'admin.image.index'],
-                    ['title' => 'Galeri Instagram', 'icon' => 'fa-brands fa-instagram', 'routes' => ['admin.insta-posts.*'], 'name' => 'admin.insta-posts.index'],
+                    ['title' => 'Berita', 'icon' => 'fa-solid fa-newspaper', 'routes' => ['admin.news.*'], 'url' => 'admin.news.index'],
+                    ['title' => 'Jurusan', 'icon' => 'fa-solid fa-layer-group', 'routes' => ['admin.majors.*'], 'url' => 'admin.majors.index'],
+                    ['title' => 'Program', 'icon' => 'fa-solid fa-graduation-cap', 'routes' => ['admin.programs.*'], 'url' => 'admin.programs.index'],
+                    ['title' => 'Fasilitas', 'icon' => 'fa-solid fa-building', 'routes' => ['admin.facilities.*'], 'url' => 'admin.facilities.index'],
+                    ['title' => 'Mitra Industri', 'icon' => 'fa-solid fa-handshake', 'routes' => ['admin.partners.*'], 'url' => 'admin.partners.index'],
+                    ['title' => 'Testimoni', 'icon' => 'fa-solid fa-quote-right', 'routes' => ['admin.testimonials.*'], 'url' => 'admin.testimonials.index'],
+                    ['title' => 'Galeri P5/PKK', 'icon' => 'fa-solid fa-lightbulb', 'routes' => ['admin.pkk.*'], 'url' => 'admin.pkk.index'],
                 ],
             ],
             [
-                'label' => 'Akademik & Kegiatan',
+                'label' => 'Akademik',
                 'items' => [
-                    ['title' => 'Guru & Staf', 'icon' => 'fa-solid fa-user-tie', 'routes' => ['admin.teachers.*'], 'name' => 'admin.teachers.index'],
-                    ['title' => 'Prestasi', 'icon' => 'fa-solid fa-trophy', 'routes' => ['admin.achievements.*'], 'name' => 'admin.achievements.index'],
-                    ['title' => 'Ekstrakurikuler', 'icon' => 'fa-solid fa-futbol', 'routes' => ['admin.extracurriculars.*'], 'name' => 'admin.extracurriculars.index'],
+                    ['title' => 'Guru & Staf', 'icon' => 'fa-solid fa-user-tie', 'routes' => ['admin.teachers.*'], 'url' => 'admin.teachers.index'],
+                    ['title' => 'Prestasi', 'icon' => 'fa-solid fa-trophy', 'routes' => ['admin.achievements.*'], 'url' => 'admin.achievements.index'],
+                    ['title' => 'Ekstrakurikuler', 'icon' => 'fa-solid fa-futbol', 'routes' => ['admin.extracurriculars.*'], 'url' => 'admin.extracurriculars.index'],
                 ],
             ],
             [
-                'label' => 'Aset & Relasi',
+                'label' => 'Pengaturan',
                 'items' => [
-                    ['title' => 'Fasilitas', 'icon' => 'fa-solid fa-building', 'routes' => ['admin.facilities.*'], 'name' => 'admin.facilities.index'],
-                    ['title' => 'Testimoni', 'icon' => 'fa-solid fa-quote-right', 'routes' => ['admin.testimonials.*'], 'name' => 'admin.testimonials.index'],
-                    ['title' => 'Mitra Industri', 'icon' => 'fa-solid fa-handshake', 'routes' => ['admin.partners.*'], 'name' => 'admin.partners.index'],
+                    ['title' => 'Info SPMB', 'icon' => 'fa-solid fa-file-circle-check', 'routes' => ['admin.spmb_settings.*'], 'url' => 'admin.spmb_settings.edit'],
+                    ['title' => 'Setting Website', 'icon' => 'fa-solid fa-sliders', 'routes' => ['admin.school_settings.*'], 'url' => 'admin.school_settings.edit'],
                 ],
             ],
             [
                 'label' => 'Monitoring',
                 'items' => array_merge(
                     [
-                        ['title' => 'Traffic Website', 'icon' => 'fa-solid fa-chart-line', 'routes' => ['admin.traffic.*'], 'name' => 'admin.traffic.index'],
-                        ['title' => 'Feeds CuratorIO', 'icon' => 'fa-solid fa-link', 'routes' => ['admin.curator'], 'name' => 'admin.curator'],
+                        ['title' => 'Traffic Website', 'icon' => 'fa-solid fa-chart-line', 'routes' => ['admin.traffic.*'], 'url' => 'admin.traffic.index'],
+                        ['title' => 'Feeds CuratorIO', 'icon' => 'fa-solid fa-rss', 'routes' => ['admin.curator'], 'url' => 'admin.curator'],
                     ],
                     auth()->user()->role === 'superadmin' ? [
-                        ['title' => 'Manajemen Admin', 'icon' => 'fa-solid fa-users', 'routes' => ['admin.users', 'admin.users.updateRole', 'admin.users.edit', 'admin.users.update'], 'name' => 'admin.users'],
+                        ['title' => 'Manajemen Admin', 'icon' => 'fa-solid fa-users', 'routes' => ['admin.users', 'admin.users.edit', 'admin.users.update', 'admin.users.updateRole'], 'url' => 'admin.users'],
                     ] : []
                 ),
             ],
         ];
 
-        // Status item menu yang sedang aktif (untuk breadcrumb)
+        // Status item menu yang aktif (untuk breadcrumb)
         $pageActive = 'Dashboard';
         $pageParent = null;
         foreach ($menu as $sec) {
             foreach ($sec['items'] as $item) {
-                $match = array_filter($item['routes'], fn($r) => request()->routeIs($r));
-                if ($match) {
+                if (array_filter($item['routes'], fn($r) => request()->routeIs($r))) {
                     $pageActive = $item['title'];
                     $pageParent = $sec['label'];
                     break 2;
                 }
-                if (isset($item['children'])) {
-                    foreach ($item['children'] as $c) {
-                        if (array_filter($c['routes'] ?? [], fn($r) => request()->routeIs($r))) {
-                            $pageActive = $c['title'];
-                            $pageParent = $sec['label'];
-                            break 3;
-                        }
-                    }
-                }
             }
         }
 
-        $userName = auth()->user()->name;
-        $initials = collect(explode(' ', trim($userName)))->take(2)->map(fn($w) => mb_substr($w, 0, 1))->implode('');
-        $userRole = auth()->user()->role;
+        $user = auth()->user();
+        $userName = $user->name;
+        $userRole = $user->role;
+        $userEmail = $user->email;
+        $initials = strtoupper(collect(explode(' ', trim($userName)))->take(2)->map(fn($w) => mb_substr($w, 0, 1))->implode(''));
+        $hasAvatar = $user->avatar && \Storage::disk('public')->exists($user->avatar);
+
+        $todayId = now()->locale('id')->translatedFormat('l, d F Y');
+        $hour = (int) now()->format('H');
+        $greeting = $hour < 11 ? 'Selamat Pagi' : ($hour < 15 ? 'Selamat Siang' : ($hour < 19 ? 'Selamat Sore' : 'Selamat Malam'));
 
         $quickActions = [
             ['title' => 'Tambah Berita', 'icon' => 'fa-solid fa-newspaper', 'url' => route('admin.news.create')],
+            ['title' => 'Tambah Jurusan', 'icon' => 'fa-solid fa-layer-group', 'url' => route('admin.majors.create')],
             ['title' => 'Tambah Program', 'icon' => 'fa-solid fa-graduation-cap', 'url' => route('admin.programs.create')],
             ['title' => 'Tambah Guru', 'icon' => 'fa-solid fa-user-tie', 'url' => route('admin.teachers.create')],
             ['title' => 'Tambah Prestasi', 'icon' => 'fa-solid fa-trophy', 'url' => route('admin.achievements.create')],
             ['title' => 'Tambah Fasilitas', 'icon' => 'fa-solid fa-building', 'url' => route('admin.facilities.create')],
+            ['title' => 'Atur Info SPMB', 'icon' => 'fa-solid fa-file-circle-check', 'url' => route('admin.spmb_settings.edit')],
         ];
 
         $paletteGroups = [];
         foreach ($menu as $sec) {
             $items = [];
             foreach ($sec['items'] as $item) {
-                $url = isset($item['name']) && Route::has($item['name']) ? route($item['name']) : '#';
-                $items[] = ['title' => $item['title'], 'icon' => $item['icon'], 'url' => $url, 'kw' => $item['title'] . ' ' . $sec['label']];
+                $u = Route::has($item['url']) ? route($item['url']) : '#';
+                $items[] = ['title' => $item['title'], 'icon' => $item['icon'], 'url' => $u, 'kw' => $item['title'] . ' ' . $sec['label']];
             }
             $paletteGroups[] = ['label' => $sec['label'], 'items' => $items];
         }
@@ -138,9 +156,11 @@
         {{-- ============ SIDEBAR ============ --}}
         <aside class="sidebar" aria-label="Menu admin">
             <div class="sidebar-brand">
-                <img class="logo" src="{{ asset('assets/logo/amaliah_white.png') }}" alt="Logo SMK Amaliah" />
+                <div class="logo-wrap">
+                    <img src="{{ asset('assets/logo/amaliah_white.png') }}" alt="Logo SMK Amaliah" />
+                </div>
                 <div class="brand-text">
-                    <div class="brand-name"><span>SMK</span> Amaliah 1 &amp; 2 CIAWI</div>
+                    <div class="brand-name">SMK Amaliah 1 &amp; 2</div>
                     <div class="brand-tag">Tauhid Is Our Fundament</div>
                 </div>
             </div>
@@ -152,56 +172,40 @@
                         @foreach ($section['items'] as $item)
                             @php
                                 $itemActive = count(array_filter($item['routes'], fn($r) => request()->routeIs($r))) > 0;
-                                $itemUrl = isset($item['name']) && Route::has($item['name']) ? route($item['name']) : '#';
+                                $itemUrl = Route::has($item['url']) ? route($item['url']) : '#';
                             @endphp
-                            @if (isset($item['children']))
-                                <div class="nav-group">
-                                    <button type="button" class="nav-group-toggle" @if($itemActive) aria-expanded="true" @endif>
-                                        <i class="nav-icon {{ $item['icon'] }}"></i>
-                                        <span class="nav-text">{{ $item['title'] }}</span>
-                                        <i class="chevron fa-solid fa-chevron-right"></i>
-                                    </button>
-                                    <div class="nav-submenu">
-                                        @foreach ($item['children'] as $child)
-                                            @php
-                                                $childActive = count(array_filter($child['routes'] ?? [], fn($r) => request()->routeIs($r))) > 0;
-                                                $childUrl = isset($child['name']) && Route::has($child['name']) ? route($child['name']) : '#';
-                                            @endphp
-                                            <a class="nav-link @if($childActive) active @endif" href="{{ $childUrl }}" title="{{ $child['title'] }}">
-                                                <i class="nav-icon {{ $child['icon'] ?? 'fa-solid fa-circle' }}" style="font-size:8px"></i>
-                                                <span class="nav-text">{{ $child['title'] }}</span>
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @else
-                                <a class="nav-link @if($itemActive) active @endif" href="{{ $itemUrl }}" title="{{ $item['title'] }}">
-                                    <i class="nav-icon {{ $item['icon'] }}"></i>
-                                    <span class="nav-text">{{ $item['title'] }}</span>
-                                </a>
-                            @endif
+                            <a class="nav-link @if($itemActive) active @endif" href="{{ $itemUrl }}" title="{{ $item['title'] }}">
+                                <i class="nav-icon {{ $item['icon'] }}"></i>
+                                <span class="nav-text">{{ $item['title'] }}</span>
+                            </a>
                         @endforeach
                     </div>
                 @endforeach
             </nav>
 
             <div class="sidebar-foot">
-                <div class="profile-chip" title="{{ $userName }}" @if(!auth()->user()->is(auth()->user()) == false) @endif>
-                    <div class="avatar">{{ strtoupper($initials) }}</div>
+                <div class="profile-chip" title="{{ $userName }}">
+                    <div class="avatar">
+                        @if($hasAvatar)
+                            <img src="{{ \Storage::disk('public')->url($user->avatar) }}" alt="{{ $userName }}" />
+                        @else
+                            {{ $initials }}
+                        @endif
+                    </div>
                     <div class="foot-text" style="min-width:0">
                         <div class="p-name">{{ $userName }}</div>
                         <div class="p-role">
-                            <span class="badge @if($userRole === 'superadmin') badge-violet @else badge-teal @endif" style="padding:2px 8px">{{ $userRole }}</span>
+                            <span class="badge @if($userRole === 'superadmin') badge-violet @else badge-brand @endif" style="padding:2px 8px;text-transform:capitalize">{{ $userRole }}</span>
                         </div>
                     </div>
                 </div>
-                <a class="app-btn app-btn-primary btn-block" href="{{ url('/') }}" target="_blank">
+                <a class="app-btn btn-block" style="width:100%" href="{{ url('/') }}" target="_blank">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                     <span class="foot-text">Lihat Website</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button class="app-btn btn-block" style="width:100%" type="submit">
+                    <button class="app-btn app-btn-danger btn-block" style="width:100%" type="submit">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i>
                         <span class="foot-text">Keluar</span>
                     </button>
@@ -212,7 +216,7 @@
         {{-- ============ MAIN ============ --}}
         <div class="app-main">
             <header class="topbar">
-                <button type="button" class="icon-btn md:hidden" data-sidebar-mobile-toggle aria-label="Buka menu">
+                <button type="button" class="icon-btn show-mob" data-sidebar-mobile-toggle aria-label="Buka menu">
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <button type="button" class="icon-btn hide-mob" data-sidebar-toggle aria-label="Ciutkan sidebar">
@@ -222,33 +226,41 @@
                 <div class="topbar-title">
                     <nav class="topbar-crumb" aria-label="Breadcrumb">
                         <span><a href="{{ route('admin.dashboard') }}">Beranda</a></span>
-                        @if ($pageParent && $pageParent !== 'Umum')
+                        @if ($pageParent && $pageParent !== 'Dashboard')
                             <i class="fa-solid fa-angle-right sep" style="font-size:9px"></i>
                             <span>{{ $pageParent }}</span>
                         @endif
                         <i class="fa-solid fa-angle-right sep" style="font-size:9px"></i>
                         <span style="color:var(--text-2);font-weight:600">{{ $pageActive }}</span>
                     </nav>
-                    <h1 class="topbar-h1">@yield('title', $pageActive)</h1>
+                    <h1 class="topbar-h1">@hasSection('title') @yield('title') @else {{ $pageActive }} @endif</h1>
+                </div>
+
+                <div class="topbar-greet">
+                    <span class="tg-hi">{{ $greeting }}, {{ $userName }} 👋</span>
+                    <span class="tg-date"><i class="fa-regular fa-calendar"></i>{{ $todayId }}</span>
                 </div>
 
                 <div class="topbar-actions">
+                    {{-- Search / palette --}}
                     <button type="button" class="icon-btn search-field" data-open-palette aria-label="Pencarian global (Ctrl+K)"
-                        style="width:auto;gap:8px;padding:0 12px">
-                        <i class="fa-solid fa-magnifying-glass" style="color:var(--text-3)"></i>
+                        style="width:auto;gap:8px;padding:0 13px;cursor:text">
+                        <i class="fa-solid fa-magnifying-glass" style="color:var(--text-3);font-size:13px"></i>
                         <span class="hide-mob" style="font-size:12.5px;color:var(--text-3)">Cari…</span>
-                        <kbd style="font-size:10.5px;color:var(--text-3);border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-family:inherit">Ctrl K</kbd>
+                        <kbd style="font-size:10px;color:var(--text-3);border:1px solid var(--border);border-radius:7px;padding:2px 7px;font-family:inherit">Ctrl K</kbd>
                     </button>
 
                     {{-- Notification center --}}
                     <div class="dropdown">
                         <button type="button" class="icon-btn" data-dropdown aria-label="Notifikasi">
                             <i class="fa-regular fa-bell"></i>
-                            <span class="tw-pulse" style="position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--brand)"></span>
+                            @if(session('success'))
+                                <span class="dot-badge"></span>
+                            @endif
                         </button>
-                        <div class="dropdown-menu" style="display:none;width:300px;max-width:calc(100vw - 32px)">
-                            <div style="padding:12px 14px;border-bottom:1px solid var(--border)">
-                                <div style="font-weight:700;font-size:13px;color:var(--text)">Notifikasi</div>
+                        <div class="dropdown-menu" style="display:none;width:320px;max-width:calc(100vw - 32px)">
+                            <div style="padding:13px 15px;border-bottom:1px solid var(--border)">
+                                <div style="font-weight:700;font-size:13.5px;color:var(--text)">Notifikasi</div>
                                 <div style="font-size:11.5px;color:var(--text-3)">Ringkasan sistem</div>
                             </div>
                             <div class="dropdown-item" style="cursor:default">
@@ -257,7 +269,7 @@
                             </div>
                             @if (session('success'))
                                 <div class="dropdown-item" style="cursor:default">
-                                    <i class="fa-solid fa-circle-info" style="color:var(--blue)"></i>
+                                    <i class="fa-solid fa-circle-info" style="color:var(--brand)"></i>
                                     <span>{{ session('success') }}</span>
                                 </div>
                             @endif
@@ -295,14 +307,20 @@
 
                     {{-- Profile --}}
                     <div class="dropdown">
-                        <button type="button" class="icon-btn" data-dropdown aria-label="Menu profil" style="width:auto;padding:2px 6px 2px 3px;gap:6px">
-                            <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">{{ strtoupper($initials) }}</span>
+                        <button type="button" class="icon-btn" data-dropdown aria-label="Menu profil" style="width:auto;padding:3px 8px 3px 4px;gap:8px">
+                            <span style="width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#282829,#3E3E40);color:#63CD00;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;overflow:hidden">
+                                @if($hasAvatar)
+                                    <img src="{{ \Storage::disk('public')->url($user->avatar) }}" alt="" style="width:100%;height:100%;object-fit:cover" />
+                                @else
+                                    {{ $initials }}
+                                @endif
+                            </span>
                             <i class="fa-solid fa-chevron-down" style="font-size:10px;color:var(--text-3)"></i>
                         </button>
                         <div class="dropdown-menu" style="display:none">
-                            <div style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                            <div style="padding:11px 13px;border-bottom:1px solid var(--border)">
                                 <div style="font-weight:700;font-size:13px;color:var(--text)">{{ $userName }}</div>
-                                <div style="font-size:11.5px;color:var(--text-3);text-transform:capitalize">{{ $userRole }}</div>
+                                <div style="font-size:11.5px;color:var(--text-3);text-transform:capitalize">{{ $userRole }} · {{ $userEmail }}</div>
                             </div>
                             <a class="dropdown-item" href="{{ url('/') }}" target="_blank"><i class="fa-solid fa-globe"></i><span>Lihat website</span></a>
                             @if ($userRole === 'superadmin')

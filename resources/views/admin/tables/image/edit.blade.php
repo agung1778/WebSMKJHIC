@@ -1,79 +1,46 @@
 @extends('layouts.admin-app')
 
+@section('title', 'Edit Gambar')
+
 @section('content')
+    <div class="fade-up mx-auto space-y-6 max-w-3xl">
+        <x-admin-components::page-header
+            icon="fa-solid fa-images"
+            kicker="Hero & Media"
+            title="Edit Gambar"
+            :subtitle="'Perbarui gambar: ' . Str::limit($image->title ?? $image->filename, 60)">
 
-    
+            <x-slot:actions>
+                <a class="app-btn app-btn-lg" href="{{ route('admin.image.show', $image->id) }}"><i class="fa-regular fa-eye"></i> Lihat</a>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
-        <div class="main-content flex-1 p-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold text-[#292929]">Edit Metadata Gambar</h1>
-                    <a href="{{ route('admin.image.index') }}"
-                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span>Kembali</span>
-                    </a>
+        <form action="{{ route('admin.image.update', $image->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <div class="grid gap-6 lg:grid-cols-3 items-start">
+                <div class="space-y-6 lg:col-span-2">
+                    <div class="form-section space-y-5">
+                        <h4 class="form-section-title"><i class="fa-solid fa-circle-info" style="color:var(--brand)"></i> Detail Media</h4>
+                        <x-admin-components::field name="title" label="Judul Gambar" :value="$image->title ?? null"
+                            placeholder="Contoh: MainImage - Header Home" icon="fa-solid fa-heading" />
+                        <x-admin-components::field name="description" label="Deskripsi" type="textarea" :rows="3" :value="$image->description ?? null"
+                            placeholder="Tulis deskripsi singkat gambar..." />
+                    </div>
                 </div>
 
-                <div class="mb-6 flex justify-center">
-                    <img src="{{ asset('storage/' . $image->path) }}" alt="Preview Gambar"
-                        class="w-64 h-64 object-cover rounded-md shadow-md border border-gray-300">
+                <div class="form-section space-y-4 h-fit">
+                    <h4 class="form-section-title"><i class="fa-solid fa-rotate" style="color:var(--brand)"></i> Ganti File</h4>
+                    <x-admin-components::dropzone name="image_file" label="Gambar Baru (opsional)" :current="$image->path"
+                        accept=".jpg,.jpeg,.png,.gif,.svg,.webp" hint="Kosongkan untuk tetap memakai gambar saat ini." />
                 </div>
-
-                <form action="{{ route('admin.image.update', $image->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="mb-4">
-                        <label for="filename" class="block text-sm font-medium text-gray-700 mb-1">Nama File
-                            (Metadata)</label>
-                        <input type="text" name="filename" id="filename"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('filename') border-red-500 @enderror"
-                            value="{{ old('filename', $image->filename) }}">
-                        @error('filename')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Kolom Title --}}
-                    <div class="mb-4">
-                        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Judul Gambar</label>
-                        <input type="text" name="title" id="title"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('title') border-red-500 @enderror"
-                            value="{{ old('title', $image->title) }}">
-                        @error('title')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Kolom Description --}}
-                    <div class="mb-6">
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-                        <textarea name="description" id="description" rows="3"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('description') border-red-500 @enderror">{{ old('description', $image->description) }}</textarea>
-                        @error('description')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-6 text-sm text-gray-600">
-                        <p><strong>Path File:</strong> <code>{{ 'storage/' . $image->path }}</code></p>
-                        <p><strong>Tipe File:</strong> {{ $image->mime_type }}</p>
-                        <p><strong>Ukuran:</strong> {{ number_format($image->size / 1024 / 1024, 2) }} MB</p>
-                    </div>
-
-                    <div class="flex items-center justify-end">
-                        <button type="submit"
-                            class="bg-[#6CF600] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200">
-                            Simpan Perubahan
-                        </button>
-                    </div>
-                </form>
             </div>
-        </div>
 
-    </body>
-
-    </html>
-
+            <div class="form-actions">
+                <a class="app-btn app-btn-lg" href="{{ route('admin.image.index') }}"><i class="fa-solid fa-arrow-left"></i> Batal</a>
+                <button type="submit" class="app-btn app-btn-lg app-btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
 @endsection

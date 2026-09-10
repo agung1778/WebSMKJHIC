@@ -1,58 +1,33 @@
 @extends('layouts.admin-app')
 
+@section('title', $writing->title)
+
 @section('content')
+    <div class="fade-up mx-auto max-w-3xl space-y-6">
+        <x-admin-components::page-header
+            icon="fa-solid fa-pen-nib"
+            kicker="Tulisan"
+            :title="Str::limit($writing->title, 60)"
+            :subtitle="'oleh ' . $writing->publisher . ' · ' . \Carbon\Carbon::parse($writing->release_date)->translatedFormat('d M Y')">
 
+            <x-slot:actions>
+                <a class="app-btn app-btn-lg" href="{{ route('admin.writings.edit', $writing->id) }}"><i class="fa-solid fa-pen"></i> Edit</a>
+                <button class="app-btn app-btn-lg app-btn-danger" type="button" x-data="{}" @click="AppConfirm({ title:'Hapus Tulisan', message:'Hapus tulisan <b>{{ addslashes($writing->title) }}</b>? Tindakan ini tidak dapat dibatalkan.', danger:true, confirmText:'Ya, hapus', onConfirm(){ const f=document.createElement('form'); f.method='POST'; f.action='{{ route('admin.writings.destroy', $writing->id) }}'; f.innerHTML='<input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"><input type=\"hidden\" name=\"_method\" value=\"DELETE\">'; document.body.appendChild(f); f.submit(); } })"><i class="fa-solid fa-trash"></i></button>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
-        <style>
-        
-        /* Tambahkan style dasar untuk konten (opsional) */
-        .prose-content p {
-            margin-bottom: 1em;
-            line-height: 1.6;
-        }
-    </style>
-
-
-<div class="main-content flex-1 p-6">
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-[#292929]">Detail Konten</h1>
-            <a href="{{ route('admin.writings.index') }}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2">
-                <i class="fas fa-arrow-left mr-2"></i>
-                <span>Kembali ke Daftar</span>
-            </a>
+        <div class="app-card p-6 md:p-8">
+            <h1 class="text-2xl md:text-[28px] font-extrabold leading-tight mb-4" style="color:var(--text)">{{ $writing->title }}</h1>
+            <div class="flex items-center gap-2 text-[12.5px] pb-5 mb-6" style="color:var(--text-3);border-bottom:1px solid var(--border)">
+                <i class="fa-regular fa-user"></i><span>{{ $writing->publisher }}</span>
+                <span class="status-dot" style="background:var(--text-3)"></span>
+                <i class="fa-regular fa-calendar"></i><span>{{ \Carbon\Carbon::parse($writing->release_date)->translatedFormat('l, d F Y') }}</span>
+            </div>
+            <x-admin-components::rich-text :content="$writing->content" />
         </div>
 
-        <div class="prose max-w-none text-gray-700">
-            <h1 class="text-3xl font-extrabold text-gray-900 mb-2">{{ $writing->title }}</h1>
-            
-            <div class="text-sm text-gray-500 mb-6 pb-3 border-b border-gray-200">
-                <p class="mb-0"><strong>Publisher:</strong> {{ $writing->publisher }}</p>
-                <p class="mt-1 mb-0"><strong>Tanggal Rilis:</strong> {{ $writing->release_date->format('d F Y') }}</p>
-            </div>
-            
-            <div class="prose-content text-base text-gray-700 mt-4 whitespace-pre-wrap">
-                {{-- Gunakan nl2br untuk mengkonversi baris baru menjadi tag <br> jika diperlukan --}}
-                {!! nl2br(e($writing->content)) !!}
-            </div>
-        </div>
-
-        <div class="mt-8 flex justify-end space-x-2">
-            <a href="{{ route('admin.writings.edit', $writing->id) }}" class="bg-[#6CF600] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200">
-                <i class="fas fa-edit mr-2"></i>Edit
-            </a>
-            <form action="{{ route('admin.writings.destroy', $writing->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus konten ini?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200">
-                    <i class="fas fa-trash-alt mr-2"></i>Hapus
-                </button>
-            </form>
+        <div class="flex flex-wrap items-center justify-center gap-3">
+            <a class="app-btn" href="{{ route('admin.writings.index') }}"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
         </div>
     </div>
-</div>
-
-</body>
-</html>
-
 @endsection

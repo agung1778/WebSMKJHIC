@@ -1,62 +1,40 @@
 @extends('layouts.admin-app')
 
+@section('title', 'Statistik Sekolah')
+
 @section('content')
-    <div class="max-w-5xl mx-auto space-y-6">
+    <div class="fade-up mx-auto space-y-6 max-w-4xl">
+        <x-admin-components::page-header
+            icon="fa-solid fa-school"
+            kicker="Website"
+            title="Statistik Sekolah"
+            subtitle="Atur data statistik yang tampil di halaman depan (Peserta Didik)." />
 
-        @if (session('success'))
-            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3">
-                <i class="fa-solid fa-circle-check"></i>
-                <p class="text-sm font-medium">{{ session('success') }}</p>
-            </div>
-        @endif
+        <form action="{{ route('admin.school_settings.update') }}" method="POST" class="app-card p-0">
+            @csrf
+            @method('PUT')
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
-            <div class="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-800">{{ __('Statistik Sekolah') }}</h1>
-                    <p class="text-xs text-slate-500 mt-1">{{ __('Atur data statistik yang tampil di halaman depan (Peserta Didik).') }}</p>
-                </div>
-            </div>
-
-            <form action="{{ route('admin.school_settings.update') }}" method="POST" class="space-y-8">
-                @csrf
-                @method('PUT')
-
-                <div>
-                    <h2 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
-                        <i class="fa-solid fa-users text-[#6CF600]"></i> {{ __('Peserta Didik') }}
-                    </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('Total Siswa') }}</label>
-                            <input type="number" name="jumlah_siswa" min="0"
-                                value="{{ old('jumlah_siswa', $setting->jumlah_siswa) }}"
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition-all text-sm"
-                                placeholder="{{ __('Cth: 1160') }}">
-                            @error('jumlah_siswa')
-                                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('Tahun Ajaran (opsional)') }}</label>
-                            <input type="text" name="tahun_ajaran"
-                                value="{{ old('tahun_ajaran', $setting->tahun_ajaran) }}"
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition-all text-sm"
-                                placeholder="{{ __('Cth: 2025/2026') }}">
-                        </div>
+            <div class="p-6 md:p-8 space-y-5" style="max-width:720px">
+                <h4 class="form-section-title"><i class="fa-solid fa-users" style="color:var(--brand)"></i> Peserta Didik</h4>
+                <div class="form-grid-2">
+                    <div>
+                        <label class="app-label" for="jumlah_siswa">Total Siswa <span class="req">*</span></label>
+                        <x-admin-components::field name="jumlah_siswa" type="number" min="0" placeholder="Cth: 1160"
+                            icon="fa-solid fa-user-group" :value="old('jumlah_siswa', $setting->jumlah_siswa)" />
                     </div>
-                    <p class="text-xs text-slate-500 mt-3">
-                        {{ __('Angka ini akan selalu diperbarui manual oleh admin tiap tahun ajaran dan langsung tampil di homepage.') }}
-                    </p>
+                    <div>
+                        <label class="app-label" for="tahun_ajaran">Tahun Ajaran <span class="optional">(opsional)</span></label>
+                        <x-admin-components::field name="tahun_ajaran" placeholder="Cth: 2025/2026"
+                            icon="fa-solid fa-calendar" :value="old('tahun_ajaran', $setting->tahun_ajaran)" />
+                    </div>
                 </div>
+                <p class="field-hint">Angka ini diperbarui manual oleh admin tiap tahun ajaran dan langsung tampil di homepage.</p>
+            </div>
 
-                <div class="pt-6 border-t border-slate-100 flex justify-end">
-                    <button type="submit"
-                        class="bg-[#6CF600] text-black px-8 py-3 rounded-xl text-sm font-bold hover:bg-[#5bd300] transition-colors shadow-sm flex items-center gap-2">
-                        <i class="fa-solid fa-save"></i> {{ __('Simpan Pengaturan') }}
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="form-actions border-t" style="border-color:var(--border)">
+                <a class="app-btn app-btn-lg" href="{{ route('admin.dashboard') }}"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</a>
+                <button type="submit" class="app-btn app-btn-primary app-btn-lg"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan</button>
+            </div>
+        </form>
     </div>
 @endsection

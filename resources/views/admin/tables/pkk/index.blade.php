@@ -1,203 +1,149 @@
 @extends('layouts.admin-app')
 
+@section('title', 'Galeri P5/PKK')
+
 @section('content')
-    <style>
-        /* Menyembunyikan panah default pada input search */
-        input[type='search']::-webkit-search-decoration,
-        input[type='search']::-webkit-search-cancel-button,
-        input[type='search']::-webkit-search-results-button,
-        input[type='search']::-webkit-search-results-decoration {
-            -webkit-appearance: none;
-        }
+    @php
+        $items = $projects->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'name' => $p->title,
+                'sub' => \Illuminate\Support\Str::limit(strip_tags($p->description ?? ''), 140),
+                'img' => $p->photo ? asset('storage/' . $p->photo) : null,
+                'by' => $p->major ? $p->major->name : '-',
+                'category' => $p->category ?? 'Produk',
+                'class' => $p->student_class ?? '-',
+                'price' => $p->price !== null ? number_format($p->price, 0, ',', '.') : 'Gratis',
+                'ts' => $p->created_at->timestamp,
+                'updated' => \Carbon\Carbon::parse($p->updated_at)->locale('id')->diffForHumans(),
+            ];
+        })->values();
+        $total = $projects->count();
+    @endphp
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
+    <div class="fade-up space-y-6" x-data="tableIndex({
+        raw: @json($items),
+        statusKey: 'category',
+        statuses: {
+            Makanan: { label: 'Makanan', class: 'badge-warning' },
+            Kerajinan: { label: 'Kerajinan', class: 'badge-info' },
+            Jasa: { label: 'Jasa', class: 'badge-published' },
+            Teknologi: { label: 'Teknologi', class: 'badge-draft' }
+        },
+        searchKeys: ['name', 'sub', 'by', 'category', 'class'],
+        perPage: 8,
+        exportUrl: @json(route('admin.export', ['resource' => 'pkk'])),
+        emptyHead: 'Belum ada proyek P5/PKK',
+        emptyBody: 'Tambahkan proyek P5/PKK pertama untuk ditampilkan di galeri.'
+    })">
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-up {
-            animation: fadeInUp 0.4s ease-out forwards;
-        }
-    </style>
-
-    <div class="max-w-7xl mx-auto space-y-6">
-        <div
-            class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 border-b border-slate-200 gap-4 animate-fade-up">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Galeri PKK</h1>
-                <p class="text-xs text-slate-500 mt-1">Kelola hasil karya produk kreatif dan kewirausahaan siswa.</p>
-            </div>
-            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                {{-- Fitur Pencarian Ditambahkan --}}
-                <div class="relative w-full sm:w-64">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <i class="fa-regular fa-search text-slate-400"></i>
-                    </span>
-                    <input type="search" id="searchInput" placeholder="Cari proyek/brand..."
-                        class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition-shadow bg-white">
-                </div>
-                <a href="{{ route('admin.pkk.create') }}"
-                    class="bg-[#6CF600] text-black px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#5bd300] transition-colors flex items-center justify-center gap-2 w-full sm:w-auto shadow-sm">
-                    <i class="fa-solid fa-plus"></i> Tambah Proyek
+        <x-admin-components::page-header
+            icon="fa-solid fa-lightbulb"
+            kicker="Konten"
+            title="Galeri P5/PKK"
+            subtitle="Kelola hasil proyek P5 dan praktik kewirausahaan siswa.">
+            <x-slot:actions>
+                <a class="app-btn app-btn-primary app-btn-lg" href="{{ route('admin.pkk.create') }}">
+                    <i class="fa-solid fa-plus"></i><span class="hide-mob">Tambah Proyek</span>
                 </a>
-            </div>
+            </x-slot:actions>
+        </x-admin-components::page-header>
+
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <x-admin-components::stat-card label="Total Proyek" :value="$total" icon="fa-solid fa-lightbulb" tone="brand" />
+            <x-admin-components::stat-card label="Kategori" :value="$projects->pluck('category')->unique()->count()" icon="fa-solid fa-shapes" tone="green" />
+            <x-admin-components::stat-card label="Kelas Terlibat" :value="$projects->pluck('student_class')->unique()->count()" icon="fa-solid fa-user-graduate" tone="blue" />
+            <x-admin-components::stat-card label="Berbayar" :value="$projects->whereNotNull('price')->count()" icon="fa-solid fa-tags" tone="amber" />
         </div>
 
-        @if (session('success'))
-            <div
-                class="animate-fade-up bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center justify-between shadow-sm">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <p class="text-sm font-medium">{{ session('success') }}</p>
+        <div class="app-card overflow-hidden">
+            <div class="toolbar">
+                <div class="search-field">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input class="app-input" type="search" placeholder="Cari proyek, jurusan, kategori…" x-model="q">
                 </div>
-                <button onclick="this.parentElement.remove()" class="text-green-600 hover:text-green-800 transition"><i
-                        class="fas fa-times"></i></button>
+                <select class="app-select" style="width:auto" x-model="statusFilter">
+                    <option value="all">Semua kategori</option>
+                    <option value="Makanan">Makanan</option>
+                    <option value="Kerajinan">Kerajinan</option>
+                    <option value="Jasa">Jasa</option>
+                    <option value="Teknologi">Teknologi</option>
+                </select>
+                <select class="app-select" style="width:auto" x-model="sortBy">
+                    <option value="newest">Terbaru</option>
+                    <option value="oldest">Terlama</option>
+                    <option value="az">Nama A–Z</option>
+                    <option value="za">Nama Z–A</option>
+                </select>
+                <span class="toolbar-spacer"></span>
+                <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
+                <a class="app-btn app-btn-md" :href="exportUrl" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
             </div>
-        @endif
 
-        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden animate-fade-up"
-            style="animation-delay: 0.1s;">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+            <div class="table-wrap" x-show="!loading" x-cloak>
+                <table class="table-app">
                     <thead>
-                        <tr
-                            class="bg-slate-50 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-500 font-bold">
-                            <th class="py-4 px-6">Produk / Brand</th>
-                            <th class="py-4 px-6">Tim Pengembang</th>
-                            <th class="py-4 px-6">Kategori</th>
-                            <th class="py-4 px-6">Jurusan</th>
-                            <th class="py-4 px-6 text-center">Aksi</th>
+                        <tr>
+                            <th>Proyek</th>
+                            <th>Kategori</th>
+                            <th>Kelas</th>
+                            <th>Harga</th>
+                            <th class="text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-sm text-slate-600 divide-y divide-slate-100" id="pkkTableBody">
-                        @forelse($projects as $item)
-                            {{-- Class pkk-row untuk trigger pencarian --}}
-                            <tr class="hover:bg-slate-50 transition-colors pkk-row">
-                                <td class="py-4 px-6">
-                                    <div class="flex items-center gap-4">
-                                        <div class="relative flex-shrink-0">
-                                            <img src="{{ asset('storage/' . $item->photo) }}"
-                                                class="w-12 h-12 object-cover rounded-lg shadow-sm border border-slate-200 bg-white">
-                                            @if ($item->logo)
-                                                <img src="{{ asset('storage/' . $item->logo) }}"
-                                                    class="absolute -bottom-2 -right-2 w-6 h-6 rounded-full border border-slate-200 bg-white object-contain shadow-sm">
-                                            @endif
-                                        </div>
-                                        <div>
-                                            <p class="font-bold text-slate-800">{{ $item->brand_name ?? $item->title }}</p>
-                                            @if ($item->brand_name)
-                                                <p class="text-xs text-slate-500 truncate max-w-[150px]">{{ $item->title }}
-                                                </p>
-                                            @endif
-                                            @if ($item->price)
-                                                <p class="text-[11px] font-bold text-[#6CF600] mt-0.5">Rp
-                                                    {{ number_format($item->price, 0, ',', '.') }}</p>
-                                            @endif
+                    <tbody>
+                        <template x-for="p in paged" :key="p.id">
+                            <tr>
+                                <td>
+                                    <div class="flex items-center gap-3" style="min-width:280px">
+                                        <img class="thumb" :src="p.img || 'https://placehold.co/64x64/eff9e3/63cd00?text=PKK'" :alt="p.name" loading="lazy">
+                                        <div style="min-width:0">
+                                            <div class="cell-main truncate" x-text="p.name"></div>
+                                            <div class="cell-sub truncate" style="max-width:320px" x-text="p.sub"></div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-4 px-6">
-                                    <p class="text-sm font-semibold text-slate-700">{{ $item->student_names }}</p>
-                                    <p class="text-xs text-slate-500">Kelas {{ $item->student_class }}</p>
-                                </td>
-                                <td class="py-4 px-6">
-                                    <span
-                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200">
-                                        {{ $item->category }}
-                                    </span>
-                                </td>
-                                <td class="py-4 px-6">
-                                    <span
-                                        class="px-2.5 py-1 rounded-md text-[10px] font-bold text-slate-700 bg-slate-100 border border-slate-200 uppercase tracking-wider">
-                                        {{ $item->major->name ?? 'N/A' }}
-                                    </span>
-                                </td>
-                                <td class="py-4 px-6 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <a href="{{ route('admin.pkk.show', $item->id) }}"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
-                                            title="Detail">
-                                            <i class="fa-regular fa-eye text-xs"></i>
-                                        </a>
-                                        <a href="{{ route('admin.pkk.edit', $item->id) }}"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors"
-                                            title="Edit">
-                                            <i class="fa-regular fa-pen-to-square text-xs"></i>
-                                        </a>
-                                        <form action="{{ route('admin.pkk.destroy', $item->id) }}" method="POST"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit"
-                                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-                                                title="Hapus">
-                                                <i class="fa-regular fa-trash-can text-xs"></i>
-                                            </button>
-                                        </form>
+                                <td><span class="badge" :class="badgeClass(p.category)" x-text="statusLabel(p.category)"></span></td>
+                                <td><span style="white-space:nowrap" x-text="p.class"></span></td>
+                                <td><span style="white-space:nowrap" :style="p.price === 'Gratis' ? 'color:var(--green);font-weight:700' : ''" x-text="p.price"></span></td>
+                                <td>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a class="app-btn app-btn-sm app-btn-primary" :href="'/admin/pkk/' + p.id + '/edit'"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
+                                        <div class="dropdown">
+                                            <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" :href="'/admin/pkk/' + p.id"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
+                                                <div class="dropdown-sep"></div>
+                                                <button class="dropdown-item danger" type="button" @click="askDelete(p, '/admin/pkk/' + p.id)"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr id="no-data">
-                                <td colspan="5" class="py-12 text-center text-slate-500">
-                                    <div
-                                        class="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 border border-slate-100">
-                                        <i class="fa-solid fa-box-open text-2xl text-slate-300"></i>
-                                    </div>
-                                    <p class="text-sm">Belum ada data proyek.</p>
-                                </td>
-                            </tr>
-                        @endforelse
-                        <tr id="no-results" class="hidden">
-                            <td colspan="5" class="py-12 text-center text-slate-500 text-sm">Proyek tidak ditemukan.
-                            </td>
-                        </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
+
+            <div x-show="loading" class="p-5 grid gap-4">
+                <template x-for="i in 4" :key="i">
+                    <div class="flex items-center gap-4">
+                        <div class="skeleton" style="width:48px;height:48px;border-radius:12px"></div>
+                        <div style="flex:1">
+                            <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
+                            <div class="skeleton" style="height:11px;width:70%"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div x-show="!loading && empty" x-cloak>
+                <x-admin-components::empty-state icon="fa-lightbulb" :title="'Belum ada proyek P5/PKK'" description="Tambahkan proyek P5/PKK pertama untuk ditampilkan di galeri.">
+                    <a class="app-btn app-btn-primary" href="{{ route('admin.pkk.create') }}"><i class="fa-solid fa-plus"></i>Tambah Proyek</a>
+                </x-admin-components::empty-state>
+            </div>
+
+            <x-admin-components::pagination client countLabel="proyek" />
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('searchInput');
-            const dataRows = document.querySelectorAll('.pkk-row');
-            const noResultsRow = document.getElementById('no-results');
-            const noDataRow = document.getElementById('no-data');
-
-            if (searchInput) {
-                searchInput.addEventListener('input', function(e) {
-                    const searchTerm = e.target.value.toLowerCase();
-                    let visibleRows = 0;
-
-                    dataRows.forEach(row => {
-                        // Cari berdasarkan kolom pertama (Brand/Judul) dan kedua (Nama Siswa)
-                        const brandCell = row.cells[0]?.textContent.toLowerCase() || '';
-                        const studentCell = row.cells[1]?.textContent.toLowerCase() || '';
-
-                        if (brandCell.includes(searchTerm) || studentCell.includes(searchTerm)) {
-                            row.style.display = '';
-                            visibleRows++;
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-
-                    if (!noDataRow) {
-                        if (visibleRows === 0) {
-                            noResultsRow.classList.remove('hidden');
-                        } else {
-                            noResultsRow.classList.add('hidden');
-                        }
-                    }
-                });
-            }
-        });
-    </script>
 @endsection

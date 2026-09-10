@@ -16,6 +16,8 @@ use App\Models\Writing;
 use App\Models\SchoolSetting;
 use App\Models\SpmbSetting;
 use App\Models\TrafficVisitor;
+use App\Models\Partner;
+use App\Models\Testimonial;
 
 class AdminController extends Controller
 {
@@ -46,10 +48,20 @@ class AdminController extends Controller
         $latestNews = News::latest('date_published')->take(5)->get();
         $latestPrograms = SchoolProgram::latest()->take(5)->get();
         $recentUsers = User::latest('created_at')->take(6)->get();
+        $latestPartners = Partner::latest()->take(5)->get();
+        $latestTeachers = Teacher::latest()->take(5)->get();
 
         $spmb = SpmbSetting::first();
 
-        return view('admin.dashboard', compact('stats', 'latestNews', 'latestPrograms', 'recentUsers', 'spmb'));
+        return view('admin.dashboard', compact(
+            'stats',
+            'latestNews',
+            'latestPrograms',
+            'recentUsers',
+            'latestPartners',
+            'latestTeachers',
+            'spmb'
+        ));
     }
 
     public function curator()

@@ -31,64 +31,54 @@
     <div class="max-w-7xl mx-auto space-y-6">
 
         {{-- HEADER --}}
-        <header
-            class="flex flex-col lg:flex-row justify-between items-start lg:items-center pb-4 border-b border-slate-200 gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-line text-[#6CF600]"></i>
-                    Lalu Lintas Website
-                </h1>
-                <p class="text-slate-500 text-sm mt-1">
-                    Pantau pengunjung, klik link, dan klik button pada website SMK Amaliah.
-                </p>
-            </div>
+        <x-admin-components::page-header
+            icon="fa-solid fa-chart-line"
+            kicker="Analitik"
+            title="Lalu Lintas Website"
+            subtitle="Pantau pengunjung, klik link, dan klik button pada website SMK Amaliah.">
+            <x-slot:actions>
+                <div class="flex flex-col sm:flex-row items-stretch gap-2">
+                    <form method="GET" action="{{ route('admin.traffic.index') }}"
+                        class="flex flex-col sm:flex-row items-stretch gap-2">
+                        <div class="relative flex-1 sm:w-52">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <i class="fa-regular fa-calendar text-slate-400"></i>
+                            </span>
+                            <select name="period" id="periodSelect" class="app-select" style="padding-left:36px">
+                                @foreach (\App\Services\TrafficService::PERIODS as $key => $label)
+                                    <option value="{{ $key }}" @selected($period['period'] === $key)>{{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
-                <form method="GET" action="{{ route('admin.traffic.index') }}"
-                    class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
+                        <div id="customDateFields"
+                            class="hidden flex-col sm:flex-row gap-2 items-center @if ($period['period'] === 'custom') !flex @endif">
+                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="app-input">
+                            <span class="text-slate-400 text-xs">–</span>
+                            <input type="date" name="end_date" value="{{ request('end_date') }}" class="app-input">
+                        </div>
 
-                    <div class="relative flex-1 sm:w-52">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i class="fa-regular fa-calendar text-slate-400"></i>
-                        </span>
-                        <select name="period" id="periodSelect"
-                            class="w-full pl-10 pr-3 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#6CF600]">
-                            @foreach (\App\Services\TrafficService::PERIODS as $key => $label)
-                                <option value="{{ $key }}" @selected($period['period'] === $key)>{{ $label }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                        <div class="relative flex-1 sm:w-48">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                            </span>
+                            <input type="search" name="search" value="{{ $search ?? '' }}"
+                                placeholder="Cari link / button / URL..." class="app-input" style="padding-left:36px">
+                        </div>
 
-                    <div id="customDateFields"
-                        class="hidden flex-col sm:flex-row gap-2 items-center @if ($period['period'] === 'custom') !flex @endif">
-                        <input type="date" name="start_date" value="{{ request('start_date') }}"
-                            class="px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6CF600]">
-                        <span class="text-slate-400 text-xs">–</span>
-                        <input type="date" name="end_date" value="{{ request('end_date') }}"
-                            class="px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6CF600]">
-                    </div>
+                        <button type="submit" class="app-btn app-btn-dark app-btn-lg justify-center">
+                            <i class="fa-solid fa-filter"></i> Filter
+                        </button>
+                    </form>
 
-                    <div class="relative flex-1 sm:w-48">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
-                        </span>
-                        <input type="search" name="search" value="{{ $search ?? '' }}" placeholder="Cari link / button / URL..."
-                            class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition-shadow">
-                    </div>
-
-                    <button type="submit"
-                        class="bg-[#1e1e1e] text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 shadow-sm">
-                        <i class="fa-solid fa-filter"></i> Filter
-                    </button>
-                </form>
-
-                <a href="{{ route('admin.traffic.export', request()->query()) }}"
-                    class="bg-[#6CF600] text-black px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#5bd300] transition-colors flex items-center justify-center gap-2 shadow-sm">
-                    <i class="fa-solid fa-file-csv"></i> Ekspor CSV
-                </a>
-            </div>
-        </header>
+                    <a href="{{ route('admin.traffic.export', request()->query()) }}"
+                        class="app-btn app-btn-primary app-btn-lg justify-center">
+                        <i class="fa-solid fa-file-csv"></i> Ekspor CSV
+                    </a>
+                </div>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
         @php
             $message = null;
@@ -105,28 +95,25 @@
 
         {{-- SUMMARY CARDS --}}
         <section>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
                 @php
                     $summaryCards = [
-                        ['icon' => 'fa-users', 'label' => 'Total Pengunjung', 'value' => $fmt($avg['total_visitors']), 'raw' => (int) $avg['total_visitors'], 'accent' => 'text-[#6CF600] bg-[#6CF600]/10'],
-                        ['icon' => 'fa-link', 'label' => 'Total Klik Link', 'value' => $fmt($avg['total_link_clicks']), 'raw' => (int) $avg['total_link_clicks'], 'accent' => 'text-blue-500 bg-blue-50'],
-                        ['icon' => 'fa-arrow-pointer', 'label' => 'Total Klik Button', 'value' => $fmt($avg['total_button_clicks']), 'raw' => (int) $avg['total_button_clicks'], 'accent' => 'text-purple-500 bg-purple-50'],
-                        ['icon' => 'fa-calendar-day', 'label' => 'Pengunjung Hari Ini', 'value' => $fmt($avg['today_visitors']), 'raw' => (int) $avg['today_visitors'], 'accent' => 'text-emerald-500 bg-emerald-50'],
-                        ['icon' => 'fa-calendar-week', 'label' => 'Pengunjung 7 Hari', 'value' => $fmt($avg['week_visitors']), 'raw' => (int) $avg['week_visitors'], 'accent' => 'text-amber-500 bg-amber-50'],
-                        ['icon' => 'fa-calendar-days', 'label' => 'Pengunjung 30 Hari', 'value' => $fmt($avg['month_visitors']), 'raw' => (int) $avg['month_visitors'], 'accent' => 'text-rose-500 bg-rose-50'],
+                        ['icon' => 'fa-users', 'label' => 'Total Pengunjung', 'value' => $fmt($avg['total_visitors']), 'raw' => (int) $avg['total_visitors'], 'tone' => 'brand'],
+                        ['icon' => 'fa-link', 'label' => 'Total Klik Link', 'value' => $fmt($avg['total_link_clicks']), 'raw' => (int) $avg['total_link_clicks'], 'tone' => 'blue'],
+                        ['icon' => 'fa-arrow-pointer', 'label' => 'Total Klik Button', 'value' => $fmt($avg['total_button_clicks']), 'raw' => (int) $avg['total_button_clicks'], 'tone' => 'purple'],
+                        ['icon' => 'fa-calendar-day', 'label' => 'Pengunjung Hari Ini', 'value' => $fmt($avg['today_visitors']), 'raw' => (int) $avg['today_visitors'], 'tone' => 'green'],
+                        ['icon' => 'fa-calendar-week', 'label' => 'Pengunjung 7 Hari', 'value' => $fmt($avg['week_visitors']), 'raw' => (int) $avg['week_visitors'], 'tone' => 'amber'],
+                        ['icon' => 'fa-calendar-days', 'label' => 'Pengunjung 30 Hari', 'value' => $fmt($avg['month_visitors']), 'raw' => (int) $avg['month_visitors'], 'tone' => 'rose'],
                     ];
                 @endphp
 
                 @foreach ($summaryCards as $card)
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                        <div class="rounded-lg h-11 w-11 flex items-center justify-center shrink-0 {{ $card['accent'] }}">
-                            <i class="fa-solid {{ $card['icon'] }} text-lg"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">{{ $card['label'] }}</p>
-                            <p class="text-xl font-bold text-slate-800 leading-tight" data-count="{{ $card['raw'] }}">{{ $card['value'] }}</p>
-                        </div>
-                    </div>
+                    <x-admin-components::stat-card
+                        :label="$card['label']"
+                        :value="$card['value']"
+                        :icon="$card['icon']"
+                        :tone="$card['tone']"
+                        :data-count="$card['raw']" />
                 @endforeach
             </div>
         </section>
@@ -141,7 +128,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {{-- Grafik Pengunjung per Hari --}}
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="app-card overflow-hidden">
                     <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
                         <h3 class="text-sm font-bold text-slate-700">Pengunjung per Hari</h3>
                         <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Pengunjung Unik</span>
@@ -164,7 +151,7 @@
                 </div>
 
                 {{-- Grafik Klik per Hari --}}
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="app-card overflow-hidden">
                     <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
                         <h3 class="text-sm font-bold text-slate-700">Klik per Hari</h3>
                         <div class="flex items-center gap-3 text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
@@ -191,7 +178,7 @@
                 </div>
 
                 {{-- Statistik Mingguan --}}
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="app-card overflow-hidden">
                     <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
                         <h3 class="text-sm font-bold text-slate-700">Statistik Mingguan</h3>
                         <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">8 Minggu Terakhir</span>
@@ -209,7 +196,7 @@
                 </div>
 
                 {{-- Statistik Bulanan --}}
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="app-card overflow-hidden">
                     <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
                         <h3 class="text-sm font-bold text-slate-700">Statistik Bulanan</h3>
                         <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">12 Bulan Terakhir</span>
@@ -243,7 +230,7 @@
                     @endphp
 
                     {{-- Kartu responsif (mobile) --}}
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 flex flex-col gap-3">
+                    <div class="app-card p-4 flex flex-col gap-3 shadow-sm">
                         <div class="flex items-start justify-between gap-3">
                             <a href="{{ $row->element_url ?: '#' }}" target="_blank" rel="noopener noreferrer"
                                 class="font-semibold text-slate-800 break-words leading-snug">{{ $row->element_name }}</a>
@@ -273,14 +260,14 @@
                         </div>
                     </div>
                 @empty
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-10 text-center text-slate-400 text-sm">
+                    <div class="app-card py-10 text-center text-base">
                         <i class="fa-solid fa-link-slash mb-2 block text-2xl"></i>
                         Belum ada data klik link pada periode ini.
                     </div>
                 @endforelse
             </div>
 
-            <div class="hidden md:block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div class="hidden md:block app-card overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -345,7 +332,7 @@
                     @endphp
 
                     {{-- Kartu responsif (mobile) --}}
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 flex flex-col gap-3">
+                    <div class="app-card p-4 flex flex-col gap-3 shadow-sm">
                         <div class="flex items-start justify-between gap-3">
                             <h4 class="font-semibold text-slate-800 break-words leading-snug">{{ $row->element_name }}</h4>
                             <span class="shrink-0 bg-purple-50 text-purple-700 font-bold text-sm px-2.5 py-1 rounded-lg">{{ $fmt($row->clicks) }}</span>
@@ -374,14 +361,14 @@
                         </div>
                     </div>
                 @empty
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-10 text-center text-slate-400 text-sm">
+                    <div class="app-card py-10 text-center text-base">
                         <i class="fa-solid fa-arrow-pointer-slash mb-2 block text-2xl"></i>
                         Belum ada data klik button pada periode ini.
                     </div>
                 @endforelse
             </div>
 
-            <div class="hidden md:block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div class="hidden md:block app-card overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -439,7 +426,7 @@
 
             <div class="space-y-3 md:hidden">
                 @forelse($visitors as $visitor)
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 flex flex-col gap-3">
+                    <div class="app-card p-4 flex flex-col gap-3 shadow-sm">
                         <div class="flex items-center justify-between gap-3 text-xs text-slate-500">
                             <span class="font-semibold text-slate-700">
                                 <i class="fa-solid fa-clock mr-1 text-slate-400"></i>
@@ -478,20 +465,20 @@
                         </div>
                     </div>
                 @empty
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm py-10 text-center text-slate-400 text-sm">
+                    <div class="app-card py-10 text-center text-base">
                         <i class="fa-solid fa-user-slash mb-2 block text-2xl"></i>
                         Belum ada data pengunjung pada periode ini.
                     </div>
                 @endforelse
 
                 @if ($visitors->hasPages())
-                    <div class="py-4">
-                        {{ $visitors->links() }}
+                    <div class="py-4 px-3">
+                        <x-admin-components::pagination :paginator="$visitors" countLabel="pengunjung" />
                     </div>
                 @endif
             </div>
 
-            <div class="hidden md:block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div class="hidden md:block app-card overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -549,8 +536,8 @@
                 </div>
 
                 @if ($visitors->hasPages())
-                    <div class="px-6 py-4 border-t border-slate-100">
-                        {{ $visitors->links() }}
+                    <div class="px-6 py-4 border-t" style="border-color:var(--border)">
+                        <x-admin-components::pagination :paginator="$visitors" countLabel="pengunjung" />
                     </div>
                 @endif
             </div>

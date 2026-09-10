@@ -1,201 +1,144 @@
 @extends('layouts.admin-app')
 
+@section('title', 'Daftar Admin')
+
 @section('content')
+    @php
+        $totalUsers = $users->count();
+        $onlineUsers = $users->filter(function ($user) {
+            return optional($user->session)->last_activity && (time() - $user->session->last_activity) < 300;
+        })->count();
+        $items = $users->map(function ($u) {
+            return [
+                'id' => $u->id,
+                'name' => $u->name,
+                'sub' => $u->email,
+                'role' => $u->role,
+                'initial' => strtoupper(mb_substr($u->name, 0, 1)),
+                'created' => $u->created_at->format('d M Y, H:i'),
+                'by' => optional($u->session)->last_activity
+                    ? \Carbon\Carbon::createFromTimestamp($u->session->last_activity)->locale('id')->diffForHumans()
+                    : 'Belum pernah login',
+                'online' => optional($u->session)->last_activity && (time() - $u->session->last_activity) < 300 ? 1 : 0,
+                'ts' => $u->created_at->timestamp,
+                'updated' => $u->created_at->locale('id')->diffForHumans(),
+            ];
+        })->values();
+        $isSuperadmin = auth()->user()->role === 'superadmin';
+    @endphp
 
+    <div class="fade-up space-y-6" x-data="tableIndex({
+        raw: @json($items),
+        statuses: {
+            admin: { label: 'Admin', class: 'badge-published' },
+            superadmin: { label: 'Super Admin', class: 'badge-info' }
+        },
+        statusKey: 'role',
+        searchKeys: ['name', 'sub', 'role', 'by'],
+        perPage: 10,
+        emptyHead: 'Belum ada admin',
+        emptyBody: 'Akun admin akan muncul di sini setelah ditambahkan.'
+    })">
 
-        <style>
-        
+        <x-admin-components::page-header
+            icon="fa-solid fa-users-gear"
+            kicker="Akses"
+            title="Daftar Admin"
+            subtitle="Kelola akun admin dan super admin yang memiliki akses ke panel ini." />
 
-        /* Menyembunyikan panah default pada input search */
-        input[type='search']::-webkit-search-decoration,
-        input[type='search']::-webkit-search-cancel-button,
-        input[type='search']::-webkit-search-results-button,
-        input[type='search']::-webkit-search-results-decoration {
-            -webkit-appearance: none;
-        }
-    </style>
+        <div class="grid gap-4 sm:grid-cols-2">
+            <x-admin-components::stat-card label="Total Admin" :value="$totalUsers" icon="fa-solid fa-users-gear" tone="brand" />
+            <x-admin-components::stat-card label="Sedang Online" :value="$onlineUsers" icon="fa-solid fa-wifi" tone="green"
+                :sub="'Aktif dalam 5 menit terakhir'" />
+        </div>
 
-
-    <div class="main-content flex-1 p-4 sm:p-6">
-        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
-            {{-- Header: Judul, Cari, dan Tombol Tambah --}}
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                <h1 class="text-2xl font-bold text-[#292929]">Daftar Admin</h1>
-                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    {{-- Fitur Pencarian --}}
-                    <div class="relative w-full sm:w-64">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </span>
-                        <input type="search" id="searchInput" placeholder="Cari berdasarkan nama..."
-                            class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6CF600]">
-                    </div>
+        <div class="app-card overflow-hidden">
+            <div class="toolbar">
+                <div class="search-field">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input class="app-input" type="search" placeholder="Cari nama, email, role…" x-model="q">
                 </div>
+                <span class="toolbar-spacer"></span>
+                <select class="app-select" style="width:auto" x-model="statusFilter" @change="applyFilter">
+                    <option value="all">Semua Role</option>
+                    <template x-for="(s, k) in statuses" :key="k">
+                        <option :value="k" x-text="s.label"></option>
+                    </template>
+                </select>
+                <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
             </div>
 
-            {{-- Notifikasi Sukses --}}
-            @if(session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg shadow-sm"
-                    role="alert">
-                    <p>{{ session('success') }}</p>
-                </div>
-            @endif
-
-            {{-- Menghitung statistik --}}
-            @php
-                $totalUsers = $users->count();
-                // Asumsi admin online jika aktivitas terakhir dalam 5 menit (300 detik)
-                $onlineUsers = $users->filter(function ($user) {
-                    return optional($user->session)->last_activity && (time() - $user->session->last_activity) < 300;
-                })->count();
-            @endphp
-
-            {{-- Bagian Statistik Ringkas --}}
-            <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {{-- Card Total Admin --}}
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                    <div class="bg-gray-200 text-gray-600 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-users-cog fa-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Total Admin</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $totalUsers }}</p>
-                    </div>
-                </div>
-                {{-- Card Admin Online --}}
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                    <div class="bg-green-100 text-green-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-wifi fa-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Admin Online</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $onlineUsers }}</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Tabel Data --}}
-            <div class="overflow-x-auto rounded-lg">
-                <table class="w-full table-auto border-collapse">
+            <div class="table-wrap" x-show="!loading" x-cloak>
+                <table class="table-app">
                     <thead>
-                        <tr class="bg-[#292929] text-white uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left w-16">No.</th>
-                            <th class="py-3 px-6 text-left">Admin</th>
-                            <th class="py-3 px-6 text-left">Role</th>
-                            <th class="py-3 px-6 text-left">Tanggal Dibuat</th>
-                            <th class="py-3 px-6 text-left">Aktivitas Terakhir</th>
-                            <th class="py-3 px-6 text-center">Aksi</th>
+                        <tr>
+                            <th>Admin</th>
+                            <th>Role</th>
+                            <th>Tanggal Dibuat</th>
+                            <th>Aktivitas Terakhir</th>
+                            <th class="text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-600 text-sm font-light" id="adminTableBody">
-                        @forelse($users as $user)
-                            <tr class="border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200">
-                                <td class="py-4 px-6 text-left font-medium">{{ $loop->iteration }}</td>
-                                <td class="py-4 px-6 text-left font-semibold">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3 flex-shrink-0">
-                                            <span class="font-bold text-gray-500">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
-                                        </div>
+                    <tbody>
+                        <template x-for="u in paged" :key="u.id">
+                            <tr>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <span class="initials-avatar" x-text="u.initial"></span>
                                         <div>
-                                            <div class="font-bold text-gray-800">{{ $user->name }}</div>
-                                            <div class="text-xs text-gray-500">{{ $user->email }}</div>
+                                            <div class="cell-main" x-text="u.name"></div>
+                                            <div class="cell-sub" x-text="u.sub"></div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-4 px-6 text-left">
-                                    <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset
-                                        @if ($user->role === 'superadmin') bg-purple-100 text-purple-700 ring-purple-200
-                                        @else bg-green-100 text-green-700 ring-green-200 @endif">
-                                        {{ $user->role }}
-                                    </span>
+                                <td><span class="badge" :class="badgeClass(u.role)" x-text="statusLabel(u.role)"></span></td>
+                                <td><span class="cell-sub" style="white-space:nowrap" x-text="u.created"></span></td>
+                                <td>
+                                    <div class="flex items-center gap-2">
+                                        <span class="status-dot" :class="u.online ? 'online' : ''"></span>
+                                        <span class="cell-sub" x-text="u.by"></span>
+                                    </div>
                                 </td>
-                                <td class="py-4 px-6 text-left">{{ $user->created_at->format('d M Y, H:i') }}</td>
-                                <td class="py-4 px-6 text-left">
-                                    @if (optional($user->session)->last_activity)
-                                        {{ \Carbon\Carbon::createFromTimestamp($user->session->last_activity)->diffForHumans() }}
-                                    @else
-                                        <span class="text-gray-400 italic">Belum pernah login</span>
-                                    @endif
-                                </td>
-                                <td class="py-4 px-6 text-center">
-                                    <div class="flex items-center justify-center gap-2 flex-wrap">
-                                        @if (auth()->user()->role === 'superadmin')
-                                            <a href="{{ route('admin.users.edit', $user) }}"
-                                                class="inline-flex items-center gap-1.5 bg-[#e8fbf0] text-[#16A34A] text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-[#16A34A] hover:text-white transition-colors duration-200"
-                                                title="Edit profil admin">
-                                                <i class="fas fa-pen-to-square"></i> Edit
-                                            </a>
-                                            <form method="POST" action="{{ route('admin.users.updateRole', $user) }}" class="inline-flex items-center gap-2">
-                                                @csrf
-                                                <select name="role"
-                                                    class="text-xs border border-gray-300 rounded-lg px-2 py-1.5 text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#6CF600]"
-                                                    onchange="this.form.submit()">
-                                                    @foreach (['admin', 'superadmin'] as $role)
-                                                        <option value="{{ $role }}" @selected($user->role === $role)>{{ $role }}</option>
-                                                    @endforeach
+                                <td>
+                                    @if ($isSuperadmin)
+                                        <div class="flex items-center justify-end gap-2">
+                                            <a class="app-btn app-btn-sm" :href="'/admin/users/' + u.id + '/edit'" title="Edit profil admin"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
+                                            <form method="POST" :action="'/admin/users/' + u.id + '/role'">
+                                                <input type="hidden" name="_token" :value="csrf">
+                                                <select name="role" class="app-select" style="width:auto;padding:7px 30px 7px 12px;font-size:12px" @change="this.form.submit()">
+                                                    <option value="admin" :selected="u.role === 'admin'">admin</option>
+                                                    <option value="superadmin" :selected="u.role === 'superadmin'">superadmin</option>
                                                 </select>
                                             </form>
-                                        @else
-                                            <span class="text-xs text-gray-400">—</span>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @else
+                                        <span class="text-sm" style="color:var(--text-3)">—</span>
+                                    @endif
                                 </td>
                             </tr>
-                        @empty
-                            <tr id="no-data">
-                                <td colspan="6" class="py-8 text-center text-gray-500">Belum ada admin yang ditambahkan.</td>
-                            </tr>
-                        @endforelse
-                        {{-- Baris ini akan muncul jika pencarian tidak menemukan hasil --}}
-                        <tr id="no-results" class="hidden">
-                             <td colspan="6" class="py-8 text-center text-gray-500">
-                                Admin tidak ditemukan.
-                            </td>
-                        </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
+
+            <div x-show="loading" class="p-5 grid gap-4">
+                <template x-for="i in 4" :key="i">
+                    <div class="flex items-center gap-4">
+                        <div class="skeleton" style="width:48px;height:48px;border-radius:999px"></div>
+                        <div style="flex:1">
+                            <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
+                            <div class="skeleton" style="height:11px;width:70%"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div x-show="!loading && empty">
+                <x-admin-components::empty-state icon="fa-users-gear" :title="'Belum ada admin'"
+                    :description="'Akun admin akan muncul di sini setelah ditambahkan.'" />
+            </div>
+
+            <x-admin-components::pagination client countLabel="admin" />
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchInput = document.getElementById('searchInput');
-            const tableBody = document.getElementById('adminTableBody');
-            const allRows = tableBody.querySelectorAll('tr:not(#no-results)');
-            const noResultsRow = document.getElementById('no-results');
-            const noDataRow = document.getElementById('no-data');
-
-            searchInput.addEventListener('keyup', function (e) {
-                const searchTerm = e.target.value.toLowerCase();
-                let visibleRows = 0;
-
-                allRows.forEach(row => {
-                    // Kolom "Admin" adalah kolom kedua (index 1)
-                    const nameCell = row.cells[1];
-                    if (nameCell) {
-                        const name = nameCell.textContent.toLowerCase();
-                        if (name.includes(searchTerm)) {
-                            row.style.display = '';
-                            visibleRows++;
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    }
-                });
-
-                // Tampilkan pesan "tidak ditemukan" jika tidak ada baris yang cocok
-                if (visibleRows === 0 && !noDataRow) {
-                    noResultsRow.style.display = '';
-                } else {
-                    noResultsRow.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-</body>
-
-</html>
-
 @endsection

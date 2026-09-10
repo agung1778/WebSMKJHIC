@@ -1,131 +1,86 @@
 @extends('layouts.admin-app')
 
+@section('title', 'Pengaturan Info SPMB')
+
 @section('content')
-    <div class="max-w-5xl mx-auto space-y-6">
+    <div class="fade-up mx-auto space-y-6 max-w-5xl">
+        <x-admin-components::page-header
+            icon="fa-solid fa-bullhorn"
+            kicker="Website"
+            title="Pengaturan Info SPMB"
+            subtitle="Atur status, teks, kuota, dan gambar brosur untuk halaman depan website." />
 
-        @if (session('success'))
-            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3">
-                <i class="fa-solid fa-circle-check"></i>
-                <p class="text-sm font-medium">{{ session('success') }}</p>
-            </div>
-        @endif
+        <form action="{{ route('admin.spmb_settings.update') }}" method="POST" enctype="multipart/form-data" class="app-card p-0">
+            @csrf
+            @method('PUT')
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
-            <div class="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-800">{{ __('Pengaturan Info SPMB') }}</h1>
-                    <p class="text-xs text-slate-500 mt-1">{{ __('Atur teks, kuota, dan gambar brosur untuk halaman depan.') }}</p>
-                </div>
-            </div>
-
-            <form action="{{ route('admin.spmb_settings.update') }}" method="POST" enctype="multipart/form-data"
-                class="space-y-8">
-                @csrf
-                @method('PUT')
-
-                {{-- SECTION 1: TEXT & STATUS --}}
-                <div>
-                    <h2 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
-                        <i class="fa-solid fa-pen-nib text-[#6CF600]"></i> {{ __('Konten Teks & Status') }}
-                    </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-6 md:p-8 space-y-8">
+                <div class="space-y-5">
+                    <h4 class="form-section-title"><i class="fa-solid fa-pen-nib" style="color:var(--brand)"></i> Konten Teks &amp; Status</h4>
+                    <div class="form-grid-2">
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('Status Pendaftaran') }}</label>
-                            <select name="status"
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition-all text-sm">
-                                <option value="Buka" {{ $setting->status == 'Buka' ? 'selected' : '' }}>{{ __('Pendaftaran Buka') }}
-                                </option>
-                                <option value="Tutup" {{ $setting->status == 'Tutup' ? 'selected' : '' }}>{{ __('Pendaftaran Tutup') }}
-                                </option>
-                            </select>
+                            <label class="app-label" for="status">Status Pendaftaran <span class="req">*</span></label>
+                            <x-admin-components::field name="status" placeholder=" " :value="old('status', $setting->status)" type="select"
+                                :options="['Buka' => 'Pendaftaran Buka', 'Tutup' => 'Pendaftaran Tutup']" />
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('Nama Gelombang / Badge Teks') }}</label>
-                            <input type="text" name="wave_name" value="{{ old('wave_name', $setting->wave_name) }}"
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition-all text-sm"
-                                placeholder="{{ __('Cth: Gelombang Inden Dibuka!') }}">
+                            <label class="app-label" for="wave_name">Nama Gelombang / Badge Teks</label>
+                            <x-admin-components::field name="wave_name" placeholder="Cth: Gelombang Inden Dibuka!" icon="fa-solid fa-flag"
+                                :value="old('wave_name', $setting->wave_name)" />
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('Periode Pendaftaran') }}</label>
-                            <input type="text" name="period_date" value="{{ old('period_date', $setting->period_date) }}"
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition-all text-sm"
-                                placeholder="{{ __('Cth: 1 Oktober 2025 - 4 Januari 2026') }}">
+                            <label class="app-label" for="period_date">Periode Pendaftaran</label>
+                            <x-admin-components::field name="period_date" placeholder="Cth: 1 Oktober 2025 - 4 Januari 2026"
+                                icon="fa-solid fa-calendar-days" :value="old('period_date', $setting->period_date)" />
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('Keterangan Tambahan / Kuota') }}</label>
-                            <input type="text" name="quota_note" value="{{ old('quota_note', $setting->quota_note) }}"
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition-all text-sm"
-                                placeholder="{{ __('Cth: *Kuota Terbatas') }}">
+                            <label class="app-label" for="quota_note">Keterangan Tambahan / Kuota</label>
+                            <x-admin-components::field name="quota_note" placeholder="Cth: *Kuota Terbatas" icon="fa-solid fa-users"
+                                :value="old('quota_note', $setting->quota_note)" />
                         </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('Link Pendaftaran (PPDB)') }}</label>
-                            <input type="url" name="registration_link"
-                                value="{{ old('registration_link', $setting->registration_link) }}"
-                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6CF600] transition-all text-sm"
-                                placeholder="{{ __('Cth: https://ppdb.smkamaliah.sch.id') }}">
+                        <div style="grid-column:1/-1">
+                            <label class="app-label" for="registration_link">Link Pendaftaran (PPDB)</label>
+                            <x-admin-components::field name="registration_link"
+                                placeholder="Cth: https://ppdb.smkamaliah.sch.id" icon="fa-solid fa-link"
+                                :value="old('registration_link', $setting->registration_link)" />
                         </div>
                     </div>
                 </div>
 
-                {{-- SECTION 2: IMAGES & FILES --}}
-                <div>
-                    <h2 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
-                        <i class="fa-solid fa-images text-blue-500"></i> {{ __('Media & Brosur') }}
-                    </h2>
-                    <p class="text-xs text-slate-500 mb-4">{{ __('*Kosongkan file jika tidak ingin mengubah gambar/file yang sudah ada.') }}</p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {{-- Brosur Miring Kiri --}}
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-<label class="block text-sm font-bold text-slate-700 mb-2">{{ __('Pratinjau Brosur') }}
-    ({{ __('Belakang/Kiri') }})</label>
-                            <input type="file" name="brochure_image_1" accept="image/*" class="w-full text-sm mb-3">
-                            @if ($setting->brochure_image_1)
-                                <img src="{{ asset('storage/' . $setting->brochure_image_1) }}" alt="Brosur 1"
-                                    class="h-24 object-cover rounded shadow-sm border border-slate-200">
-                            @endif
+                <div class="space-y-5">
+                    <h4 class="form-section-title"><i class="fa-solid fa-images" style="color:var(--brand)"></i> Media &amp; Brosur</h4>
+                    <p class="field-hint">*Kosongkan file jika tidak ingin mengubah gambar/file yang sudah ada.</p>
+                    <div class="form-grid-2">
+                        <div class="media-box">
+                            <label class="app-label">Brosur Miring Kiri <span class="optional">(belakang/kiri)</span></label>
+                            <x-admin-components::dropzone name="brochure_image_1" accept="image/*" :current="$setting->brochure_image_1" />
                         </div>
-
-                        {{-- Brosur Miring Kanan --}}
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('Pratinjau Brosur') }} ({{ __('Depan/Kanan') }})</label>
-                            <input type="file" name="brochure_image_2" accept="image/*" class="w-full text-sm mb-3">
-                            @if ($setting->brochure_image_2)
-                                <img src="{{ asset('storage/' . $setting->brochure_image_2) }}" alt="Brosur 2"
-                                    class="h-24 object-cover rounded shadow-sm border border-slate-200">
-                            @endif
+                        <div class="media-box">
+                            <label class="app-label">Brosur Miring Kanan <span class="optional">(depan/kanan)</span></label>
+                            <x-admin-components::dropzone name="brochure_image_2" accept="image/*" :current="$setting->brochure_image_2" />
                         </div>
-
-                        {{-- Brosur Fullscreen Modal --}}
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-<label class="block text-sm font-bold text-slate-700 mb-2">{{ __('Brosur Penuh') }} ({{ __('Untuk Modal Pop-up') }})</label>
-                            <input type="file" name="brochure_full_image" accept="image/*" class="w-full text-sm mb-3">
-                            @if ($setting->brochure_full_image)
-                                <img src="{{ asset('storage/' . $setting->brochure_full_image) }}" alt="Brosur Penuh"
-                                    class="h-24 object-cover rounded shadow-sm border border-slate-200">
-                            @endif
+                        <div class="media-box">
+                            <label class="app-label">Brosur Penuh <span class="optional">(untuk modal pop-up)</span></label>
+                            <x-admin-components::dropzone name="brochure_full_image" accept="image/*" :current="$setting->brochure_full_image" />
                         </div>
-
-                        {{-- File PDF Download --}}
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('File Brosur Download (PDF)') }}</label>
-                            <input type="file" name="brochure_file" accept="application/pdf" class="w-full text-sm mb-3">
+                        <div class="media-box">
+                            <label class="app-label">File Brosur Download (PDF)</label>
+                            <x-admin-components::dropzone name="brochure_file" accept="application/pdf"
+                                :current="$setting->brochure_file" />
                             @if ($setting->brochure_file)
-                                <div class="flex items-center gap-2 text-sm text-green-600 font-bold">
-                                    <i class="fa-solid fa-file-pdf"></i> {{ __('PDF Tersedia') }}
-                                </div>
+                                <a class="app-btn app-btn-sm mt-2" href="{{ asset('storage/' . $setting->brochure_file) }}" target="_blank">
+                                    <i class="fa-solid fa-file-pdf" style="color:var(--red)"></i> PDF Tersedia
+                                </a>
                             @endif
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="pt-6 border-t border-slate-100 flex justify-end">
-                    <button type="submit"
-                        class="bg-[#6CF600] text-black px-8 py-3 rounded-xl text-sm font-bold hover:bg-[#5bd300] transition-colors shadow-sm flex items-center gap-2">
-                        <i class="fa-solid fa-save"></i> {{ __('Simpan Pengaturan SPMB') }}
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="form-actions border-t" style="border-color:var(--border)">
+                <a class="app-btn app-btn-lg" href="{{ route('admin.dashboard') }}"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</a>
+                <button type="submit" class="app-btn app-btn-primary app-btn-lg"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan SPMB</button>
+            </div>
+        </form>
     </div>
 @endsection

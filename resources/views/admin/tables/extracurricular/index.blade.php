@@ -1,203 +1,145 @@
 @extends('layouts.admin-app')
 
+@section('title', 'Ekstrakurikuler')
+
 @section('content')
+    @php
+        $items = $extracurriculars->map(function ($e) {
+            return [
+                'id' => $e->id,
+                'name' => $e->name,
+                'sub' => \Illuminate\Support\Str::limit(strip_tags($e->description ?? ''), 150),
+                'img' => $e->image ? asset('storage/' . $e->image) : null,
+                'by' => $e->publisher ?? '-',
+                'type' => $e->type ?? 'Pilihan',
+                'coach' => $e->coach ?? '-',
+                'contact' => $e->contact ?? '-',
+                'ts' => $e->created_at->timestamp,
+                'updated' => \Carbon\Carbon::parse($e->updated_at)->locale('id')->diffForHumans(),
+            ];
+        })->values();
+        $total = $extracurriculars->count();
+    @endphp
 
+    <div class="fade-up space-y-6" x-data="tableIndex({
+        raw: @json($items),
+        statusKey: 'type',
+        statuses: {
+            Wajib: { label: 'Wajib', class: 'badge-info' },
+            Pilihan: { label: 'Pilihan', class: 'badge-warning' }
+        },
+        searchKeys: ['name', 'sub', 'by', 'coach', 'type'],
+        perPage: 8,
+        exportUrl: @json(route('admin.export', ['resource' => 'extracurriculars'])),
+        emptyHead: 'Belum ada ekstrakurikuler',
+        emptyBody: 'Tambahkan ekstrakurikuler pertama untuk ditampilkan di website sekolah.'
+    })">
 
-        <style>
-        
+        <x-admin-components::page-header
+            icon="fa-solid fa-futbol"
+            kicker="Akademik"
+            title="Ekstrakurikuler"
+            subtitle="Kelola kegiatan ekstrakurikuler siswa SMK Amaliah.">
+            <x-slot:actions>
+                <a class="app-btn app-btn-primary app-btn-lg" href="{{ route('admin.extracurriculars.create') }}">
+                    <i class="fa-solid fa-plus"></i><span class="hide-mob">Tambah Ekskul</span>
+                </a>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
-        /* Menyembunyikan panah default pada input search */
-        input[type='search']::-webkit-search-decoration,
-        input[type='search']::-webkit-search-cancel-button,
-        input[type='search']::-webkit-search-results-button,
-        input[type='search']::-webkit-search-results-decoration {
-            -webkit-appearance: none;
-        }
-    </style>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <x-admin-components::stat-card label="Total Ekskul" :value="$total" icon="fa-solid fa-futbol" tone="brand" />
+            <x-admin-components::stat-card label="Wajib" :value="$extracurriculars->where('type','Wajib')->count()" icon="fa-solid fa-list-check" tone="green" />
+            <x-admin-components::stat-card label="Pilihan" :value="$extracurriculars->where('type','Pilihan')->count()" icon="fa-solid fa-hand-pointer" tone="blue" />
+            <x-admin-components::stat-card label="Terakhir Diperbarui" :value="$extracurriculars->max('updated_at') ? \Carbon\Carbon::parse($extracurriculars->max('updated_at'))->locale('id')->diffForHumans() : '-'" icon="fa-solid fa-clock-rotate-left" tone="amber" />
+        </div>
 
-
-    <div class="main-content flex-1 p-4 sm:p-6">
-        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
-            {{-- Header: Judul, Cari, dan Tombol Tambah --}}
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                <h1 class="text-2xl font-bold text-[#292929]">Daftar Ekstrakurikuler</h1>
-                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    {{-- Fitur Pencarian --}}
-                    <div class="relative w-full sm:w-64">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </span>
-                        <input type="search" id="searchInput" placeholder="Cari berdasarkan nama..."
-                            class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6CF600]">
-                    </div>
-                    {{-- Tombol Tambah --}}
-                    <a href="{{ route('admin.extracurriculars.create') }}"
-                        class="bg-[#6CF600] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200 flex items-center justify-center space-x-2 w-full sm:w-auto">
-                        <i class="fas fa-plus"></i>
-                        <span>Tambah Ekskul</span>
-                    </a>
+        <div class="app-card overflow-hidden">
+            <div class="toolbar">
+                <div class="search-field">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input class="app-input" type="search" placeholder="Cari ekskul, pembina…" x-model="q">
                 </div>
+                <select class="app-select" style="width:auto" x-model="statusFilter">
+                    <option value="all">Semua tipe</option>
+                    <option value="Wajib">Wajib</option>
+                    <option value="Pilihan">Pilihan</option>
+                </select>
+                <select class="app-select" style="width:auto" x-model="sortBy">
+                    <option value="newest">Terbaru</option>
+                    <option value="oldest">Terlama</option>
+                    <option value="az">Nama A–Z</option>
+                    <option value="za">Nama Z–A</option>
+                </select>
+                <span class="toolbar-spacer"></span>
+                <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
+                <a class="app-btn app-btn-md" :href="exportUrl" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
             </div>
 
-            {{-- Notifikasi Sukses --}}
-            @if(session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg shadow-sm"
-                    role="alert">
-                    <p>{{ session('success') }}</p>
-                </div>
-            @endif
-
-            {{-- Menghitung statistik --}}
-            @php
-                $totalExtracurriculars = $extracurriculars->count();
-                $pilihanTypeCount = $extracurriculars->filter(fn($e) => strcasecmp(trim($e->type), 'Pilihan') === 0)->count();
-                $wajibTypeCount = $extracurriculars->filter(fn($e) => strcasecmp(trim($e->type), 'Wajib') === 0)->count();
-            @endphp
-
-            {{-- Bagian Statistik Ringkas --}}
-            <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {{-- Card Total --}}
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                    <div class="bg-pink-100 text-pink-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-shapes fa-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Total Ekskul</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $totalExtracurriculars }}</p>
-                    </div>
-                </div>
-                 {{-- Card Pilihan --}}
-                 <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                    <div class="bg-blue-100 text-blue-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-mouse-pointer fa-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Pilihan</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $pilihanTypeCount }}</p>
-                    </div>
-                </div>
-                {{-- Card Wajib --}}
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                    <div class="bg-red-100 text-red-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-exclamation-circle fa-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Wajib</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $wajibTypeCount }}</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Tabel Data --}}
-            <div class="overflow-x-auto rounded-lg">
-                <table class="w-full table-fixed border-collapse">
+            <div class="table-wrap" x-show="!loading" x-cloak>
+                <table class="table-app">
                     <thead>
-                        <tr class="bg-[#292929] text-white uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left w-16">No.</th>
-                            <th class="py-3 px-6 text-left">Nama</th>
-                            <th class="py-3 px-6 text-left">Foto</th>
-                            <th class="py-3 px-6 text-left">Deskripsi</th>
-                            <th class="py-3 px-6 text-left">Jenis</th>
-                            <th class="py-3 px-6 text-left">Pembina</th>
-                            <th class="py-3 px-6 text-left">Penerbit</th>
-                            <th class="py-3 px-6 text-center">Aksi</th>
+                        <tr>
+                            <th>Ekstrakurikuler</th>
+                            <th>Tipe</th>
+                            <th>Pembina</th>
+                            <th>Diperbarui</th>
+                            <th class="text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-600 text-sm font-light" id="extracurricularTableBody">
-                        @forelse($extracurriculars as $extracurricular)
-                            <tr class="border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200">
-                                <td class="py-4 px-6 text-left font-medium">{{ $loop->iteration }}</td>
-                                <td class="py-4 px-6 text-left font-semibold break-words">{{ $extracurricular->name }}</td>
-                                <td class="py-4 px-6 text-left">
-                                    <img src="{{ asset('storage/' . $extracurricular->image) }}"
-                                        alt="{{ $extracurricular->name }}"
-                                        class="w-16 h-16 object-cover rounded-md shadow-sm bg-gray-50">
+                    <tbody>
+                        <template x-for="e in paged" :key="e.id">
+                            <tr>
+                                <td>
+                                    <div class="flex items-center gap-3" style="min-width:260px">
+                                        <img class="thumb" :src="e.img || 'https://placehold.co/64x64/eff9e3/63cd00?text=EKS'" :alt="e.name" loading="lazy">
+                                        <div style="min-width:0">
+                                            <div class="cell-main truncate" x-text="e.name"></div>
+                                            <div class="cell-sub truncate" style="max-width:320px" x-text="e.sub"></div>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="py-4 px-6 text-left max-w-xs break-words">
-                                    <p class="line-clamp-3">{{ $extracurricular->description }}</p>
-                                </td>
-                                <td class="py-4 px-6 text-left break-words">{{ $extracurricular->type }}</td>
-                                <td class="py-4 px-6 text-left break-words">{{ $extracurricular->coach }}</td>
-                                <td class="py-4 px-6 text-left break-words">{{ $extracurricular->publisher }}</td>
-                                <td class="py-4 px-6 text-center">
-                                    <div class="flex items-center justify-center space-x-2">
-                                        <a href="{{ route('admin.extracurriculars.show', $extracurricular->id) }}"
-                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Lihat">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('admin.extracurriculars.edit', $extracurricular->id) }}"
-                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('admin.extracurriculars.destroy', $extracurricular->id) }}"
-                                            method="POST"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus ekstrakurikuler ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Hapus">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
+                                <td><span class="badge" :class="badgeClass(e.type)" x-text="statusLabel(e.type)"></span></td>
+                                <td><span style="white-space:nowrap"><i class="fa-solid fa-whistle mr-1" style="color:var(--text-3)"></i><span x-text="e.coach"></span></span></td>
+                                <td><span class="cell-sub" style="white-space:nowrap" x-text="e.updated"></span></td>
+                                <td>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a class="app-btn app-btn-sm app-btn-primary" :href="'/admin/extracurriculars/' + e.id + '/edit'"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
+                                        <div class="dropdown">
+                                            <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" :href="'/admin/extracurriculars/' + e.id"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
+                                                <div class="dropdown-sep"></div>
+                                                <button class="dropdown-item danger" type="button" @click="askDelete(e, '/admin/extracurriculars/' + e.id)"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr id="no-data">
-                                <td colspan="8" class="py-8 text-center text-gray-500">Belum ada data ekstrakurikuler yang ditambahkan.</td>
-                            </tr>
-                        @endforelse
-                        {{-- Baris ini akan muncul jika pencarian tidak menemukan hasil --}}
-                        <tr id="no-results" class="hidden">
-                             <td colspan="8" class="py-8 text-center text-gray-500">
-                                Ekstrakurikuler tidak ditemukan.
-                            </td>
-                        </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
+
+            <div x-show="loading" class="p-5 grid gap-4">
+                <template x-for="i in 4" :key="i">
+                    <div class="flex items-center gap-4">
+                        <div class="skeleton" style="width:48px;height:48px;border-radius:12px"></div>
+                        <div style="flex:1">
+                            <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
+                            <div class="skeleton" style="height:11px;width:70%"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div x-show="!loading && empty" x-cloak>
+                <x-admin-components::empty-state icon="fa-futbol" :title="'Belum ada ekstrakurikuler'" description="Tambahkan ekstrakurikuler pertama untuk ditampilkan di website sekolah.">
+                    <a class="app-btn app-btn-primary" href="{{ route('admin.extracurriculars.create') }}"><i class="fa-solid fa-plus"></i>Tambah Ekskul</a>
+                </x-admin-components::empty-state>
+            </div>
+
+            <x-admin-components::pagination client countLabel="ekskul" />
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchInput = document.getElementById('searchInput');
-            const tableBody = document.getElementById('extracurricularTableBody');
-            const allRows = tableBody.querySelectorAll('tr:not(#no-results)');
-            const noResultsRow = document.getElementById('no-results');
-            const noDataRow = document.getElementById('no-data');
-
-            searchInput.addEventListener('keyup', function (e) {
-                const searchTerm = e.target.value.toLowerCase();
-                let visibleRows = 0;
-
-                allRows.forEach(row => {
-                    // Kolom "Nama" adalah kolom kedua (index 1)
-                    const nameCell = row.cells[1];
-                    if (nameCell) {
-                        const name = nameCell.textContent.toLowerCase();
-                        if (name.includes(searchTerm)) {
-                            row.style.display = '';
-                            visibleRows++;
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    }
-                });
-
-                // Tampilkan pesan "tidak ditemukan" jika tidak ada baris yang cocok
-                if (visibleRows === 0 && !noDataRow) {
-                    noResultsRow.style.display = '';
-                } else {
-                    noResultsRow.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-</body>
-
-</html>
-
 @endsection
-

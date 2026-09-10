@@ -1,53 +1,45 @@
 @extends('layouts.admin-app')
+
+@section('title', $facility->name)
+
 @section('content')
+    <div class="fade-up mx-auto max-w-4xl space-y-6">
+        <x-admin-components::page-header
+            icon="fa-solid fa-building-columns"
+            kicker="Fasilitas"
+            :title="Str::limit($facility->name, 60)"
+            :subtitle="'Jenis: ' . $facility->type">
 
+            <x-slot:actions>
+                <a class="app-btn app-btn-lg" href="{{ route('admin.facilities.edit', $facility->id) }}"><i class="fa-solid fa-pen"></i> Edit</a>
+                <button class="app-btn app-btn-lg app-btn-danger" type="button" x-data="{}" @click="AppConfirm({ title:'Hapus Fasilitas', message:'Hapus fasilitas <b>{{ addslashes($facility->name) }}</b>? Tindakan ini tidak dapat dibatalkan.', danger:true, confirmText:'Ya, hapus', onConfirm(){ const f=document.createElement('form'); f.method='POST'; f.action='{{ route('admin.facilities.destroy', $facility->id) }}'; f.innerHTML='<input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"><input type=\"hidden\" name=\"_method\" value=\"DELETE\">'; document.body.appendChild(f); f.submit(); } })"><i class="fa-solid fa-trash"></i></button>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
+        @if($facility->image)
+            <div class="app-card overflow-hidden">
+                <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}" class="w-full" style="max-height:380px;object-fit:cover">
+            </div>
+        @endif
 
-    <div class="main-content flex-1 p-6">
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-[#292929]">{{ $facility->name }}</h1>
-                <a href="{{ route('admin.facilities.index') }}"
-                    class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    <span>Kembali</span>
-                </a>
+        <div class="grid gap-6 md:grid-cols-3">
+            <div class="form-section md:col-span-2">
+                <h4 class="form-section-title"><i class="fa-solid fa-file-lines" style="color:var(--brand)"></i> Deskripsi</h4>
+                <x-admin-components::rich-text :content="$facility->description" />
             </div>
 
-            <div class="mb-6">
-                <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}"
-                    class="w-full h-80 object-cover rounded-lg shadow-md">
-            </div>
-
-            <div class="prose max-w-none text-gray-700">
-                <h2 class="text-lg font-semibold text-[#292929]">Deskripsi</h2>
-                <p>{{ $facility->description }}</p>
-
-                <div class="mt-4 text-sm font-medium text-gray-500">
-                    <p>Jenis Fasilitas: <span class="text-gray-700">{{ $facility->type }}</span></p>
-                    <p>Dipublikasikan oleh: <span class="text-gray-700">{{ $facility->publisher }}</span></p>
-                </div>
-            </div>
-
-            <div class="mt-8 flex justify-end space-x-2">
-                <a href="{{ route('admin.facilities.edit', $facility->id) }}"
-                    class="bg-[#6CF600] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200">
-                    <i class="fas fa-edit mr-2"></i>Edit
-                </a>
-                <form action="{{ route('admin.facilities.destroy', $facility->id) }}" method="POST"
-                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus fasilitas ini?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit"
-                        class="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200">
-                        <i class="fas fa-trash-alt mr-2"></i>Hapus
-                    </button>
-                </form>
+            <div class="form-section h-fit">
+                <h4 class="form-section-title"><i class="fa-solid fa-circle-info" style="color:var(--brand)"></i> Info</h4>
+                <dl class="info-grid">
+                    <div><dt>Nama</dt><dd>{{ $facility->name }}</dd></div>
+                    <div><dt>Jenis</dt><dd><span class="badge badge-info">{{ $facility->type }}</span></dd></div>
+                    <div><dt>Penerbit</dt><dd>{{ $facility->publisher ?? '-' }}</dd></div>
+                </dl>
             </div>
         </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3">
+            <a class="app-btn" href="{{ route('admin.facilities.index') }}"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        </div>
     </div>
-
-</body>
-
-</html>
 @endsection

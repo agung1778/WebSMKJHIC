@@ -1,103 +1,24 @@
 @extends('layouts.admin-app')
+
+@section('title', 'Edit Ekstrakurikuler')
+
 @section('content')
+    <div class="fade-up mx-auto space-y-6 max-w-4xl">
+        <x-admin-components::page-header
+            icon="fa-solid fa-futbol"
+            kicker="Akademik"
+            title="Edit Ekstrakurikuler"
+            :subtitle="'Perbarui ekskul: ' . Str::limit($extracurricular->name, 60)">
 
-    
+            <x-slot:actions>
+                <a class="app-btn app-btn-lg" href="{{ route('admin.extracurriculars.show', $extracurricular->id) }}"><i class="fa-regular fa-eye"></i> Lihat</a>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
-        <div class="main-content flex-1 p-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold text-[#292929]">Edit Ekstrakurikuler</h1>
-                    <a href="{{ route('admin.extracurriculars.index') }}"
-                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span>Kembali</span>
-                    </a>
-                </div>
-
-                <form action="{{ route('admin.extracurriculars.update', $extracurricular->id) }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="mb-4">
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Ekstrakurikuler</label>
-                        <input type="text" name="name" id="name"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('name') border-red-500 @enderror"
-                            value="{{ old('name', $extracurricular->name) }}">
-                        @error('name')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Jenis Ekstrakurikuler</label>
-                        <select name="type" id="type"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('type') border-red-500 @enderror">
-                            <option value="Wajib" @if(old('type', $extracurricular->type) == 'Wajib') selected @endif>Wajib
-                            </option>
-                            <option value="Pilihan" @if(old('type', $extracurricular->type) == 'Pilihan') selected @endif>
-                                Pilihan</option>
-                        </select>
-                        @error('type')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Foto Ekstrakurikuler</label>
-                        <input type="file" name="image" id="image"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('image') border-red-500 @enderror">
-                        @if($extracurricular->image)
-                            <p class="text-xs text-gray-500 mt-2">Foto saat ini:</p>
-                            <img src="{{ asset('storage/' . $extracurricular->image) }}" alt="Foto {{ $extracurricular->name }}"
-                                class="w-32 h-32 object-cover rounded-md mt-2">
-                        @endif
-                        @error('image')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-                        <textarea name="description" id="description" rows="5"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('description') border-red-500 @enderror">{{ old('description', $extracurricular->description) }}</textarea>
-                        @error('description')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="coach" class="block text-sm font-medium text-gray-700 mb-1">Pelatih/Pembina</label>
-                        <input type="text" name="coach" id="coach"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('coach') border-red-500 @enderror"
-                            value="{{ old('coach', $extracurricular->coach) }}">
-                        @error('coach')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="mb-6">
-                        <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">Kontak</label>
-                        <input type="text" name="contact" id="contact"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6CF600] @error('contact') border-red-500 @enderror"
-                            value="{{ old('contact', $extracurricular->contact) }}">
-                        @error('contact')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="flex items-center justify-end">
-                        <button type="submit"
-                            class="bg-[#6CF600] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200">
-                            Perbarui Ekstrakurikuler
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    </body>
-
-    </html>
-
+        <form action="{{ route('admin.extracurriculars.update', $extracurricular->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            @include('admin.tables.extracurricular._form', ['extracurricular' => $extracurricular])
+        </form>
+    </div>
 @endsection

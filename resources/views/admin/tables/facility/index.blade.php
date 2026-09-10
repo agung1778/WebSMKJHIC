@@ -1,198 +1,134 @@
 @extends('layouts.admin-app')
 
+@section('title', 'Fasilitas')
+
 @section('content')
+    @php
+        $items = $facilities->map(function ($f) {
+            return [
+                'id' => $f->id,
+                'name' => $f->name,
+                'sub' => \Illuminate\Support\Str::limit(strip_tags($f->description ?? ''), 140),
+                'img' => $f->image ? asset('storage/' . $f->image) : null,
+                'by' => $f->publisher ?? '-',
+                'type' => $f->type ?? '-',
+                'ts' => $f->created_at->timestamp,
+                'updated' => \Carbon\Carbon::parse($f->updated_at)->locale('id')->diffForHumans(),
+            ];
+        })->values();
+        $total = $facilities->count();
+        $types = $facilities->pluck('type')->filter()->unique()->values();
+    @endphp
 
+    <div class="fade-up space-y-6" x-data="tableIndex({
+        raw: @json($items),
+        searchKeys: ['name', 'sub', 'by', 'type'],
+        perPage: 8,
+        exportUrl: @json(route('admin.export', ['resource' => 'facilities'])),
+        emptyHead: 'Belum ada fasilitas',
+        emptyBody: 'Tambahkan fasilitas pertama untuk ditampilkan di halaman website sekolah.'
+    })">
 
-        <style>
-        
+        <x-admin-components::page-header
+            icon="fa-solid fa-building-columns"
+            kicker="Konten"
+            title="Fasilitas"
+            subtitle="Kelola sarana dan prasarana yang tersedia di sekolah.">
+            <x-slot:actions>
+                <a class="app-btn app-btn-primary app-btn-lg" href="{{ route('admin.facilities.create') }}">
+                    <i class="fa-solid fa-plus"></i><span class="hide-mob">Tambah Fasilitas</span>
+                </a>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
-        /* Menyembunyikan panah default pada input search */
-        input[type='search']::-webkit-search-decoration,
-        input[type='search']::-webkit-search-cancel-button,
-        input[type='search']::-webkit-search-results-button,
-        input[type='search']::-webkit-search-results-decoration {
-            -webkit-appearance: none;
-        }
-    </style>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <x-admin-components::stat-card label="Total Fasilitas" :value="$total" icon="fa-solid fa-building-columns" tone="brand" />
+            <x-admin-components::stat-card label="Jenis Unik" :value="$types->count()" icon="fa-solid fa-shapes" tone="green" />
+            <x-admin-components::stat-card label="Dengan Gambar" :value="$facilities->whereNotNull('image')->count()" icon="fa-solid fa-image" tone="blue" />
+            <x-admin-components::stat-card label="Terakhir Diperbarui" :value="$facilities->max('updated_at') ? \Carbon\Carbon::parse($facilities->max('updated_at'))->locale('id')->diffForHumans() : '-'" icon="fa-solid fa-clock-rotate-left" tone="amber" />
+        </div>
 
-
-    <div class="main-content flex-1 p-4 sm:p-6">
-        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
-            {{-- Header: Judul, Cari, dan Tombol Tambah --}}
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                <h1 class="text-2xl font-bold text-[#292929]">Daftar Fasilitas</h1>
-                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    {{-- Fitur Pencarian --}}
-                    <div class="relative w-full sm:w-64">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </span>
-                        <input type="search" id="searchInput" placeholder="Cari berdasarkan nama..."
-                            class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6CF600]">
-                    </div>
-                    {{-- Tombol Tambah --}}
-                    <a href="{{ route('admin.facilities.create') }}"
-                        class="bg-[#6CF600] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200 flex items-center justify-center space-x-2 w-full sm:w-auto">
-                        <i class="fas fa-plus"></i>
-                        <span>Tambah Fasilitas</span>
-                    </a>
+        <div class="app-card overflow-hidden">
+            <div class="toolbar">
+                <div class="search-field">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input class="app-input" type="search" placeholder="Cari fasilitas…" x-model="q">
                 </div>
+                <select class="app-select" style="width:auto" x-model="sortBy">
+                    <option value="newest">Terbaru</option>
+                    <option value="oldest">Terlama</option>
+                    <option value="az">Nama A–Z</option>
+                    <option value="za">Nama Z–A</option>
+                </select>
+                <span class="toolbar-spacer"></span>
+                <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
+                <a class="app-btn app-btn-md" :href="exportUrl" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
             </div>
 
-            {{-- Notifikasi Sukses --}}
-            @if(session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg shadow-sm"
-                    role="alert">
-                    <p>{{ session('success') }}</p>
-                </div>
-            @endif
-
-            {{-- Menghitung statistik --}}
-            @php
-                $totalFacilities = $facilities->count();
-                $mainFacilityCount = $facilities->filter(fn($f) => strcasecmp(trim($f->type), 'Utama') === 0)->count();
-                $supportingFacilityCount = $facilities->filter(fn($f) => strcasecmp(trim($f->type), 'Pendukung') === 0)->count();
-            @endphp
-
-            {{-- Bagian Statistik Ringkas --}}
-            <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {{-- Card Total --}}
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                    <div class="bg-gray-200 text-gray-600 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-building fa-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Total Fasilitas</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $totalFacilities }}</p>
-                    </div>
-                </div>
-                {{-- Card Fasilitas Utama --}}
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                    <div class="bg-blue-100 text-blue-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-star fa-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Fasilitas Utama</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $mainFacilityCount }}</p>
-                    </div>
-                </div>
-                {{-- Card Fasilitas Pendukung --}}
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm flex items-center space-x-4 border border-gray-200">
-                    <div class="bg-green-100 text-green-500 rounded-full h-12 w-12 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-plus-circle fa-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Fasilitas Pendukung</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $supportingFacilityCount }}</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Tabel Data --}}
-            <div class="overflow-x-auto rounded-lg">
-                <table class="w-full table-auto border-collapse">
+            <div class="table-wrap" x-show="!loading" x-cloak>
+                <table class="table-app">
                     <thead>
-                        <tr class="bg-[#292929] text-white uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left w-16">No.</th>
-                            <th class="py-3 px-6 text-left">Nama Fasilitas</th>
-                            <th class="py-3 px-6 text-left">Foto</th>
-                            <th class="py-3 px-6 text-left">Deskripsi</th>
-                            <th class="py-3 px-6 text-left">Jenis</th>
-                            <th class="py-3 px-6 text-left">Penerbit</th>
-                            <th class="py-3 px-6 text-center">Aksi</th>
+                        <tr>
+                            <th>Fasilitas</th>
+                            <th>Jenis</th>
+                            <th>Penerbit</th>
+                            <th>Diperbarui</th>
+                            <th class="text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-600 text-sm font-light" id="facilityTableBody">
-                        @forelse($facilities as $facility)
-                            <tr class="border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200">
-                                <td class="py-4 px-6 text-left font-medium">{{ $loop->iteration }}</td>
-                                <td class="py-4 px-6 text-left font-semibold break-words">{{ $facility->name }}</td>
-                                <td class="py-4 px-6 text-left">
-                                    <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}"
-                                        class="w-16 h-16 object-cover rounded-md shadow-sm bg-gray-50">
+                    <tbody>
+                        <template x-for="f in paged" :key="f.id">
+                            <tr>
+                                <td>
+                                    <div class="flex items-center gap-3" style="min-width:260px">
+                                        <img class="thumb" :src="f.img || 'https://placehold.co/64x64/eff9e3/63cd00?text=FSL'" :alt="f.name" loading="lazy">
+                                        <div style="min-width:0">
+                                            <div class="cell-main truncate" x-text="f.name"></div>
+                                            <div class="cell-sub truncate" style="max-width:340px" x-text="f.sub"></div>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="py-4 px-6 text-left max-w-sm break-words">
-                                    <p class="line-clamp-3">{{ $facility->description }}</p>
-                                </td>
-                                <td class="py-4 px-6 text-left break-words">{{ $facility->type }}</td>
-                                <td class="py-4 px-6 text-left break-words">{{ $facility->publisher }}</td>
-                                <td class="py-4 px-6 text-center">
-                                    <div class="flex items-center justify-center space-x-2">
-                                        <a href="{{ route('admin.facilities.show', $facility->id) }}"
-                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Lihat">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('admin.facilities.edit', $facility->id) }}"
-                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('admin.facilities.destroy', $facility->id) }}" method="POST"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus fasilitas ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-200 transition-all duration-200" title="Hapus">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
+                                <td><span class="badge badge-info" x-text="f.type"></span></td>
+                                <td><span style="white-space:nowrap"><i class="fa-regular fa-user mr-1" style="color:var(--text-3)"></i><span x-text="f.by"></span></span></td>
+                                <td><span class="cell-sub" style="white-space:nowrap" x-text="f.updated"></span></td>
+                                <td>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a class="app-btn app-btn-sm app-btn-primary" :href="'/admin/facilities/' + f.id + '/edit'"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
+                                        <div class="dropdown">
+                                            <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" :href="'/admin/facilities/' + f.id"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
+                                                <div class="dropdown-sep"></div>
+                                                <button class="dropdown-item danger" type="button" @click="askDelete(f, '/admin/facilities/' + f.id)"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr id="no-data">
-                                <td colspan="7" class="py-8 text-center text-gray-500">Belum ada fasilitas yang ditambahkan.</td>
-                            </tr>
-                        @endforelse
-                        {{-- Baris ini akan muncul jika pencarian tidak menemukan hasil --}}
-                        <tr id="no-results" class="hidden">
-                             <td colspan="7" class="py-8 text-center text-gray-500">
-                                Fasilitas tidak ditemukan.
-                            </td>
-                        </tr>
+                        </template>
                     </tbody>
                 </table>
             </div>
+
+            <div x-show="loading" class="p-5 grid gap-4">
+                <template x-for="i in 4" :key="i">
+                    <div class="flex items-center gap-4">
+                        <div class="skeleton" style="width:48px;height:48px;border-radius:12px"></div>
+                        <div style="flex:1">
+                            <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
+                            <div class="skeleton" style="height:11px;width:70%"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div x-show="!loading && empty" x-cloak>
+                <x-admin-components::empty-state icon="fa-building-columns" :title="'Belum ada fasilitas'" description="Tambahkan fasilitas pertama untuk ditampilkan di halaman website sekolah.">
+                    <a class="app-btn app-btn-primary" href="{{ route('admin.facilities.create') }}"><i class="fa-solid fa-plus"></i>Tambah Fasilitas</a>
+                </x-admin-components::empty-state>
+            </div>
+
+            <x-admin-components::pagination client countLabel="fasilitas" />
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchInput = document.getElementById('searchInput');
-            const tableBody = document.getElementById('facilityTableBody');
-            const allRows = tableBody.querySelectorAll('tr:not(#no-results)');
-            const noResultsRow = document.getElementById('no-results');
-            const noDataRow = document.getElementById('no-data');
-
-            searchInput.addEventListener('keyup', function (e) {
-                const searchTerm = e.target.value.toLowerCase();
-                let visibleRows = 0;
-
-                allRows.forEach(row => {
-                    // Kolom "Nama Fasilitas" adalah kolom kedua (index 1)
-                    const nameCell = row.cells[1];
-                    if (nameCell) {
-                        const name = nameCell.textContent.toLowerCase();
-                        if (name.includes(searchTerm)) {
-                            row.style.display = '';
-                            visibleRows++;
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    }
-                });
-
-                // Tampilkan pesan "tidak ditemukan" jika tidak ada baris yang cocok
-                if (visibleRows === 0 && !noDataRow) {
-                    noResultsRow.style.display = '';
-                } else {
-                    noResultsRow.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-</body>
-
-</html>
-
 @endsection

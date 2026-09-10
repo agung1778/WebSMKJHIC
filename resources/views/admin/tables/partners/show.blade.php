@@ -1,60 +1,56 @@
 @extends('layouts.admin-app')
 
+@section('title', $partner->name)
+
 @section('content')
+    <div class="fade-up mx-auto max-w-4xl space-y-6">
+        <x-admin-components::page-header
+            icon="fa-solid fa-handshake"
+            kicker="Mitra Industri"
+            :title="Str::limit($partner->name, 60)"
+            :subtitle="($partner->sector ?? '') . ($partner->city ? ' · ' . $partner->city : '')">
 
-    
+            <x-slot:actions>
+                <a class="app-btn app-btn-lg" href="{{ route('admin.partners.edit', $partner->id) }}"><i class="fa-solid fa-pen"></i> Edit</a>
+                <button class="app-btn app-btn-lg app-btn-danger" type="button" x-data="{}" @click="AppConfirm({ title:'Hapus Mitra', message:'Hapus mitra <b>{{ addslashes($partner->name) }}</b>? Tindakan ini tidak dapat dibatalkan.', danger:true, confirmText:'Ya, hapus', onConfirm(){ const f=document.createElement('form'); f.method='POST'; f.action='{{ route('admin.partners.destroy', $partner->id) }}'; f.innerHTML='<input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"><input type=\"hidden\" name=\"_method\" value=\"DELETE\">'; document.body.appendChild(f); f.submit(); } })"><i class="fa-solid fa-trash"></i></button>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
-        <div class="main-content flex-1 p-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold text-[#292929]">{{ $partner->name }}</h1>
-                    <a href="{{ route('admin.partners.index') }}"
-                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span>Kembali</span>
-                    </a>
+        <div class="grid gap-6 md:grid-cols-3">
+            <div class="form-section space-y-4 md:col-span-2">
+                <div class="flex items-center gap-4">
+                    @if($partner->logo)
+                        <div class="img-thumb" style="width:88px;height:88px;border-radius:16px;flex-shrink:0">
+                            <img src="{{ asset('storage/' . $partner->logo) }}" alt="{{ $partner->name }}" style="height:88px">
+                        </div>
+                    @endif
+                    <div>
+                        <div class="cell-main" style="font-size:18px">{{ $partner->name }}</div>
+                        <div class="mt-1 flex flex-wrap gap-2">
+                            @if($partner->sector)<span class="badge badge-info">{{ $partner->sector }}</span>@endif
+                            @if($partner->city)<span class="badge badge-published"><i class="fa-solid fa-location-dot mr-1"></i>{{ $partner->city }}</span>@endif
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mb-6 flex justify-center items-center">
-                    <img src="{{ asset('storage/' . $partner->logo) }}" alt="{{ $partner->name }} Logo"
-                        class="w-64 h-auto object-contain rounded-lg shadow-md">
-                </div>
+                <h4 class="form-section-title mt-4"><i class="fa-solid fa-file-lines" style="color:var(--brand)"></i> Deskripsi</h4>
+                <x-admin-components::rich-text :content="$partner->description" />
+            </div>
 
-                <div class="prose max-w-none text-gray-700">
-                    <h2 class="text-lg font-semibold text-[#292929]">Detail Kemitraan</h2>
-                    <hr class="my-2 border-gray-300">
-                    <p><strong>Sektor:</strong> {{ $partner->sector }}</p>
-                    <p><strong>Kota:</strong> {{ $partner->city }}</p>
-                    <p><strong>Kontak Perusahaan:</strong> {{ $partner->company_contact }}</p>
-                    <p><strong>Tanggal Kerja Sama:</strong>
-                        {{ \Carbon\Carbon::parse($partner->partnership_date)->format('d F Y') }}</p>
-                    <p><strong>Penerbit:</strong> {{ $partner->publisher }}</p>
-
-                    <h2 class="text-lg font-semibold text-[#292929] mt-6">Deskripsi</h2>
-                    <hr class="my-2 border-gray-300">
-                    <p>{{ $partner->description }}</p>
-                </div>
-
-                <div class="mt-8 flex justify-end space-x-2">
-                    <a href="{{ route('admin.partners.edit', $partner->id) }}"
-                        class="bg-[#6CF600] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200">
-                        <i class="fas fa-edit mr-2"></i>Edit
-                    </a>
-                    <form action="{{ route('admin.partners.destroy', $partner->id) }}" method="POST"
-                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus mitra ini?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200">
-                            <i class="fas fa-trash-alt mr-2"></i>Hapus
-                        </button>
-                    </form>
-                </div>
+            <div class="form-section h-fit">
+                <h4 class="form-section-title"><i class="fa-solid fa-circle-info" style="color:var(--brand)"></i> Detail Kemitraan</h4>
+                <dl class="info-grid">
+                    <div><dt>Kerja Sama</dt><dd>{{ \Carbon\Carbon::parse($partner->partnership_date)->translatedFormat('d M Y') }}</dd></div>
+                    @if($partner->company_contact)
+                        <div><dt>Kontak</dt><dd>{{ $partner->company_contact }}</dd></div>
+                    @endif
+                    <div><dt>Penerbit</dt><dd>{{ $partner->publisher ?? '-' }}</dd></div>
+                </dl>
             </div>
         </div>
 
-    </body>
-
-    </html>
-
+        <div class="flex flex-wrap items-center justify-center gap-3">
+            <a class="app-btn" href="{{ route('admin.partners.index') }}"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        </div>
+    </div>
 @endsection

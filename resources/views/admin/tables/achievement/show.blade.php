@@ -1,59 +1,49 @@
 @extends('layouts.admin-app')
 
+@section('title', $achievement->title)
+
 @section('content')
+    <div class="fade-up mx-auto max-w-4xl space-y-6">
+        <x-admin-components::page-header
+            icon="fa-solid fa-trophy"
+            kicker="Prestasi"
+            :title="Str::limit($achievement->title, 60)"
+            :subtitle="'Pemenang: ' . $achievement->winner">
 
-    
+            <x-slot:actions>
+                <a class="app-btn app-btn-lg" href="{{ route('admin.achievements.edit', $achievement->id) }}"><i class="fa-solid fa-pen"></i> Edit</a>
+                <button class="app-btn app-btn-lg app-btn-danger" type="button" x-data="{}" @click="AppConfirm({ title:'Hapus Prestasi', message:'Hapus prestasi <b>{{ addslashes($achievement->title) }}</b>? Tindakan ini tidak dapat dibatalkan.', danger:true, confirmText:'Ya, hapus', onConfirm(){ const f=document.createElement('form'); f.method='POST'; f.action='{{ route('admin.achievements.destroy', $achievement->id) }}'; f.innerHTML='<input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"><input type=\"hidden\" name=\"_method\" value=\"DELETE\">'; document.body.appendChild(f); f.submit(); } })"><i class="fa-solid fa-trash"></i></button>
+            </x-slot:actions>
+        </x-admin-components::page-header>
 
-        <div class="main-content flex-1 p-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold text-[#292929]">Detail Prestasi</h1>
-                    <a href="{{ route('admin.achievements.index') }}"
-                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center space-x-2">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span>Kembali</span>
-                    </a>
-                </div>
+        @if($achievement->image)
+            <div class="app-card overflow-hidden">
+                <img src="{{ asset('storage/' . $achievement->image) }}" alt="{{ $achievement->title }}" class="w-full" style="max-height:380px;object-fit:cover">
+            </div>
+        @endif
 
-                <div class="mb-6">
-                    <img src="{{ asset('storage/' . $achievement->image) }}" alt="{{ $achievement->title }}"
-                        class="w-full h-80 object-cover rounded-lg shadow-md">
-                </div>
+        <div class="grid gap-6 md:grid-cols-3">
+            <div class="form-section md:col-span-2">
+                <h4 class="form-section-title"><i class="fa-solid fa-file-lines" style="color:var(--brand)"></i> Deskripsi</h4>
+                <x-admin-components::rich-text :content="$achievement->description" />
+            </div>
 
-                <div class="prose max-w-none text-gray-700">
-                    <h2 class="text-lg font-semibold text-[#292929]">{{ $achievement->title }}</h2>
-                    <hr class="my-2 border-gray-300">
-                    <p><strong>Kategori:</strong> {{ $achievement->category }}</p>
-                    <p><strong>Juara:</strong> {{ $achievement->winner }}</p>
-                    <p><strong>Tingkat:</strong> {{ $achievement->level }}</p>
-                    <p><strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($achievement->date)->format('d F Y') }}</p>
-                    <p><strong>Penerbit:</strong> {{ $achievement->publisher }}</p>
-
-                    <h2 class="text-lg font-semibold text-[#292929] mt-6">Deskripsi</h2>
-                    <hr class="my-2 border-gray-300">
-                    <p>{{ $achievement->description }}</p>
-                </div>
-
-                <div class="mt-8 flex justify-end space-x-2">
-                    <a href="{{ route('admin.achievements.edit', $achievement->id) }}"
-                        class="bg-[#6CF600] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#5bd300] transition-colors duration-200">
-                        <i class="fas fa-edit mr-2"></i>Edit
-                    </a>
-                    <form action="{{ route('admin.achievements.destroy', $achievement->id) }}" method="POST"
-                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus prestasi ini?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200">
-                            <i class="fas fa-trash-alt mr-2"></i>Hapus
-                        </button>
-                    </form>
-                </div>
+            <div class="form-section h-fit">
+                <h4 class="form-section-title"><i class="fa-solid fa-circle-info" style="color:var(--brand)"></i> Info</h4>
+                <dl class="info-grid">
+                    <div><dt>Kategori</dt><dd>
+                        <span class="badge" style="background:{{ $achievement->category === 'Individual' ? 'var(--blue-soft,#e8f2ff)' : 'var(--brand-soft)' }};color:{{ $achievement->category === 'Individual' ? 'var(--blue,#1d6fd6)' : 'var(--brand-deep)' }}">{{ $achievement->category }}</span>
+                    </dd></div>
+                    <div><dt>Pemenang</dt><dd>{{ $achievement->winner }}</dd></div>
+                    <div><dt>Tingkat</dt><dd>{{ $achievement->level }}</dd></div>
+                    <div><dt>Tanggal</dt><dd>{{ \Carbon\Carbon::parse($achievement->date)->translatedFormat('d M Y') }}</dd></div>
+                    <div><dt>Penerbit</dt><dd>{{ $achievement->publisher ?? '-' }}</dd></div>
+                </dl>
             </div>
         </div>
 
-    </body>
-
-    </html>
-
+        <div class="flex flex-wrap items-center justify-center gap-3">
+            <a class="app-btn" href="{{ route('admin.achievements.index') }}"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+        </div>
+    </div>
 @endsection
