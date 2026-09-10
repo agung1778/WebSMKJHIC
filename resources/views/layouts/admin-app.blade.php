@@ -62,6 +62,7 @@
                     ['title' => 'Hero & Media', 'icon' => 'fa-solid fa-images', 'routes' => ['admin.image.*'], 'url' => 'admin.image.index'],
                     ['title' => 'Menu Navigasi', 'icon' => 'fa-solid fa-bars-staggered', 'routes' => ['admin.navigations.*'], 'url' => 'admin.navigations.index'],
                     ['title' => 'Feed Instagram', 'icon' => 'fa-brands fa-instagram', 'routes' => ['admin.insta-posts.*'], 'url' => 'admin.insta-posts.index'],
+                    ['title' => 'Jumlah Peserta Didik', 'icon' => 'fa-solid fa-users', 'routes' => ['admin.school_settings.*'], 'url' => 'admin.school_settings.edit'],
                 ],
             ],
             [
@@ -88,7 +89,6 @@
                 'label' => 'Pengaturan',
                 'items' => [
                     ['title' => 'Info SPMB', 'icon' => 'fa-solid fa-file-circle-check', 'routes' => ['admin.spmb_settings.*'], 'url' => 'admin.spmb_settings.edit'],
-                    ['title' => 'Setting Website', 'icon' => 'fa-solid fa-sliders', 'routes' => ['admin.school_settings.*'], 'url' => 'admin.school_settings.edit'],
                 ],
             ],
             [

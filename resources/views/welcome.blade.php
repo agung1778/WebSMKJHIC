@@ -364,9 +364,9 @@
 
                 // Data untuk bagian statistik, disesuaikan dengan referensi gambar
                 $stats = [
-                    ['icon' => 'fa-users', 'number' => '1160 +', 'label' => 'Peserta Didik'],
-                    ['icon' => 'fa-rocket', 'number' => '80 +', 'label' => 'Tenaga Pendidik'],
-                    ['icon' => 'fa-star', 'number' => '40 +', 'label' => 'Fasilitas Unggulan'],
+                    ['icon' => 'fa-users', 'number' => ($studentsCount ?? 0) . ' +', 'label' => 'Peserta Didik'],
+                    ['icon' => 'fa-rocket', 'number' => ($teachersCount ?? 0) . ' +', 'label' => 'Tenaga Pendidik'],
+                    ['icon' => 'fa-star', 'number' => ($facilitiesCount ?? 0) . ' +', 'label' => 'Fasilitas Unggulan'],
                     ['icon' => 'fa-graduation-cap', 'number' => '85%', 'label' => 'Alumni cepat dapat kerja'],
                 ];
             @endphp

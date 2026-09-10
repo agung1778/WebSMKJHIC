@@ -10,6 +10,8 @@ use App\Models\Testimonial;
 use App\Models\Image;
 use App\Models\Facility;
 use App\Models\Major;
+use App\Models\SchoolSetting;
+use App\Models\Teacher;
 use Illuminate\Support\Facades\Cache; // <-- 1. IMPORT CACHE
 
 class HomeController extends Controller
@@ -56,6 +58,18 @@ class HomeController extends Controller
             return Major::orderBy('id', 'asc')->get();
         });
 
+        $schoolSettings = Cache::remember('home_school_settings', $cacheDuration, function () {
+            return SchoolSetting::first();
+        });
+
+        $teachersCount = Cache::remember('home_teachers_count', $cacheDuration, function () {
+            return Teacher::count();
+        });
+
+        $facilitiesCount = Cache::remember('home_facilities_count', $cacheDuration, function () {
+            return Facility::count();
+        });
+
         // Kirim semua variabel ke view
         return view('welcome', [
             'latestNews'      => $latestNews,
@@ -66,6 +80,9 @@ class HomeController extends Controller
             'majorGridImages' => $majorGridImages_padded,
             'facilities'      => $facilities_padded,
             'majors'          => $majors,
+            'studentsCount'   => optional($schoolSettings)->jumlah_siswa ?? 0,
+            'teachersCount'   => $teachersCount,
+            'facilitiesCount' => $facilitiesCount,
         ]);
     }
 }

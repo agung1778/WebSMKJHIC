@@ -1,14 +1,14 @@
 @extends('layouts.admin-app')
 
-@section('title', 'Statistik Sekolah')
+@section('title', 'Jumlah Peserta Didik')
 
 @section('content')
     <div class="fade-up mx-auto space-y-6 max-w-4xl">
         <x-admin-components::page-header
-            icon="fa-solid fa-school"
+            icon="fa-solid fa-users"
             kicker="Website"
-            title="Statistik Sekolah"
-            subtitle="Atur data statistik yang tampil di halaman depan (Peserta Didik)." />
+            title="Jumlah Peserta Didik"
+            subtitle="Atur jumlah peserta didik yang tampil di halaman depan (beranda)." />
 
         <form action="{{ route('admin.school_settings.update') }}" method="POST" class="app-card p-0">
             @csrf
@@ -18,7 +18,7 @@
                 <h4 class="form-section-title"><i class="fa-solid fa-users" style="color:var(--brand)"></i> Peserta Didik</h4>
                 <div class="form-grid-2">
                     <div>
-                        <label class="app-label" for="jumlah_siswa">Total Siswa <span class="req">*</span></label>
+                        <label class="app-label" for="jumlah_siswa">Jumlah Peserta Didik <span class="req">*</span></label>
                         <x-admin-components::field name="jumlah_siswa" type="number" min="0" placeholder="Cth: 1160"
                             icon="fa-solid fa-user-group" :value="old('jumlah_siswa', $setting->jumlah_siswa)" />
                     </div>
