@@ -10,7 +10,8 @@
     <link rel="icon" type="image/webp" href="{{ asset('assets/logo/am.webp') }}">
 
     <title>@yield('title', 'SMK Amaliah 1 & 2')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script type="module" src="{{ asset('js/app.js') }}"></script>
 
 
     {{-- 2. PERFORMA: Preconnect ke domain penting untuk mempercepat handshake DNS, TCP, dan TLS --}}
