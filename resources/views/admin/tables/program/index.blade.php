@@ -1,4 +1,4 @@
-@extends('layouts.admin-app')
+﻿@extends('layouts.admin-app')
 
 @section('title', 'Educational Programs')
 
@@ -96,7 +96,7 @@
             </div>
 
             {{-- GRID VIEW --}}
-            <div x-show="view === 'grid'" x-cloak>
+            <div x-show="view === 'grid'">
                 <div class="prog-grid" x-show="!loading">
                     <template x-for="p in paged" :key="p.id">
                         <div class="prog-card">
@@ -137,7 +137,7 @@
                 </div>
 
                 {{-- LIST VIEW --}}
-                <div class="table-wrap" x-show="view === 'list'" x-cloak>
+                <div class="table-wrap" x-show="view === 'list'">
                     <table class="table-app">
                         <thead x-show="!loading">
                             <tr>
@@ -215,7 +215,7 @@
                 </div>
 
                 {{-- Pagination --}}
-                <div class="pagination-bar" x-show="!loading && !empty" x-cloak>
+                <div class="pagination-bar" x-show="!loading && !empty">
                     <span class="range-text" x-text="'Menampilkan ' + rangeStart + '–' + rangeEnd + ' dari ' + filtered.length + ' program'"></span>
                     <div class="page-btns">
                         <button class="page-btn" @click="goPage(page - 1)" :disabled="page <= 1"><i class="fa-solid fa-chevron-left" style="font-size:10px"></i></button>

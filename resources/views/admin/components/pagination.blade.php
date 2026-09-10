@@ -1,11 +1,11 @@
-@props([
+﻿@props([
     'paginator' => null,
     'client' => false,
     'showingLabel' => 'Menampilkan',
     'countLabel' => 'data',
 ])
 @if($client)
-    <div class="pagination-bar" x-show="!loading && !empty" x-cloak>
+    <div class="pagination-bar" x-show="!loading && !empty">
         <span class="range-text" x-text="'Menampilkan ' + rangeStart + '–' + rangeEnd + ' dari ' + filtered.length + ' {{ $countLabel }}'"></span>
         <div class="page-btns">
             <button class="page-btn" @click="goPage(page - 1)" :disabled="page <= 1"><i class="fa-solid fa-chevron-left" style="font-size:10px"></i></button>

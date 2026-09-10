@@ -1,4 +1,4 @@
-@extends('layouts.admin-app')
+﻿@extends('layouts.admin-app')
 
 @section('title', 'Ekstrakurikuler')
 
@@ -76,7 +76,7 @@
                 <a class="app-btn app-btn-md" :href="exportUrl" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
             </div>
 
-            <div class="table-wrap" x-show="!loading" x-cloak>
+            <div class="table-wrap" x-show="!loading">
                 <table class="table-app">
                     <thead>
                         <tr>

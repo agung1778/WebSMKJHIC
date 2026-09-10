@@ -1,4 +1,4 @@
-@extends('layouts.admin-app')
+﻿@extends('layouts.admin-app')
 
 @section('title', 'Menu Navigasi')
 
@@ -62,7 +62,7 @@
                 <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
             </div>
 
-            <div class="table-wrap" x-show="!loading" x-cloak>
+            <div class="table-wrap" x-show="!loading">
                 <table class="table-app">
                     <thead>
                         <tr>
