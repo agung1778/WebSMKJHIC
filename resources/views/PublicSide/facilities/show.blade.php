@@ -114,7 +114,7 @@
 
                         {{-- DESKRIPSI LENGKAP --}}
                         <div class="prose prose-lg max-w-none text-gray-600">
-                            {!! $facility->description !!}
+                            {!! \App\Support\HtmlSanitizer::clean($facility->description) !!}
                         </div>
                     </div>
 

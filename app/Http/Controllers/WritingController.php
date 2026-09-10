@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Writing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Support\HtmlSanitizer;
 
 class WritingController extends Controller
 {
@@ -31,8 +30,6 @@ class WritingController extends Controller
      */
     public function store(Request $request)
     {
-        $content = HtmlSanitizer::clean($request->input('content'));
-
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
@@ -46,7 +43,8 @@ class WritingController extends Controller
             'release_date.date' => 'Tanggal rilis harus berupa format tanggal yang valid.',
         ]);
 
-        $validatedData['content'] = $content;
+        $validatedData['content'] = \App\Support\HtmlSanitizer::clean($validatedData['content']);
+
         Writing::create($validatedData);
 
         return redirect()->route('admin.writings.index')->with('success', 'Konten berhasil ditambahkan!');
@@ -73,8 +71,6 @@ class WritingController extends Controller
      */
     public function update(Request $request, Writing $writing)
     {
-        $content = HtmlSanitizer::clean($request->input('content'));
-
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
@@ -88,7 +84,8 @@ class WritingController extends Controller
             'release_date.date' => 'Tanggal rilis harus berupa format tanggal yang valid.',
         ]);
 
-        $validatedData['content'] = $content;
+        $validatedData['content'] = \App\Support\HtmlSanitizer::clean($validatedData['content']);
+
         $writing->update($validatedData);
 
         return redirect()->route('admin.writings.index')->with('success', 'Konten berhasil diperbarui!');

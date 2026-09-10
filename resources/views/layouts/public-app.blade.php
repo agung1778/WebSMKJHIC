@@ -531,18 +531,7 @@
             <div class="elfsight-app-26bf6423-b36c-42c5-a8db-b1c223ee9ec9" data-elfsight-app-lazy></div>
             {{-- PERBAIKAN: Menambah jarak vertikal (space-y) dan posisi dari bawah (bottom) untuk desktop --}}
             <div
-                class="fixed bottom-[90px] lg:bottom-[100px] right-5 z-40 flex flex-col items-end space-y-4 lg:space-y-5">
-
-                {{-- TOMBOL SCROLL TO TOP (UP BUTTON) --}}
-                <div x-data="{ shown: false }"
-                    x-init="window.addEventListener('scroll', () => { shown = window.scrollY > 300 })" x-show="shown"
-                    x-transition>
-                    <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Kembali ke atas"
-                        class="w-12 h-12 lg:w-[65px] lg:h-[65px] rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110"
-                        style="background-color: {{ $amaliahGreen }};">
-                        <i class="fas fa-arrow-up text-xl lg:text-2xl"></i>
-                    </button>
-                </div>
+                class="fixed bottom-[90px] lg:bottom-[100px] right-5 z-40 flex flex-col items-end">
 
                 {{-- TOMBOL CEPAT WHATSAPP --}}
                 <a href="https://wa.me/{{ $whatsappNumber }}?text={{ urlencode($whatsappMessage) }}" target="_blank"
@@ -552,6 +541,19 @@
                     <i class="fab fa-whatsapp text-xl lg:text-2xl"></i>
                 </a>
 
+            </div>
+
+            {{-- TOMBOL KEMBALI KE ATAS (DIPISAH, POSISI BAWAH TENGAH) --}}
+            <div class="fixed bottom-6 inset-x-0 z-40 flex justify-center pointer-events-none">
+                <div x-data="{ shown: false }"
+                    x-init="window.addEventListener('scroll', () => { shown = window.scrollY > 300 })"
+                    class="pointer-events-auto" x-show="shown" x-transition>
+                    <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Kembali ke atas"
+                        class="w-12 h-12 lg:w-[65px] lg:h-[65px] rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110"
+                        style="background-color: {{ $amaliahGreen }};">
+                        <i class="fas fa-arrow-up text-xl lg:text-2xl"></i>
+                    </button>
+                </div>
             </div>
             @yield('content')
         </main>
@@ -675,61 +677,7 @@
                         </div>
                     </div>
 
-                </div> {{--
-                ============================================================
-                == BAGIAN TAMBAHAN: Logo Partner/Sponsor (Sesuai Permintaan) ==
-                ============================================================
-                Ditempatkan setelah grid 4-kolom, tapi di dalam wrapper utama.
-                Ini persis seperti struktur di gambar referensi.
-                --}}
-                {{--
-                ============================================================
-                == BAGIAN LOGO PARTNER (DIMODIFIKASI) ==
-                ============================================================
-                --}}
-                <div class="mt-16 pt-8 border-t border-gray-800">
-                    <div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
-
-                        {{--
-                        PENYESUAIAN:
-                        1. Tag <a> kini memiliki background putih (bg-white), padding (p-2), dan sudut (rounded-md).
-                            2. Efek opacity dipindahkan ke tag <a> agar background-nya tidak ikut transparan.
-                                3. Ukuran <img> diubah dari h-8 menjadi h-12.
-                                --}}
-
-                                {{-- Contoh Placeholder 1 (Jagoan Hosting) --}}
-                                <a href="#" target="_blank" rel="noopener" aria-label="Jagoan Hosting"
-                                    class="block bg-white p-2 rounded-md opacity-70 hover:opacity-100 transition-opacity duration-300">
-                                    <img src="{{ asset('assets/logo/jh.webp') }}" alt="Logo Jagoan Hosting"
-                                        class="h-12">
-                                </a>
-
-
-
-                                
-                                <a href="#" target="_blank" rel="noopener" aria-label="Galileo"
-                                    class="block bg-white p-2 rounded-md opacity-70 hover:opacity-100 transition-opacity duration-300">
-                                    <img src="{{ asset('assets/logo/komdigi.webp') }}" alt="Logo Galileo" class="h-12">
-                                </a>
-
-                                
-                                <a href="#" target="_blank" rel="noopener" aria-label="Kominfo"
-                                    class="block bg-white p-2 rounded-md opacity-70 hover:opacity-100 transition-opacity duration-300">
-                                    <img src="{{ asset('assets/logo/maspionit.webp') }}" alt="Logo Kominfo"
-                                        class="h-12">
-                                </a>
-
-                                
-                                <a href="#" target="_blank" rel="noopener" aria-label="Spark"
-                                    class="block bg-white p-2 rounded-md opacity-70 hover:opacity-100 transition-opacity duration-300">
-                                    <img src="{{ asset('assets/logo/gspark.webp') }}" alt="Logo Spark" class="h-12">
-                                </a>
-
-                                {{-- Tambahkan logo lain di sini jika perlu --}}
-
-                    </div>
                 </div>
-                {{-- === AKHIR BAGIAN TAMBAHAN === --}}
 
             </div> {{-- Bagian Copyright di Bawah (Tidak ada perubahan di sini) --}}
             <div class="border-t border-gray-800">

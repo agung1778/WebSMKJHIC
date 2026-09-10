@@ -117,7 +117,7 @@
                             </h2>
                             {{-- Kelas `prose` akan memberikan styling default yang rapi untuk teks --}}
                             <div class="prose prose-lg max-w-none text-gray-600 leading-relaxed">
-                                {!! $program->description !!} {{-- Menggunakan {!! !!} jika deskripsi mengandung HTML --}}
+                                {!! \App\Support\HtmlSanitizer::clean($program->description) !!} {{-- Menggunakan {!! !!} jika deskripsi mengandung HTML --}}
                             </div>
                         </section>
 

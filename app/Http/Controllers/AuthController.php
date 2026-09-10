@@ -7,7 +7,6 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -58,9 +57,12 @@ class AuthController extends Controller
         // **[IMPROVEMENT]** Tambahkan 1 percobaan gagal ke rate limiter
         RateLimiter::hit($throttleKey);
 
-        // 3. Logika jika autentikasi gagal - pesan satu untuk both user-not-exists & wrong password
+        // 3. Logika jika autentikasi gagal
+        // Gunakan pesan yang sama untuk email tidak terdaftar vs password salah
+        // untuk mencegah enumerasi akun (account enumeration).
         return back()
             ->withErrors(['email' => 'Email atau password salah.'])
+            ->with('show_reset_link', true)
             ->onlyInput('email');
     }
 

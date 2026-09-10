@@ -102,7 +102,7 @@
                     <div x-data="{ modalOpen: false, modalImage: '' }">
                         {{-- Isi Konten Artikel --}}
                         <article class="prose prose-lg max-w-none text-gray-800 leading-relaxed mb-12">
-                            {!! $news->description !!}
+                            {!! \App\Support\HtmlSanitizer::clean($news->description) !!}
                         </article>
 
                         {{-- BAGIAN GALERI MINI (THUMBNAILS) --}}

@@ -14,6 +14,7 @@ class TrafficController extends Controller
     public function __construct(
         protected TrafficService $traffic
     ) {
+        $this->middleware('throttle:60,1')->only(['trackPage', 'trackClick']);
     }
 
     /**

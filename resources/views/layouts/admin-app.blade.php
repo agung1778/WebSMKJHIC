@@ -1,263 +1,345 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" @if(Cache::get('smk-admin-theme-default') === 'dark') class="dark" @endif>
 
 <head>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <title>@yield('title', 'Admin Dashboard')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <title>@yield('title', 'Admin Dashboard') — SMK Amaliah 1 & 2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Times+New+Roman&display=swap"
-        rel="stylesheet" />
-    {{-- Bootstrap CSS & JS --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
-        }
-
-        .times {
-            font-family: 'Times New Roman', serif;
-        }
-
-        .sidebar-link-active {
-            color: #6CF600 !important;
-            font-weight: 600;
-            background-color: #333;
-            position: relative;
-        }
-
-        .sidebar-link-active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 20%;
-            bottom: 20%;
-            width: 4px;
-            border-radius: 0 3px 3px 0;
-            background-color: #6CF600;
-        }
-
-        .rotate-90 {
-            transform: rotate(90deg);
-        }
-
-        .collapsible-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-
-        .collapsible-content.expanded {
-            max-height: 500px;
-            transition: max-height 0.5s ease-in;
-        }
-
-        /* Sembunyikan scrollbar untuk WebKit (Chrome, Safari) */
-        .sidebar::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Sembunyikan scrollbar untuk Firefox */
-        .sidebar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        /* Sembunyikan scrollbar untuk WebKit (Chrome, Safari) */
-        ::-webkit-scrollbar {
-            width: 0.5em;
-            /* Atau atur lebar menjadi 0 jika Anda ingin menyembunyikannya sepenuhnya */
-            display: none;
-            /* Opsional: untuk memastikan scrollbar tidak muncul sama sekali */
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: { preflight: false },
+            theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'Poppins', 'sans-serif'] } } }
+        };
+    </script>
+    <link rel="stylesheet" href="{{ asset('admin/admin.css') }}" />
+    <script src="{{ asset('admin/admin.js') }}" defer></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 </head>
 
-<body class="text-black flex">
+<body>
+    @php
+        // -----------------------------------------------------------------
+        // Struktur menu admin (data-driven — mudah ditambah menu baru)
+        // routes : pola route yang membuat item aktif (request()->routeIs)
+        // url    : nama route untuk tautan
+        // -----------------------------------------------------------------
+        $menu = [
+            [
+                'label' => 'Umum',
+                'items' => [
+                    ['title' => 'Dashboard', 'icon' => 'fa-solid fa-gauge-high', 'routes' => ['admin.dashboard'], 'name' => 'admin.dashboard'],
+                ],
+            ],
+            [
+                'label' => 'Sekolah',
+                'items' => [
+                    ['title' => 'Profil & Tulisan', 'icon' => 'fa-solid fa-book-open', 'routes' => ['admin.writings.index', 'admin.writings.create', 'admin.writings.edit', 'admin.writings.show'], 'name' => 'admin.writings.index'],
+                    ['title' => 'Jurusan / Kompetensi', 'icon' => 'fa-solid fa-layer-group', 'routes' => ['admin.majors.*'], 'name' => 'admin.majors.index'],
+                    ['title' => 'Program Pendidikan', 'icon' => 'fa-solid fa-graduation-cap', 'routes' => ['admin.programs.*'], 'name' => 'admin.programs.index'],
+                    ['title' => 'Info SPMB', 'icon' => 'fa-solid fa-file-circle-check', 'routes' => ['admin.spmb_settings.*'], 'name' => 'admin.spmb_settings.edit'],
+                    ['title' => 'Jumlah Siswa', 'icon' => 'fa-solid fa-user-graduate', 'routes' => ['admin.school_settings.*'], 'name' => 'admin.school_settings.edit'],
+                    ['title' => 'Menu Navigasi', 'icon' => 'fa-solid fa-bars-staggered', 'routes' => ['admin.navigations.*'], 'name' => 'admin.navigations.index'],
+                    ['title' => 'Galeri P5/PKK', 'icon' => 'fa-solid fa-lightbulb', 'routes' => ['admin.pkk.*'], 'name' => 'admin.pkk.index'],
+                ],
+            ],
+            [
+                'label' => 'Media & Berita',
+                'items' => [
+                    ['title' => 'Berita', 'icon' => 'fa-solid fa-newspaper', 'routes' => ['admin.news.*'], 'name' => 'admin.news.index'],
+                    ['title' => 'Hero Images', 'icon' => 'fa-solid fa-image', 'routes' => ['admin.image.*'], 'name' => 'admin.image.index'],
+                    ['title' => 'Galeri Instagram', 'icon' => 'fa-brands fa-instagram', 'routes' => ['admin.insta-posts.*'], 'name' => 'admin.insta-posts.index'],
+                ],
+            ],
+            [
+                'label' => 'Akademik & Kegiatan',
+                'items' => [
+                    ['title' => 'Guru & Staf', 'icon' => 'fa-solid fa-user-tie', 'routes' => ['admin.teachers.*'], 'name' => 'admin.teachers.index'],
+                    ['title' => 'Prestasi', 'icon' => 'fa-solid fa-trophy', 'routes' => ['admin.achievements.*'], 'name' => 'admin.achievements.index'],
+                    ['title' => 'Ekstrakurikuler', 'icon' => 'fa-solid fa-futbol', 'routes' => ['admin.extracurriculars.*'], 'name' => 'admin.extracurriculars.index'],
+                ],
+            ],
+            [
+                'label' => 'Aset & Relasi',
+                'items' => [
+                    ['title' => 'Fasilitas', 'icon' => 'fa-solid fa-building', 'routes' => ['admin.facilities.*'], 'name' => 'admin.facilities.index'],
+                    ['title' => 'Testimoni', 'icon' => 'fa-solid fa-quote-right', 'routes' => ['admin.testimonials.*'], 'name' => 'admin.testimonials.index'],
+                    ['title' => 'Mitra Industri', 'icon' => 'fa-solid fa-handshake', 'routes' => ['admin.partners.*'], 'name' => 'admin.partners.index'],
+                ],
+            ],
+            [
+                'label' => 'Monitoring',
+                'items' => array_merge(
+                    [
+                        ['title' => 'Traffic Website', 'icon' => 'fa-solid fa-chart-line', 'routes' => ['admin.traffic.*'], 'name' => 'admin.traffic.index'],
+                        ['title' => 'Feeds CuratorIO', 'icon' => 'fa-solid fa-link', 'routes' => ['admin.curator'], 'name' => 'admin.curator'],
+                    ],
+                    auth()->user()->role === 'superadmin' ? [
+                        ['title' => 'Manajemen Admin', 'icon' => 'fa-solid fa-users', 'routes' => ['admin.users', 'admin.users.updateRole'], 'name' => 'admin.users'],
+                    ] : []
+                ),
+            ],
+        ];
 
-    <aside id="sidebar"
-        class="sidebar bg-[#292929] md:w-64 fixed top-0 left-0 bottom-0 z-50 flex flex-col justify-between p-6 transition-transform duration-300 md:translate-x-0 -translate-x-full">
-        <div class="flex flex-col h-full">
-            <div class="mb-6 flex items-center space-x-3">
-                <img alt="Logo SMK Amaliah" class="w-11 h-11" src="{{ asset('assets/logo/amaliah_white.png') }}" />
-                <div class="text-white text-xs leading-tight times">
-                    <div>
-                        <span class="font-bold">SMK</span> Amaliah 1 &amp; 2 CIAWI
-                    </div>
-                    <div class="italic font-light text-[10px]">Tauhid Is Our Fundament</div>
+        // Status item menu yang sedang aktif (untuk breadcrumb)
+        $pageActive = 'Dashboard';
+        $pageParent = null;
+        foreach ($menu as $sec) {
+            foreach ($sec['items'] as $item) {
+                $match = array_filter($item['routes'], fn($r) => request()->routeIs($r));
+                if ($match) {
+                    $pageActive = $item['title'];
+                    $pageParent = $sec['label'];
+                    break 2;
+                }
+                if (isset($item['children'])) {
+                    foreach ($item['children'] as $c) {
+                        if (array_filter($c['routes'] ?? [], fn($r) => request()->routeIs($r))) {
+                            $pageActive = $c['title'];
+                            $pageParent = $sec['label'];
+                            break 3;
+                        }
+                    }
+                }
+            }
+        }
+
+        $userName = auth()->user()->name;
+        $initials = collect(explode(' ', trim($userName)))->take(2)->map(fn($w) => mb_substr($w, 0, 1))->implode('');
+        $userRole = auth()->user()->role;
+
+        $quickActions = [
+            ['title' => 'Tambah Berita', 'icon' => 'fa-solid fa-newspaper', 'url' => route('admin.news.create')],
+            ['title' => 'Tambah Program', 'icon' => 'fa-solid fa-graduation-cap', 'url' => route('admin.programs.create')],
+            ['title' => 'Tambah Guru', 'icon' => 'fa-solid fa-user-tie', 'url' => route('admin.teachers.create')],
+            ['title' => 'Tambah Prestasi', 'icon' => 'fa-solid fa-trophy', 'url' => route('admin.achievements.create')],
+            ['title' => 'Tambah Fasilitas', 'icon' => 'fa-solid fa-building', 'url' => route('admin.facilities.create')],
+        ];
+
+        $paletteGroups = [];
+        foreach ($menu as $sec) {
+            $items = [];
+            foreach ($sec['items'] as $item) {
+                $url = isset($item['name']) && Route::has($item['name']) ? route($item['name']) : '#';
+                $items[] = ['title' => $item['title'], 'icon' => $item['icon'], 'url' => $url, 'kw' => $item['title'] . ' ' . $sec['label']];
+            }
+            $paletteGroups[] = ['label' => $sec['label'], 'items' => $items];
+        }
+        $paletteGroups[] = ['label' => 'Aksi Cepat', 'items' => array_map(fn($a) => ['title' => $a['title'], 'icon' => $a['icon'], 'url' => $a['url']], $quickActions)];
+    @endphp
+
+    <div class="app-shell">
+
+        {{-- ============ SIDEBAR ============ --}}
+        <aside class="sidebar" aria-label="Menu admin">
+            <div class="sidebar-brand">
+                <img class="logo" src="{{ asset('assets/logo/amaliah_white.png') }}" alt="Logo SMK Amaliah" />
+                <div class="brand-text">
+                    <div class="brand-name"><span>SMK</span> Amaliah 1 &amp; 2 CIAWI</div>
+                    <div class="brand-tag">Tauhid Is Our Fundament</div>
                 </div>
             </div>
 
-            <!-- Search -->
-            <div class="mb-6 relative">
-                <input id="sidebar-search"
-                    class="w-full rounded-full bg-[#D9D9D9] text-xs text-black placeholder-gray-600 px-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#6CF600] pl-10"
-                    placeholder="Search menu..." type="search" />
-                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-            </div>
-            <nav class="text-white text-sm space-y-1 flex-1 overflow-y-auto pr-2">
-                {{-- Home --}}
-                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700
-                    @if(request()->routeIs('admin.dashboard')) sidebar-link-active @endif"
-                    href="{{ route('admin.dashboard') }}">
-                    <i class="fas fa-home w-5 text-center"></i>
-                    <span>Home</span>
-                </a>
-
-                {{-- Editor --}}
-                <div class="relative">
-                    <button id="editor-toggle"
-                        class="w-full text-left relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700 focus:outline-none
-                            @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*', 'admin.writings.*'])) sidebar-link-active @endif">
-                        <i class="fas fa-pen-alt w-5 text-center"></i>
-                        <span class="flex-1">Editor</span>
-                        <i id="editor-arrow"
-                            class="fas fa-chevron-right text-xs transition-transform duration-300
-                                @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*', 'admin.writings.*'])) rotate-90 @endif">
-                        </i>
-                    </button>
-                    <div id="editor-submenu"
-                        class="pl-10 space-y-1 collapsible-content
-                            @if(request()->routeIs(['admin.majors.*', 'admin.news.*', 'admin.testimonials.*', 'admin.partners.*', 'admin.facilities.*', 'admin.programs.*', 'admin.teachers.*', 'admin.achievements.*', 'admin.image.*', 'admin.extracurriculars.*', 'admin.writings.*'])) expanded @endif">
-                        {{-- Sub-menu items --}}
-                        <a id="submenu-mainimage"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.image.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.image.index') }}">
-                            Image
-                        </a>
-                        <a id="submenu-history"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700  @if(request()->routeIs('admin.writings.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.writings.index') }}">Writing</a>
-                        <a id="submenu-facility"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.facilities.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.facilities.index') }}">Facility</a>
-                        <a id="submenu-programs"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.programs.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.programs.index') }}">Programs</a>
-                        <a id="submenu-major"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.majors.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.majors.index') }}">
-                            Major
-                        </a>
-                        <a id="submenu-news"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.news.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.news.index') }}">News</a>
-                        <a id="submenu-testimonials"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.testimonials.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.testimonials.index') }}">
-                            Testimonials
-                        </a>
-                        <a id="submenu-partners"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.partners.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.partners.index') }}">
-                            Partners
-                        </a>
-                        <a id="submenu-teachers"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.teachers.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.teachers.index') }}">
-                            Teachers
-                        </a>
-                        <a id="submenu-achievement"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.achievements.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.achievements.index') }}">
-                            Achievement
-                        </a>
-                        <a id="submenu-extracurricular"
-                            class="block p-2 text-xs rounded-md transition hover:bg-gray-700 @if(request()->routeIs('admin.extracurriculars.*')) sidebar-link-active @endif"
-                            href="{{ route('admin.extracurriculars.index') }}">
-                            Extracurricular
-                        </a>
-
+            <nav class="sidebar-scroll">
+                @foreach ($menu as $section)
+                    <div class="menu-section">
+                        <div class="menu-label">{{ $section['label'] }}</div>
+                        @foreach ($section['items'] as $item)
+                            @php
+                                $itemActive = count(array_filter($item['routes'], fn($r) => request()->routeIs($r))) > 0;
+                                $itemUrl = isset($item['name']) && Route::has($item['name']) ? route($item['name']) : '#';
+                            @endphp
+                            @if (isset($item['children']))
+                                <div class="nav-group">
+                                    <button type="button" class="nav-group-toggle" @if($itemActive) aria-expanded="true" @endif>
+                                        <i class="nav-icon {{ $item['icon'] }}"></i>
+                                        <span class="nav-text">{{ $item['title'] }}</span>
+                                        <i class="chevron fa-solid fa-chevron-right"></i>
+                                    </button>
+                                    <div class="nav-submenu">
+                                        @foreach ($item['children'] as $child)
+                                            @php
+                                                $childActive = count(array_filter($child['routes'] ?? [], fn($r) => request()->routeIs($r))) > 0;
+                                                $childUrl = isset($child['name']) && Route::has($child['name']) ? route($child['name']) : '#';
+                                            @endphp
+                                            <a class="nav-link @if($childActive) active @endif" href="{{ $childUrl }}" title="{{ $child['title'] }}">
+                                                <i class="nav-icon {{ $child['icon'] ?? 'fa-solid fa-circle' }}" style="font-size:8px"></i>
+                                                <span class="nav-text">{{ $child['title'] }}</span>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @else
+                                <a class="nav-link @if($itemActive) active @endif" href="{{ $itemUrl }}" title="{{ $item['title'] }}">
+                                    <i class="nav-icon {{ $item['icon'] }}"></i>
+                                    <span class="nav-text">{{ $item['title'] }}</span>
+                                </a>
+                            @endif
+                        @endforeach
                     </div>
-                </div>
-                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700 @if(request()->routeIs(['admin.users'])) sidebar-link-active
-                @endif" href="{{ route('admin.users') }}">
-                    <i class="fa-solid fa-circle-user w-5 text-center"></i>
-                    <span>Users</span>
-                </a>
-                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700 @if(request()->routeIs(['admin.curator'])) sidebar-link-active
-                @endif" href="{{ route('admin.curator') }}">
-                    <i class="fa-solid fa-link w-5 text-center"></i>
-                    <span>CuratorIO</span>
-                </a>
-                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700" href="https://forms.gle/sveGZa9nd9uX62YE9">
-                    <i class="fas fa-comments w-5 text-center"></i>
-                    <span>Feedback</span>
-                </a>
-                <a class="relative flex items-center space-x-3 p-2 rounded-md transition hover:bg-gray-700" href="https://app.jagoan.cloud/">
-                    <i class="fas fa-cog w-5 text-center"></i>
-                    <span>Settings</span>
-                </a>
+                @endforeach
             </nav>
 
-            <div class="sidebar-footer space-y-3 pt-6">
-                <form action="{{ route('logout') }}" method="POST" class="w-full">
+            <div class="sidebar-foot">
+                <div class="profile-chip" title="{{ $userName }}" @if(!auth()->user()->is(auth()->user()) == false) @endif>
+                    <div class="avatar">{{ strtoupper($initials) }}</div>
+                    <div class="foot-text" style="min-width:0">
+                        <div class="p-name">{{ $userName }}</div>
+                        <div class="p-role">
+                            <span class="badge @if($userRole === 'superadmin') badge-violet @else badge-teal @endif" style="padding:2px 8px">{{ $userRole }}</span>
+                        </div>
+                    </div>
+                </div>
+                <a class="app-btn app-btn-primary btn-block" href="{{ url('/') }}" target="_blank">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    <span class="foot-text">Lihat Website</span>
+                </a>
+                <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit"
-                        class="w-full bg-[#6CF600] text-white text-sm font-semibold rounded-lg px-4 py-2.5 flex items-center justify-center space-x-2 hover:bg-[#5bd300] transition">
-                        <span>Log Out</span>
-                        <i class="fas fa-sign-out-alt"></i>
+                    <button class="app-btn btn-block" style="width:100%" type="submit">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <span class="foot-text">Keluar</span>
                     </button>
                 </form>
-                <a href="{{ url('/') }}"
-                    class="w-full bg-[#6CF600] text-white text-sm font-semibold rounded-lg px-4 py-2.5 flex items-center justify-center space-x-2 hover:bg-[#5bd300] transition">
-                    <span>Go to Web</span>
-                    <i class="fas fa-external-link-alt"></i>
-                </a>
             </div>
+        </aside>
+
+        {{-- ============ MAIN ============ --}}
+        <div class="app-main">
+            <header class="topbar">
+                <button type="button" class="icon-btn md:hidden" data-sidebar-mobile-toggle aria-label="Buka menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <button type="button" class="icon-btn hide-mob" data-sidebar-toggle aria-label="Ciutkan sidebar">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+
+                <div class="topbar-title">
+                    <nav class="topbar-crumb" aria-label="Breadcrumb">
+                        <span><a href="{{ route('admin.dashboard') }}">Beranda</a></span>
+                        @if ($pageParent && $pageParent !== 'Umum')
+                            <i class="fa-solid fa-angle-right sep" style="font-size:9px"></i>
+                            <span>{{ $pageParent }}</span>
+                        @endif
+                        <i class="fa-solid fa-angle-right sep" style="font-size:9px"></i>
+                        <span style="color:var(--text-2);font-weight:600">{{ $pageActive }}</span>
+                    </nav>
+                    <h1 class="topbar-h1">@yield('title', $pageActive)</h1>
+                </div>
+
+                <div class="topbar-actions">
+                    <button type="button" class="icon-btn search-field" data-open-palette aria-label="Pencarian global (Ctrl+K)"
+                        style="width:auto;gap:8px;padding:0 12px">
+                        <i class="fa-solid fa-magnifying-glass" style="color:var(--text-3)"></i>
+                        <span class="hide-mob" style="font-size:12.5px;color:var(--text-3)">Cari…</span>
+                        <kbd style="font-size:10.5px;color:var(--text-3);border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-family:inherit">Ctrl K</kbd>
+                    </button>
+
+                    {{-- Notification center --}}
+                    <div class="dropdown">
+                        <button type="button" class="icon-btn" data-dropdown aria-label="Notifikasi">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="tw-pulse" style="position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--brand)"></span>
+                        </button>
+                        <div class="dropdown-menu" style="display:none;width:300px;max-width:calc(100vw - 32px)">
+                            <div style="padding:12px 14px;border-bottom:1px solid var(--border)">
+                                <div style="font-weight:700;font-size:13px;color:var(--text)">Notifikasi</div>
+                                <div style="font-size:11.5px;color:var(--text-3)">Ringkasan sistem</div>
+                            </div>
+                            <div class="dropdown-item" style="cursor:default">
+                                <i class="fa-solid fa-circle-check" style="color:var(--green)"></i>
+                                <span>Semua sistem berjalan normal.</span>
+                            </div>
+                            @if (session('success'))
+                                <div class="dropdown-item" style="cursor:default">
+                                    <i class="fa-solid fa-circle-info" style="color:var(--blue)"></i>
+                                    <span>{{ session('success') }}</span>
+                                </div>
+                            @endif
+                            <div class="dropdown-sep"></div>
+                            <a class="dropdown-item" href="{{ route('admin.traffic.index') }}">
+                                <i class="fa-solid fa-chart-line"></i><span>Lihat statistik traffic</span>
+                            </a>
+                            @if ($userRole === 'superadmin')
+                                <a class="dropdown-item" href="{{ route('admin.users') }}">
+                                    <i class="fa-solid fa-users"></i><span>Kelola admin</span>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Quick action --}}
+                    <div class="dropdown">
+                        <button type="button" class="icon-btn" data-dropdown aria-label="Aksi cepat">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <div class="dropdown-menu" style="display:none">
+                            @foreach ($quickActions as $qa)
+                                <a class="dropdown-item" href="{{ $qa['url'] }}">
+                                    <i class="{{ $qa['icon'] }}"></i><span>{{ $qa['title'] }}</span>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Theme toggle --}}
+                    <button type="button" class="icon-btn" data-theme-toggle aria-label="Mode terang / gelap">
+                        <i class="fa-regular fa-sun" data-theme-icon-sun style="display:none"></i>
+                        <i class="fa-regular fa-moon" data-theme-icon-moon></i>
+                    </button>
+
+                    {{-- Profile --}}
+                    <div class="dropdown">
+                        <button type="button" class="icon-btn" data-dropdown aria-label="Menu profil" style="width:auto;padding:2px 6px 2px 3px;gap:6px">
+                            <span style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">{{ strtoupper($initials) }}</span>
+                            <i class="fa-solid fa-chevron-down" style="font-size:10px;color:var(--text-3)"></i>
+                        </button>
+                        <div class="dropdown-menu" style="display:none">
+                            <div style="padding:10px 12px;border-bottom:1px solid var(--border)">
+                                <div style="font-weight:700;font-size:13px;color:var(--text)">{{ $userName }}</div>
+                                <div style="font-size:11.5px;color:var(--text-3);text-transform:capitalize">{{ $userRole }}</div>
+                            </div>
+                            <a class="dropdown-item" href="{{ url('/') }}" target="_blank"><i class="fa-solid fa-globe"></i><span>Lihat website</span></a>
+                            @if ($userRole === 'superadmin')
+                                <a class="dropdown-item" href="{{ route('admin.users') }}"><i class="fa-solid fa-user-gear"></i><span>Manajemen admin</span></a>
+                            @endif
+                            <div class="dropdown-sep"></div>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-item danger"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Keluar</span></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="app-content">
+                @yield('content')
+            </main>
         </div>
-    </aside>
+    </div>
 
-    <button id="toggleSidebar" class="md:hidden fixed top-4 left-4 z-50 bg-[#6CF600] text-white p-2 rounded-lg shadow">
-        <i class="fas fa-bars"></i>
-    </button>
-
-    <main class="main-content flex-1 md:ml-64 p-6 w-full">
-        @yield('content')
-    </main>
-
-
-    <!-- Script -->
+    {{-- Toast flash (dibaca admin.js) --}}
+    @if (session('success'))
+        <div style="display:none" data-toast-flash="success">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div style="display:none" data-toast-flash="error">{{ session('error') }}</div>
+    @endif
+    @if ($errors->any())
+        <div style="display:none" data-toast-errors>{!! json_encode($errors->all()) !!}</div>
+    @endif
 
     <script>
-        // Toggle Sidebar
-        const sidebar = document.getElementById("sidebar");
-        const toggleBtn = document.getElementById("toggleSidebar");
-        toggleBtn.addEventListener("click", () => {
-            sidebar.classList.toggle("-translate-x-full");
-        });
-
-        // Editor Submenu
-        const editorToggle = document.getElementById("editor-toggle");
-        const editorSubmenu = document.getElementById("editor-submenu");
-        const editorArrow = document.getElementById("editor-arrow");
-        editorToggle.addEventListener("click", () => {
-            editorSubmenu.classList.toggle("expanded");
-            editorArrow.classList.toggle("rotate-90");
-        });
-
-        // Search functionality
-        const searchInput = document.getElementById("sidebar-search");
-        const sidebarLinks = document.querySelectorAll("#sidebar-nav .sidebar-link");
-
-        searchInput.addEventListener("keyup", () => {
-            let filter = searchInput.value.toLowerCase();
-            sidebarLinks.forEach(link => {
-                let text = link.textContent.toLowerCase();
-                let id = link.id.toLowerCase();
-                if (text.includes(filter) || id.includes(filter)) {
-                    link.style.display = "";
-                } else {
-                    link.style.display = "none";
-                }
-            });
-        });
+        window.__palette = @json($paletteGroups);
     </script>
 
+    @stack('scripts')
 </body>
 
 </html>

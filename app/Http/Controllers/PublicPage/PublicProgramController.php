@@ -16,7 +16,7 @@ class PublicProgramController extends Controller
     public function index()
     {
         // Mengambil semua program, diurutkan dari yang terbaru
-        $programs = SchoolProgram::latest()->paginate(10);
+        $programs = SchoolProgram::published()->latest()->paginate(10);
 
         $programImages = Image::whereIn('title', ['ProgramImage', 'main'])->get();
 
@@ -33,7 +33,11 @@ class PublicProgramController extends Controller
 
     public function show(SchoolProgram $program)
     {
-        $otherPrograms = SchoolProgram::where('id', '!=', $program->id)->latest()->take(4)->get();
+        abort_unless($program->status === 'published', 404);
+
+        $otherPrograms = SchoolProgram::published()
+            ->where('id', '!=', $program->id)
+            ->latest()->take(4)->get();
 
         // 2. Kirim variabel '$program' (berita utama) dan '$randomPrograms' (untuk sugesti) ke view.
         return view('PublicSide.program.show', compact('program', 'otherPrograms'));

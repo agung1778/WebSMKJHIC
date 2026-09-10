@@ -164,7 +164,7 @@
 
                 @if ($historyContent)
                     <article class="prose prose-lg prose-gray max-w-screen">
-                        {!! $historyContent->content !!}
+                        {!! \App\Support\HtmlSanitizer::clean($historyContent->content) !!}
                     </article>
                 @else
                     <div class="text-center py-24 px-6 bg-gray-50 rounded-xl border border-gray-200">

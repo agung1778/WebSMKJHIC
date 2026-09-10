@@ -94,7 +94,7 @@
             {{-- Tabel Data --}}
             <div class="overflow-x-auto rounded-lg">
                 <table class="w-full table-auto border-collapse">
-<thead>
+                    <thead>
                         <tr class="bg-[#292929] text-white uppercase text-sm leading-normal">
                             <th class="py-3 px-6 text-left w-16">No.</th>
                             <th class="py-3 px-6 text-left">Admin</th>
@@ -120,8 +120,10 @@
                                     </div>
                                 </td>
                                 <td class="py-4 px-6 text-left">
-                                    <span class="inline-block px-2 py-1 rounded text-xs font-medium {{ $user->role === 'superadmin' ? 'bg-red-100 text-red-800' : ($user->role === 'admin' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800') }}">
-                                        {{ ucfirst($user->role) }}
+                                    <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset
+                                        @if ($user->role === 'superadmin') bg-purple-100 text-purple-700 ring-purple-200
+                                        @else bg-green-100 text-green-700 ring-green-200 @endif">
+                                        {{ $user->role }}
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-left">{{ $user->created_at->format('d M Y, H:i') }}</td>
@@ -133,17 +135,20 @@
                                     @endif
                                 </td>
                                 <td class="py-4 px-6 text-center">
-                                    <form method="POST" action="{{ route('admin.users.updateRole', $user->id) }}">
-                                        @csrf @method('PUT')
-                                        <div class="flex items-center justify-center space-x-2">
-                                            <select name="role" class="px-2 py-1 rounded border text-sm">
-                                                <option value="superadmin" {{ $user->role === 'superadmin' ? 'selected' : '' }}>Superadmin</option>
-                                                <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
-                                                <option value="curator" {{ $user->role === 'curator' ? 'selected' : '' }}>Curator</option>
+                                    @if (auth()->user()->role === 'superadmin')
+                                        <form method="POST" action="{{ route('admin.users.updateRole', $user) }}" class="inline-flex items-center gap-2">
+                                            @csrf
+                                            <select name="role"
+                                                class="text-xs border border-gray-300 rounded-lg px-2 py-1.5 text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#6CF600]"
+                                                onchange="this.form.submit()">
+                                                @foreach (['admin', 'superadmin'] as $role)
+                                                    <option value="{{ $role }}" @selected($user->role === $role)>{{ $role }}</option>
+                                                @endforeach
                                             </select>
-                                            <button type="submit" class="px-2 py-1 rounded text-sm bg-indigo-600 text-white">Update</button>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    @else
+                                        <span class="text-xs text-gray-400">-</span>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

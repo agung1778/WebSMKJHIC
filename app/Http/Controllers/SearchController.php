@@ -17,11 +17,11 @@ class SearchController extends Controller
         // Ambil query pencarian dari input
         $query = $request->input('query');
 
-        // Escape karakter wildcard % dan _ untuk mencegah wildcard injection
-        $escapedQuery = addcslashes($query, '%_');
+        // Escape wildcard LIKE (% dan _) untuk mencegah pola injeksi
+        $escapedQuery = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], trim((string) $query));
 
         // Lakukan pencarian jika ada query
-        if ($query) {
+        if ($query && $escapedQuery !== '') {
             $newsResults = News::where('title', 'LIKE', "%{$escapedQuery}%")
                                ->orWhere('description', 'LIKE', "%{$escapedQuery}%")
                                ->latest()->limit(10)->get();

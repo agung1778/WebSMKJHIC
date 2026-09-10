@@ -15,11 +15,15 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'traffic/*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 
-    'allowed_origins' => ['https://smkamaliah.sch.id'],
+    'allowed_origins' => array_filter([
+        env('APP_URL', 'https://smkamaliah.sch.id'),
+        'https://www.smkamaliah.sch.id',
+        env('FRONTEND_URL'),
+    ]),
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +33,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
+    'supports_credentials' => false,
 
 ];

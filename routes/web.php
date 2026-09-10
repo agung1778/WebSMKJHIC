@@ -14,6 +14,11 @@ use App\Http\Controllers\AchievementController; // Mengimpor AchievementControll
 use App\Http\Controllers\ExtracurricularController; // Mengimpor ExtracurricularController
 use App\Http\Controllers\ImageController; // Mengimpor ImageController
 use App\Http\Controllers\WritingController; // Mengimpor WritingController
+use App\Http\Controllers\SpmbSettingController;
+use App\Http\Controllers\SchoolSettingController;
+use App\Http\Controllers\PkkProjectController;
+use App\Http\Controllers\NavigationController;
+use App\Http\Controllers\InstaPostController;
 
 use App\Models\SchoolProgram;
 use App\Http\Controllers\SearchController;
@@ -34,8 +39,11 @@ use App\Http\Controllers\PublicPage\PublicProgramController;
 use App\Http\Controllers\PublicPage\PublicExtracurricularController;
 use App\Http\Controllers\PublicPage\PublicHelpcenterController;
 
+use App\Http\Controllers\TrafficController;
+use App\Http\Controllers\PublicPage\PublicTrafficController;
 
-Route::get('/', [App\Http\Controllers\PublicPage\HomeController::class, 'index'])->name('home');
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
 // Rute Halaman Publik Jurusan
@@ -79,7 +87,8 @@ Route::get('/help/feedback', [PublicHelpcenterController::class, 'feedback'])->n
 
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 
-Route::get('/', [HomeController::class, 'index']);
+// Halaman traffic publik (rekap bulanan agregat)
+Route::get('/traffic', [PublicTrafficController::class, 'index'])->name('public.traffic.index');
 
 // Authentication Routes
 // Tambahkan rute untuk menampilkan form login dan beri nama 'login'
@@ -97,14 +106,9 @@ Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showRese
 // 4. Memproses dan menyimpan password baru
 Route::post('reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
 
-// Public traffic routes
-Route::get('/traffic', [App\Http\Controllers\TrafficController::class, 'index'])->name('public.traffic.index');
-
-// Rute yang dilindungi oleh middleware 'auth'
-
-// Rute yang dilindungi oleh middleware 'auth'
-// Semua rute di dalam grup ini hanya bisa diakses setelah login
-Route::middleware(['auth', 'role:superadmin,admin,curator'])->group(function () {
+// Rute yang dilindungi oleh middleware 'auth' & 'role'
+// Semua rute di dalam grup ini hanya bisa diakses setelah login dengan role admin/superadmin
+Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
     // Jika pengguna mengakses '/admin', arahkan ke '/admin/dashboard'
     Route::get('/admin', function () {
         return redirect()->route('admin.dashboard');
@@ -115,11 +119,11 @@ Route::middleware(['auth', 'role:superadmin,admin,curator'])->group(function () 
 
     Route::get('/admin/curator', [AdminController::class, 'curator'])->name('admin.curator');
 
-    // Rute traffic admin
-    Route::get('/admin/traffic', [TrafficController::class, 'index'])->name('admin.traffic.index');
-    Route::get('/admin/traffic/export', [TrafficController::class, 'export'])->name('admin.traffic.export');
-
-    Route::get('/admin/users', [AdminController::class, 'user'])->name('admin.users');
+    // Manajemen user & role HANYA untuk superadmin
+    Route::middleware('role:superadmin')->group(function () {
+        Route::get('/admin/users', [AdminController::class, 'user'])->name('admin.users');
+        Route::post('/admin/users/{user}/role', [AdminController::class, 'updateRole'])->name('admin.users.updateRole');
+    });
 
     // Grup rute untuk manajemen konten di dashboard admin
     Route::prefix('admin')->name('admin.')->group(function () {
@@ -156,5 +160,31 @@ Route::middleware(['auth', 'role:superadmin,admin,curator'])->group(function () 
         Route::resource('image', ImageController::class)->except(['create']);
 
         Route::resource('writings', WritingController::class);
+
+        // Rute untuk Traffic Website (dashboard + export CSV)
+        Route::get('/traffic', [TrafficController::class, 'index'])->name('traffic.index');
+        Route::get('/traffic/export', [TrafficController::class, 'export'])->name('traffic.export');
+
+        // Aksi program: ubah status, duplikat, dan aksi massal (additif, tidak mengubah CRUD lama)
+        Route::post('/programs/{program}/status', [SchoolProgramController::class, 'updateStatus'])->name('programs.updateStatus');
+        Route::post('/programs/{program}/duplicate', [SchoolProgramController::class, 'duplicate'])->name('programs.duplicate');
+        Route::post('/programs/bulk', [SchoolProgramController::class, 'bulkAction'])->name('programs.bulk');
+
+        // Pengaturan Info SPMB & Jumlah Siswa (controller & view sudah ada, tinggal route)
+        Route::get('/spmb-settings', [SpmbSettingController::class, 'edit'])->name('spmb_settings.edit');
+        Route::post('/spmb-settings', [SpmbSettingController::class, 'update'])->name('spmb_settings.update');
+        Route::get('/school-settings', [SchoolSettingController::class, 'edit'])->name('school_settings.edit');
+        Route::post('/school-settings', [SchoolSettingController::class, 'update'])->name('school_settings.update');
+
+        // Projek P5/PKK & Menu Navigasi (controller & view sudah ada, tinggal route)
+        Route::resource('pkk', PkkProjectController::class);
+        Route::resource('navigations', NavigationController::class);
+
+        // Galeri Media Instagram (controller & view sudah ada, tinggal route)
+        Route::get('/insta-posts', [InstaPostController::class, 'index'])->name('insta-posts.index');
+        Route::post('/insta-posts', [InstaPostController::class, 'store'])->name('insta-posts.store');
+        Route::put('/insta-posts/{instaPost}', [InstaPostController::class, 'update'])->name('insta-posts.update');
+        Route::post('/insta-posts/{instaPost}/toggle', [InstaPostController::class, 'toggle'])->name('insta-posts.toggle');
+        Route::delete('/insta-posts/{instaPost}', [InstaPostController::class, 'destroy'])->name('insta-posts.destroy');
     });
 });

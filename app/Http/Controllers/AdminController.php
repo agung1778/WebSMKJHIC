@@ -4,6 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\SchoolProgram;
+use App\Models\News;
+use App\Models\Teacher;
+use App\Models\Achievement;
+use App\Models\Facility;
+use App\Models\Major;
+use App\Models\Extracurricular;
+use App\Models\Image;
+use App\Models\Writing;
+use App\Models\SchoolSetting;
+use App\Models\SpmbSetting;
+use App\Models\TrafficVisitor;
 
 class AdminController extends Controller
 {
@@ -14,7 +26,30 @@ class AdminController extends Controller
      */
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $stats = [
+            'programs'        => SchoolProgram::count(),
+            'programsPublished' => SchoolProgram::where('status', 'published')->count(),
+            'programsDraft'   => SchoolProgram::where('status', 'draft')->count(),
+            'news'            => News::count(),
+            'teachers'        => Teacher::count(),
+            'achievements'    => Achievement::count(),
+            'facilities'      => Facility::count(),
+            'majors'          => Major::count(),
+            'extracurriculars' => Extracurricular::count(),
+            'images'          => Image::count(),
+            'writings'        => Writing::count(),
+            'users'           => User::count(),
+            'students'        => optional(SchoolSetting::first())->jumlah_siswa ?? 0,
+            'visitorsToday'   => TrafficVisitor::whereDate('created_at', today())->count(),
+        ];
+
+        $latestNews = News::latest('date_published')->take(5)->get();
+        $latestPrograms = SchoolProgram::latest()->take(5)->get();
+        $recentUsers = User::latest('created_at')->take(6)->get();
+
+        $spmb = SpmbSetting::first();
+
+        return view('admin.dashboard', compact('stats', 'latestNews', 'latestPrograms', 'recentUsers', 'spmb'));
     }
 
     public function curator()
@@ -26,26 +61,31 @@ class AdminController extends Controller
     {
         // Mengambil semua user (admin) beserta data sesi terakhirnya
         // Eager loading 'session' untuk performa yang lebih baik (menghindari N+1 query)
-        $users = User::with('session')->get();
+        $users = User::with('session')->orderBy('role')->get();
 
         return view('admin.user', compact('users'));
     }
 
-    public function updateRole(Request $request, $id)
+    /**
+     * Perbarui role pengguna (hanya dapat dipanggil oleh superadmin).
+     */
+    public function updateRole(Request $request, User $user)
     {
-        // Hanya superadmin yang boleh mengubah role
-        if (Auth::user()->role !== 'superadmin') {
-            return redirect()->route('admin.users')->with('error', 'Akses ditolak.');
-        }
-
         $request->validate([
-            'role' => 'required|in:superadmin,admin,curator',
+            'role' => ['required', 'string', 'in:admin,superadmin'],
         ]);
 
-        $user = User::findOrFail($id);
-        $user->role = $request->input('role');
-        $user->save();
+        // Cegah superadmin menurunkan dirinya sendiri agar tidak terkunci.
+        if (
+            auth()->user()->is($user)
+            && auth()->user()->role === 'superadmin'
+            && $request->input('role') !== 'superadmin'
+        ) {
+            return back()->withErrors(['role' => 'Kamu tidak dapat menurunkan role kamu sendiri.']);
+        }
 
-        return redirect()->route('admin.users')->with('success', 'Role user berhasil diupdate.');
+        $user->update(['role' => $request->input('role')]);
+
+        return back()->with('success', "Role {$user->name} berhasil diubah menjadi {$request->input('role')}.");
     }
 }

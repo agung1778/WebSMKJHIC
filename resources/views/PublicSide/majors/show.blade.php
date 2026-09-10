@@ -225,7 +225,7 @@
                                 <span>Tentang Jurusan</span>
                             </h2>
                             <div class="prose max-w-none text-gray-700 leading-relaxed text-base">
-                                <div>{!! $major->description !!}</div>
+                                <div>{!! \App\Support\HtmlSanitizer::clean($major->description) !!}</div>
                             </div>
                         </section>
 
