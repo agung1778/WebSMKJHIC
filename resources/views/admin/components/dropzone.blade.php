@@ -26,7 +26,13 @@
             data-preview="{{ $previewId }}" class="@if($hasError) !border-rose-500 @endif" />
         <div class="dz-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
         <div class="dz-title">Tarik &amp; letakkan file di sini</div>
-        <div class="dz-sub">atau klik untuk memilih · <span data-file-label="{{ $dropId }}-input">@if($imgUrl)file terpasang saat ini@else belum ada file@endif</span></div>
+        <div class="dz-sub">atau klik untuk memilih · <span data-file-label="{{ $dropId }}-input">
+                @if($imgUrl)
+                    file terpasang saat ini
+                @else
+                    belum ada file
+                @endif
+            </span></div>
     </div>
 
     @if($hasError)
