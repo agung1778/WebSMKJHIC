@@ -56,7 +56,7 @@
         </div>
 
         {{-- Card utama --}}
-        <div class="app-card">
+        <div>
             {{-- Toolbar --}}
             <div class="toolbar">
                 <div class="search-field">

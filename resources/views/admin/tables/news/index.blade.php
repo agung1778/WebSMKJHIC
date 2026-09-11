@@ -49,7 +49,7 @@
         </div>
 
         {{-- Tabel --}}
-        <div class="app-card overflow-hidden">
+        <div>
             <div class="toolbar">
                 <div class="search-field">
                     <i class="fa-solid fa-magnifying-glass"></i>

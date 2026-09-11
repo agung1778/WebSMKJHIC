@@ -54,7 +54,7 @@
             <x-admin-components::stat-card label="Terakhir Diperbarui" :value="$extracurriculars->max('updated_at') ? \Carbon\Carbon::parse($extracurriculars->max('updated_at'))->locale('id')->diffForHumans() : '-'" icon="fa-solid fa-clock-rotate-left" tone="amber" />
         </div>
 
-        <div class="app-card overflow-hidden">
+        <div>
             <div class="toolbar">
                 <div class="search-field">
                     <i class="fa-solid fa-magnifying-glass"></i>

@@ -50,7 +50,7 @@
             <x-admin-components::stat-card label="Gabungan" :value="$teachers->where('school','Amaliah 1 & 2')->count()" icon="fa-solid fa-school-circle-check" tone="amber" />
         </div>
 
-        <div class="app-card overflow-hidden">
+        <div>
             <div class="toolbar">
                 <div class="search-field">
                     <i class="fa-solid fa-magnifying-glass"></i>

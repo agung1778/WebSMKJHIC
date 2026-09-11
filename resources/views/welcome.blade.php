@@ -120,33 +120,6 @@
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 translate-y-10">
 
-        {{-- KODE LOGO ANDA (LENGKAP) --}}
-        <div class="bg-white/90 backdrop-blur-md border border-white/30 rounded-xl p-3 shadow-lg mb-4">
-            <div class="flex items-center justify-between w-full">
-                <div class="flex items-center justify-between w-full pr-2">
-                    <img src="{{ asset('assets/logo/infra.webp') }}" alt="Logo Partner 1"
-                        class="h-7 object-contain transition duration-300">
-                    <img src="{{ asset('assets/logo/jh.webp') }}" alt="Logo Partner 5"
-                        class="h-7 object-contain transition duration-300">
-                    <img src="{{ asset('assets/logo/komdigi.webp') }}" alt="Logo Partner 2"
-                        class="h-7 object-contain transition duration-300">
-                    <img src="{{ asset('assets/logo/maspionit.webp') }}" alt="Logo Partner 3"
-                        class="h-7 object-contain transition duration-300">
-                    <img src="{{ asset('assets/logo/gspark.webp') }}" alt="Logo Partner 4"
-                        class="h-7 object-contain transition duration-300">
-                </div>
-
-                <a href="https://jagoanhosting.com/" aria-label="Lihat semua partner industri"
-                    class="text-[#282829] hover:text-gray-600 transition-colors flex-shrink-0">
-                    <svg xmlns="https://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 5l7 7-7 7" />
-                    </svg>
-                </a>
-            </div>
-        </div>
-
         {{-- Kontainer Slider Kartu Berita --}}
         <div class="relative w-full h-auto min-h-[250px] overflow-hidden hero-clip-path ">
 

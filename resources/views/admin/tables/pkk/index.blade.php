@@ -56,7 +56,7 @@
             <x-admin-components::stat-card label="Berbayar" :value="$projects->whereNotNull('price')->count()" icon="fa-solid fa-tags" tone="amber" />
         </div>
 
-        <div class="app-card overflow-hidden">
+        <div>
             <div class="toolbar">
                 <div class="search-field">
                     <i class="fa-solid fa-magnifying-glass"></i>

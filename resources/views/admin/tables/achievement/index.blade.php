@@ -55,7 +55,7 @@
             <x-admin-components::stat-card label="Tingkat Unik" :value="$achievements->pluck('level')->filter()->unique()->count()" icon="fa-solid fa-medal" tone="amber" />
         </div>
 
-        <div class="app-card overflow-hidden">
+        <div>
             <div class="toolbar">
                 <div class="search-field">
                     <i class="fa-solid fa-magnifying-glass"></i>
