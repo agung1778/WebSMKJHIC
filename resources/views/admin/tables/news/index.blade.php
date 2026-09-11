@@ -4,29 +4,10 @@
 
 @section('content')
     @php
-        $items = $news->map(function ($n) {
-            return [
-                'id' => $n->id,
-                'name' => $n->title,
-                'img' => $n->image ? asset('storage/' . $n->image) : null,
-                'sub' => \Illuminate\Support\Str::limit(strip_tags($n->description), 150),
-                'by' => $n->publisher,
-                'date' => \Carbon\Carbon::parse($n->date_published)->translatedFormat('d M Y'),
-                'ts' => $n->created_at->timestamp,
-                'updated' => \Carbon\Carbon::parse($n->updated_at)->locale('id')->diffForHumans(),
-            ];
-        })->values();
         $total = $news->count();
     @endphp
 
-    <div class="fade-up space-y-6" x-data="tableIndex({
-        raw: @json($items),
-        searchKeys: ['name', 'sub', 'by'],
-        perPage: 8,
-        exportUrl: @json(route('admin.export', ['resource' => 'news'])),
-        emptyHead: 'Belum ada berita',
-        emptyBody: 'Mulai tulis berita pertama untuk ditampilkan di halaman website sekolah.'
-    })">
+    <div class="fade-up space-y-6">
 
         <x-admin-components::page-header
             icon="fa-solid fa-newspaper"
@@ -49,24 +30,17 @@
         </div>
 
         {{-- Tabel --}}
-        <div>
+        <div data-filter-root>
             <div class="toolbar">
                 <div class="search-field">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input class="app-input" type="search" placeholder="Cari berita, penerbit…" x-model="q">
+                    <input class="app-input" type="search" placeholder="Cari berita, penerbit…" data-filter-input>
                 </div>
-                <select class="app-select" style="width:auto" x-model="sortBy">
-                    <option value="newest">Terbaru</option>
-                    <option value="oldest">Terlama</option>
-                    <option value="az">Judul A–Z</option>
-                    <option value="za">Judul Z–A</option>
-                </select>
                 <span class="toolbar-spacer"></span>
-                <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
-                <a class="app-btn app-btn-md" :href="exportUrl" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
+                <a class="app-btn app-btn-md" href="{{ route('admin.export', ['resource' => 'news']) }}" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
             </div>
 
-            <div class="table-wrap" x-show="!loading">
+            <div class="table-wrap">
                 <table class="table-app">
                     <thead>
                         <tr>
@@ -77,58 +51,56 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <template x-for="n in paged" :key="n.id">
-                            <tr>
+                        @forelse ($news as $n)
+                            <tr data-row>
                                 <td>
                                     <div class="flex items-center gap-3" style="min-width:280px">
-                                        <img class="thumb" :src="n.img || 'https://placehold.co/64x64/eff9e3/63cd00?text=BRT'" :alt="n.name" loading="lazy">
+                                        <img class="thumb" src="{{ $n->image ? asset('storage/' . $n->image) : 'https://placehold.co/64x64/eff9e3/63cd00?text=BRT' }}" alt="{{ $n->title }}" loading="lazy">
                                         <div style="min-width:0">
-                                            <div class="cell-main truncate" x-text="n.name"></div>
-                                            <div class="cell-sub truncate" style="max-width:420px" x-text="n.sub"></div>
+                                            <div class="cell-main truncate">{{ $n->title }}</div>
+                                            <div class="cell-sub truncate" style="max-width:420px">{{ \Illuminate\Support\Str::limit(strip_tags($n->description), 150) }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td><span class="cell-sub" style="white-space:nowrap" x-text="n.date"></span></td>
-                                <td><span style="white-space:nowrap"><i class="fa-regular fa-user mr-1" style="color:var(--text-3)"></i><span x-text="n.by"></span></span></td>
+                                <td><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($n->date_published)->translatedFormat('d M Y') }}</span></td>
+                                <td><span style="white-space:nowrap"><i class="fa-regular fa-user mr-1" style="color:var(--text-3)"></i>{{ $n->publisher }}</span></td>
                                 <td>
                                     <div class="flex items-center justify-end gap-2">
-                                        <a class="app-btn app-btn-sm app-btn-primary" :href="'/admin/news/' + n.id + '/edit'"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
+                                        <a class="app-btn app-btn-sm app-btn-primary" href="{{ route('admin.news.edit', $n) }}"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
                                         <div class="dropdown">
                                             <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" :href="'/admin/news/' + n.id"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
+                                            <div class="dropdown-menu" style="display:none">
+                                                <a class="dropdown-item" href="{{ route('admin.news.show', $n) }}"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
                                                 <div class="dropdown-sep"></div>
-                                                <button class="dropdown-item danger" type="button" @click="askDelete(n, '/admin/news/' + n.id)"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                                <form action="{{ route('admin.news.destroy', $n) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus berita ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="dropdown-item danger" type="submit"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
-                        </template>
+                        @empty
+                            <tr data-row data-empty>
+                                <td colspan="4">
+                                    <div class="p-6 text-center">
+                                        <div class="empty-state">
+                                            <div class="empty-icon"><i class="fa-solid fa-newspaper"></i></div>
+                                            <h3>Belum ada berita</h3>
+                                            <p>Tulis berita pertama untuk ditampilkan di halaman website sekolah.</p>
+                                            <a class="app-btn app-btn-primary" href="{{ route('admin.news.create') }}"><i class="fa-solid fa-plus"></i>Tulis Berita</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
-            {{-- Skeleton --}}
-            <div x-show="loading" class="p-5 grid gap-4">
-                <template x-for="i in 4" :key="i">
-                    <div class="flex items-center gap-4">
-                        <div class="skeleton" style="width:48px;height:48px;border-radius:12px"></div>
-                        <div style="flex:1">
-                            <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
-                            <div class="skeleton" style="height:11px;width:70%"></div>
-                        </div>
-                    </div>
-                </template>
-            </div>
-
-            <div x-show="!loading && empty" x-cloak>
-                <x-admin-components::empty-state icon="fa-newspaper" :title="'Belum ada berita'" description="Tulis berita pertama untuk ditampilkan di halaman website sekolah.">
-                    <a class="app-btn app-btn-primary" href="{{ route('admin.news.create') }}"><i class="fa-solid fa-plus"></i>Tulis Berita</a>
-                </x-admin-components::empty-state>
-            </div>
-
-            <x-admin-components::pagination client countLabel="berita" />
+            @include('admin.tables._filter')
         </div>
     </div>
 @endsection

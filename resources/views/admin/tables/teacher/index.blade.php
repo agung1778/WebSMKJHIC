@@ -4,32 +4,10 @@
 
 @section('content')
     @php
-        $items = $teachers->map(function ($t) {
-            return [
-                'id' => $t->id,
-                'name' => $t->name,
-                'sub' => trim(($t->subject ?? '') . (($t->subject && $t->position) ? ' · ' : '') . ($t->position ?? '')) ?: $t->position,
-                'position' => $t->position ?? '-',
-                'subject' => $t->subject ?? '-',
-                'img' => $t->photo ? asset('storage/' . $t->photo) : null,
-                'by' => $t->school ?? '-',
-                'school' => $t->school ?? '-',
-                'category' => $t->category ?? 'guru',
-                'ts' => $t->created_at->timestamp,
-                'updated' => \Carbon\Carbon::parse($t->updated_at)->locale('id')->diffForHumans(),
-            ];
-        })->values();
         $total = $teachers->count();
     @endphp
 
-    <div class="fade-up space-y-6" x-data="tableIndex({
-        raw: @json($items),
-        searchKeys: ['name', 'sub', 'position', 'subject', 'school', 'category'],
-        perPage: 8,
-        exportUrl: @json(route('admin.export', ['resource' => 'teachers'])),
-        emptyHead: 'Belum ada guru',
-        emptyBody: 'Tambahkan data guru & staf pertama untuk ditampilkan di website sekolah.'
-    })">
+    <div class="fade-up space-y-6">
 
         <x-admin-components::page-header
             icon="fa-solid fa-chalkboard-user"
@@ -50,24 +28,17 @@
             <x-admin-components::stat-card label="Gabungan" :value="$teachers->where('school','Amaliah 1 & 2')->count()" icon="fa-solid fa-school-circle-check" tone="amber" />
         </div>
 
-        <div>
+        <div data-filter-root>
             <div class="toolbar">
                 <div class="search-field">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input class="app-input" type="search" placeholder="Cari nama, jabatan, mapel…" x-model="q">
+                    <input class="app-input" type="search" placeholder="Cari nama, jabatan, mapel…" data-filter-input>
                 </div>
-                <select class="app-select" style="width:auto" x-model="sortBy">
-                    <option value="newest">Terbaru</option>
-                    <option value="oldest">Terlama</option>
-                    <option value="az">Nama A–Z</option>
-                    <option value="za">Nama Z–A</option>
-                </select>
                 <span class="toolbar-spacer"></span>
-                <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
-                <a class="app-btn app-btn-md" :href="exportUrl" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
+                <a class="app-btn app-btn-md" href="{{ route('admin.export', ['resource' => 'teachers']) }}" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
             </div>
 
-            <div class="table-wrap" x-show="!loading">
+            <div class="table-wrap">
                 <table class="table-app">
                     <thead>
                         <tr>
@@ -79,60 +50,60 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <template x-for="t in paged" :key="t.id">
-                            <tr>
+                        @forelse ($teachers as $t)
+                            @php $category = $t->category ?? 'guru'; @endphp
+                            <tr data-row>
                                 <td>
                                     <div class="flex items-center gap-3" style="min-width:220px">
-                                        <img class="thumb thumb-round" :src="t.img || 'https://placehold.co/64x64/eff9e3/63cd00?text=GRU'" :alt="t.name" loading="lazy">
+                                        <img class="thumb thumb-round" src="{{ $t->photo ? asset('storage/' . $t->photo) : 'https://placehold.co/64x64/eff9e3/63cd00?text=GRU' }}" alt="{{ $t->name }}" loading="lazy">
                                         <div style="min-width:0">
-                                            <div class="cell-main truncate" x-text="t.name"></div>
-                                            <div class="cell-sub truncate" style="max-width:280px" x-text="t.sub"></div>
+                                            <div class="cell-main truncate">{{ $t->name }}</div>
+                                            <div class="cell-sub truncate" style="max-width:280px">{{ trim(($t->subject ?? '') . (($t->subject && $t->position) ? ' · ' : '') . ($t->position ?? '')) ?: $t->position }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td><span class="badge badge-info" x-text="t.school"></span></td>
+                                <td><span class="badge badge-info">{{ $t->school ?? '-' }}</span></td>
                                 <td>
-                                    <span class="badge" :class="t.category === 'staff' ? 'badge-warning' : 'badge-published'" x-text="t.category"></span>
+                                    <span class="badge {{ $category === 'staff' ? 'badge-warning' : 'badge-published' }}">{{ $category }}</span>
                                 </td>
-                                <td><span class="cell-sub" style="white-space:nowrap" x-text="t.updated"></span></td>
+                                <td><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($t->updated_at)->locale('id')->diffForHumans() }}</span></td>
                                 <td>
                                     <div class="flex items-center justify-end gap-2">
-                                        <a class="app-btn app-btn-sm app-btn-primary" :href="'/admin/teachers/' + t.id + '/edit'"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
+                                        <a class="app-btn app-btn-sm app-btn-primary" href="{{ route('admin.teachers.edit', $t) }}"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
                                         <div class="dropdown">
                                             <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" :href="'/admin/teachers/' + t.id"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
+                                            <div class="dropdown-menu" style="display:none">
+                                                <a class="dropdown-item" href="{{ route('admin.teachers.show', $t) }}"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
                                                 <div class="dropdown-sep"></div>
-                                                <button class="dropdown-item danger" type="button" @click="askDelete(t, '/admin/teachers/' + t.id)"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                                <form action="{{ route('admin.teachers.destroy', $t) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus guru ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="dropdown-item danger" type="submit"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
-                        </template>
+                        @empty
+                            <tr data-row data-empty>
+                                <td colspan="5">
+                                    <div class="p-6 text-center">
+                                        <div class="empty-state">
+                                            <div class="empty-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+                                            <h3>Belum ada guru</h3>
+                                            <p>Tambahkan data guru & staf pertama untuk ditampilkan di website sekolah.</p>
+                                            <a class="app-btn app-btn-primary" href="{{ route('admin.teachers.create') }}"><i class="fa-solid fa-plus"></i>Tambah Guru</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <div x-show="loading" class="p-5 grid gap-4">
-                <template x-for="i in 4" :key="i">
-                    <div class="flex items-center gap-4">
-                        <div class="skeleton" style="width:48px;height:48px;border-radius:12px"></div>
-                        <div style="flex:1">
-                            <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
-                            <div class="skeleton" style="height:11px;width:70%"></div>
-                        </div>
-                    </div>
-                </template>
-            </div>
-
-            <div x-show="!loading && empty" x-cloak>
-                <x-admin-components::empty-state icon="fa-chalkboard-user" :title="'Belum ada guru'" description="Tambahkan data guru & staf pertama untuk ditampilkan di website sekolah.">
-                    <a class="app-btn app-btn-primary" href="{{ route('admin.teachers.create') }}"><i class="fa-solid fa-plus"></i>Tambah Guru</a>
-                </x-admin-components::empty-state>
-            </div>
-
-            <x-admin-components::pagination client countLabel="guru" />
+            @include('admin.tables._filter')
         </div>
     </div>
 @endsection

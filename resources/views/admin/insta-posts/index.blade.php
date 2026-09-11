@@ -5,34 +5,9 @@
 @section('content')
     @php
         $activeCount = $posts->where('is_active', true)->count();
-        $items = $posts->map(function ($p) {
-            return [
-                'id' => $p->id,
-                'name' => $p->caption ?: 'Tanpa caption',
-                'sub' => $p->post_url ?? '',
-                'img' => asset('storage/' . $p->path),
-                'by' => $p->created_at->translatedFormat('d M Y'),
-                'status' => $p->is_active ? 'active' : 'inactive',
-                'caption' => $p->caption ?? '',
-                'url' => $p->post_url ?? '',
-                'path' => $p->path,
-                'ts' => $p->created_at->timestamp,
-                'updated' => \Carbon\Carbon::parse($p->created_at)->locale('id')->diffForHumans(),
-            ];
-        })->values();
     @endphp
 
-    <div class="fade-up space-y-6" x-data="instaIndex({
-        raw: @json($items),
-        statuses: {
-            active: { label: 'Aktif', class: 'badge-published' },
-            inactive: { label: 'Tersembunyi', class: 'badge-archived' }
-        },
-        searchKeys: ['name', 'sub', 'by'],
-        perPage: 8,
-        emptyHead: 'Belum ada postingan',
-        emptyBody: 'Unggah foto postingan Instagram pertama untuk ditampilkan di website.'
-    })" x-cloak>
+    <div class="fade-up space-y-6">
 
         <x-admin-components::page-header
             icon="fa-brands fa-instagram"
@@ -83,86 +58,105 @@
             </div>
 
             {{-- Daftar postingan --}}
-            <div class="app-card overflow-hidden">
-                <div class="toolbar">
-                    <div class="search-field">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input class="app-input" type="search" placeholder="Cari caption, link…" x-model="q">
-                    </div>
-                    <span class="toolbar-spacer"></span>
-                    <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
-                </div>
-
-                <div class="table-wrap" x-show="!loading">
-                    <table class="table-app">
-                        <thead>
-                            <tr>
-                                <th>Pratinjau</th>
-                                <th>Caption</th>
-                                <th>Status</th>
-                                <th>Ditambahkan</th>
-                                <th class="text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template x-for="p in paged" :key="p.id">
-                                <tr>
-                                    <td>
-                                        <img class="thumb cursor-zoom-in" :src="p.img" :alt="p.name" loading="lazy" style="width:56px;height:56px;border-radius:14px" @click="window.open(p.img)">
-                                    </td>
-                                    <td style="min-width:220px">
-                                        <div class="cell-main truncate" style="max-width:280px" x-text="p.name"></div>
-                                        <a class="cell-sub truncate d-block" style="max-width:280px;color:var(--blue,#1d6fd6)" :href="p.url" target="_blank" x-show="p.url" x-text="p.url"></a>
-                                    </td>
-                                    <td><span class="badge" :class="badgeClass(p.status)" x-text="statusLabel(p.status)"></span></td>
-                                    <td><span class="cell-sub" style="white-space:nowrap" x-text="p.by"></span></td>
-                                    <td>
-                                        <div class="flex items-center justify-end gap-2">
-                                            <button class="icon-btn" type="button" @click="toggleActive(p)" :title="p.status === 'active' ? 'Sembunyikan' : 'Tampilkan'" :aria-label="p.status === 'active' ? 'Sembunyikan' : 'Tampilkan'">
-                                                <i class="fa-solid" :class="p.status === 'active' ? 'fa-eye-slash' : 'fa-eye'"></i>
-                                            </button>
-                                            <button class="icon-btn" type="button" @click="openEdit(p)" title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
-                                            <button class="icon-btn danger" type="button" @click="askDelete(p, '/admin/insta-posts/' + p.id)" title="Hapus"><i class="fa-solid fa-trash"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div x-show="loading" class="p-5 grid gap-4">
-                    <template x-for="i in 4" :key="i">
-                        <div class="flex items-center gap-4">
-                            <div class="skeleton" style="width:56px;height:56px;border-radius:14px"></div>
-                            <div style="flex:1">
-                                <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
-                                <div class="skeleton" style="height:11px;width:70%"></div>
-                            </div>
+            <div>
+                <div data-filter-root class="app-card overflow-hidden">
+                    <div class="toolbar">
+                        <div class="search-field">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input class="app-input" type="search" placeholder="Cari caption, link…" data-filter-input>
                         </div>
-                    </template>
-                </div>
+                        <span class="toolbar-spacer"></span>
+                    </div>
 
-                <div x-show="!loading && empty">
-                    <x-admin-components::empty-state icon="fa-brands fa-instagram" :title="'Belum ada postingan'" description="Unggah foto postingan Instagram pertama untuk ditampilkan di website." />
-                </div>
+                    <div class="table-wrap">
+                        <table class="table-app">
+                            <thead>
+                                <tr>
+                                    <th>Pratinjau</th>
+                                    <th>Caption</th>
+                                    <th>Status</th>
+                                    <th>Ditambahkan</th>
+                                    <th class="text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($posts as $p)
+                                    @php
+                                        $caption = $p->caption ?: 'Tanpa caption';
+                                        $active = (bool) $p->is_active;
+                                        $imgUrl = asset('storage/' . $p->path);
+                                    @endphp
+                                    <tr data-row>
+                                        <td>
+                                            <img class="thumb cursor-zoom-in" src="{{ $imgUrl }}" alt="{{ $caption }}" loading="lazy" style="width:56px;height:56px;border-radius:14px" onclick="window.open('{{ $imgUrl }}')">
+                                        </td>
+                                        <td style="min-width:220px">
+                                            <div class="cell-main truncate" style="max-width:280px">{{ $caption }}</div>
+                                            @if ($p->post_url)
+                                                <a class="cell-sub truncate d-block" style="max-width:280px;color:var(--blue,#1d6fd6)" href="{{ $p->post_url }}" target="_blank">{{ $p->post_url }}</a>
+                                            @endif
+                                        </td>
+                                        <td><span class="badge {{ $active ? 'badge-published' : 'badge-archived' }}">{{ $active ? 'Aktif' : 'Tersembunyi' }}</span></td>
+                                        <td><span class="cell-sub" style="white-space:nowrap">{{ $p->created_at->translatedFormat('d M Y') }}</span></td>
+                                        <td>
+                                            <div class="flex items-center justify-end gap-2">
+                                                <form action="{{ route('admin.insta-posts.toggle', $p) }}" method="POST" title="{{ $active ? 'Sembunyikan' : 'Tampilkan' }}">
+                                                    @csrf
+                                                    <button class="icon-btn" type="submit" aria-label="{{ $active ? 'Sembunyikan' : 'Tampilkan' }}">
+                                                        <i class="fa-solid {{ $active ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+                                                    </button>
+                                                </form>
+                                                <button class="icon-btn js-edit-insta" type="button"
+                                                    title="Edit"
+                                                    data-action="{{ route('admin.insta-posts.update', $p) }}"
+                                                    data-img="{{ $imgUrl }}"
+                                                    data-caption="{{ $p->caption ?? '' }}"
+                                                    data-url="{{ $p->post_url ?? '' }}"
+                                                    data-active="{{ $active ? '1' : '0' }}">
+                                                    <i class="fa-regular fa-pen-to-square"></i>
+                                                </button>
+                                                <form action="{{ route('admin.insta-posts.destroy', $p) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus postingan ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="icon-btn danger" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr data-row data-empty>
+                                        <td colspan="5">
+                                            <div class="p-6 text-center">
+                                                <div class="empty-state">
+                                                    <div class="empty-icon"><i class="fa-brands fa-instagram"></i></div>
+                                                    <h3>Belum ada postingan</h3>
+                                                    <p>Unggah foto postingan Instagram pertama untuk ditampilkan di website.</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
-                <x-admin-components::pagination client countLabel="postingan" />
+                    @include('admin.tables._filter')
+                </div>
             </div>
         </div>
 
         {{-- Modal edit --}}
-        <div class="app-modal-backdrop" x-show="editOpen" x-cloak x-transition.opacity @click.self="editOpen = false">
-            <div class="app-modal" @keydown.escape.window="editOpen = false">
-                <div class="flex items-center justify-between p-5 border-b" style="border-color:var(--border)">
-                    <h3 class="card-title"><i class="fa-regular fa-pen-to-square text-[var(--brand)]"></i> Edit Postingan</h3>
-                    <button class="icon-btn" type="button" @click="editOpen = false" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <form :action="'/admin/insta-posts/' + editItem.id" method="POST" enctype="multipart/form-data" class="p-5 space-y-4">
-                    <input type="hidden" name="_token" :value="csrf">
+        <div class="modal-overlay" id="editInstaModal" style="display:none">
+            <div class="modal-card" style="max-width:480px">
+                <form action="" method="POST" enctype="multipart/form-data" id="editInstaForm" class="p-5 space-y-4">
+                    @csrf
                     <input type="hidden" name="_method" value="PUT">
+                    <div class="flex items-center justify-between">
+                        <h3 class="card-title"><i class="fa-regular fa-pen-to-square text-[var(--brand)]"></i> Edit Postingan</h3>
+                        <button class="icon-btn js-edit-close" type="button" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
                     <div class="flex items-center gap-4">
-                        <img :src="editItem.img" alt="Pratinjau" class="rounded-xl border" style="width:72px;height:72px;object-fit:cover;border-color:var(--border)">
+                        <img id="editInstaImg" alt="Pratinjau" class="rounded-xl border" style="width:72px;height:72px;object-fit:cover;border-color:var(--border)">
                         <div class="flex-1">
                             <label class="app-label">Ganti Foto <span class="optional">(opsional)</span></label>
                             <input type="file" name="image_file" accept="image/*" class="app-file">
@@ -170,25 +164,59 @@
                     </div>
                     <div>
                         <label class="app-label" for="edit_caption">Caption</label>
-                        <textarea name="caption" id="edit_caption" rows="3" class="app-textarea" x-model="editItem.caption"></textarea>
+                        <textarea name="caption" id="edit_caption" rows="3" class="app-textarea"></textarea>
                     </div>
                     <div>
                         <label class="app-label" for="edit_post_url">Link Postingan</label>
-                        <input type="url" name="post_url" id="edit_post_url" class="app-input" placeholder="https://www.instagram.com/p/..." x-model="editItem.url">
+                        <input type="url" name="post_url" id="edit_post_url" class="app-input" placeholder="https://www.instagram.com/p/...">
                     </div>
+                    <input type="hidden" name="is_active" value="0">
                     <label class="flex items-center gap-3 cursor-pointer select-none w-fit">
                         <span class="toggle-switch">
-                            <input type="checkbox" value="1" x-model.number="editActive" name="is_active">
+                            <input type="checkbox" value="1" id="edit_active" name="is_active" checked>
                             <span class="track"></span>
                         </span>
                         <span class="text-sm font-medium" style="color:var(--text-2)">Tampilkan di website</span>
                     </label>
                     <div class="flex justify-end gap-2 pt-2 border-t" style="border-color:var(--border)">
-                        <button type="button" class="app-btn" @click="editOpen = false">Batal</button>
+                        <button type="button" class="app-btn js-edit-close">Batal</button>
                         <button type="submit" class="app-btn app-btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            (function () {
+                var modal = document.getElementById('editInstaModal');
+                var form = document.getElementById('editInstaForm');
+                if (!modal || !form) return;
+
+                function openEdit(btn) {
+                    form.action = btn.getAttribute('data-action') || '';
+                    document.getElementById('editInstaImg').src = btn.getAttribute('data-img') || '';
+                    document.getElementById('edit_caption').value = btn.getAttribute('data-caption') || '';
+                    document.getElementById('edit_post_url').value = btn.getAttribute('data-url') || '';
+                    document.getElementById('edit_active').checked = btn.getAttribute('data-active') === '1';
+                    modal.style.display = 'flex';
+                }
+
+                function closeEdit() {
+                    modal.style.display = 'none';
+                }
+
+                document.querySelectorAll('.js-edit-insta').forEach(function (btn) {
+                    btn.addEventListener('click', function () { openEdit(btn); });
+                });
+                modal.querySelectorAll('.js-edit-close').forEach(function (btn) {
+                    btn.addEventListener('click', closeEdit);
+                });
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) closeEdit();
+                });
+            })();
+        </script>
+    @endpush
 @endsection

@@ -4,38 +4,16 @@
 
 @section('content')
     @php
-        $items = $projects->map(function ($p) {
-            return [
-                'id' => $p->id,
-                'name' => $p->title,
-                'sub' => \Illuminate\Support\Str::limit(strip_tags($p->description ?? ''), 140),
-                'img' => $p->photo ? asset('storage/' . $p->photo) : null,
-                'by' => $p->major ? $p->major->name : '-',
-                'category' => $p->category ?? 'Produk',
-                'class' => $p->student_class ?? '-',
-                'price' => $p->price !== null ? number_format($p->price, 0, ',', '.') : 'Gratis',
-                'ts' => $p->created_at->timestamp,
-                'updated' => \Carbon\Carbon::parse($p->updated_at)->locale('id')->diffForHumans(),
-            ];
-        })->values();
         $total = $projects->count();
+        $categories = [
+            'Makanan' => 'badge-warning',
+            'Kerajinan' => 'badge-info',
+            'Jasa' => 'badge-published',
+            'Teknologi' => 'badge-draft',
+        ];
     @endphp
 
-    <div class="fade-up space-y-6" x-data="tableIndex({
-        raw: @json($items),
-        statusKey: 'category',
-        statuses: {
-            Makanan: { label: 'Makanan', class: 'badge-warning' },
-            Kerajinan: { label: 'Kerajinan', class: 'badge-info' },
-            Jasa: { label: 'Jasa', class: 'badge-published' },
-            Teknologi: { label: 'Teknologi', class: 'badge-draft' }
-        },
-        searchKeys: ['name', 'sub', 'by', 'category', 'class'],
-        perPage: 8,
-        exportUrl: @json(route('admin.export', ['resource' => 'pkk'])),
-        emptyHead: 'Belum ada proyek P5/PKK',
-        emptyBody: 'Tambahkan proyek P5/PKK pertama untuk ditampilkan di galeri.'
-    })">
+    <div class="fade-up space-y-6">
 
         <x-admin-components::page-header
             icon="fa-solid fa-lightbulb"
@@ -56,31 +34,24 @@
             <x-admin-components::stat-card label="Berbayar" :value="$projects->whereNotNull('price')->count()" icon="fa-solid fa-tags" tone="amber" />
         </div>
 
-        <div>
+        <div data-filter-root>
             <div class="toolbar">
                 <div class="search-field">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input class="app-input" type="search" placeholder="Cari proyek, jurusan, kategori…" x-model="q">
+                    <input class="app-input" type="search" placeholder="Cari proyek, jurusan, kategori…" data-filter-input>
                 </div>
-                <select class="app-select" style="width:auto" x-model="statusFilter">
-                    <option value="all">Semua kategori</option>
+                <select class="app-select" style="width:auto" data-filter-cat>
+                    <option value="">Semua kategori</option>
                     <option value="Makanan">Makanan</option>
                     <option value="Kerajinan">Kerajinan</option>
                     <option value="Jasa">Jasa</option>
                     <option value="Teknologi">Teknologi</option>
                 </select>
-                <select class="app-select" style="width:auto" x-model="sortBy">
-                    <option value="newest">Terbaru</option>
-                    <option value="oldest">Terlama</option>
-                    <option value="az">Nama A–Z</option>
-                    <option value="za">Nama Z–A</option>
-                </select>
                 <span class="toolbar-spacer"></span>
-                <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
-                <a class="app-btn app-btn-md" :href="exportUrl" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
+                <a class="app-btn app-btn-md" href="{{ route('admin.export', ['resource' => 'pkk']) }}" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
             </div>
 
-            <div class="table-wrap" x-show="!loading">
+            <div class="table-wrap">
                 <table class="table-app">
                     <thead>
                         <tr>
@@ -92,58 +63,61 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <template x-for="p in paged" :key="p.id">
-                            <tr>
+                        @forelse ($projects as $p)
+                            @php
+                                $category = $p->category ?? 'Produk';
+                                $priceText = $p->price !== null ? number_format($p->price, 0, ',', '.') : 'Gratis';
+                            @endphp
+                            <tr data-row data-cat="{{ $category }}">
                                 <td>
                                     <div class="flex items-center gap-3" style="min-width:280px">
-                                        <img class="thumb" :src="p.img || 'https://placehold.co/64x64/eff9e3/63cd00?text=PKK'" :alt="p.name" loading="lazy">
+                                        <img class="thumb" src="{{ $p->photo ? asset('storage/' . $p->photo) : 'https://placehold.co/64x64/eff9e3/63cd00?text=PKK' }}" alt="{{ $p->title }}" loading="lazy">
                                         <div style="min-width:0">
-                                            <div class="cell-main truncate" x-text="p.name"></div>
-                                            <div class="cell-sub truncate" style="max-width:320px" x-text="p.sub"></div>
+                                            <div class="cell-main truncate">{{ $p->title }}</div>
+                                            <div class="cell-sub truncate" style="max-width:320px">{{ \Illuminate\Support\Str::limit(strip_tags($p->description ?? ''), 140) }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td><span class="badge" :class="badgeClass(p.category)" x-text="statusLabel(p.category)"></span></td>
-                                <td><span style="white-space:nowrap" x-text="p.class"></span></td>
-                                <td><span style="white-space:nowrap" :style="p.price === 'Gratis' ? 'color:var(--green);font-weight:700' : ''" x-text="p.price"></span></td>
+                                <td><span class="badge {{ $categories[$category] ?? 'badge-info' }}">{{ $category }}</span></td>
+                                <td><span style="white-space:nowrap">{{ $p->student_class ?? '-' }}</span></td>
+                                <td><span style="white-space:nowrap;{{ $priceText === 'Gratis' ? 'color:var(--green);font-weight:700' : '' }}">{{ $priceText }}</span></td>
                                 <td>
                                     <div class="flex items-center justify-end gap-2">
-                                        <a class="app-btn app-btn-sm app-btn-primary" :href="'/admin/pkk/' + p.id + '/edit'"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
+                                        <a class="app-btn app-btn-sm app-btn-primary" href="{{ route('admin.pkk.edit', $p) }}"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
                                         <div class="dropdown">
                                             <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" :href="'/admin/pkk/' + p.id"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
+                                            <div class="dropdown-menu" style="display:none">
+                                                <a class="dropdown-item" href="{{ route('admin.pkk.show', $p) }}"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
                                                 <div class="dropdown-sep"></div>
-                                                <button class="dropdown-item danger" type="button" @click="askDelete(p, '/admin/pkk/' + p.id)"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                                <form action="{{ route('admin.pkk.destroy', $p) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus proyek ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="dropdown-item danger" type="submit"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
-                        </template>
+                        @empty
+                            <tr data-row data-empty>
+                                <td colspan="5">
+                                    <div class="p-6 text-center">
+                                        <div class="empty-state">
+                                            <div class="empty-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                                            <h3>Belum ada proyek P5/PKK</h3>
+                                            <p>Tambahkan proyek P5/PKK pertama untuk ditampilkan di galeri.</p>
+                                            <a class="app-btn app-btn-primary" href="{{ route('admin.pkk.create') }}"><i class="fa-solid fa-plus"></i>Tambah Proyek</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <div x-show="loading" class="p-5 grid gap-4">
-                <template x-for="i in 4" :key="i">
-                    <div class="flex items-center gap-4">
-                        <div class="skeleton" style="width:48px;height:48px;border-radius:12px"></div>
-                        <div style="flex:1">
-                            <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
-                            <div class="skeleton" style="height:11px;width:70%"></div>
-                        </div>
-                    </div>
-                </template>
-            </div>
-
-            <div x-show="!loading && empty" x-cloak>
-                <x-admin-components::empty-state icon="fa-lightbulb" :title="'Belum ada proyek P5/PKK'" description="Tambahkan proyek P5/PKK pertama untuk ditampilkan di galeri.">
-                    <a class="app-btn app-btn-primary" href="{{ route('admin.pkk.create') }}"><i class="fa-solid fa-plus"></i>Tambah Proyek</a>
-                </x-admin-components::empty-state>
-            </div>
-
-            <x-admin-components::pagination client countLabel="proyek" />
+            @include('admin.tables._filter')
         </div>
     </div>
 @endsection

@@ -4,30 +4,12 @@
 
 @section('content')
     @php
-        $items = $images->map(function ($img) {
-            return [
-                'id' => $img->id,
-                'name' => $img->title ?? $img->filename,
-                'sub' => $img->description ?? ($img->mime_type ?? ''),
-                'img' => asset('storage/' . $img->path),
-                'by' => $img->mime_type ?? 'image',
-                'size' => $img->size ? number_format($img->size / 1024 / 1024, 2) . ' MB' : '-',
-                'ts' => $img->created_at->timestamp,
-                'updated' => \Carbon\Carbon::parse($img->updated_at)->locale('id')->diffForHumans(),
-            ];
-        })->values();
         $total = $images->count();
         $totalSizeMB = $images->sum('size') / 1024 / 1024;
         $allTitles = ['MainImage', 'MajorsImage', 'NewsImage', 'PartnersImage', 'FacilityImage', 'ExtracurricularImage', 'AchievementImage', 'ProgramImage', 'GridImage', 'MajorGrid', 'Main', 'PortraitImage'];
     @endphp
 
-    <div class="fade-up space-y-6" x-data="tableIndex({
-        raw: @json($items),
-        perPage: 8,
-        exportUrl: @json(route('admin.export', ['resource' => 'image'])),
-        emptyHead: 'Belum ada gambar',
-        emptyBody: 'Unggah gambar pertama untuk digunakan di berbagai media website.'
-    })">
+    <div class="fade-up space-y-6">
 
         <x-admin-components::page-header
             icon="fa-solid fa-images"
@@ -54,7 +36,7 @@
                     @csrf
                     <div>
                         <label class="app-label" for="title_option">Judul Gambar <span class="req">*</span></label>
-                        <select name="title" id="title_option" class="app-select w-full" x-data x-init="$watch('$el.value', v => {})" onchange="document.getElementById('custom_title_wrapper').classList.toggle('hidden', this.value !== 'custom')" required>
+                        <select name="title" id="title_option" class="app-select w-full" onchange="document.getElementById('custom_title_wrapper').classList.toggle('hidden', this.value !== 'custom')" required>
                             <optgroup label="Header Halaman">
                                 <option value="MainImage">MainImage - Header Home</option>
                                 <option value="MajorsImage">MajorsImage - Header Jurusan</option>
@@ -111,24 +93,23 @@
                                     <span class="status-dot" style="background:{{ $count > 0 ? 'var(--brand)' : 'var(--border)' }}"></span>
                                     <code class="ms-label" style="font-size:12px">{{ $title }}</code>
                                 </div>
-                                <div class="ms-value" style="color:{{ $count > 0 ? 'var(--brand)' : 'var(--text-3)' }}">{{ $count }} <span class="text-[11px]">{{ $count === 1 ? 'gambar' : 'gambar' }}</span></div>
+                                <div class="ms-value" style="color:{{ $count > 0 ? 'var(--brand)' : 'var(--text-3)' }}">{{ $count }} <span class="text-[11px]">gambar</span></div>
                             </div>
                         @endforeach
                     </div>
                 </div>
 
-                <div>
+                <div data-filter-root>
                     <div class="toolbar">
                         <div class="search-field">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input class="app-input" type="search" placeholder="Cari gambar judul…" x-model="q">
+                            <input class="app-input" type="search" placeholder="Cari gambar judul…" data-filter-input>
                         </div>
                         <span class="toolbar-spacer"></span>
-                        <button class="icon-btn" @click="refresh" title="Muat ulang" aria-label="Muat ulang"><i class="fa-solid fa-rotate-right" :class="{'fa-spin': loading}"></i></button>
-                        <a class="app-btn app-btn-md" :href="exportUrl" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
+                        <a class="app-btn app-btn-md" href="{{ route('admin.export', ['resource' => 'image']) }}" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
                     </div>
 
-                    <div class="table-wrap" x-show="!loading">
+                    <div class="table-wrap">
                         <table class="table-app">
                             <thead>
                                 <tr>
@@ -139,52 +120,58 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <template x-for="g in paged" :key="g.id">
-                                    <tr>
+                                @forelse ($images as $g)
+                                    @php
+                                        $imgName = $g->title ?? $g->filename;
+                                        $imgSub = $g->description ?? ($g->mime_type ?? '');
+                                        $imgSize = $g->size ? number_format($g->size / 1024 / 1024, 2) . ' MB' : '-';
+                                        $imgUrl = asset('storage/' . $g->path);
+                                    @endphp
+                                    <tr data-row>
                                         <td>
-                                            <img class="thumb cursor-zoom-in" :src="g.img" :alt="g.name" loading="lazy" style="width:72px;height:48px;border-radius:10px" @click="window.open(g.img)">
+                                            <img class="thumb cursor-zoom-in" src="{{ $imgUrl }}" alt="{{ $imgName }}" loading="lazy" style="width:72px;height:48px;border-radius:10px" onclick="window.open('{{ $imgUrl }}')">
                                         </td>
                                         <td style="min-width:260px">
-                                            <div class="cell-main truncate" x-text="g.name"></div>
-                                            <code class="cell-sub truncate d-block" style="max-width:340px" x-text="g.sub"></code>
+                                            <div class="cell-main truncate">{{ $imgName }}</div>
+                                            <code class="cell-sub truncate d-block" style="max-width:340px">{{ $imgSub }}</code>
                                         </td>
-                                        <td><span class="badge badge-info" x-text="g.size"></span></td>
+                                        <td><span class="badge badge-info">{{ $imgSize }}</span></td>
                                         <td>
                                             <div class="flex items-center justify-end gap-2">
-                                                <a class="app-btn app-btn-sm app-btn-primary" :href="'/admin/image/' + g.id + '/edit'"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
+                                                <a class="app-btn app-btn-sm app-btn-primary" href="{{ route('admin.image.edit', $g) }}"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
                                                 <div class="dropdown">
                                                     <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" :href="'/admin/image/' + g.id"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
+                                                    <div class="dropdown-menu" style="display:none">
+                                                        <a class="dropdown-item" href="{{ route('admin.image.show', $g) }}"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
                                                         <div class="dropdown-sep"></div>
-                                                        <button class="dropdown-item danger" type="button" @click="askDelete(g, '/admin/image/' + g.id)"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                                        <form action="{{ route('admin.image.destroy', $g) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus gambar ini?')">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="dropdown-item danger" type="submit"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                     </tr>
-                                </template>
+                                @empty
+                                    <tr data-row data-empty>
+                                        <td colspan="4">
+                                            <div class="p-6 text-center">
+                                                <div class="empty-state">
+                                                    <div class="empty-icon"><i class="fa-solid fa-images"></i></div>
+                                                    <h3>Belum ada gambar</h3>
+                                                    <p>Unggah gambar pertama dari formulir di samping.</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
 
-                    <div x-show="loading" class="p-5 grid gap-4">
-                        <template x-for="i in 4" :key="i">
-                            <div class="flex items-center gap-4">
-                                <div class="skeleton" style="width:72px;height:48px;border-radius:10px"></div>
-                                <div style="flex:1">
-                                    <div class="skeleton" style="height:14px;width:45%;margin-bottom:8px"></div>
-                                    <div class="skeleton" style="height:11px;width:70%"></div>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-
-                    <div x-show="!loading && empty" x-cloak>
-                        <x-admin-components::empty-state icon="fa-images" :title="'Belum ada gambar'" description="Unggah gambar pertama dari formulir di samping." />
-                    </div>
-
-                    <x-admin-components::pagination client countLabel="gambar" />
+                    @include('admin.tables._filter')
                 </div>
             </div>
         </div>
