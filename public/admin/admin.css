@@ -694,25 +694,31 @@ body.sidebar-collapsed .sidebar-foot .btn-block { padding: 0; justify-content: c
 .qa-icon svg { width: 22px; height: 22px; }
 
 /* ---------- Table ---------- */
-.table-wrap { overflow-x: auto; border-radius: var(--radius-sm); }
+.table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgba(28, 28, 29, 0.04), 0 4px 14px rgba(28, 28, 29, 0.05);
+}
 
 .table-app { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
 
 .table-app thead th {
     text-align: left;
-    font-size: 10.5px;
+font-size: 10.5px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    color: var(--text-3);
-    background: var(--surface-2);
-    padding: 13px 16px;
+    color: var(--brand-deep);
+    background: var(--brand-softer);
+    padding: 14px 16px;
     border-bottom: 1px solid var(--border);
     white-space: nowrap;
 }
 
-.table-app thead th:first-child { border-radius: 14px 0 0 0; }
-.table-app thead th:last-child { border-radius: 0 14px 0 0; }
+.table-app thead th:first-child { border-radius: 16px 0 0 0; }
+.table-app thead th:last-child { border-radius: 0 16px 0 0; }
 
 .table-app tbody td {
     padding: 14px 16px;
@@ -723,6 +729,7 @@ body.sidebar-collapsed .sidebar-foot .btn-block { padding: 0; justify-content: c
 
 .table-app tbody tr:last-child td { border-bottom: 0; }
 .table-app tbody tr { transition: background 0.14s ease; }
+.table-app tbody tr:nth-child(even) { background: var(--surface-2); }
 .table-app tbody tr:hover { background: var(--brand-softer); }
 
 .table-app .thumb {
@@ -751,10 +758,10 @@ body.sidebar-collapsed .sidebar-foot .btn-block { padding: 0; justify-content: c
     transition: all 0.16s ease;
     text-decoration: none;
 }
+.act-btn.view { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 28%, transparent); background: var(--blue-soft); }
+.act-btn.edit { color: var(--brand-deep); border-color: color-mix(in srgb, var(--brand) 35%, transparent); background: var(--brand-soft); }
+.act-btn.delete { color: var(--rose); border-color: color-mix(in srgb, var(--rose) 28%, transparent); background: var(--rose-soft); }
 .act-btn:hover { transform: translateY(-1px); }
-.act-btn.view:hover { color: var(--blue); border-color: rgba(37, 99, 235, 0.4); background: var(--blue-soft); }
-.act-btn.edit:hover { color: var(--brand-deep); border-color: rgba(99, 205, 0, 0.5); background: var(--brand-soft); }
-.act-btn.delete:hover { color: var(--rose); border-color: rgba(225, 29, 72, 0.4); background: var(--rose-soft); }
 
 .checkbox-app {
     width: 17px; height: 17px;

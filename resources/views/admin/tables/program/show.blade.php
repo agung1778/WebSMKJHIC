@@ -31,8 +31,8 @@
                 <div class="detail-grid">
                     <div class="detail-item">
                         <span class="detail-label">Status</span>
-                        <span class="detail-value" x-data="{}">
-                            <span class="badge" :class="'{{ $program->status }}' === 'published' ? 'badge-published' : '{{ $program->status }}' === 'draft' ? 'badge-draft' : 'badge-archived'">
+                        <span class="detail-value">
+                            <span class="badge @class(['badge-published' => $program->status === 'published', 'badge-draft' => $program->status === 'draft', 'badge-archived' => $program->status === 'archived'])">
                                 @if($program->status === 'published') Published @elseif($program->status === 'draft') Draft @else Archived @endif
                             </span>
                         </span>

@@ -12,7 +12,11 @@
 
             <x-slot:actions>
                 <a class="app-btn app-btn-lg" href="{{ route('admin.image.edit', $image->id) }}"><i class="fa-solid fa-pen"></i> Edit</a>
-                <button class="app-btn app-btn-lg app-btn-danger" type="button" x-data="{}" @click="AppConfirm({ title:'Hapus Gambar', message:'Hapus gambar <b>{{ addslashes($image->title ?? $image->filename) }}</b>? File akan dihapus permanen.', danger:true, confirmText:'Ya, hapus', onConfirm(){ const f=document.createElement('form'); f.method='POST'; f.action='{{ route('admin.image.destroy', $image->id) }}'; f.innerHTML='<input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"><input type=\"hidden\" name=\"_method\" value=\"DELETE\">'; document.body.appendChild(f); f.submit(); } })"><i class="fa-solid fa-trash"></i></button>
+                <form action="{{ route('admin.image.destroy', $image->id) }}" method="POST" id="delete-image-form" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="app-btn app-btn-lg app-btn-danger" onclick="AppConfirm({ title:'Hapus Gambar', message:'Hapus gambar {{ addslashes($image->title ?? $image->filename) }}? File akan dihapus permanen.', danger:true, confirmText:'Ya, hapus', onConfirm(){ document.getElementById('delete-image-form').submit(); } })"><i class="fa-solid fa-trash"></i></button>
+                </form>
             </x-slot:actions>
         </x-admin-components::page-header>
 

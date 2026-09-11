@@ -12,7 +12,11 @@
 
             <x-slot:actions>
                 <a class="app-btn app-btn-lg" href="{{ route('admin.facilities.edit', $facility->id) }}"><i class="fa-solid fa-pen"></i> Edit</a>
-                <button class="app-btn app-btn-lg app-btn-danger" type="button" x-data="{}" @click="AppConfirm({ title:'Hapus Fasilitas', message:'Hapus fasilitas <b>{{ addslashes($facility->name) }}</b>? Tindakan ini tidak dapat dibatalkan.', danger:true, confirmText:'Ya, hapus', onConfirm(){ const f=document.createElement('form'); f.method='POST'; f.action='{{ route('admin.facilities.destroy', $facility->id) }}'; f.innerHTML='<input type=\"hidden\" name=\"_token\" value=\"{{ csrf_token() }}\"><input type=\"hidden\" name=\"_method\" value=\"DELETE\">'; document.body.appendChild(f); f.submit(); } })"><i class="fa-solid fa-trash"></i></button>
+                <form action="{{ route('admin.facilities.destroy', $facility->id) }}" method="POST" id="delete-facility-form" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="app-btn app-btn-lg app-btn-danger" onclick="AppConfirm({ title:'Hapus Fasilitas', message:'Hapus fasilitas {{ addslashes($facility->name) }}? Tindakan ini tidak dapat dibatalkan.', danger:true, confirmText:'Ya, hapus', onConfirm(){ document.getElementById('delete-facility-form').submit(); } })"><i class="fa-solid fa-trash"></i></button>
+                </form>
             </x-slot:actions>
         </x-admin-components::page-header>
 

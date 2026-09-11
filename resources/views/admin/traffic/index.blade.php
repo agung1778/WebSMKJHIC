@@ -18,6 +18,30 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        /* ---- Sinkron warna Traffic dengan tema admin ---- */
+        .traffic-page .text-slate-800,
+        .traffic-page .text-slate-700 { color: var(--text); }
+        .traffic-page .text-slate-600,
+        .traffic-page .text-slate-500 { color: var(--text-2); }
+        .traffic-page .text-slate-400 { color: var(--text-3); }
+        .traffic-page .border-slate-100,
+        .traffic-page .border-slate-200 { border-color: var(--border); }
+        .traffic-page .bg-slate-50 { background: var(--surface-2); }
+        .traffic-page .bg-slate-100 { background: var(--surface-2); }
+        .traffic-page .divide-slate-100 > * + * { border-color: var(--border); }
+        .traffic-page .hover\:bg-slate-50:hover { background: var(--brand-softer); }
+        .traffic-page .bg-purple-50 { background: var(--violet-soft); }
+        .traffic-page .text-purple-700 { color: var(--violet); }
+        .traffic-page .text-purple-500 { color: var(--violet); }
+        .traffic-page .text-blue-500 { color: var(--blue); }
+        .traffic-page .bg-blue-50,
+        .traffic-page .bg-blue-100 { background: var(--blue-soft); }
+        .traffic-page .text-blue-700 { color: var(--blue); }
+        .traffic-page .border-blue-100 { border-color: color-mix(in srgb, var(--blue) 18%, transparent); }
+        .traffic-page .border-purple-100 { border-color: color-mix(in srgb, var(--violet) 18%, transparent); }
+        .traffic-page .bg-blue-400 { background: var(--blue); }
+        .traffic-page .bg-purple-400 { background: var(--violet); }
     </style>
 @endpush
 
@@ -28,7 +52,7 @@
         $pct = fn ($part, $total) => $total > 0 ? number_format(((float) $part / (float) $total) * 100, 1, ',', '.') : '0,0';
     @endphp
 
-    <div class="max-w-7xl mx-auto space-y-6">
+    <div class="traffic-page max-w-7xl mx-auto space-y-6">
 
         {{-- HEADER --}}
         <x-admin-components::page-header
@@ -121,7 +145,7 @@
         {{-- STATISTIK TRAFFIC --}}
         <section class="space-y-4">
             <div class="flex items-center gap-2">
-                <i class="fa-solid fa-chart-column text-[#6CF600]"></i>
+                <i class="fa-solid fa-chart-column" style="color:var(--brand)"></i>
                 <h2 class="text-lg font-bold text-slate-800">Statistik Lalu Lintas</h2>
                 <span class="ml-auto text-xs text-slate-400 font-medium">{{ $period['label'] }}</span>
             </div>
@@ -144,7 +168,7 @@
                             </div>
                             <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 text-xs">
                                 <span class="text-slate-500 font-medium">Total hari: <b>{{ $daily['days']->count() }}</b></span>
-                                <span class="text-[#6CF600] font-bold">{{ $fmt($daily['days']->sum('visitors')) }} kunjungan</span>
+                                <span class="font-bold" style="color:var(--brand)">{{ $fmt($daily['days']->sum('visitors')) }} kunjungan</span>
                             </div>
                         @endif
                     </div>
@@ -188,8 +212,8 @@
                             <canvas id="chartWeekly"></canvas>
                         </div>
                         <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-[10px] font-semibold uppercase tracking-wider">
-                            <span class="flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-sm bg-[#6CF600]/70"></span> Pengunjung</span>
-                            <span class="flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-sm bg-[#1e1e1e]"></span> Klik</span>
+                            <span class="flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-sm" style="background:var(--brand)"></span> Pengunjung</span>
+                            <span class="flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-sm" style="background:var(--dark)"></span> Klik</span>
                             <span class="ml-auto text-slate-500">{{ $fmt($weekly->sum('visitors')) }} pengunjung</span>
                         </div>
                     </div>
@@ -206,8 +230,8 @@
                             <canvas id="chartMonthly"></canvas>
                         </div>
                         <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-[10px] font-semibold uppercase tracking-wider">
-                            <span class="flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-sm bg-[#6CF600]/70"></span> Pengunjung</span>
-                            <span class="flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-sm bg-[#1e1e1e]"></span> Klik</span>
+                            <span class="flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-sm" style="background:var(--brand)"></span> Pengunjung</span>
+                            <span class="flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-sm" style="background:var(--dark)"></span> Klik</span>
                             <span class="ml-auto text-slate-500">{{ $fmt($monthly->sum('visitors')) }} pengunjung</span>
                         </div>
                     </div>
@@ -218,7 +242,7 @@
         {{-- TRAFFIC SETIAP LINK --}}
         <section>
             <div class="flex items-center gap-2 mb-3">
-                <i class="fa-solid fa-link text-[#6CF600]"></i>
+                <i class="fa-solid fa-link" style="color:var(--brand)"></i>
                 <h2 class="text-lg font-bold text-slate-800">Lalu Lintas Setiap Link</h2>
                 <span class="ml-auto text-xs text-slate-400 font-medium">{{ $fmt($totalLinks) }} total klik</span>
             </div>
@@ -234,9 +258,9 @@
                         <div class="flex items-start justify-between gap-3">
                             <a href="{{ $row->element_url ?: '#' }}" target="_blank" rel="noopener noreferrer"
                                 class="font-semibold text-slate-800 break-words leading-snug">{{ $row->element_name }}</a>
-                            <span class="shrink-0 bg-[#6CF600]/10 text-[#1e1e1e] font-bold text-sm px-2.5 py-1 rounded-lg">{{ $fmt($row->clicks) }}</span>
+                            <span class="shrink-0 font-bold text-sm px-2.5 py-1 rounded-lg" style="background:var(--brand-soft);color:var(--dark)">{{ $fmt($row->clicks) }}</span>
                         </div>
-                        <p class="text-xs text-[#6CF600] break-all leading-snug">{{ $row->element_url ?: '-' }}</p>
+                        <p class="text-xs break-all leading-snug" style="color:var(--brand)">{{ $row->element_url ?: '-' }}</p>
                         <div class="grid grid-cols-3 gap-2 text-center border-t border-slate-100 pt-3">
                             <div>
                                 <p class="text-xs font-bold text-slate-800">{{ $fmt($row->clicks) }}</p>
@@ -254,7 +278,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div class="h-full bg-[#6CF600] rounded-full" style="width: {{ min(100, $p) }}%;"></div>
+                                <div class="h-full rounded-full" style="background:var(--brand);width: {{ min(100, $p) }}%;"></div>
                             </div>
                             <span class="text-xs font-semibold text-slate-500">{{ number_format($p, 1, ',', '.') }}%</span>
                         </div>
@@ -293,7 +317,7 @@
                                     </td>
                                     <td class="py-4 px-6 max-w-[260px]">
                                         <a href="{{ $row->element_url ?: '#' }}" target="_blank" rel="noopener noreferrer"
-                                            class="text-[#6CF600] hover:underline truncate block text-xs"
+                                            class="hover:underline truncate block text-xs" style="color:var(--brand)"
                                             title="{{ $row->element_url ?: '-' }}">{{ $row->element_url ?: '-' }}</a>
                                     </td>
                                     <td class="py-4 px-6 text-center font-bold text-slate-800">{{ $fmt($row->clicks) }}</td>
@@ -304,7 +328,7 @@
                                     <td class="py-4 px-6">
                                         <div class="flex items-center gap-2">
                                             <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                                <div class="h-full bg-[#6CF600] rounded-full" style="width: {{ min(100, $p) }}%;"></div>
+                                                <div class="h-full rounded-full" style="background:var(--brand);width: {{ min(100, $p) }}%;"></div>
                                             </div>
                                             <span class="text-xs font-semibold text-slate-500 w-12 text-right">{{ number_format($p, 1, ',', '.') }}%</span>
                                         </div>
@@ -320,7 +344,7 @@
         {{-- TRAFFIC SETIAP BUTTON --}}
         <section>
             <div class="flex items-center gap-2 mb-3">
-                <i class="fa-solid fa-arrow-pointer text-[#6CF600]"></i>
+                <i class="fa-solid fa-arrow-pointer" style="color:var(--brand)"></i>
                 <h2 class="text-lg font-bold text-slate-800">Lalu Lintas Setiap Button</h2>
                 <span class="ml-auto text-xs text-slate-400 font-medium">{{ $fmt($totalButtons) }} total klik</span>
             </div>
@@ -419,7 +443,7 @@
         {{-- DETAIL PENGUNJUNG --}}
         <section>
             <div class="flex items-center gap-2 mb-3">
-                <i class="fa-solid fa-user-clock text-[#6CF600]"></i>
+                <i class="fa-solid fa-user-clock" style="color:var(--brand)"></i>
                 <h2 class="text-lg font-bold text-slate-800">Detail Pengunjung</h2>
                 <span class="ml-auto text-xs text-slate-400 font-medium">{{ $fmt($visitors->total()) }} data</span>
             </div>
@@ -445,7 +469,7 @@
                             <div>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-0.5">Halaman Tujuan</p>
                                 <a href="{{ $visitor->page_url }}" target="_blank" rel="noopener noreferrer"
-                                    class="text-[#6CF600] hover:underline text-xs break-all leading-snug">{{ $visitor->page_url }}</a>
+                                    class="hover:underline text-xs break-all leading-snug" style="color:var(--brand)">{{ $visitor->page_url }}</a>
                             </div>
                         </div>
 
@@ -506,7 +530,7 @@
                                     </td>
                                     <td class="py-4 px-6 max-w-[220px]">
                                         <a href="{{ $visitor->page_url }}" target="_blank" rel="noopener noreferrer"
-                                            class="text-[#6CF600] hover:underline truncate block text-xs"
+                                            class="hover:underline truncate block text-xs" style="color:var(--brand)"
                                             title="{{ $visitor->page_url }}">{{ $visitor->page_url }}</a>
                                     </td>
                                     <td class="py-4 px-6 whitespace-nowrap">
@@ -716,7 +740,7 @@
                             label: 'Pengunjung',
                             data: weekly.map(function (w) { return w.visitors; }),
                             backgroundColor: function (ctx) {
-                                return makeGradient(ctx.chart.ctx, ctx.chartArea, '#6CF600', 'rgba(108,246,0,0.15)');
+                                return makeGradient(ctx.chart.ctx, ctx.chartArea, '#63cd00', 'rgba(99,205,0,0.12)');
                             },
                             hoverBackgroundColor: '#5bd300',
                             borderRadius: 6,
@@ -725,7 +749,7 @@
                         }, {
                             label: 'Klik',
                             data: weekly.map(function (w) { return w.clicks; }),
-                            backgroundColor: '#1e1e1e',
+                            backgroundColor: '#282829',
                             hoverBackgroundColor: '#3f3f46',
                             borderRadius: 6,
                             borderSkipped: false,
@@ -761,7 +785,7 @@
                             label: 'Pengunjung',
                             data: monthly.map(function (m) { return m.visitors; }),
                             backgroundColor: function (ctx) {
-                                return makeGradient(ctx.chart.ctx, ctx.chartArea, '#6CF600', 'rgba(108,246,0,0.15)');
+                                return makeGradient(ctx.chart.ctx, ctx.chartArea, '#63cd00', 'rgba(99,205,0,0.12)');
                             },
                             hoverBackgroundColor: '#5bd300',
                             borderRadius: 6,
@@ -770,7 +794,7 @@
                         }, {
                             label: 'Klik',
                             data: monthly.map(function (m) { return m.clicks; }),
-                            backgroundColor: '#1e1e1e',
+                            backgroundColor: '#282829',
                             hoverBackgroundColor: '#3f3f46',
                             borderRadius: 6,
                             borderSkipped: false,
