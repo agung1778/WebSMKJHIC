@@ -15,15 +15,17 @@ class PublicTrafficController extends Controller
     }
 
     /**
-     * Halaman traffic publik: menampilkan rekapan bulanan.
+     * Halaman traffic publik: menampilkan statistik kunjungan
+     * per hari, per minggu, dan per bulan.
      * Hanya data agregat (jumlah), tanpa IP/referrer/UA.
      */
     public function index()
     {
-        $monthly = $this->traffic->monthlyStats();
-        $chart   = $this->traffic->publicChart(); // 30 hari terakhir
+        $monthly = $this->traffic->monthlyStats(); // 12 bulan terakhir
+        $weekly  = $this->traffic->weeklyStats();   // 8 minggu terakhir
+        $chart   = $this->traffic->publicChart();   // 30 hari terakhir
         $today   = $this->traffic->publicTodayStats(); // statistik hari ini
 
-        return view('PublicSide.traffic.index', compact('monthly', 'chart', 'today'));
+        return view('PublicSide.traffic.index', compact('monthly', 'weekly', 'chart', 'today'));
     }
 }

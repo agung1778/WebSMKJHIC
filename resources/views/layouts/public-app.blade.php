@@ -532,7 +532,7 @@
             <div class="elfsight-app-26bf6423-b36c-42c5-a8db-b1c223ee9ec9" data-elfsight-app-lazy></div>
             {{-- PERBAIKAN: Menambah jarak vertikal (space-y) dan posisi dari bawah (bottom) untuk desktop --}}
             <div
-                class="fixed bottom-[90px] lg:bottom-[100px] right-5 z-40 flex flex-col items-end">
+                class="fixed bottom-[90px] lg:bottom-[100px] right-5 z-40 flex flex-col items-end gap-3">
 
                 {{-- TOMBOL CEPAT WHATSAPP --}}
                 <a href="https://wa.me/{{ $whatsappNumber }}?text={{ urlencode($whatsappMessage) }}" target="_blank"
@@ -540,6 +540,14 @@
                     class="w-12 h-12 lg:w-[65px] lg:h-[65px] rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110"
                     style="background-color: {{ $amaliahGreen }};">
                     <i class="fab fa-whatsapp text-xl lg:text-2xl"></i>
+                </a>
+
+                {{-- TOMBOL STATISTIK KUNJUNGAN (DI BAWAH WHATSAPP) --}}
+                <a href="{{ route('public.traffic.index') }}" target="_blank" rel="noopener noreferrer"
+                    aria-label="Lihat statistik kunjungan website" title="Statistik Kunjungan"
+                    class="w-12 h-12 lg:w-[55px] lg:h-[55px] rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110"
+                    style="background-color: {{ $amaliahDark }};">
+                    <i class="fa-solid fa-chart-column text-xl lg:text-2xl"></i>
                 </a>
 
             </div>
