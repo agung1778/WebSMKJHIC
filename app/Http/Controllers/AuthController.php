@@ -31,7 +31,7 @@ class AuthController extends Controller
         // 1. Validasi input
         $credentials = $request->validate([
             'email' => ['required', 'email', 'not_regex:/[\r\n]/'],
-            'password' => ['required'],
+            'password' => ['required', 'max:72'],
         ]);
 
         // **[IMPROVEMENT]** Buat kunci unik untuk rate limiter berdasarkan email dan IP
@@ -94,6 +94,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login')->with('success', 'Anda Berhasil Logout');
+        return redirect()->route('login')->with('success', 'Anda Berhasil Logout');
     }
 }

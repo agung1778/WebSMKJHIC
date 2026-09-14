@@ -12,65 +12,35 @@ use App\Models\Facility;
 use App\Models\Major;
 use App\Models\SchoolSetting;
 use App\Models\Teacher;
-use Illuminate\Support\Facades\Cache; // <-- 1. IMPORT CACHE
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // 2. Tentukan durasi cache (misal: 10 menit)
-        $cacheDuration = now()->addMinutes(5);
+        $latestNews = News::latest('date_published')->take(4)->get();
 
-        // 3. Bungkus semua query dengan Cache::remember()
-        $latestNews = Cache::remember('home_latest_news', $cacheDuration, function () {
-            return News::latest('date_published')->take(4)->get();
-        });
+        $partners = Partner::latest()->get();
 
-        $partners = Cache::remember('home_partners', $cacheDuration, function () {
-            return Partner::latest()->get();
-        });
+        $testimonials = Testimonial::with('major')->latest()->take(6)->get();
 
-        $testimonials = Cache::remember('home_testimonials', $cacheDuration, function () {
-            return Testimonial::with('major')->latest()->take(6)->get();
-        });
+        $mainImages = Image::whereIn('title', ['MainImage'])->get();
 
-        $mainImages = Cache::remember('home_main_images', $cacheDuration, function () {
-            return Image::whereIn('title', ['MainImage'])->get();
-        });
+        $gridImages = Image::where('title', 'GridImage')->take(5)->get();
 
-        $gridImages = Cache::remember('home_grid_images', $cacheDuration, function () {
-            return Image::where('title', 'GridImage')->take(5)->get();
-        });
-
-        // Cache query utama, baru lakukan padding
-        $majorGridImages = Cache::remember('home_major_grid_images', $cacheDuration, function () {
-            return Image::where('title', 'MajorGrid')->latest()->take(2)->get();
-        });
+        $majorGridImages = Image::where('title', 'MajorGrid')->latest()->take(2)->get();
         $majorGridImages_padded = $majorGridImages->pad(2, null);
 
-        // Cache query utama, baru lakukan padding
-        $facilities = Cache::remember('home_facilities', $cacheDuration, function () {
-            return Facility::latest()->take(5)->get();
-        });
+        $facilities = Facility::latest()->take(5)->get();
         $facilities_padded = $facilities->pad(5, null);
 
-        $majors = Cache::remember('home_majors', $cacheDuration, function () {
-            return Major::orderBy('id', 'asc')->get();
-        });
+        $majors = Major::orderBy('id', 'asc')->get();
 
-        $schoolSettings = Cache::remember('home_school_settings', $cacheDuration, function () {
-            return SchoolSetting::first();
-        });
+        $schoolSettings = SchoolSetting::first();
 
-        $teachersCount = Cache::remember('home_teachers_count', $cacheDuration, function () {
-            return Teacher::count();
-        });
+        $teachersCount = Teacher::count();
 
-        $facilitiesCount = Cache::remember('home_facilities_count', $cacheDuration, function () {
-            return Facility::count();
-        });
+        $facilitiesCount = Facility::count();
 
-        // Kirim semua variabel ke view
         return view('welcome', [
             'latestNews'      => $latestNews,
             'partners'        => $partners,
