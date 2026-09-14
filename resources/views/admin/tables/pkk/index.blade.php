@@ -34,90 +34,55 @@
             <x-admin-components::stat-card label="Berbayar" :value="$projects->whereNotNull('price')->count()" icon="fa-solid fa-tags" tone="amber" />
         </div>
 
-        <div data-filter-root>
-            <div class="toolbar">
-                <div class="search-field">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input class="app-input" type="search" placeholder="Cari proyek, jurusan, kategori…" data-filter-input>
-                </div>
-                <select class="app-select" style="width:auto" data-filter-cat>
-                    <option value="">Semua kategori</option>
-                    <option value="Makanan">Makanan</option>
-                    <option value="Kerajinan">Kerajinan</option>
-                    <option value="Jasa">Jasa</option>
-                    <option value="Teknologi">Teknologi</option>
-                </select>
-                <span class="toolbar-spacer"></span>
-                <a class="app-btn app-btn-md" href="{{ route('admin.export', ['resource' => 'pkk']) }}" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
-            </div>
-
-            <div class="table-wrap">
-                <table class="table-app">
-                    <thead>
-                        <tr>
-                            <th>Proyek</th>
-                            <th>Kategori</th>
-                            <th>Kelas</th>
-                            <th>Harga</th>
-                            <th class="text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($projects as $p)
-                            @php
-                                $category = $p->category ?? 'Produk';
-                                $priceText = $p->price !== null ? number_format($p->price, 0, ',', '.') : 'Gratis';
-                            @endphp
-                            <tr data-row data-cat="{{ $category }}">
-                                <td>
-                                    <div class="flex items-center gap-3" style="min-width:280px">
-                                        <img class="thumb" src="{{ $p->photo ? asset('storage/' . $p->photo) : 'https://placehold.co/64x64/eff9e3/63cd00?text=PKK' }}" alt="{{ $p->title }}" loading="lazy">
-                                        <div style="min-width:0">
-                                            <div class="cell-main truncate">{{ $p->title }}</div>
-                                            <div class="cell-sub truncate" style="max-width:320px">{{ \Illuminate\Support\Str::limit(strip_tags($p->description ?? ''), 140) }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="badge {{ $categories[$category] ?? 'badge-info' }}">{{ $category }}</span></td>
-                                <td><span style="white-space:nowrap">{{ $p->student_class ?? '-' }}</span></td>
-                                <td><span style="white-space:nowrap;{{ $priceText === 'Gratis' ? 'color:var(--green);font-weight:700' : '' }}">{{ $priceText }}</span></td>
-                                <td>
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a class="app-btn app-btn-sm app-btn-primary" href="{{ route('admin.pkk.edit', $p) }}"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
-                                        <div class="dropdown">
-                                            <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
-                                            <div class="dropdown-menu" style="display:none">
-                                                <a class="dropdown-item" href="{{ route('admin.pkk.show', $p) }}"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
-                                                <div class="dropdown-sep"></div>
-                                                <form action="{{ route('admin.pkk.destroy', $p) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus proyek ini?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="dropdown-item danger" type="submit"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr data-row data-empty>
-                                <td colspan="5">
-                                    <div class="p-6 text-center">
-                                        <div class="empty-state">
-                                            <div class="empty-icon"><i class="fa-solid fa-lightbulb"></i></div>
-                                            <h3>Belum ada proyek P5/PKK</h3>
-                                            <p>Tambahkan proyek P5/PKK pertama untuk ditampilkan di galeri.</p>
-                                            <a class="app-btn app-btn-primary" href="{{ route('admin.pkk.create') }}"><i class="fa-solid fa-plus"></i>Tambah Proyek</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            @include('admin.tables._filter')
-        </div>
+        <x-admin-components::table
+            :head="['Proyek', 'Kategori', 'Kelas', 'Harga', ['label' => 'Aksi', 'right' => true]]"
+            search-hint="Cari proyek, jurusan, kategori…"
+            :category-options="['' => 'Semua kategori', 'Makanan' => 'Makanan', 'Kerajinan' => 'Kerajinan', 'Jasa' => 'Jasa', 'Teknologi' => 'Teknologi']"
+            :export-url="route('admin.export', ['resource' => 'pkk'])">
+            <x-slot:body>
+                @forelse ($projects as $p)
+                    @php
+                        $category = $p->category ?? 'Produk';
+                        $priceText = $p->price !== null ? number_format($p->price, 0, ',', '.') : 'Gratis';
+                    @endphp
+                    <tr data-row data-cat="{{ $category }}">
+                        <td data-label="Proyek">
+                            <div class="table-main">
+                                <img class="thumb" src="{{ $p->photo ? asset('storage/' . $p->photo) : 'https://placehold.co/64x64/eff9e3/63cd00?text=PKK' }}" alt="{{ $p->title }}" loading="lazy">
+                                <div style="min-width:0">
+                                    <div class="cell-main truncate">{{ $p->title }}</div>
+                                    <div class="cell-sub truncate">{{ \Illuminate\Support\Str::limit(strip_tags($p->description ?? ''), 140) }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-label="Kategori"><span class="badge {{ $categories[$category] ?? 'badge-info' }}">{{ $category }}</span></td>
+                        <td data-label="Kelas"><span style="white-space:nowrap">{{ $p->student_class ?? '-' }}</span></td>
+                        <td data-label="Harga"><span style="white-space:nowrap;{{ $priceText === 'Gratis' ? 'color:var(--green);font-weight:700' : '' }}">{{ $priceText }}</span></td>
+                        <td data-label="Aksi" class="text-right">
+                            <div class="table-actions">
+                                <a class="act-btn view" href="{{ route('admin.pkk.show', $p) }}" title="Lihat detail"><i class="fa-regular fa-eye"></i></a>
+                                <a class="act-btn edit" href="{{ route('admin.pkk.edit', $p) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                <form action="{{ route('admin.pkk.destroy', $p) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus proyek ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr data-row data-empty>
+                        <td colspan="5">
+                            <x-admin-components::empty-state
+                                icon="fa-solid fa-lightbulb"
+                                title="Belum ada proyek P5/PKK"
+                                description="Tambahkan proyek P5/PKK pertama untuk ditampilkan di galeri."
+                                action-label="Tambah Proyek"
+                                action-url="{{ route('admin.pkk.create') }}" />
+                        </td>
+                    </tr>
+                @endforelse
+            </x-slot:body>
+        </x-admin-components::table>
     </div>
 @endsection

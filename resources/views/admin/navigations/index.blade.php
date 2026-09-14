@@ -28,79 +28,49 @@
             <x-admin-components::stat-card label="Posisi" :value="$navigations->pluck('position')->unique()->count()" icon="fa-solid fa-layer-group" tone="amber" />
         </div>
 
-        <div data-filter-root>
-            <div class="toolbar">
-                <div class="search-field">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input class="app-input" type="search" placeholder="Cari menu, URL, posisi…" data-filter-input>
-                </div>
-                <span class="toolbar-spacer"></span>
-            </div>
-
-            <div class="table-wrap">
-                <table class="table-app">
-                    <thead>
-                        <tr>
-                            <th style="width:64px">Urutan</th>
-                            <th>Label Menu</th>
-                            <th>URL / Link</th>
-                            <th>Posisi</th>
-                            <th>Tipe</th>
-                            <th>Status</th>
-                            <th class="text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($navigations as $n)
-                            @php
-                                $navType = ucfirst($n->type);
-                                $navActive = $n->is_active ? 'active' : 'inactive';
-                                $navPosition = str_replace('_', ' ', $n->position);
-                            @endphp
-                            <tr data-row>
-                                <td><span class="badge badge-info">#{{ $n->order }}</span></td>
-                                <td><div class="cell-main">{{ $n->title }}</div></td>
-                                <td><code class="cell-sub" style="font-size:12px">{{ $n->url }}</code></td>
-                                <td><span class="badge badge-info">{{ $navPosition }}</span></td>
-                                <td>
-                                    <span class="badge {{ $navType === 'Button' ? 'badge-archived' : 'badge-published' }}">{{ $navType }}</span>
-                                </td>
-                                <td><span class="badge {{ $navActive === 'active' ? 'badge-published' : 'badge-archived' }}">{{ $navActive === 'active' ? 'Aktif' : 'Nonaktif' }}</span></td>
-                                <td>
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a class="app-btn app-btn-sm app-btn-primary" href="{{ route('admin.navigations.edit', $n) }}"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
-                                        <div class="dropdown">
-                                            <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
-                                            <div class="dropdown-menu" style="display:none">
-                                                <form action="{{ route('admin.navigations.destroy', $n) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus menu ini?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="dropdown-item danger" type="submit"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr data-row data-empty>
-                                <td colspan="7">
-                                    <div class="p-6 text-center">
-                                        <div class="empty-state">
-                                            <div class="empty-icon"><i class="fa-solid fa-bars"></i></div>
-                                            <h3>Belum ada menu</h3>
-                                            <p>Tambahkan menu navigasi pertama untuk website sekolah.</p>
-                                            <a class="app-btn app-btn-primary" href="{{ route('admin.navigations.create') }}"><i class="fa-solid fa-plus"></i>Tambah Menu</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            @include('admin.tables._filter')
-        </div>
+        <x-admin-components::table
+            :head="[['label' => 'Urutan', 'class' => 'w-16'], 'Label Menu', 'URL / Link', 'Posisi', 'Tipe', 'Status', ['label' => 'Aksi', 'right' => true]]"
+            search-hint="Cari menu, URL, posisi…">
+            <x-slot:body>
+                @forelse ($navigations as $n)
+                    @php
+                        $navType = ucfirst($n->type);
+                        $navActive = $n->is_active ? 'active' : 'inactive';
+                        $navPosition = str_replace('_', ' ', $n->position);
+                    @endphp
+                    <tr data-row>
+                        <td data-label="Urutan"><span class="badge badge-info">#{{ $n->order }}</span></td>
+                        <td data-label="Label Menu"><div class="cell-main">{{ $n->title }}</div></td>
+                        <td data-label="URL / Link"><code class="cell-sub" style="font-size:12px">{{ $n->url }}</code></td>
+                        <td data-label="Posisi"><span class="badge badge-info">{{ $navPosition }}</span></td>
+                        <td data-label="Tipe">
+                            <span class="badge {{ $navType === 'Button' ? 'badge-archived' : 'badge-published' }}">{{ $navType }}</span>
+                        </td>
+                        <td data-label="Status"><span class="badge {{ $navActive === 'active' ? 'badge-published' : 'badge-archived' }}">{{ $navActive === 'active' ? 'Aktif' : 'Nonaktif' }}</span></td>
+                        <td data-label="Aksi" class="text-right">
+                            <div class="table-actions">
+                                <a class="act-btn edit" href="{{ route('admin.navigations.edit', $n) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                <form action="{{ route('admin.navigations.destroy', $n) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus menu ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr data-row data-empty>
+                        <td colspan="7">
+                            <x-admin-components::empty-state
+                                icon="fa-solid fa-bars"
+                                title="Belum ada menu"
+                                description="Tambahkan menu navigasi pertama untuk website sekolah."
+                                action-label="Tambah Menu"
+                                action-url="{{ route('admin.navigations.create') }}" />
+                        </td>
+                    </tr>
+                @endforelse
+            </x-slot:body>
+        </x-admin-components::table>
     </div>
 @endsection

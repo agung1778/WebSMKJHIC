@@ -30,77 +30,49 @@
         </div>
 
         {{-- Tabel --}}
-        <div data-filter-root>
-            <div class="toolbar">
-                <div class="search-field">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input class="app-input" type="search" placeholder="Cari berita, penerbit…" data-filter-input>
-                </div>
-                <span class="toolbar-spacer"></span>
-                <a class="app-btn app-btn-md" href="{{ route('admin.export', ['resource' => 'news']) }}" title="Export CSV"><i class="fa-solid fa-file-csv"></i><span class="hide-mob">Export</span></a>
-            </div>
-
-            <div class="table-wrap">
-                <table class="table-app">
-                    <thead>
-                        <tr>
-                            <th>Berita</th>
-                            <th>Tanggal Terbit</th>
-                            <th>Penerbit</th>
-                            <th class="text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($news as $n)
-                            <tr data-row>
-                                <td>
-                                    <div class="flex items-center gap-3" style="min-width:280px">
-                                        <img class="thumb" src="{{ $n->image ? asset('storage/' . $n->image) : 'https://placehold.co/64x64/eff9e3/63cd00?text=BRT' }}" alt="{{ $n->title }}" loading="lazy">
-                                        <div style="min-width:0">
-                                            <div class="cell-main truncate">{{ $n->title }}</div>
-                                            <div class="cell-sub truncate" style="max-width:420px">{{ \Illuminate\Support\Str::limit(strip_tags($n->description), 150) }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($n->date_published)->translatedFormat('d M Y') }}</span></td>
-                                <td><span style="white-space:nowrap"><i class="fa-regular fa-user mr-1" style="color:var(--text-3)"></i>{{ $n->publisher }}</span></td>
-                                <td>
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a class="app-btn app-btn-sm app-btn-primary" href="{{ route('admin.news.edit', $n) }}"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
-                                        <div class="dropdown">
-                                            <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
-                                            <div class="dropdown-menu" style="display:none">
-                                                <a class="dropdown-item" href="{{ route('admin.news.show', $n) }}"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
-                                                <div class="dropdown-sep"></div>
-                                                <form action="{{ route('admin.news.destroy', $n) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus berita ini?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="dropdown-item danger" type="submit"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr data-row data-empty>
-                                <td colspan="4">
-                                    <div class="p-6 text-center">
-                                        <div class="empty-state">
-                                            <div class="empty-icon"><i class="fa-solid fa-newspaper"></i></div>
-                                            <h3>Belum ada berita</h3>
-                                            <p>Tulis berita pertama untuk ditampilkan di halaman website sekolah.</p>
-                                            <a class="app-btn app-btn-primary" href="{{ route('admin.news.create') }}"><i class="fa-solid fa-plus"></i>Tulis Berita</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            @include('admin.tables._filter')
-        </div>
+        <x-admin-components::table
+            :head="['Berita', 'Tanggal Terbit', 'Penerbit', ['label' => 'Aksi', 'right' => true]]"
+            search-hint="Cari berita, penerbit…"
+            :export-url="route('admin.export', ['resource' => 'news'])">
+            <x-slot:body>
+                @forelse ($news as $n)
+                    <tr data-row>
+                        <td data-label="Berita">
+                            <div class="table-main">
+                                <img class="thumb" src="{{ $n->image ? asset('storage/' . $n->image) : 'https://placehold.co/64x64/eff9e3/63cd00?text=BRT' }}" alt="{{ $n->title }}" loading="lazy">
+                                <div style="min-width:0">
+                                    <div class="cell-main truncate">{{ $n->title }}</div>
+                                    <div class="cell-sub truncate">{{ \Illuminate\Support\Str::limit(strip_tags($n->description), 150) }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-label="Tanggal Terbit"><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($n->date_published)->translatedFormat('d M Y') }}</span></td>
+                        <td data-label="Penerbit"><span style="white-space:nowrap"><i class="fa-regular fa-user mr-1" style="color:var(--text-3)"></i>{{ $n->publisher }}</span></td>
+                        <td data-label="Aksi" class="text-right">
+                            <div class="table-actions">
+                                <a class="act-btn view" href="{{ route('admin.news.show', $n) }}" title="Lihat detail"><i class="fa-regular fa-eye"></i></a>
+                                <a class="act-btn edit" href="{{ route('admin.news.edit', $n) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                <form action="{{ route('admin.news.destroy', $n) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus berita ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr data-row data-empty>
+                        <td colspan="4">
+                            <x-admin-components::empty-state
+                                icon="fa-solid fa-newspaper"
+                                title="Belum ada berita"
+                                description="Tulis berita pertama untuk ditampilkan di halaman website sekolah."
+                                action-label="Tulis Berita"
+                                action-url="{{ route('admin.news.create') }}" />
+                        </td>
+                    </tr>
+                @endforelse
+            </x-slot:body>
+        </x-admin-components::table>
     </div>
 @endsection

@@ -761,6 +761,7 @@ font-size: 10.5px;
 .act-btn.view { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 28%, transparent); background: var(--blue-soft); }
 .act-btn.edit { color: var(--brand-deep); border-color: color-mix(in srgb, var(--brand) 35%, transparent); background: var(--brand-soft); }
 .act-btn.delete { color: var(--rose); border-color: color-mix(in srgb, var(--rose) 28%, transparent); background: var(--rose-soft); }
+.act-btn.publish { color: var(--green); border-color: color-mix(in srgb, var(--green) 30%, transparent); background: var(--green-soft); }
 .act-btn:hover { transform: translateY(-1px); }
 
 .checkbox-app {
@@ -1305,3 +1306,71 @@ html.dark .form-section { box-shadow:none; }
 .info-grid > div { padding:10px 12px; background:var(--app-bg); border-radius:12px; border:1px solid var(--border); }
 .img-thumb { display:block; border-radius:14px; overflow:hidden; border:1px solid var(--border); background:var(--surface); }
 .img-thumb img { width:100%; height:120px; object-fit:cover; display:block; }
+
+/* ---------- Komponen tabel responsif ---------- */
+.table-main { display:flex; align-items:center; gap:12px; min-width:0; flex:1 1 auto; }
+.table-main .cell-main { font-weight:600; color:var(--text); }
+.table-main .cell-sub { max-width:340px; }
+.table-actions { display:flex; align-items:center; justify-content:flex-end; gap:6px; flex-wrap:wrap; }
+.table-actions .app-btn { flex-shrink:0; }
+.table-actions .dropdown { flex-shrink:0; }
+
+/* Mode kartu: setiap baris jadi kartu di layar sempit (label tampil otomatis via data-label) */
+@media (max-width: 1599.98px) {
+    .table-wrap { overflow:visible; border:0; background:transparent; box-shadow:none; border-radius:0; }
+    .table-app, .table-app thead, .table-app tbody, .table-app tr, .table-app th, .table-app td { display:block; }
+    .table-app thead { display:none; }
+    .table-app tbody { display:flex; flex-direction:column; gap:14px; }
+    .table-app tbody tr {
+        background:var(--surface);
+        border:1px solid var(--border);
+        border-radius:16px;
+        box-shadow:0 1px 2px rgba(28,28,29,.04), 0 4px 14px rgba(28,28,29,.05);
+        padding:14px 14px 10px;
+    }
+    .table-app tbody tr:hover { background:var(--surface); }
+    .table-app tbody tr:nth-child(even) { background:var(--surface); }
+    .table-app tbody tr[data-empty] { background:transparent; border:1px dashed var(--border-strong); box-shadow:none; }
+    .table-app tbody td {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        padding:8px 2px;
+        border:0;
+        color:var(--text-2);
+        font-size:12.5px;
+        vertical-align:top;
+        flex-wrap:wrap;
+    }
+    .table-app tbody td[data-label]::before {
+        content:attr(data-label);
+        flex-shrink:0;
+        font-size:10px;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:.06em;
+        color:var(--brand-deep);
+        background:var(--brand-softer);
+        border-radius:999px;
+        padding:5px 10px;
+        margin-top:2px;
+    }
+    .table-app tbody td .table-main { flex:1 1 auto; min-width:0; }
+    .table-app tbody td .table-main .cell-sub { max-width:none; -webkit-line-clamp:2; -webkit-box-orient:vertical; display:-webkit-box; overflow:hidden; }
+    .table-app tbody td .table-actions { flex:1 1 auto; justify-content:flex-end; }
+    .table-app tbody td .table-actions .act-btn { width:38px; height:38px; }
+    .table-app tbody td .thumb { width:40px; height:40px; border-radius:10px; flex-shrink:0; }
+    .table-app tbody tr[data-empty] td { display:block; padding:4px 0 0; }
+    .table-app tbody tr[data-empty] .empty-state { padding:28px 12px; }
+}
+
+@media (min-width: 1600px) {
+    .table-app thead th { padding: 12px 14px; }
+    .table-app tbody td { padding: 12px 14px; }
+    .table-app .thumb { width: 42px; height: 42px; }
+    .table-app tbody td .cell-main { max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .table-app tbody td .table-main .cell-sub { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .table-app tbody td code { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .table-actions .act-btn { width: 30px; height: 30px; }
+}
