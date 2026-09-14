@@ -23,8 +23,8 @@
 @endphp
 <div class="app-card app-card-hover p-5 stat-card">
     <div>
-        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">{{ $label }}</div>
-        <div class="text-[26px] lg:text-[30px] font-extrabold text-[#1C1C1D] mt-1 tracking-tight" @if($attributes->has('data-count')) data-count="{{ $attributes->get('data-count') }}" @endif>{{ $value }}</div>
+        <div class="text-[11px] font-semibold uppercase tracking-wider" style="color:var(--text-3)">{{ $label }}</div>
+        <div class="text-[26px] lg:text-[30px] font-extrabold mt-1 tracking-tight" style="color:var(--text)" @if($attributes->has('data-count')) data-count="{{ $attributes->get('data-count') }}" @endif>{{ $value }}</div>
     </div>
 
     <div class="flex items-center justify-between gap-3">
@@ -44,6 +44,6 @@
     </div>
 
     @if($sub)
-        <div class="text-xs text-gray-400 mt-1">{{ $sub }}</div>
+        <div class="text-xs mt-1" style="color:var(--text-3)">{{ $sub }}</div>
     @endif
 </div>

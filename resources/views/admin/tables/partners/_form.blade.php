@@ -1,5 +1,9 @@
 @php
     $item = $partner ?? null;
+    $sectorOptions = \App\Models\Partner::sectorOptions();
+    if ($item && $item->sector && !in_array($item->sector, \App\Models\Partner::SECTOR_OPTIONS, true)) {
+        $sectorOptions[$item->sector] = $item->sector;
+    }
 @endphp
 
 <div class="grid gap-6 lg:grid-cols-3 items-start">
@@ -12,8 +16,9 @@
                         placeholder="Contoh: PT Teknologi Nusantara" icon="fa-solid fa-building" />
                 </div>
                 <div>
-                    <x-admin-components::field name="sector" label="Sektor / Bidang" :value="$item->sector ?? null"
-                        placeholder="Contoh: Teknologi Informasi" icon="fa-solid fa-industry" />
+                    <x-admin-components::field name="sector" label="Sektor / Bidang" type="select"
+                        :options="$sectorOptions" :value="$item->sector ?? null"
+                        hint="Pilih jenis usaha mitra, mis. Jasa Hiburan &amp; Wisata." icon="fa-solid fa-industry" />
                 </div>
                 <div>
                     <x-admin-components::field name="city" label="Kota" :value="$item->city ?? null"
