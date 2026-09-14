@@ -232,13 +232,7 @@
                 </div>
             </div>
 
-            {{-- Tombol Load More --}}
-            <div id="loadMoreContainer" class="text-center mt-12">
-                <button id="loadMoreBtn"
-                    class="bg-white hover:bg-[#63cd00] hover:text-white text-[#282829] font-bold py-3 px-8 rounded-full border border-gray-300 hover:border-[#63cd00] transition-colors duration-300 shadow-sm">
-                    Tampilkan Lebih Banyak <i class="fas fa-chevron-down ml-1 text-xs"></i>
-                </button>
-            </div>
+
         </div>
     </section>
 
@@ -271,11 +265,6 @@
             var pills = Array.from(document.querySelectorAll('.sector-pill'));
             var cards = Array.from(document.querySelectorAll('.partner-card'));
             var noResults = document.getElementById('noResultsMessage');
-            var loadMoreWrap = document.getElementById('loadMoreContainer');
-            var loadMoreBtn = document.getElementById('loadMoreBtn');
-
-            var itemsPerLoad = 12;
-            var shown = itemsPerLoad;
             var state = { q: '', sector: '' };
 
             function applyState() {
@@ -284,21 +273,16 @@
                 cards.forEach(function (card) {
                     var okName = !q || (card.dataset.name || '').indexOf(q) !== -1;
                     var okSector = !state.sector || (card.dataset.sector || '').indexOf(state.sector) !== -1;
-                    if (okName && okSector) visible++;
-                    card.dataset.ok = (okName && okSector) ? '1' : '0';
+                    var match = okName && okSector;
+                    visible += match ? 1 : 0;
+                    card.classList.toggle('hidden', !match);
                 });
                 noResults.classList.toggle('hidden', visible > 0);
-                cards.forEach(function (card, index) {
-                    var shouldShow = card.dataset.ok === '1' && index < shown;
-                    card.classList.toggle('hidden', !shouldShow);
-                });
-                loadMoreWrap.style.display = (visible > 0 && shown < cards.length) ? 'block' : 'none';
             }
 
             if (searchInput) {
                 searchInput.addEventListener('keyup', function () {
                     state.q = searchInput.value.toLowerCase().trim();
-                    shown = itemsPerLoad;
                     applyState();
                 });
             }
@@ -308,17 +292,9 @@
                     pills.forEach(function (p) { p.classList.remove('active'); });
                     pill.classList.add('active');
                     state.sector = pill.dataset.sector;
-                    shown = itemsPerLoad;
                     applyState();
                 });
             });
-
-            if (loadMoreBtn) {
-                loadMoreBtn.addEventListener('click', function () {
-                    shown += itemsPerLoad;
-                    applyState();
-                });
-            }
 
             applyState();
         });
