@@ -95,7 +95,8 @@
     }
 
     /* Kartu & pesan kosong disembunyikan secara default, baru tampil sesuai radio terpilih */
-    .fw-card { display: none; }
+    .fw-card { display: none; min-width: 0; }
+    .fw-card > .teacher-card { flex: 1 1 auto; min-width: 0; }
     .fw-empty { display: none; }
 
     /* Tombol aktif (hijau) */
@@ -122,8 +123,8 @@
     #fw-staff:checked ~ .fw-empty--staff,
     #fw-all:checked ~ .fw-empty--all { display: flex; }
 
-    /* Grid kartu guru */
-    .teachers-grid { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 1.25rem; }
+    /* Grid kartu guru — tinggi baris seragam (semua kartu sama besar) */
+    .teachers-grid { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); grid-auto-rows: 1fr; align-items: stretch; gap: 1.25rem; }
     @media (min-width: 480px) { .teachers-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (min-width: 900px) { .teachers-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (min-width: 1180px) { .teachers-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
@@ -143,7 +144,7 @@
     .teacher-card:focus-visible { outline: 2px solid var(--ts-green); outline-offset: 2px; }
 
     /* Foto guru: selalu 1:1 (square) */
-    .teacher-card__photo { position: relative; width: 100%; aspect-ratio: 1 / 1; background: linear-gradient(145deg, #f3f4f6, #e9edf1); overflow: hidden; }
+    .teacher-card__photo { position: relative; width: 100%; aspect-ratio: 1 / 1; flex-shrink: 0; background: linear-gradient(145deg, #f3f4f6, #e9edf1); overflow: hidden; }
     .teacher-card__photo img {
         position: absolute; inset: 0; width: 100%; height: 100%;
         object-fit: cover; object-position: top center;
@@ -156,7 +157,7 @@
     .teacher-card__avatar {
         position: absolute; inset: 0;
         display: flex; align-items: center; justify-content: center;
-        font-size: 5.5rem; font-weight: 700;
+        font-size: clamp(3.2rem, 8vw + 0.75rem, 5.5rem); font-weight: 700;
         color: #63cd00;
         background: linear-gradient(145deg, #282829 0%, #3b3b3c 100%);
     }
