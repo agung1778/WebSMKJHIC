@@ -92,12 +92,13 @@
                             {{-- Kontainer Iframe YouTube (Hanya tampil jika showVideo true) --}}
                             <div x-show="showVideo" x-cloak class="w-full h-full">
                                 {{-- Iframe yang sudah dimodifikasi --}}
-                                <iframe class="w-full h-full"
-                                    :src="showVideo ? 'https://www.youtube-nocookie.com/embed/STOhZZmY6Co?autoplay=1&mute=1&controls=0&loop=1&playlist=STOhZZmY6Co&rel=0&iv_load_policy=3&modestbranding=1' : ''"
-                                    title="YouTube video player" frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowfullscreen>
-                                </iframe>
+<iframe class="w-full h-full"
+    :src="showVideo ? 'https://www.youtube-nocookie.com/embed/STOhZZmY6Co?autoplay=1&mute=1&controls=0&loop=1&playlist=STOhZZmY6Co&rel=0&iv_load_policy=3&modestbranding=1' : ''"
+    title="YouTube video player" frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+    loading="lazy">
+</iframe>
 
                                 {{-- Tombol "Close" untuk Video --}}
                                 <button @click="showVideo = false" aria-label="Tutup video"

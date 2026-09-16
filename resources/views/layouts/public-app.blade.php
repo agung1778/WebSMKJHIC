@@ -10,19 +10,34 @@
     <link rel="icon" type="image/webp" href="{{ asset('assets/logo/am.webp') }}">
 
     <title>@yield('title', 'SMK Amaliah 1 & 2')</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ @filemtime(public_path('css/app.css')) }}">
-    <script type="module" src="{{ asset('js/app.js') }}?v={{ @filemtime(public_path('js/app.js')) }}"></script>
 
+    {{-- ============================================================ --}}
+    {{-- PERFORMANCE: Resource Hints & Preconnects --}}
+    {{-- ============================================================ --}}
+    {{-- DNS Prefetch for third-party domains --}}
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://elfsightcdn.com">
+    <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
+    <link rel="dns-prefetch" href="https://www.google.com">
+    <link rel="dns-prefetch" href="https://maps.googleapis.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
-    {{-- 2. PERFORMA: Preconnect ke domain penting untuk mempercepat handshake DNS, TCP, dan TLS --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    {{-- Preconnect for critical third-party origins --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://elfsightcdn.com" crossorigin>
+    <link rel="preconnect" href="https://www.youtube-nocookie.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
-    {{-- Google Fonts: Poppins --}}
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" as="style"
-        onload="this.onload=null;this.rel='stylesheet'">
+    {{-- ============================================================ --}}
+    {{-- FONTS: Google Fonts + FontAwesome with font-display:swap --}}
+    {{-- ============================================================ --}}
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     </noscript>
 
 
@@ -192,6 +207,40 @@
             }
         }
     </style>
+
+    {{-- ============================================================ --}}
+    {{-- VITE ASSETS: CSS & JS with versioning --}}
+    {{-- ============================================================ --}}
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ @filemtime(public_path('css/app.css')) }}">
+    <script type="module" src="{{ asset('js/app.js') }}?v={{ @filemtime(public_path('js/app.js')) }}"></script>
+
+    {{-- ============================================================ --}}
+    {{-- PERFORMANCE: Defer non-critical third-party scripts --}}
+    {{-- ============================================================ --}}
+    {{-- Elfsight Chatbot - deferred with lazy initialization --}}
+    <script>
+        // Defer Elfsight loading until user interaction or idle time
+        (function() {
+            function loadElfsight() {
+                if (document.querySelector('.elfsight-app-26bf6423-b36c-42c5-a8db-b1c223ee9ec9')) return;
+                var s = document.createElement('script');
+                s.src = 'https://elfsightcdn.com/platform.js';
+                s.async = true;
+                document.head.appendChild(s);
+                var d = document.createElement('div');
+                d.className = 'elfsight-app-26bf6423-b36c-42c5-a8db-b1c223ee9ec9';
+                d.setAttribute('data-elfsight-app-lazy', '');
+                document.body.appendChild(d);
+                ['click','scroll','mousemove','keydown','touchstart'].forEach(function(e) {
+                    window.removeEventListener(e, loadElfsight, {passive:true});
+                });
+            }
+            ['click','scroll','mousemove','keydown','touchstart'].forEach(function(e) {
+                window.addEventListener(e, loadElfsight, {passive:true, once:true});
+            });
+            setTimeout(loadElfsight, 3000);
+        })();
+    </script>
 </head>
 
 <script>
@@ -524,12 +573,9 @@
             @endphp
 
             {{-- ================================================================= --}}
-            {{-- TOMBOL CEPAT & WIDGET (WHATSAPP, UP BUTTON, & ELFSIGHT AI) ----}}
+            {{-- TOMBOL CEPAT & WIDGET (WHATSAPP, UP BUTTON) --}}
             {{-- ================================================================= --}}
 
-            <!-- Elfsight AI Chatbot | Ama Dan Lia -->
-            <script src="https://elfsightcdn.com/platform.js" async></script>
-            <div class="elfsight-app-26bf6423-b36c-42c5-a8db-b1c223ee9ec9" data-elfsight-app-lazy></div>
             {{-- PERBAIKAN: Menambah jarak vertikal (space-y) dan posisi dari bawah (bottom) untuk desktop --}}
             <div
                 class="fixed bottom-[90px] lg:bottom-[100px] right-5 z-40 flex flex-col items-end gap-3">
