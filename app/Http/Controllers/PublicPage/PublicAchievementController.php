@@ -16,8 +16,8 @@ class PublicAchievementController extends Controller
      */
     public function index()
     {
-        // Mengambil semua prestasi, diurutkan dari yang terbaru, dengan paginasi
-        $achievements = Achievement::latest()->paginate(10);
+        // Mengambil semua prestasi (tanpa paginasi agar semua kartu langsung tampil)
+        $achievements = Achievement::latest()->get();
 
         $achievementContent = Writing::where('title', 'Achievement')
             ->orderBy('release_date', 'desc')
@@ -26,10 +26,23 @@ class PublicAchievementController extends Controller
         // Mengambil gambar terkait, diasumsikan judul gambar 'AchievementImage' atau 'main'
         $achievementImages = Image::whereIn('title', ['AchievementImage', 'main'])->get();
 
+        $all = Achievement::all(['category', 'level', 'winner', 'date']);
+
+        $stats = [
+            'total'          => $all->count(),
+            'categories'     => $all->pluck('category')->filter()->unique()->values(),
+            'levels'         => $all->pluck('level')->filter()->unique()->values(),
+            'categoriesCount'=> $all->pluck('category')->filter()->unique()->count(),
+            'levelsCount'    => $all->pluck('level')->filter()->unique()->count(),
+            'yearMin'        => $all->pluck('date')->filter()->map(fn ($d) => \Carbon\Carbon::parse($d)->year)->min(),
+            'yearMax'        => $all->pluck('date')->filter()->map(fn ($d) => \Carbon\Carbon::parse($d)->year)->max(),
+        ];
+
         return view('PublicSide.achievement.index', [
             'achievements' => $achievements,
             'achievementImages' => $achievementImages,
             'achievementContent' => $achievementContent,
+            'stats' => $stats,
         ]);
     }
 

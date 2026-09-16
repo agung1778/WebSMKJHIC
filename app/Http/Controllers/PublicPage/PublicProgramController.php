@@ -15,8 +15,8 @@ class PublicProgramController extends Controller
      */
     public function index()
     {
-        // Mengambil semua program, diurutkan dari yang terbaru
-        $programs = SchoolProgram::published()->latest()->paginate(10);
+        // Mengambil semua program (tanpa paginasi agar semua kartu langsung tampil)
+        $programs = SchoolProgram::published()->latest()->get();
 
         $programImages = Image::whereIn('title', ['ProgramImage', 'main'])->get();
 

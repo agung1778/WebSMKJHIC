@@ -1,155 +1,160 @@
-@extends('layouts.public-app') {{-- Sesuaikan dengan nama file layout utama Anda --}}
+@extends('layouts.public-app')
+
+@section('title', 'Program Unggulan | SMK Amaliah 1 & 2')
+@section('description', 'Jelajahi program unggulan SMK Amaliah 1 & 2 Ciawi-Bogor: kurikulum inovatif, fasilitas modern, dan pembelajaran yang membentuk profesional masa depan.')
+
+@include('PublicSide.program._styles')
+
+@php
+    $hasImages = isset($programImages) && $programImages->isNotEmpty();
+    $heroImage = $hasImages ? $programImages->first() : null;
+    $total = $programs->count();
+@endphp
 
 @section('content')
-    <!DOCTYPE html>
-    <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>@yield('title')</title>
+    {{-- ============================ HERO ============================ --}}
+    <section class="relative bg-[#282829]">
+        <div class="relative h-[320px] lg:h-[420px] overflow-hidden">
+            @if ($heroImage)
+                <img src="{{ Storage::url($heroImage->path) }}"
+                    alt="{{ $heroImage->description ?? $heroImage->filename }}"
+                    class="w-full h-full object-cover">
+            @else
+                <div class="absolute inset-0">
+                    <div class="absolute -top-24 -right-16 w-96 h-96 rounded-full opacity-25"
+                        style="background: radial-gradient(circle, #63cd00 0%, transparent 70%)"></div>
+                    <div class="absolute bottom-0 left-0 w-full h-2/3"
+                        style="background: radial-gradient(ellipse at bottom left, rgba(99,205,0,.18) 0%, transparent 60%)"></div>
+                </div>
+            @endif
 
-        {{-- Link Extensions --}}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    </head>
-    <style>
-        .hero-clip-path {
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4rem), calc(100% - 4rem) 100%, 0 100%);
-        }
+            <div class="absolute inset-0"
+                style="background: linear-gradient(100deg, rgba(40,40,41,.88) 0%, rgba(40,40,41,.55) 45%, rgba(40,40,41,.15) 100%)"></div>
 
-        .custom-mt {
-            margin-top: -30px;
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+            <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+                <span
+                    class="inline-flex items-center gap-2 w-fit text-[11px] lg:text-xs font-semibold tracking-widest uppercase text-[#d9ffb3] bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 mb-4">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
+                    Program Unggulan
+                </span>
+                <h1 class="text-white text-3xl lg:text-5xl font-bold leading-tight">Program Unggulan <span class="text-[#63cd00]">SMK Amaliah</span></h1>
+                <p class="mt-4 max-w-2xl text-white/85 text-base lg:text-lg leading-relaxed">
+                    {{ $total }} program pendidikan inovatif didukung kurikulum modern dan fasilitas lengkap untuk mengembangkan potensi terbaik siswa.
+                </p>
 
-    <body class="font-['Poppins'] bg-gray-100">
-        <div id="loader-wrapper">
-            <div class="loader-content">
-                <div class="loader-spinner"></div>
-                <p class="loader-message">Tenang, pengalaman terbaik sedang kami siapkan untuk Anda.</p>
-            </div>
-        </div>  
-        <section class="relative bg-white overflow-hidden mt-[-30px] fade-in-section">
-            {{-- Elemen Dekoratif: Gradasi di Latar Belakang --}}
-            <div class="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2">
-                <div
-                    class="w-[40rem] h-[40rem] bg-gradient-to-tr from-green-100 to-transparent rounded-full opacity-50 blur-3xl">
+                <div class="mt-8 flex flex-wrap items-center gap-3">
+                    <a href="#daftarProgram"
+                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        <i class="fa-solid fa-graduation-cap"></i> Lihat Program
+                    </a>
+                    <a href="{{ route('public.about.index') }}"
+                        class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        <i class="fa-solid fa-circle-info"></i> Tentang Kami
+                    </a>
                 </div>
             </div>
-            <div class="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2">
-                <div
-                    class="w-[30rem] h-[30rem] bg-gradient-to-tl from-green-100 to-transparent rounded-full opacity-40 blur-3xl">
-                </div>
-            </div>
+        </div>
 
-            <div class="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32">
-                <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-x-16">
-
-                    {{-- Bagian Kiri: Teks dan Tombol --}}
-                    <div class="text-center lg:text-left">
-                        <h1
-                            class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
-                            Mulai Perjalananmu dengan Program
-                            <span class="text-[#63cd00]">Unggulan Kami</span>
-                        </h1>
-                        <p class="mt-6 text-lg text-gray-600 max-w-xl mx-auto lg:mx-0">
-                            Program pendidikan yang dirancang khusus, didukung oleh kurikulum inovatif dan fasilitas modern
-                            untuk mengembangkan potensi terbaik siswa.
-                        </p>
-
-                        {{-- Tombol Aksi (CTA) --}}
-                        <div class="mt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                            <a href="href=" {{ route('public.about.index') }}
-                                class="inline-flex items-center justify-center px-7 py-3 border border-transparent text-base font-semibold rounded-lg shadow-lg text-white bg-[#63cd00] hover:bg-[#52a800] transition-all duration-300 transform hover:-translate-y-0.5">
-                                About
+        {{-- Breadcrumb --}}
+        <div style="background-color:#2D2D2D;">
+            <div class="max-w-screen-xl min-h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-3">
+                <nav aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
+                        <li class="flex items-center">
+                            <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
+                                Home
                             </a>
-                            <a href="https://wa.me/6285649011449"
-                                class="inline-flex items-center justify-center px-7 py-3 border-2 border-gray-300 text-base font-semibold rounded-lg text-gray-700 bg-transparent hover:border-[#63cd00] hover:text-[#63cd00] transition-all duration-300">
-                                Hubungi Kami
-                            </a>
-                        </div>
-                    </div>
-
-                    {{-- Bagian Kanan: Gambar --}}
-                    <div class="relative flex justify-center lg:justify-end">
-                        <div class="w-full max-w-md lg:max-w-none rounded-2xl p-2 bg-white/50 backdrop-blur-sm shadow-2xl">
-                            <img class="w-full h-auto rounded-xl object-cover"
-                                src="{{ asset('assets/image/DroneView.jpg') }}" alt="Siswa belajar dengan antusias" />
-                        </div>
-                        {{-- Elemen Dekoratif: Bentuk di pojok gambar --}}
-                        <div
-                            class="absolute -bottom-6 -left-6 w-24 h-24 bg-green-200 rounded-full opacity-60 blur-lg -z-10">
-                        </div>
-                    </div>
-
-                </div>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
+                            <span class="inline-flex items-center ml-2 md:ml-3 font-medium text-[#63cd00]">Program Unggulan</span>
+                        </li>
+                    </ol>
+                </nav>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="bg-white mt-[-50px] fade-in-section">
-            <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+    {{-- ============================ DAFTAR PROGRAM ============================ --}}
+    <section id="daftarProgram" class="bg-gray-50 py-16 sm:py-20">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                <div class="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
-                    <h2 class="text-2xl font-bold md:text-4xl md:leading-tight">Pendekatan Program Kami</h2>
-                    <p class="mt-1 text-gray-600">Kami tidak hanya mengajar, kami membentuk profesional masa depan melalui
-                        program pendidikan yang terintegrasi.</p>
-                </div>
+            <div class="max-w-2xl mb-10">
+                <span class="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#63cd00] mb-3">
+                    <span class="w-6 h-0.5 rounded-full bg-[#63cd00]"></span>
+                    Program Pendidikan
+                </span>
+                <h2 class="text-3xl lg:text-4xl font-extrabold text-[#282829] tracking-tight">Membentuk Profesional Masa Depan</h2>
+                <p class="mt-3 text-gray-600 text-lg">Kurikulum terintegrasi, fasilitas modern, dan pembelajaran berbasis kompeten.</p>
+            </div>
 
-                <!-- Grid -->
-                <div class="grid lg:grid-cols-2 lg:gap-y-16 gap-10">
+            @if ($total > 0)
+                <div class="pg-grid">
+                    @foreach ($programs as $program)
+                        <a href="{{ route('public.program.show', $program->id) }}"
+                            class="pg-card group"
+                            aria-label="{{ $program->name }}">
+                            <div class="pg-card__thumb">
+                                @if ($program->image)
+                                    <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->name }}" loading="lazy">
+                                @else
+                                    <div class="pg-thumb-fallback"><i class="fa-solid fa-book-open"></i></div>
+                                @endif
+                                <span class="pg-chip pg-chip--green absolute bottom-3 left-3 z-10">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                    Program
+                                </span>
+                            </div>
 
-                    {{-- Loop untuk setiap program dari database --}}
-                    @forelse ($programs as $program)
-                        <!-- Card -->
-                        <a class="group block rounded-xl overflow-hidden focus:outline-hidden fade-in-section"
-                            href="{{ route('public.program.show', $program->id) }}"> {{-- Ganti dengan route Anda --}}
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
-                                <div class="shrink-0 relative rounded-xl overflow-hidden w-full sm:w-56 h-44">
-                                    <img class="group-hover:scale-105 group-focus:scale-105 transition-transform duration-500 ease-in-out size-full absolute top-0 start-0 object-cover rounded-xl"
-                                        src="{{ asset('storage/' . $program->image) }}" {{-- Mengambil gambar dari DB --}}
-                                        alt="{{ $program->name }}">
-                                </div>
-
-                                <div class="grow">
-                                    <h3 class="text-xl font-semibold text-gray-800 group-hover:text-gray-600">
-                                        {{ $program->name }} {{-- Mengambil judul dari DB --}}
-                                    </h3>
-                                    <p class="mt-3 text-gray-600 line-clamp-3"> {{-- line-clamp untuk meratakan panjang teks
-                                        --}}
-                                        {{ $program->description }} {{-- Mengambil deskripsi dari DB --}}
-                                    </p>
-                                    <p
-                                        class="mt-4 inline-flex items-center gap-x-1 text-sm text-blue-600 decoration-2 group-hover:underline group-focus:underline font-medium">
-                                        Lihat Detail
-                                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="m9 18 6-6-6-6" />
-                                        </svg>
-                                    </p>
+                            <div class="p-5 flex flex-col flex-1">
+                                <h3 class="text-lg font-bold text-[#282829] leading-snug line-clamp-2 group-hover:text-[#63cd00] transition-colors duration-200">
+                                    {{ $program->name }}
+                                </h3>
+                                <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mt-2 flex-grow">
+                                    {{ strip_tags($program->description) }}
+                                </p>
+                                <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="pg-card__hint">
+                                        Selengkapnya
+                                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </span>
+                                    <span class="pg-meta"><i class="fa-solid fa-user-pen"></i> {{ $program->publisher }}</span>
                                 </div>
                             </div>
                         </a>
-                        <!-- End Card -->
-                    @empty
-                        {{-- Pesan jika tidak ada program --}}
-                        <div class="lg:col-span-2 text-center py-10">
-                            <p class="text-gray-500">Saat ini belum ada program yang tersedia.</p>
-                        </div>
-                    @endforelse
-
+                    @endforeach
                 </div>
-                <!-- End Grid -->
+            @else
+                <div class="border-2 border-dashed border-gray-300 rounded-2xl p-14 text-center bg-white">
+                    <div class="w-14 h-14 mx-auto rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xl mb-3">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <p class="text-gray-600 font-semibold">Belum ada program yang dipublikasikan.</p>
+                    <p class="text-sm text-gray-500 mt-1">Data program unggulan akan segera hadir.</p>
+                </div>
+            @endif
+        </div>
+    </section>
+
+    {{-- ============================ CTA SECTION ============================ --}}
+    <section class="bg-[#282829] py-16 sm:py-20">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl lg:text-4xl font-extrabold text-white">Tertarik Bergabung?</h2>
+            <p class="mt-4 max-w-2xl mx-auto text-white/80 text-lg">
+                Daftar sekarang dan jadilah bagian dari komunitas SMK Amaliah yang berprestasi.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+                <a href="{{ route('public.about.index') }}"
+                    class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-base px-8 py-4 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg">
+                    <i class="fa-solid fa-user-plus"></i> Info PPDB
+                </a>
+                <a href="https://wa.me/6285649011449" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-base px-8 py-4 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300">
+                    <i class="fa-brands fa-whatsapp"></i> Konsultasi WA
+                </a>
             </div>
-        </section>
-
-    </body>
-
-    </html>
+        </div>
+    </section>
 
 @endsection

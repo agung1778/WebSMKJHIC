@@ -1,219 +1,261 @@
-@extends('layouts.public-app') {{-- Sesuaikan dengan nama file layout utama Anda --}}
+@extends('layouts.public-app')
+
+@section('title', $program->name . ' | Program Unggulan SMK Amaliah 1 & 2')
+@section('description', \Illuminate\Support\Str::limit(strip_tags($program->description), 160) ?? 'Program unggulan SMK Amaliah 1 & 2 Ciawi-Bogor.')
+
+@include('PublicSide.program._styles')
+
+@php
+    $readMinutes = $program->description
+        ? max(1, (int) ceil(str_word_count(strip_tags($program->description)) / 200))
+        : 1;
+@endphp
 
 @section('content')
 
-
-
-
-
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>@yield('title')</title>
-
-        {{-- Link Extensions --}}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    </head>
-    <style>
-        .hero-clip-path {
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4rem), calc(100% - 4rem) 100%, 0 100%);
-        }
-
-        .custom-mt {
-            margin-top: -30px;
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-
-    <body class="font-['Poppins'] bg-gray-100">
-        @php
-            $amaliahGreen = '#63cd00';
-            $amaliahGreen = '#63cd00';
-            $amaliahDark = '#282829';
-
-            // Mengambil program lain dari controller
-            $otherPrograms = $otherPrograms ?? collect([]);
-
-            // Logika untuk memproses keunggulan program (dijadikan array)
-            $advantages = $program->advantage ? array_filter(explode("\n", $program->advantage)) : [];
-        @endphp
-
-        {{-- ================================================================= --}}
-        {{-- BAGIAN 1: HERO IMAGE (GAMBAR UTAMA PROGRAM) --}}
-        {{-- ================================================================= --}}
-        <header class="h-64 lg:h-80 w-full bg-gray-800">
+    {{-- ============================ HERO ============================ --}}
+    <section class="relative bg-[#282829]">
+        <div class="relative h-[340px] lg:h-[440px] overflow-hidden">
             @if ($program->image)
-                <img src="{{ asset('storage/' . $program->image) }}" alt="Gambar Latar {{ $program->title }}"
+                <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->name }}"
                     class="w-full h-full object-cover">
+            @else
+                <div class="pg-thumb-fallback pg-thumb-fallback--big"><i class="fa-solid fa-book-open"></i></div>
             @endif
-        </header>
 
-        {{-- ================================================================= --}}
-        {{-- BAGIAN 2: BREADCRUMB NAVIGASI --}}
-        {{-- ================================================================= --}}
-        <div style="background-color: #2D2D2D;">
-            <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="h-full flex items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        <ol class="inline-flex items-center space-x-2 md:space-x-3 text-lg">
-                            <li class="inline-flex items-center">
-                                <a href="/"
-                                    class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-                                    <a href="{{ route('public.program.index') }}" {{-- DIUBAH: Route ke index program --}}
-                                        class="ml-2 font-medium text-gray-300 hover:text-white md:ml-3 transition-colors">Program
-                                        Unggulan</a>
-                                </div>
-                            </li>
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-                                    <span class="ml-2 font-medium md:ml-3 text-white">{{ $program->name }}</span>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
+            <div class="absolute inset-0"
+                style="background: linear-gradient(180deg, rgba(40,40,41,.35) 0%, rgba(40,40,41,.78) 100%)"></div>
+
+            <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-10">
+                <span class="pg-chip pg-chip--green w-fit mb-4"><i class="fa-solid fa-graduation-cap"></i> Program Unggulan</span>
+                <h1 class="text-white text-3xl lg:text-5xl font-extrabold leading-tight max-w-4xl">
+                    {{ $program->name }}
+                </h1>
+                <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/85">
+                    <span class="inline-flex items-center gap-2">
+                        <i class="fa-solid fa-user-pen"></i>
+                        {{ $program->publisher }}
+                    </span>
+                    <span class="inline-flex items-center gap-2">
+                        <i class="fa-regular fa-clock"></i>
+                        {{ $readMinutes }} menit baca
+                    </span>
                 </div>
             </div>
         </div>
 
-        {{-- ================================================================= --}}
-        {{-- BAGIAN 3: KONTEN UTAMA (LAYOUT 2 KOLOM) --}}
-        {{-- ================================================================= --}}
-        <main class="py-16 lg:py-24 bg-white">
-            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
-
-                    {{-- ========================================================== --}}
-                    {{-- Kolom Kiri: Konten Detail Program --}}
-                    {{-- ========================================================== --}}
-                    <div class="lg:col-span-2 space-y-12">
-
-                        {{-- DIUBAH: Header Judul Program (Lebih Simpel dan Profesional) --}}
-                        <section class="pb-6 border-b border-gray-200">
-                            <p class="text-base font-semibold uppercase text-gray-500 tracking-wider">Program Unggulan</p>
-                            <h1 class="mt-2 text-4xl lg:text-5xl font-extrabold tracking-tight"
-                                style="color: {{ $amaliahDark }};">
+        {{-- Breadcrumb --}}
+        <div style="background-color:#2D2D2D;">
+            <div class="max-w-screen-xl min-h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-3">
+                <nav aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2 md:space-x-3 text-sm">
+                        <li class="inline-flex items-center flex-shrink-0">
+                            <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
+                                Home
+                            </a>
+                        </li>
+                        <li class="inline-flex items-center flex-shrink-0">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
+                            <a href="{{ route('public.program.index') }}"
+                                class="inline-flex items-center ml-2 md:ml-3 font-medium text-gray-300 hover:text-white transition-colors">
+                                Program Unggulan
+                            </a>
+                        </li>
+                        <li class="inline-flex items-center min-w-0">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-xs flex-shrink-0"></i>
+                            <span class="ml-2 md:ml-3 font-medium text-[#63cd00] truncate max-w-[40vw] sm:max-w-[55vw]" title="{{ $program->name }}">
                                 {{ $program->name }}
-                            </h1>
-                        </section>
+                            </span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </section>
 
-                        {{-- Deskripsi Program --}}
-                        <section>
-                            <h2 class="text-2xl font-bold mb-4" style="color: {{ $amaliahDark }};">
-                                Tentang Program
-                            </h2>
-                            {{-- Kelas `prose` akan memberikan styling default yang rapi untuk teks --}}
-                            <div class="prose prose-lg max-w-none text-gray-600 leading-relaxed">
-                                {!! \App\Support\HtmlSanitizer::clean($program->description) !!} {{-- Menggunakan {!! !!} jika deskripsi mengandung HTML --}}
+    {{-- ============================ KONTEN ============================ --}}
+    <section class="bg-white">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+            <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12 gap-y-10">
+
+                {{-- Kolom kiri (2/3): artikel --}}
+                <div class="lg:col-span-2 min-w-0">
+                    <a href="{{ route('public.program.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#63cd00] transition-colors duration-200 mb-6">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        Kembali ke Daftar Program
+                    </a>
+
+                    {{-- Gambar besar (jika ada) --}}
+                    @if ($program->image)
+                        <figure class="mb-8">
+                            <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->name }}"
+                                class="w-full rounded-2xl shadow-md object-cover">
+                            @if ($program->publisher)
+                                <figcaption class="mt-2 text-sm text-gray-500">
+                                    <i class="fa-solid fa-camera mr-1 text-[#63cd00]"></i>
+                                    Dokumentasi {{ $program->publisher }}
+                                </figcaption>
+                            @endif
+                        </figure>
+                    @endif
+
+                    {{-- Deskripsi program --}}
+                    <article class="pg-article bg-gray-50 border border-[#eef0f3] rounded-2xl p-6 sm:p-10">
+                        @if (trim(strip_tags($program->description ?? '')) !== '')
+                            {!! \App\Support\HtmlSanitizer::clean($program->description) !!}
+                        @else
+                            <p class="text-gray-500 text-center py-8">
+                                Deskripsi detail program ini belum tersedia.
+                            </p>
+                        @endif
+                    </article>
+
+                    {{-- Keunggulan (jika ada data di field advantage - handled gracefully) --}}
+                    @php
+                        $advantages = $program->advantage ?? null;
+                        $advantageList = $advantages ? array_filter(array_map('trim', explode("\n", $advantages))) : [];
+                    @endphp
+                    @if (!empty($advantageList))
+                        <section class="mt-10">
+                            <h2 class="text-2xl font-bold text-[#282829] mb-6">Keunggulan Program</h2>
+                            <ul class="pg-advantages">
+                                @foreach ($advantageList as $adv)
+                                    <li>
+                                        <span class="pg-adv-icon"><i class="fa-solid fa-check"></i></span>
+                                        <span class="text-gray-700">{{ $adv }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </section>
+                    @endif
+
+                    {{-- Koordinator (jika field ada di model) --}}
+                    @if (isset($program->coordinator_name) && $program->coordinator_name)
+                        <section class="mt-10">
+                            <h2 class="text-2xl font-bold text-[#282829] mb-6">Koordinator Program</h2>
+                            <div class="bg-gray-50 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6 border border-gray-200">
+                                @if (isset($program->coordinator_photo) && $program->coordinator_photo)
+                                    <img src="{{ asset('storage/' . $program->coordinator_photo) }}"
+                                        alt="Foto {{ $program->coordinator_name }}"
+                                        class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white flex-shrink-0">
+                                @else
+                                    <div class="w-24 h-24 rounded-full flex items-center justify-center bg-[#282829] text-[#63cd00] text-3xl font-bold flex-shrink-0">
+                                        {{ strtoupper(substr($program->coordinator_name, 0, 1)) }}
+                                    </div>
+                                @endif
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800">{{ $program->coordinator_name }}</h3>
+                                    <p class="text-base text-gray-500">Koordinator Program</p>
+                                </div>
                             </div>
                         </section>
+                    @endif
 
-                        {{-- Poin Keunggulan (DIUBAH: Desain lebih bersih) --}}
-                        @if (!empty($advantages))
-                            <section>
-                                <h2 class="text-2xl font-bold mb-6" style="color: {{ $amaliahDark }};">
-                                    Poin-Poin Keunggulan
-                                </h2>
-                                <ul class="space-y-4">
-                                    @foreach ($advantages as $advantage)
-                                        @if (trim($advantage) != '')
-                                            <li class="flex items-start">
-                                                <div class="flex-shrink-0 mt-1">
-                                                    <i class="fas fa-check-circle text-xl" style="color: {{ $amaliahGreen }};"></i>
-                                                </div>
-                                                <span class="ml-3 text-base text-gray-700">{{ trim($advantage) }}</span>
-                                            </li>
-                                        @endif
-                                    @endforeach
-                                </ul>
-                            </section>
-                        @endif
+                    {{-- Bagikan --}}
+                    <footer class="mt-8 bg-[#282829] rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <p class="font-bold text-white">Bagikan program ini</p>
+                            <p class="text-sm text-white/60 mt-0.5">Bantu sebarkan informasi ke teman & keluarga.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ url()->current() }}" target="_blank" rel="noopener noreferrer"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#1877F2] hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Bagikan ke Facebook">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?url={{ url()->current() }}&text={{ urlencode($program->name) }}" target="_blank" rel="noopener noreferrer"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-black hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Bagikan ke X (Twitter)">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </a>
+                            <a href="https://api.whatsapp.com/send?text={{ urlencode($program->name . ' - ' . url()->current()) }}" target="_blank" rel="noopener noreferrer"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#25D366] hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Bagikan ke WhatsApp">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </a>
+                            <a href="{{ url()->current() }}" onclick="navigator.clipboard?.writeText(this.href); alert('Tautan disalin!'); return false;"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#63cd00] hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Salin tautan">
+                                <i class="fa-solid fa-link"></i>
+                            </a>
+                        </div>
+                    </footer>
+                </div>
 
-                        {{-- Koordinator Program --}}
-                        @if ($program->coordinator_name)
-                            <section>
-                                <h2 class="text-2xl font-bold mb-6" style="color: {{ $amaliahDark }};">
-                                    Koordinator Program
-                                </h2>
-                                <div
-                                    class="bg-gray-50 rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 border border-gray-200">
-                                    @if ($program->coordinator_photo)
-                                        <img src="{{ asset('storage/' . $program->coordinator_photo) }}"
-                                            alt="Foto {{ $program->coordinator_name }}"
-                                            class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white flex-shrink-0">
-                                    @endif
-                                    <div>
-                                        <h3 class="text-xl font-bold text-gray-800">{{ $program->coordinator_name }}</h3>
-                                        <p class="text-base text-gray-500">Koordinator Program {{ $program->title }}</p>
+                {{-- Kolom kanan (1/3): sidebar --}}
+                <aside class="lg:col-span-1">
+                    <div class="lg:sticky lg:top-8 space-y-6">
+
+                        {{-- Info program --}}
+                        <div class="pg-side">
+                            <h3 class="pg-side__head"><i class="fa-solid fa-circle-info"></i> Info Program</h3>
+                            <div class="pg-side__body space-y-4 text-sm">
+                                <div class="pg-side__row">
+                                    <span class="pg-side__icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                                    <div class="min-w-0">
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Jenis</p>
+                                        <p class="font-semibold text-gray-800 truncate">Program Unggulan</p>
                                     </div>
                                 </div>
-                            </section>
-                        @endif
-                    </div>
+                                <div class="pg-side__row">
+                                    <span class="pg-side__icon"><i class="fa-solid fa-user-pen"></i></span>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Penanggung Jawab</p>
+                                        <p class="font-semibold text-gray-800">{{ $program->publisher }}</p>
+                                    </div>
+                                </div>
+                                <div class="pg-side__row">
+                                    <span class="pg-side__icon"><i class="fa-regular fa-clock"></i></span>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Waktu Baca</p>
+                                        <p class="font-semibold text-gray-800">{{ $readMinutes }} menit</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                    {{-- ========================================================== --}}
-                    {{-- Kolom Kanan: Sidebar Program Lain --}}
-                    {{-- ========================================================== --}}
-                    <aside class="lg:col-span-1">
-                        <div class="lg:sticky lg:top-8 space-y-6">
-                            <h3 class="text-2xl font-bold" style="color: {{ $amaliahDark }};">
-                                Jelajahi Program Lain
-                            </h3>
-                            <div class="space-y-4">
-                                {{-- DIUBAH: Kartu sidebar lebih simpel dan modern --}}
-                                @forelse ($otherPrograms->take(4) as $otherProgram)
-                                    <a href="{{ route('public.program.show', $otherProgram->id) }}"
-                                        class="group flex items-center gap-4 p-3 bg-white rounded-lg border border-gray-200 transition-all duration-300 hover:shadow-md hover:border-green-300">
-                                        <div class="flex-shrink-0">
-                                            <img src="{{ asset('storage/' . $otherProgram->image) }}"
-                                                alt="Gambar {{ $otherProgram->name }}"
-                                                class="w-20 h-20 rounded-md object-cover">
+                        {{-- Program lainnya --}}
+                        <div class="pg-side">
+                            <h3 class="pg-side__head"><i class="fa-solid fa-book-open"></i> Program Lainnya</h3>
+                            <div class="pg-side__body">
+                                @forelse ($otherPrograms as $item)
+                                    <a href="{{ route('public.program.show', $item->id) }}"
+                                        class="pg-rel" aria-label="{{ $item->name }}">
+                                        <div class="pg-rel__thumb">
+                                            @if ($item->image)
+                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" loading="lazy">
+                                            @else
+                                                <i class="fa-solid fa-book-open"></i>
+                                            @endif
                                         </div>
-                                        <div>
-                                            <h4
-                                                class="font-semibold text-gray-800 leading-tight group-hover:text-green-600 transition-colors">
-                                                {{ $otherProgram->name }}
-                                            </h4>
-                                            <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ $otherProgram->description }}
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 hover:text-[#63cd00] transition-colors duration-200">
+                                                {{ $item->name }}
                                             </p>
+                                            <span class="pg-meta mt-1.5 inline-flex">
+                                                <i class="fa-solid fa-user-pen"></i>
+                                                {{ $item->publisher }}
+                                            </span>
                                         </div>
                                     </a>
                                 @empty
-                                    <p class="text-gray-500 italic text-sm">Tidak ada program lain.</p>
+                                    <p class="text-sm text-gray-500 py-4 text-center">Tidak ada program lain untuk ditampilkan.</p>
                                 @endforelse
                             </div>
 
-                            {{-- Tombol Lihat Semua --}}
-                            <div class="pt-4">
+                            <div class="p-4 pt-0">
                                 <a href="{{ route('public.program.index') }}"
-                                    class="w-full block text-center py-3 rounded-lg text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90"
-                                    style="background-color: {{ $amaliahDark }};">
+                                    class="w-full block text-center py-3 rounded-xl text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90 bg-[#282829]">
                                     Lihat Semua Program
                                 </a>
                             </div>
                         </div>
-                    </aside>
-                </div>
+                    </div>
+                </aside>
+
             </div>
-        </main>
-
-
-
-    </body>
-
-    </html>
+        </div>
+    </section>
 
 @endsection
