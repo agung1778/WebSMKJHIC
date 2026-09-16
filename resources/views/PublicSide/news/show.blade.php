@@ -1,207 +1,203 @@
-@extends('layouts.public-app') {{-- Sesuaikan dengan nama file layout utama Anda --}}
+@extends('layouts.public-app')
+
+@section('title', $news->title . ' | SMK Amaliah 1 & 2')
+@section('description', \Illuminate\Support\Str::limit(strip_tags($news->description), 160) ?? 'Berita resmi SMK Amaliah 1 & 2 Ciawi-Bogor.')
+
+@include('PublicSide.news._styles')
+
+@php
+    $published = \Carbon\Carbon::parse($news->date_published);
+    $readMinutes = max(1, (int) ceil(str_word_count(strip_tags($news->description)) / 200));
+@endphp
 
 @section('content')
-    @php
-        $amaliahGreen = '#63cd00';
-        $amaliahDark = '#282829';
-        $amaliahBlue = '#E0E7FF';
 
-        // Cek Variabel 
-        $hasImages = isset($newsImages) && $newsImages->isNotEmpty();
-    @endphp
-
-    <div>
-
-
-        {{-- ================================================================= --}}
-        {{-- BAGIAN 1: HERO IMAGE (GAMBAR UTAMA BERITA) --}}
-        {{-- ================================================================= --}}
-        <header class="w-full h-80 lg:h-96 bg-gray-900 overflow-hidden">
-            {{-- Mengambil langsung gambar utama berita ($news->image) sebagai Hero Image --}}
+    {{-- ============================ HERO ============================ --}}
+    <section class="relative bg-[#282829]">
+        <div class="relative h-[340px] lg:h-[440px] overflow-hidden">
             @if ($news->image)
-                <img src="{{ asset('storage/' . $news->image) }}" alt="Gambar Utama {{ $news->title }}"
-                    class="w-full h-full object-cover opacity-80 transition-opacity duration-300 hover:opacity-100">
-                {{-- Tambahan: opacity 80% dengan hover 100% untuk efek visual yang halus --}}
+                <img src="{{ asset('storage/' . $news->image) }}" alt="{{ $news->title }}"
+                    class="w-full h-full object-cover">
             @else
-                {{-- Fallback jika gambar utama tidak tersedia --}}
-                <div class="w-full h-full flex items-center justify-center bg-gray-800 text-white text-xl">
-                    Gambar Berita Tidak Tersedia
-                </div>
+                <div class="nw-thumb-fallback nw-thumb-fallback--big"><i class="fa-solid fa-newspaper"></i></div>
             @endif
-        </header>
-        <div class="bg-[#2D2D2D]">
-            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-auto py-3">
-                <div class="flex items-center overflow-hidden">
-                    <nav class="flex w-full text-sm sm:text-base md:text-lg" aria-label="Breadcrumb">
-                        <ol class="flex items-center space-x-1 sm:space-x-2 md:space-x-3 w-full overflow-hidden">
-                            {{-- 1. Home --}}
-                            <li class="inline-flex items-center flex-shrink-0">
-                                <a href="/" class="font-medium text-gray-300 hover:text-white transition-colors">
-                                    Home
-                                </a>
-                            </li>
 
-                            {{-- 2. News --}}
-                            <li class="inline-flex items-center flex-shrink-0">
-                                <i class="fas fa-chevron-right text-gray-300 text-xs mx-1 sm:mx-2"></i>
-                                <a href="{{ route('public.news.index') }}"
-                                    class="font-medium text-gray-300 hover:text-white transition-colors">
-                                    News
-                                </a>
-                            </li>
+            <div class="absolute inset-0"
+                style="background: linear-gradient(180deg, rgba(40,40,41,.35) 0%, rgba(40,40,41,.78) 100%)"></div>
 
-                            {{-- 3. Judul berita --}}
-                            <li class="inline-flex items-center min-w-0 flex-1">
-                                <i class="fas fa-chevron-right text-gray-300 text-xs flex-shrink-0 mx-1 sm:mx-2"></i>
-                                <span class="font-medium text-white truncate block" title="{{ $news->title }}">
-                                    {{ $news->title }}
-                                </span>
-                            </li>
-                        </ol>
-                    </nav>
+            <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-10">
+                <span class="nw-chip w-fit mb-4"><i class="fa-solid fa-newspaper"></i> Berita Sekolah</span>
+                <h1 class="text-white text-3xl lg:text-5xl font-extrabold leading-tight max-w-4xl">
+                    {{ $news->title }}
+                </h1>
+                <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/85">
+                    <span class="inline-flex items-center gap-2">
+                        <i class="fa-regular fa-calendar"></i>
+                        {{ $published->format('d F Y') }}
+                    </span>
+                    <span class="inline-flex items-center gap-2">
+                        <i class="fa-solid fa-user-pen"></i>
+                        {{ $news->publisher }}
+                    </span>
+                    <span class="inline-flex items-center gap-2">
+                        <i class="fa-regular fa-clock"></i>
+                        {{ $readMinutes }} menit baca
+                    </span>
                 </div>
             </div>
         </div>
 
+        {{-- Breadcrumb --}}
+        <div style="background-color:#2D2D2D;">
+            <div class="max-w-screen-xl min-h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-3">
+                <nav aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2 md:space-x-3 text-sm">
+                        <li class="inline-flex items-center flex-shrink-0">
+                            <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
+                                Home
+                            </a>
+                        </li>
+                        <li class="inline-flex items-center flex-shrink-0">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
+                            <a href="{{ route('public.news.index') }}"
+                                class="inline-flex items-center ml-2 md:ml-3 font-medium text-gray-300 hover:text-white transition-colors">
+                                Berita
+                            </a>
+                        </li>
+                        <li class="inline-flex items-center min-w-0">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-xs flex-shrink-0"></i>
+                            <span class="ml-2 md:ml-3 font-medium text-[#63cd00] truncate max-w-[40vw] sm:max-w-[55vw]" title="{{ $news->title }}">
+                                {{ $news->title }}
+                            </span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </section>
 
+    {{-- ============================ KONTEN ============================ --}}
+    <section class="bg-white">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-            <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12">
+            <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12 gap-y-10">
 
-                {{-- ========================================================== --}}
-                {{-- KOLOM KIRI (2/3): KONTEN UTAMA ARTIKEL --}}
-                {{-- ========================================================== --}}
-                <div class="lg:col-span-2">
-                    {{-- Tombol Kembali --}}
+                {{-- Kolom kiri (2/3): artikel --}}
+                <div class="lg:col-span-2 min-w-0">
                     <a href="{{ route('public.news.index') }}"
-                        class="text-gray-500 hover:text-gray-900 text-sm font-medium mb-8 inline-flex items-center transition-colors">
-                        <i class="fas fa-arrow-left mr-2 text-xs"></i>
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#63cd00] transition-colors duration-200 mb-6">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
                         Kembali ke Daftar Berita
                     </a>
 
-                    {{-- Header Artikel --}}
-                    <header class="mb-8 border-b border-gray-200 pb-6">
-                        <h1 class="text-3xl lg:text-4xl font-extrabold mb-4 text-gray-900 leading-tight">
-                            {{ $news->title }}
-                        </h1>
+                    {{-- Isi artikel --}}
+                    <article class="nw-article bg-gray-50 border border-[#eef0f3] rounded-2xl p-6 sm:p-10">
+                        {!! \App\Support\HtmlSanitizer::clean($news->description) !!}
+                    </article>
 
-                        {{-- Metadata di bawah judul --}}
-                        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-500">
-                            <span class="inline-flex items-center">
-                                <i class="far fa-calendar-alt mr-2 text-gray-400"></i>
-                                Dipublikasikan: <strong
-                                    class="ml-1 text-gray-700">{{ \Carbon\Carbon::parse($news->date_published)->format('d F Y') }}</strong>
-                            </span>
-                            <span class="inline-flex items-center">
-                                <i class="far fa-user-circle mr-2 text-gray-400"></i>
-                                Oleh: <strong class="ml-1 text-gray-700">{{ $news->publisher }}</strong>
-                            </span>
+                    {{-- Bagikan --}}
+                    <footer class="mt-8 bg-[#282829] rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <p class="font-bold text-white">Bagikan artikel ini</p>
+                            <p class="text-sm text-white/60 mt-0.5">Bantu sebarkan informasi untuk teman &amp; keluarga.</p>
                         </div>
-                    </header>
-
-                    {{-- Konten Utama Artikel & Galeri --}}
-                    <div x-data="{ modalOpen: false, modalImage: '' }">
-                        {{-- Isi Konten Artikel --}}
-                        <article class="prose prose-lg max-w-none text-gray-800 leading-relaxed mb-12">
-                            {!! \App\Support\HtmlSanitizer::clean($news->description) !!}
-                        </article>
-
-                        {{-- BAGIAN GALERI MINI (THUMBNAILS) --}}
-                        @if (isset($newsImages) && $newsImages->isNotEmpty())
-                            <div class="pt-8 mt-12 border-t border-gray-200">
-                                <h3 class="text-xl font-bold text-gray-800 mb-4">Galeri Foto</h3>
-                                <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                                    @foreach ($newsImages as $image)
-                                        <div @click="modalImage = '{{ Storage::url($image->path) }}'; modalOpen = true"
-                                            class="aspect-square overflow-hidden rounded-lg cursor-pointer group">
-                                            <img src="{{ Storage::url($image->path) }}"
-                                                alt="{{ $image->description ?? $image->filename }}"
-                                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300">
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-
-                        {{-- MODAL PREVIEW GAMBAR (TETAP DI SINI) --}}
-                        <div x-show="modalOpen"
-                            class="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-90 flex items-center justify-center"
-                            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
-                            x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
-                            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                            @click.away="modalOpen = false" style="display: none;">
-                            <div class="relative max-w-4xl w-full p-4 mx-auto">
-                                <button @click="modalOpen = false"
-                                    class="absolute -top-2 -right-2 m-4 text-white text-4xl hover:text-gray-300 transition-colors z-50">
-                                    &times;
-                                </button>
-                                <img :src="modalImage"
-                                    class="w-full h-auto max-h-[90vh] object-contain rounded-lg shadow-2xl">
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- BAGIAN FOOTER ARTIKEL (SHARING) --}}
-                    <footer class="mt-12 pt-8 border-t border-gray-200">
-                        <div class="flex items-center gap-4">
-                            <h3 class="text-base font-semibold text-gray-700">Bagikan Artikel:</h3>
-                            <div class="flex items-center space-x-2">
-                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ url()->current() }}"
-                                    target="_blank"
-                                    class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-200">
-                                    <i class="fab fa-facebook-f text-lg"></i>
-                                </a>
-                                <a href="https://twitter.com/intent/tweet?url={{ url()->current() }}&text={{ urlencode($news->title) }}"
-                                    target="_blank"
-                                    class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-black hover:text-white transition-all duration-200">
-                                    <i class="fab fa-twitter text-lg"></i>
-                                </a>
-                                <a href="https://api.whatsapp.com/send?text={{ urlencode($news->title . ' - ' . url()->current()) }}"
-                                    target="_blank"
-                                    class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-green-500 hover:text-white transition-all duration-200">
-                                    <i class="fab fa-whatsapp text-lg"></i>
-                                </a>
-                            </div>
+                        <div class="flex items-center gap-3">
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ url()->current() }}" target="_blank" rel="noopener noreferrer"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#1877F2] hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Bagikan ke Facebook">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?url={{ url()->current() }}&text={{ urlencode($news->title) }}" target="_blank" rel="noopener noreferrer"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-black hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Bagikan ke X (Twitter)">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </a>
+                            <a href="https://api.whatsapp.com/send?text={{ urlencode($news->title . ' - ' . url()->current()) }}" target="_blank" rel="noopener noreferrer"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#25D366] hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Bagikan ke WhatsApp">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </a>
+                            <a href="{{ url()->current() }}" onclick="navigator.clipboard?.writeText(this.href); alert('Tautan disalin!'); return false;"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#63cd00] hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Salin tautan">
+                                <i class="fa-solid fa-link"></i>
+                            </a>
                         </div>
                     </footer>
                 </div>
 
-                {{-- ========================================================== --}}
-                {{-- KOLOM KANAN (1/3): SUGGESTION SIDEBAR --}}
-                {{-- ========================================================== --}}
-                <aside class="lg:col-span-1 mt-12 lg:mt-0">
-                    {{-- Wrapper untuk membuat 'sticky' --}}
-                    <div class="lg:sticky lg:top-8">
-                        <div class="bg-gray-50 rounded-xl p-6">
-                            <h3 class="text-xl font-bold text-gray-900 mb-5 pb-4 border-b">Baca Juga</h3>
-                            <ul class="space-y-4">
-                                @php
-                                    // Pastikan variabel $randomNews ada dari controller Anda
-                                    $suggestedNews = $randomNews ?? collect([]);
-                                @endphp
+                {{-- Kolom kanan (1/3): sidebar --}}
+                <aside class="lg:col-span-1">
+                    <div class="lg:sticky lg:top-8 space-y-6">
 
-                                @forelse ($suggestedNews->take(4) as $item)
-                                    <li>
-                                        {{-- PERBAIKAN: Menggunakan $item->id bukan $item->slug --}}
-                                        <a href="{{ route('public.news.show', $item->id) }}" class="group block">
-                                            <p
-                                                class="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-200 leading-snug">
+                        {{-- Info artikel --}}
+                        <div class="nw-side">
+                            <h3 class="nw-side__head"><i class="fa-solid fa-circle-info"></i> Info Artikel</h3>
+                            <div class="nw-side__body space-y-4 text-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-[#63cd00] border border-gray-200">
+                                        <i class="fa-regular fa-calendar"></i>
+                                    </span>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Tanggal Terbit</p>
+                                        <p class="font-semibold text-gray-800">{{ $published->format('d F Y') }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-[#63cd00] border border-gray-200">
+                                        <i class="fa-solid fa-user-pen"></i>
+                                    </span>
+                                    <div class="min-w-0">
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Penulis</p>
+                                        <p class="font-semibold text-gray-800 truncate">{{ $news->publisher }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-[#63cd00] border border-gray-200">
+                                        <i class="fa-regular fa-clock"></i>
+                                    </span>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Waktu Baca</p>
+                                        <p class="font-semibold text-gray-800">{{ $readMinutes }} menit</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Berita lainnya --}}
+                        <div class="nw-side">
+                            <h3 class="nw-side__head"><i class="fa-solid fa-newspaper"></i> Berita Lainnya</h3>
+                            <div class="nw-side__body">
+                                @php $suggested = $randomNews ?? collect([]); @endphp
+                                @forelse ($suggested->take(4) as $item)
+                                    <a href="{{ route('public.news.show', $item) }}"
+                                        class="nw-rel" aria-label="{{ $item->title }}">
+                                        <div class="nw-rel__thumb">
+                                            @if ($item->image)
+                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" loading="lazy">
+                                            @else
+                                                <i class="fa-solid fa-newspaper"></i>
+                                            @endif
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 hover:text-[#63cd00] transition-colors duration-200">
                                                 {{ $item->title }}
                                             </p>
-                                            <span
-                                                class="text-xs text-gray-500 mt-1">{{ \Carbon\Carbon::parse($item->date_published)->diffForHumans() }}</span>
-                                        </a>
-                                    </li>
+                                            <span class="nw-meta mt-1.5 inline-flex">
+                                                <i class="fa-regular fa-calendar"></i>
+                                                {{ \Carbon\Carbon::parse($item->date_published)->diffForHumans() }}
+                                            </span>
+                                        </div>
+                                    </a>
                                 @empty
-                                    <li class="text-sm text-gray-500">Tidak ada berita lain untuk ditampilkan.</li>
+                                    <p class="text-sm text-gray-500 py-4 text-center">Tidak ada berita lain untuk ditampilkan.</p>
                                 @endforelse
-                            </ul>
+                            </div>
                         </div>
                     </div>
                 </aside>
 
             </div>
         </div>
-    </div>
-    </div>
+    </section>
 
 @endsection

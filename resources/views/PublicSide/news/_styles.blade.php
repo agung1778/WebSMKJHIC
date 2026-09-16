@@ -1,0 +1,99 @@
+{{-- Styles bersama untuk halaman News (index & detail) — tema website SMK Amaliah --}}
+<style>
+    :root {
+        --nw-accent: #63cd00;
+        --nw-accent-soft: #eefde2;
+        --nw-ink: #111827;
+        --nw-muted: #6b7280;
+        --nw-border: #e5e7eb;
+        --nw-dark: #282829;
+    }
+
+    /* Chip label hijau */
+    .nw-chip {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.35rem 0.75rem; border-radius: 9999px;
+        font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em; line-height: 1.2;
+        color: #282829; background: var(--nw-accent);
+        box-shadow: 0 2px 8px -2px rgba(99, 205, 0, 0.5);
+    }
+    .nw-chip--dark { color: #ffffff; background: rgba(40, 40, 41, 0.85); box-shadow: none; }
+
+    /* Metadatum: tanggal / penulis / waktu baca */
+    .nw-meta {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        font-size: 0.8rem; font-weight: 500; color: var(--nw-muted);
+    }
+    .nw-meta i { color: var(--nw-accent); width: 0.9rem; text-align: center; }
+
+    /* Kartu berita — seragam & responsif */
+    .nw-card {
+        display: flex; flex-direction: column; height: 100%; min-width: 0;
+        background: #ffffff; border: 1px solid var(--nw-border); border-radius: 1rem;
+        overflow: hidden; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .nw-card:hover, .nw-card:focus-visible {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 34px -14px rgba(16, 24, 40, 0.16);
+        border-color: var(--nw-accent);
+    }
+    .nw-card:focus-visible { outline: 2px solid var(--nw-accent); outline-offset: 2px; }
+    .nw-card__thumb { position: relative; width: 100%; aspect-ratio: 16 / 9; flex-shrink: 0; overflow: hidden; background: linear-gradient(145deg, #282829, #1f2937); }
+    .nw-card__thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.45s ease; }
+    .nw-card:hover .nw-card__thumb img { transform: scale(1.05); }
+    .nw-card__hint { color: var(--nw-accent); font-weight: 700; font-size: 0.82rem; transition: gap 0.2s ease; }
+
+    /* Fallback gambar (berita tanpa foto) */
+    .nw-thumb-fallback {
+        width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(145deg, #282829 0%, #343435 55%, #1f2937 100%);
+        position: relative;
+    }
+    .nw-thumb-fallback i { font-size: 3rem; color: rgba(255, 255, 255, 0.18); }
+    .nw-thumb-fallback--big i { font-size: 4.5rem; }
+    .nw-thumb-fallback::after {
+        content: '';
+        position: absolute; inset: 0;
+        background: radial-gradient(circle at 80% 15%, rgba(99, 205, 0, 0.18) 0%, transparent 55%);
+    }
+
+    /* Tipografi isi artikel */
+    .nw-article { font-size: 1.02rem; line-height: 1.85; color: #374151; word-wrap: break-word; }
+    .nw-article > * + * { margin-top: 1.15rem; }
+    .nw-article h2 { font-size: 1.5rem; line-height: 1.3; font-weight: 800; color: #111827; margin-top: 2.25rem; }
+    .nw-article h3 { font-size: 1.25rem; line-height: 1.35; font-weight: 700; color: #111827; margin-top: 1.9rem; }
+    .nw-article h4 { font-size: 1.08rem; font-weight: 700; color: #111827; margin-top: 1.6rem; }
+    .nw-article a { color: #4b8f00; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    .nw-article a:hover { color: var(--nw-accent); }
+    .nw-article img, .nw-article video { max-width: 100%; height: auto; border-radius: 1rem; box-shadow: 0 10px 30px -12px rgba(16, 24, 40, 0.25); margin: 1.5rem 0; }
+    .nw-article blockquote { border-left: 4px solid var(--nw-accent); background: #f6faf0; border-radius: 0.6rem; padding: 1rem 1.25rem; font-style: italic; color: #374151; }
+    .nw-article ul { list-style: disc; padding-left: 1.4rem; }
+    .nw-article ol { list-style: decimal; padding-left: 1.4rem; }
+    .nw-article li { margin-top: 0.5rem; }
+    .nw-article li::marker { color: var(--nw-accent); }
+    .nw-article table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    .nw-article th, .nw-article td { border: 1px solid var(--nw-border); padding: 0.6rem 0.75rem; text-align: left; }
+    .nw-article th { background: #f8fafc; font-weight: 700; color: #111827; }
+    .nw-article hr { border: none; border-top: 1px solid var(--nw-border); margin: 2rem 0; }
+    .nw-article iframe { max-width: 100%; border-radius: 0.75rem; }
+
+    /* Sidebar (halaman detail) */
+    .nw-side { background: #f8fafc; border: 1px solid #eef0f3; border-radius: 1.25rem; overflow: hidden; }
+    .nw-side__head {
+        display: flex; align-items: center; gap: 0.6rem;
+        padding: 1.1rem 1.25rem; border-bottom: 1px solid var(--nw-border);
+        font-weight: 800; font-size: 1rem; color: #111827;
+    }
+    .nw-side__head i { color: var(--nw-accent); }
+    .nw-side__body { padding: 1.25rem; }
+    .nw-rel {
+        display: flex; align-items: flex-start; gap: 0.9rem;
+        padding: 0.75rem 0.4rem; border-radius: 0.9rem;
+        transition: background 0.2s ease;
+    }
+    .nw-rel:hover { background: #ffffff; }
+    .nw-rel__thumb { position: relative; width: 4.5rem; height: 4.5rem; flex-shrink: 0; overflow: hidden; border-radius: 0.8rem; background: linear-gradient(145deg, #282829, #1f2937); }
+    .nw-rel__thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .nw-rel__thumb i { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.3); font-size: 1.2rem; }
+</style>
