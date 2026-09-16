@@ -64,11 +64,6 @@ class AdminController extends Controller
         ));
     }
 
-    public function curator()
-    {
-        return view('admin.curator');
-    }   
-
     public function user()
     {
         // Mengambil semua user (admin) beserta data sesi terakhirnya

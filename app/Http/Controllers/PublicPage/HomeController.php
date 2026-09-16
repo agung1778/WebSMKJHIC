@@ -12,6 +12,7 @@ use App\Models\Facility;
 use App\Models\Major;
 use App\Models\SchoolSetting;
 use App\Models\Teacher;
+use App\Models\InstaPost;
 
 class HomeController extends Controller
 {
@@ -41,6 +42,8 @@ class HomeController extends Controller
 
         $facilitiesCount = Facility::count();
 
+        $instaPosts = InstaPost::where('is_active', true)->latest()->take(16)->get();
+
         return view('welcome', [
             'latestNews'      => $latestNews,
             'partners'        => $partners,
@@ -53,6 +56,7 @@ class HomeController extends Controller
             'studentsCount'   => optional($schoolSettings)->jumlah_siswa ?? 0,
             'teachersCount'   => $teachersCount,
             'facilitiesCount' => $facilitiesCount,
+            'instaPosts'      => $instaPosts,
         ]);
     }
 }

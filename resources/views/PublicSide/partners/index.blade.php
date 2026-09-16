@@ -256,7 +256,6 @@
             color: #ffffff;
             box-shadow: 0 8px 18px rgba(99, 205, 0, 0.28);
         }
-        .hidden { display: none !important; }
     </style>
 
     <script>

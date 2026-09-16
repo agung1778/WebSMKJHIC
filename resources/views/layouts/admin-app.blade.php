@@ -96,7 +96,6 @@
                 'items' => array_merge(
                     [
                         ['title' => 'Traffic Website', 'icon' => 'fa-solid fa-chart-line', 'routes' => ['admin.traffic.*'], 'url' => 'admin.traffic.index'],
-                        ['title' => 'Feeds CuratorIO', 'icon' => 'fa-solid fa-rss', 'routes' => ['admin.curator'], 'url' => 'admin.curator'],
                     ],
                     auth()->user()->role === 'superadmin' ? [
                         ['title' => 'Manajemen Admin', 'icon' => 'fa-solid fa-users', 'routes' => ['admin.users', 'admin.users.edit', 'admin.users.update', 'admin.users.updateRole'], 'url' => 'admin.users'],

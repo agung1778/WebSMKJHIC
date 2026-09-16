@@ -1115,7 +1115,7 @@
                 </div>
             </section>
             {{-- ================================================================= --}}
-            {{-- SECTION INSTAGRAM (SLIDER + GRID DARI CURATOR.IO) --}}
+            {{-- SECTION INSTAGRAM (GRID POSTINGAN MANUAL) --}}
             {{-- ================================================================= --}}
             <section class="bg-white py-16 sm:py-24 space-y-20 fade-in-section">
 
@@ -1135,26 +1135,26 @@
                     </div>
                 </div>
 
-                {{-- BAGIAN 2: GRID --}}
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8  ">
-
-
-                    {{-- Wadah untuk grid Curator.io --}}
-                    <div id="curator-feed-grid-layout">
-
-                        <!-- Place <div> tag where you want the feed to appear -->
-                        <div id="curator-feed-default-feed-layout"><a href="https://curator.io" target="_blank"
-                                class="crt-logo crt-tag">Powered by Curator.io</a></div>
-
-                        <!-- The Javascript can be moved to the end of the html page before the </div> tag -->
-                        <script type="text/javascript">
-                            /* curator-feed-default-feed-layout */
-                            (function () {
-                                var i, e, d = document, s = "script"; i = d.createElement("script"); i.async = 1; i.charset = "UTF-8";
-                                i.src = "https://cdn.curator.io/published/9b122a7e-d39e-40c4-abc3-8ab6bc446899.js";
-                                e = d.getElementsByTagName(s)[0]; e.parentNode.insertBefore(i, e);
-                            })();
-                        </script>
+                {{-- BAGIAN 2: GRID FEED INSTAGRAM (MANUAL) --}}
+                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5">
+                        @forelse ($instaPosts as $post)
+                            <a href="{{ $post->post_url ?: '#' }}" target="{{ $post->post_url ? '_blank' : '_self' }}"
+                                class="group relative block aspect-square rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+                                title="{{ $post->caption ?? 'Postingan Instagram' }}">
+                                <img src="{{ asset('storage/' . $post->path) }}" alt="{{ $post->caption ?? 'Instagram' }}"
+                                    class="w-full h-full object-cover group-hover:scale-105 group-hover:opacity-75 transition-transform duration-500">
+                                @if ($post->post_url)
+                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <i class="fab fa-instagram text-white text-3xl drop-shadow-lg"></i>
+                                    </div>
+                                @endif
+                            </a>
+                        @empty
+                            <div class="col-span-full text-center py-10 text-gray-500 text-sm">
+                                Belum ada postingan Instagram.
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </section>

@@ -117,8 +117,6 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
     // Rute untuk dashboard admin yang hanya bisa diakses setelah login
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-    Route::get('/admin/curator', [AdminController::class, 'curator'])->name('admin.curator');
-
     // Ekspor data tabel ke CSV
     Route::get('/admin/export/{resource}', [App\Http\Controllers\ExportController::class, 'export'])->name('admin.export');
 
