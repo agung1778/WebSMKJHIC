@@ -1104,15 +1104,14 @@
                 </div>
             </section>
             {{-- ================================================================= --}}
-            {{-- SECTION INSTAGRAM (GRID POSTINGAN MANUAL) --}}
+            {{-- SECTION INSTAGRAM (GRID ALA INSTAGRAM) --}}
             {{-- ================================================================= --}}
-            <section class="bg-white py-16 sm:py-24 space-y-20 fade-in-section">
+            <section class="bg-white py-16 sm:py-24 fade-in-section">
 
-                {{-- BAGIAN 1: SLIDER (SWIPE) --}}
-                <div>
-                    {{-- Header untuk slider diletakkan di dalam container agar rapi --}}
-                    {{-- Header Section (Tidak ada perubahan) --}}
-                    <div class="text-center">
+                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                    {{-- Header Section --}}
+                    <div class="text-center mb-10">
                         <h2 class="text-3xl md:text-4xl font-bold" style="color: {{ $amaliahDark }};">
                             Our Latest Instagram Post
                         </h2>
@@ -1122,30 +1121,189 @@
                             <div class="w-4 h-1 rounded-full" style="background-color: {{ $amaliahDark }};"></div>
                         </div>
                     </div>
-                </div>
 
-                {{-- BAGIAN 2: GRID FEED INSTAGRAM (MANUAL) --}}
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-5">
-                        @forelse ($instaPosts as $post)
-                            <a href="{{ $post->post_url ?: '#' }}" target="{{ $post->post_url ? '_blank' : '_self' }}"
-                                class="group relative block aspect-square rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
-                                title="{{ $post->caption ?? 'Postingan Instagram' }}">
-                                <img src="{{ asset('storage/' . $post->path) }}" alt="{{ $post->caption ?? 'Instagram' }}"
-                                    class="w-full h-full object-cover group-hover:scale-105 group-hover:opacity-75 transition-transform duration-500">
-                                @if ($post->post_url)
-                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <i class="fab fa-instagram text-white text-3xl drop-shadow-lg"></i>
-                                    </div>
-                                @endif
+                    {{-- Kartu ala profil Instagram --}}
+                    <div class="ig-card mx-auto">
+
+                        {{-- Kepala kartu: avatar + username + tombol follow --}}
+                        <div class="ig-head">
+                            <a class="ig-avatar" href="https://www.instagram.com/smkamaliah" target="_blank" rel="noopener" aria-label="Profil Instagram SMK Amaliah">
+                                <img src="{{ asset('assets/logo/am.webp') }}" alt="SMK Amaliah">
                             </a>
-                        @empty
-                            <div class="col-span-full text-center py-10 text-gray-500 text-sm">
-                                Belum ada postingan Instagram.
+                            <div class="ig-user">
+                                <span class="ig-username">@smkamaliah</span>
+                                <span class="ig-sub">SMK Amaliah 1 &amp; 2 · Ciawi-Bogor</span>
                             </div>
-                        @endforelse
+                            <a class="ig-follow" href="https://www.instagram.com/smkamaliah" target="_blank" rel="noopener">Follow</a>
+                        </div>
+
+                        {{-- Grid postingan: persegi, rapat tanpa jarak --}}
+                        <div class="ig-grid">
+                            @forelse ($instaPosts as $post)
+                                <a href="{{ $post->post_url ?: '#' }}" target="{{ $post->post_url ? '_blank' : '_self' }}"
+                                    class="ig-item" title="{{ $post->caption ?? 'Postingan Instagram' }}">
+                                    <img src="{{ asset('storage/' . $post->path) }}" alt="{{ $post->caption ?? 'Instagram' }}" loading="lazy">
+                                    @if ($post->post_url)
+                                        <span class="ig-stats">
+                                            <span class="ig-stat"><i class="fa-regular fa-heart"></i></span>
+                                            <span class="ig-stat"><i class="fa-regular fa-comment"></i></span>
+                                        </span>
+                                    @endif
+                                </a>
+                            @empty
+                                <div class="ig-empty">Belum ada postingan Instagram.</div>
+                            @endforelse
+                        </div>
+
                     </div>
                 </div>
+
+                <style>
+                    .ig-card {
+                        max-width: 935px;
+                        background: #fff;
+                        border: 1px solid #dbdbdb;
+                        border-radius: 4px;
+                        overflow: hidden;
+                    }
+
+                    .ig-head {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        padding: 14px 16px;
+                        border-bottom: 1px solid #dbdbdb;
+                    }
+
+                    .ig-avatar {
+                        flex-shrink: 0;
+                        width: 46px;
+                        height: 46px;
+                        border-radius: 50%;
+                        padding: 2px;
+                        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+                    }
+
+                    .ig-avatar img {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 50%;
+                        object-fit: cover;
+                        display: block;
+                        border: 2px solid #fff;
+                        background: #fff;
+                    }
+
+                    .ig-user {
+                        flex: 1;
+                        min-width: 0;
+                        display: flex;
+                        flex-direction: column;
+                    }
+
+                    .ig-username {
+                        font-weight: 700;
+                        font-size: 15px;
+                        color: #262626;
+                        line-height: 1.2;
+                    }
+
+                    .ig-sub {
+                        font-size: 12px;
+                        color: #8e8e8e;
+                        line-height: 1.4;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                    .ig-follow {
+                        flex-shrink: 0;
+                        background: #0095f6;
+                        color: #fff;
+                        font-size: 13px;
+                        font-weight: 600;
+                        padding: 5px 18px;
+                        border-radius: 6px;
+                        transition: background-color .2s;
+                    }
+
+                    .ig-follow:hover {
+                        background: #1877f2;
+                    }
+
+                    .ig-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 0;
+                        background: #fff;
+                    }
+
+                    .ig-item {
+                        position: relative;
+                        display: block;
+                        aspect-ratio: 1 / 1;
+                        overflow: hidden;
+                        background: #f0f0f0;
+                        border: 3px solid #fff;
+                        box-sizing: border-box;
+                    }
+
+                    .ig-item img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        display: block;
+                        transition: transform .25s ease, opacity .25s ease;
+                    }
+
+                    .ig-item:hover img {
+                        transform: scale(1.04);
+                        opacity: .85;
+                    }
+
+                    .ig-stats {
+                        position: absolute;
+                        left: 10px;
+                        bottom: 10px;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        color: #fff;
+                        font-size: 15px;
+                        opacity: 0;
+                        transition: opacity .2s;
+                        text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+                        z-index: 2;
+                    }
+
+                    .ig-item:hover .ig-stats {
+                        opacity: 1;
+                    }
+
+                    .ig-stat {
+                        display: inline-flex;
+                    }
+
+                    .ig-empty {
+                        grid-column: 1 / -1;
+                        text-align: center;
+                        padding: 48px 16px;
+                        color: #8e8e8e;
+                        font-size: 14px;
+                    }
+
+                    @media (max-width: 480px) {
+                        .ig-avatar {
+                            width: 40px;
+                            height: 40px;
+                        }
+
+                        .ig-sub {
+                            display: none;
+                        }
+                    }
+                </style>
             </section>
             @php
                 // Definisikan warna utama
