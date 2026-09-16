@@ -13,6 +13,9 @@
     /* Mensinkronkan tab yang disembunyikan (attribute hidden kalah oleh display grid) */
     .tab-content[hidden] { display: none !important; }
 
+    /* Elemen yang belum siap hydrate (Alpine) disembunyikan agar tidak flashing */
+    [x-cloak] { display: none !important; }
+
     /* Wrapping halaman */
     .page-section { background: #ffffff; padding-top: 0; padding-bottom: 3rem; overflow-x: hidden; }
     @media (min-width: 640px) { .page-section { padding-bottom: 4rem; } }
@@ -22,12 +25,12 @@
     @media (min-width: 1024px) { .page-shell { padding-left: 2rem; padding-right: 2rem; } }
 
     /* Hero slider */
-    .ts-hero { position: relative; width: 100%; height: 240px; background: #111827; overflow: hidden; }
+    .ts-hero { position: relative; width: 100%; height: 240px; background: #282829; overflow: hidden; }
     @media (min-width: 768px) { .ts-hero { height: 300px; } }
     @media (max-width: 480px) { .ts-hero { height: 180px; } }
 
     /* Breadcrumb */
-    .breadcrumb-bar { background: #111827; min-height: 64px; display: flex; align-items: center; }
+    .breadcrumb-bar { background: #2D2D2D; min-height: 64px; display: flex; align-items: center; }
     .ts-crumb a { color: #9ca3af; }
     .ts-crumb a:hover { color: #ffffff; }
     .ts-crumb .crumb-current { color: var(--ts-green); font-weight: 600; }
@@ -104,6 +107,30 @@
     .teacher-card:hover .teacher-card__hint { gap: 0.65rem; }
 
     .text-theme-green { color: var(--ts-green); }
+
+    /* Chip (label) overlay di sudut foto kartu */
+    .ts-chip {
+        position: absolute; top: 0.75rem; left: 0.75rem; z-index: 2;
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.35rem 0.7rem; border-radius: 9999px;
+        font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; line-height: 1.2;
+        color: #ffffff; background: rgba(40, 40, 41, 0.82);
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .ts-chip--green { color: #ffffff; background: rgba(99, 205, 0, 0.92); }
+
+    /* Kartu info detail guru di halaman show */
+    .ts-info-card {
+        display: flex; align-items: flex-start; gap: 0.85rem;
+        padding: 1rem 1.1rem;
+        background: var(--ts-bg-soft); border: 1px solid #eef0f3; border-radius: 0.9rem;
+    }
+    .ts-info-card__icon {
+        flex-shrink: 0; width: 2.4rem; height: 2.4rem; border-radius: 0.7rem;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--ts-green-soft); color: #3f8600; font-size: 0.85rem;
+    }
+    .ts-info-card.--staff .ts-info-card__icon { background: #f3f4f6; color: #282829; }
 
     /* Empty state */
     .empty-state {

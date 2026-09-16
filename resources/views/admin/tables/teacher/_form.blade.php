@@ -21,7 +21,7 @@
                 </div>
                 <div>
                     <x-admin-components::field name="school" label="Sekolah" :required="true" type="select"
-                        :options="['Amaliah 1' => 'Amaliah 1', 'Amaliah 2' => 'Amaliah 2', 'Amaliah 1 & 2' => 'Amaliah 1 & 2']" :value="$item->school ?? null" />
+                        :options="['Amaliah 1' => 'Amaliah 1', 'Amaliah 2' => 'Amaliah 2', 'Amaliah 1 & 2' => 'Amaliah 1 & 2', 'Staff' => 'Staff']" :value="$item->school ?? null" />
                 </div>
                 <div>
                     <x-admin-components::field name="category" label="Kategori" :required="true" type="select"

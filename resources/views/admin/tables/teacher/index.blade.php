@@ -21,11 +21,12 @@
             </x-slot:actions>
         </x-admin-components::page-header>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             <x-admin-components::stat-card label="Total Guru & Staf" :value="$total" icon="fa-solid fa-chalkboard-user" tone="brand" />
             <x-admin-components::stat-card label="Amaliah 1" :value="$teachers->where('school','Amaliah 1')->count()" icon="fa-solid fa-school" tone="green" />
             <x-admin-components::stat-card label="Amaliah 2" :value="$teachers->where('school','Amaliah 2')->count()" icon="fa-solid fa-school" tone="blue" />
             <x-admin-components::stat-card label="Gabungan" :value="$teachers->where('school','Amaliah 1 & 2')->count()" icon="fa-solid fa-school-circle-check" tone="amber" />
+            <x-admin-components::stat-card label="Staff" :value="$teachers->where('school','Staff')->count()" icon="fa-solid fa-users-gear" tone="dark" />
         </div>
 
         <x-admin-components::table
@@ -34,7 +35,7 @@
             :export-url="route('admin.export', ['resource' => 'teachers'])">
             <x-slot:body>
                 @forelse ($teachers as $t)
-                    @php $category = $t->category ?? 'guru'; @endphp
+                    @php $isStaff = ($t->school ?? '') === 'Staff'; @endphp
                     <tr data-row>
                         <td data-label="Nama">
                             <div class="table-main">
@@ -47,7 +48,7 @@
                         </td>
                         <td data-label="Sekolah"><span class="badge badge-info">{{ $t->school ?? '-' }}</span></td>
                         <td data-label="Kategori">
-                            <span class="badge {{ $category === 'staff' ? 'badge-warning' : 'badge-published' }}">{{ $category }}</span>
+                            <span class="badge {{ $isStaff ? 'badge-warning' : 'badge-published' }}">{{ $t->category ?? ($isStaff ? 'Staf' : 'Guru') }}</span>
                         </td>
                         <td data-label="Diperbarui"><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($t->updated_at)->locale('id')->diffForHumans() }}</span></td>
                         <td data-label="Aksi" class="text-right">

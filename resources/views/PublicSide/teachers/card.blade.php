@@ -9,8 +9,17 @@
 
 <a href="{{ route('public.teachers.show', $teacher->id) }}" class="teacher-card group" aria-label="{{ __('Lihat detail') }} {{ $teacher->name }}">
 
+    @php
+        $isStaff = ($teacher->school ?? '') === 'Staff';
+        $chipLabel = $teacher->school ?: 'Staff';
+    @endphp
+
     {{-- Foto guru 1:1 --}}
     <div class="teacher-card__photo">
+        <span class="ts-chip {{ !$isStaff ? 'ts-chip--green' : '' }}">
+            <i class="fas {{ $isStaff ? 'fa-users-gear' : 'fa-school' }}"></i>
+            {{ $chipLabel }}
+        </span>
         <img src="{{ $teacher->photo ? asset('storage/' . $teacher->photo) : $teacherPlaceholder }}"
             alt="{{ __('Foto') }} {{ $teacher->name }}" loading="lazy"
             onerror="this.onerror=null;this.src='{{ $teacherPlaceholder }}';">

@@ -15,18 +15,22 @@ class PublicTeacherController extends Controller
      */
     public function index()
     {
-        // Mengambil semua guru yang aktif
-        $teachers = Teacher::all();
+        // Semua tenaga pendidik & kependidikan aktif, dikelompokkan per sekolah/staf
+        $teachers = Teacher::orderBy('name')->get();
 
-        // Mengelompokkan guru berdasarkan kategori untuk tampilan yang terstruktur
-        $groupedTeachers = $teachers->groupBy('category');
+        $counts = [
+            'amaliah1' => $teachers->where('school', 'Amaliah 1')->count(),
+            'amaliah2' => $teachers->where('school', 'Amaliah 2')->count(),
+            'gabungan' => $teachers->where('school', 'Amaliah 1 & 2')->count(),
+            'staff'    => $teachers->where('school', 'Staff')->count(),
+        ];
 
         //hiraukan ini
         $mainImages = Image::whereIn('title', ['main'])->get();
         $hasImages = !$mainImages->isEmpty();
 
         // Mengirimkan data ke view di lokasi public-side.teachers.index
-        return view('PublicSide.teachers.index', compact('groupedTeachers', 'hasImages', 'mainImages'));
+        return view('PublicSide.teachers.index', compact('teachers', 'counts', 'hasImages', 'mainImages'));
     }
 
     public function show(Teacher $teacher)
