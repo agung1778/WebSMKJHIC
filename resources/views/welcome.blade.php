@@ -336,11 +336,11 @@
                 $amaliahDark = '#282829';
 
                 // Data untuk bagian statistik, disesuaikan dengan referensi gambar
-                $stats = [
+$stats = [
                     ['icon' => 'fa-users', 'number' => ($studentsCount ?? 0) . ' +', 'label' => 'Peserta Didik'],
                     ['icon' => 'fa-rocket', 'number' => ($teachersCount ?? 0) . ' +', 'label' => 'Tenaga Pendidik'],
                     ['icon' => 'fa-star', 'number' => ($facilitiesCount ?? 0) . ' +', 'label' => 'Fasilitas Unggulan'],
-                    ['icon' => 'fa-graduation-cap', 'number' => '85%', 'label' => 'Alumni cepat dapat kerja'],
+                    ['icon' => 'fa-award', 'number' => 'A+', 'label' => 'Akreditasi'],
                 ];
             @endphp
             {{-- SECTION STATS BAR --}}
