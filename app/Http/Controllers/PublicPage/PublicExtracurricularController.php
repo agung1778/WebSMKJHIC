@@ -11,8 +11,8 @@
     {
         public function index()
         {
-            // Mengambil semua berita, diurutkan dari yang terbaru
-            $extracurriculars = Extracurricular::latest()->paginate(10);
+            // Mengambil semua kegiatan (tanpa paginasi agar semua kartu langsung tampil)
+            $extracurriculars = Extracurricular::latest()->get();
 
             $mainImages = Image::whereIn('title', ['ExtracurricularImage', 'main'])->get();
 

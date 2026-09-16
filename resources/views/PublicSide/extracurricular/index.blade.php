@@ -1,179 +1,210 @@
-@extends('layouts.public-app') {{-- Sesuaikan dengan nama file layout utama Anda --}}
+@extends('layouts.public-app')
+
+@section('title', 'Ekstrakurikuler | SMK Amaliah 1 & 2')
+@section('description', 'Kegiatan ekstrakurikuler SMK Amaliah 1 & 2 Ciawi-Bogor: Pramuka, ACC, dan lainnya. Kembangkan bakat dan minat di luar jam pelajaran.')
+
+@include('PublicSide.extracurricular._styles')
+
+@php
+    $hasImages = isset($mainImages) && $mainImages->isNotEmpty();
+    $heroImage = $hasImages ? $mainImages->first() : null;
+    $total = $extracurriculars->count();
+    $wajibCount = $extracurriculars->where('type', 'Wajib')->count();
+    $pilihanCount = $extracurriculars->where('type', 'Pilihan')->count();
+@endphp
 
 @section('content')
 
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>@yield('title')</title>
-
-        {{-- Link Extensions --}}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    </head>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-
-    @php
-        $amaliahGreen = '#63cd00';
-        $amaliahDark = '#282829';
-        $amaliahBlue = '#E0E7FF';
-
-        // Cek Variabel 
-        $hasImages = isset($mainImages) && $mainImages->isNotEmpty();
-    @endphp
-
-    <body>
-
-        <section class="relative max-w-screen">
-            {{-- Slider Gambar Dinamis --}}
-            @if($hasImages)
-                <div x-data="{ activeSlide: 1, totalSlides: {{ $mainImages->count() }} }"
-                    x-init="setInterval(() => { activeSlide = activeSlide % totalSlides + 1 }, 5000)">
-                    <div class="relative w-full h-[300px] overflow-hidden">
-                        @foreach($mainImages as $image)
-                            <div x-show="activeSlide === {{ $loop->iteration }}"
-                                x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
-                                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
-                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0">
-
-                                <img src="{{ Storage::url($image->path) }}" alt="{{ $image->description ?? $image->filename }}"
-                                    class="w-full h-full object-cover">
-                            </div>
-                        @endforeach
-
-                    </div>
-                </div>
+    {{-- ============================ HERO ============================ --}}
+    <section class="relative bg-[#282829]">
+        <div class="relative h-[320px] lg:h-[420px] overflow-hidden">
+            @if ($heroImage)
+                <img src="{{ Storage::url($heroImage->path) }}"
+                    alt="{{ $heroImage->description ?? $heroImage->filename }}"
+                    class="w-full h-full object-cover">
             @else
-                <div>
-                    <div class="relative h-[300px] overflow-hidden bg-black">
-                        {{-- Layar hitam sebagai fallback --}}
-                    </div>
+                <div class="absolute inset-0">
+                    <div class="absolute -top-24 -right-16 w-96 h-96 rounded-full opacity-25"
+                        style="background: radial-gradient(circle, #63cd00 0%, transparent 70%)"></div>
+                    <div class="absolute bottom-0 left-0 w-full h-2/3"
+                        style="background: radial-gradient(ellipse at bottom left, rgba(99,205,0,.18) 0%, transparent 60%)"></div>
                 </div>
             @endif
 
+            <div class="absolute inset-0"
+                style="background: linear-gradient(100deg, rgba(40,40,41,.88) 0%, rgba(40,40,41,.55) 45%, rgba(40,40,41,.15) 100%)"></div>
 
-        </section>
+            <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+                <span
+                    class="inline-flex items-center gap-2 w-fit text-[11px] lg:text-xs font-semibold tracking-widest uppercase text-[#d9ffb3] bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 mb-4">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
+                    Ekstrakurikuler
+                </span>
+                <h1 class="text-white text-3xl lg:text-5xl font-bold leading-tight">Kegiatan <span class="text-[#63cd00]">Ekstrakurikuler</span></h1>
+                <p class="mt-4 max-w-2xl text-white/85 text-base lg:text-lg leading-relaxed">
+                    {{ $total }} kegiatan untuk mengembangkan bakat, minat, dan karakter siswa di luar jam pelajaran.
+                </p>
 
-        <div style="background-color: #2D2D2D;">
-            <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-                {{-- Menggunakan h-full dan flex items-center untuk membuat konten di tengah vertikal --}}
-                <div class="h-full flex items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        {{-- Text-lg untuk memperbesar teks --}}
-                        <ol class="inline-flex items-center space-x-2 md:space-x-3 text-lg">
-                            <li class="inline-flex items-center">
-                                <a href="/"
-                                    class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-white text-xs"></i>
-                                    <a href="{{ route('public.extracurricular.index') }}"
-                                        class="ml-2 font-medium text-white hover:text-white md:ml-3 transition-colors">Extracurriculars</a>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
+                <div class="mt-8 flex flex-wrap items-center gap-3">
+                    <a href="#daftarEkstrakurikuler"
+                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        <i class="fa-solid fa-futbol"></i> Lihat Kegiatan
+                    </a>
+                    <a href="{{ route('public.about.index') }}"
+                        class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        <i class="fa-solid fa-circle-info"></i> Tentang Kami
+                    </a>
                 </div>
             </div>
         </div>
 
-        {{-- Pastikan Anda sudah menjalankan: php artisan storage:link --}}
-        {{-- Pastikan route 'public.extracurricular.show' sudah ada di web.php --}}
-
-        <div class="bg-gray-50">
-            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-
-                {{-- Header Section --}}
-                <div class="md:w-2/3 lg:w-1/2 mb-10">
-                    <h2 class="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">
-                        Kegiatan Ekstrakurikuler
-                    </h2>
-                    <p class="mt-3 text-base text-gray-600">
-                        Temukan dan kembangkan bakat serta minatmu di luar jam pelajaran melalui berbagai pilihan kegiatan
-                        yang kami sediakan.
-                    </p>
-                </div>
-
-                {{-- Grid untuk Kartu Ekstrakurikuler --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-                    @forelse ($extracurriculars as $extracurricular)
-                        <div
-                            class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group">
-                            <a href="{{ route('public.extracurricular.show', $extracurricular) }}" class="block">
-                                @if ($extracurricular->image)
-                                    <div class="h-48 overflow-hidden">
-                                        <img src="{{ asset('storage/' . $extracurricular->image) }}"
-                                            alt="Gambar {{ $extracurricular->name }}"
-                                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                    </div>
-                                @else
-                                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">
-                                        <i class="fas fa-image mr-2"></i> Gambar Tidak Tersedia
-                                    </div>
-                                @endif
+        {{-- Breadcrumb --}}
+        <div style="background-color:#2D2D2D;">
+            <div class="max-w-screen-xl min-h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-3">
+                <nav aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
+                        <li class="flex items-center">
+                            <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
+                                Home
                             </a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
+                            <span class="inline-flex items-center ml-2 md:ml-3 font-medium text-[#63cd00]">Ekstrakurikuler</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </section>
 
-                            <div class="p-5 flex flex-col flex-grow">
-                                {{-- Meta Info: Pelatih & Tipe --}}
-                                <div class="flex items-center justify-between text-xs text-gray-500 mb-3">
-                                    <span class="font-medium flex items-center" title="Pelatih">
-                                        <i class="fas fa-user-tie mr-1.5 text-gray-400"></i>
-                                        {{ $extracurricular->coach }}
+    {{-- ============================ STATISTIK ============================ --}}
+    <section class="bg-white">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 -mt-8 relative z-20">
+                <div class="bg-[#282829] rounded-2xl p-5 lg:p-6 shadow-xl flex items-center gap-4">
+                    <span class="w-11 h-11 lg:w-12 lg:h-12 rounded-xl bg-[#63cd00]/15 flex items-center justify-center text-[#63cd00] text-lg lg:text-xl flex-shrink-0">
+                        <i class="fa-solid fa-futbol"></i>
+                    </span>
+                    <div class="min-w-0">
+                        <p class="text-2xl lg:text-3xl font-extrabold text-white leading-none">{{ $total }}</p>
+                        <p class="text-xs lg:text-sm text-white/60 mt-1 truncate">Total Kegiatan</p>
+                    </div>
+                </div>
+                <div class="bg-[#282829] rounded-2xl p-5 lg:p-6 shadow-xl flex items-center gap-4">
+                    <span class="w-11 h-11 lg:w-12 lg:h-12 rounded-xl bg-[#eab308]/15 flex items-center justify-center text-[#eab308] text-lg lg:text-xl flex-shrink-0">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </span>
+                    <div class="min-w-0">
+                        <p class="text-2xl lg:text-3xl font-extrabold text-white leading-none">{{ $wajibCount }}</p>
+                        <p class="text-xs lg:text-sm text-white/60 mt-1 truncate">Wajib</p>
+                    </div>
+                </div>
+                <div class="bg-[#282829] rounded-2xl p-5 lg:p-6 shadow-xl flex items-center gap-4">
+                    <span class="w-11 h-11 lg:w-12 lg:h-12 rounded-xl bg-[#0ea5e9]/15 flex items-center justify-center text-[#0ea5e9] text-lg lg:text-xl flex-shrink-0">
+                        <i class="fa-solid fa-list-check"></i>
+                    </span>
+                    <div class="min-w-0">
+                        <p class="text-2xl lg:text-3xl font-extrabold text-white leading-none">{{ $pilihanCount }}</p>
+                        <p class="text-xs lg:text-sm text-white/60 mt-1 truncate">Pilihan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ============================ DAFTAR EKSTRAKURIKULER ============================ --}}
+    <section id="daftarEkstrakurikuler" class="bg-gray-50 py-16 sm:py-20">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="max-w-2xl mb-10">
+                <span class="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#63cd00] mb-3">
+                    <span class="w-6 h-0.5 rounded-full bg-[#63cd00]"></span>
+                    Kegiatan Ekstrakurikuler
+                </span>
+                <h2 class="text-3xl lg:text-4xl font-extrabold text-[#282829] tracking-tight">Kembangkan Bakat & Minat</h2>
+                <p class="mt-3 text-gray-600 text-lg">Berbagai pilihan kegiatan yang didampingi pembina berpengalaman.</p>
+            </div>
+
+            @if ($total > 0)
+                <div class="ec-grid">
+                    @foreach ($extracurriculars as $item)
+                        <a href="{{ route('public.extracurricular.show', $item->id) }}"
+                            class="ec-card group"
+                            aria-label="{{ $item->name }}">
+                            <div class="ec-card__thumb">
+                                @if ($item->image)
+                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" loading="lazy">
+                                @else
+                                    <div class="ec-thumb-fallback"><i class="fa-solid fa-futbol"></i></div>
+                                @endif
+                                <span class="ec-chip absolute top-3 left-3 z-10">
+                                    <i class="fa-solid fa-user-tie"></i>
+                                    {{ $item->coach }}
+                                </span>
+                                @if ($item->type === 'Wajib')
+                                    <span class="ec-chip ec-chip--type-wajib absolute top-3 right-3 z-10">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                        Wajib
                                     </span>
-                                    <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-semibold">
-                                        {{ $extracurricular->type }}
+                                @else
+                                    <span class="ec-chip ec-chip--type-pilihan absolute top-3 right-3 z-10">
+                                        <i class="fa-solid fa-list-check"></i>
+                                        Pilihan
                                     </span>
-                                </div>
+                                @endif
+                            </div>
 
-                                {{-- Nama Ekstrakurikuler --}}
-                                <a href="{{ route('public.extracurricular.show', $extracurricular) }}"
-                                    class="text-lg font-bold text-gray-900 hover:text-[#4ED400] transition-colors block mb-2 line-clamp-2"
-                                    title="{{ $extracurricular->name }}">
-                                    {{ $extracurricular->name }}
-                                </a>
-
-                                {{-- Deskripsi Singkat --}}
-                                <p class="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">
-                                    {{ $extracurricular->description }}
+                            <div class="p-5 flex flex-col flex-1">
+                                <h3 class="text-lg font-bold text-[#282829] leading-snug line-clamp-2 group-hover:text-[#63cd00] transition-colors duration-200">
+                                    {{ $item->name }}
+                                </h3>
+                                <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mt-2 flex-grow">
+                                    {{ strip_tags($item->description) }}
                                 </p>
-
-                                {{-- Tombol Selengkapnya (diletakkan di bawah) --}}
-                                <div class="mt-auto pt-3 border-t border-gray-100">
-                                    <a href="{{ route('public.extracurricular.show', $extracurricular) }}"
-                                        class="text-[#4ED400] hover:text-green-700 text-sm font-semibold flex items-center">
+                                <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="ec-card__hint">
                                         Selengkapnya
-                                        <i class="fas fa-arrow-right ml-1.5 text-xs"></i>
-                                    </a>
+                                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </span>
+                                    @if ($item->contact)
+                                        <span class="ec-meta"><i class="fa-solid fa-phone"></i> {{ $item->contact }}</span>
+                                    @endif
                                 </div>
                             </div>
-                        </div>
-                    @empty
-                        <p class="text-gray-500 text-center col-span-full py-16">
-                            Belum ada data ekstrakurikuler yang dipublikasikan.
-                        </p>
-                    @endforelse
+                        </a>
+                    @endforeach
                 </div>
+            @else
+                <div class="border-2 border-dashed border-gray-300 rounded-2xl p-14 text-center bg-white">
+                    <div class="w-14 h-14 mx-auto rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xl mb-3">
+                        <i class="fa-solid fa-futbol"></i>
+                    </div>
+                    <p class="text-gray-600 font-semibold">Belum ada kegiatan yang dipublikasikan.</p>
+                    <p class="text-sm text-gray-500 mt-1">Data ekstrakurikuler akan segera hadir.</p>
+                </div>
+            @endif
+        </div>
+    </section>
 
-                {{-- Link Paginasi --}}
-                <div class="mt-12">
-                    {{ $extracurriculars->links() }}
-                </div>
+    {{-- ============================ CTA SECTION ============================ --}}
+    <section class="bg-[#282829] py-16 sm:py-20">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl lg:text-4xl font-extrabold text-white">Tertarik Bergabung?</h2>
+            <p class="mt-4 max-w-2xl mx-auto text-white/80 text-lg">
+                Daftar PPDB dan jadilah bagian dari komunitas SMK Amaliah yang aktif berprestasi.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+                <a href="{{ route('public.about.index') }}"
+                    class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-base px-8 py-4 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg">
+                    <i class="fa-solid fa-user-plus"></i> Info PPDB
+                </a>
+                <a href="https://wa.me/6285649011449" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-base px-8 py-4 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300">
+                    <i class="fa-brands fa-whatsapp"></i> Konsultasi WA
+                </a>
             </div>
         </div>
-
-    </body>
-
-    </html>
-
+    </section>
 
 @endsection

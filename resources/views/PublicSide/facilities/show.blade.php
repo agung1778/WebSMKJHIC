@@ -1,196 +1,224 @@
 @extends('layouts.public-app')
 
+@section('title', $facility->name . ' | Fasilitas SMK Amaliah 1 & 2')
+@section('description', \Illuminate\Support\Str::limit(strip_tags($facility->description), 160) ?? 'Fasilitas SMK Amaliah 1 & 2 Ciawi-Bogor.')
+
+@include('PublicSide.facilities._styles')
+
+@php
+    $readMinutes = $facility->description
+        ? max(1, (int) ceil(str_word_count(strip_tags($facility->description)) / 200))
+        : 1;
+@endphp
+
 @section('content')
 
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>@yield('title')</title>
-
-        {{-- Link Extensions --}}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-    </head>
-
-    @php
-        $amaliahGreen = '#63cd00';
-        $amaliahDark = '#282829';
-        $amaliahBlue = '#E0E7FF';
-
-    @endphp
-
-
-    <body>
-        <header class="w-full h-80 lg:h-96 bg-[#2D2D2D] overflow-hidden">
-            {{-- Mengambil langsung gambar utama berita ($news->image) sebagai Hero Image --}}
+    {{-- ============================ HERO ============================ --}}
+    <section class="relative bg-[#282829]">
+        <div class="relative h-[340px] lg:h-[440px] overflow-hidden">
             @if ($facility->image)
-                <img src="{{ asset('storage/' . $facility->image) }}" alt="Gambar Utama {{ $facility->name }}"
-                    class="w-full h-full object-cover opacity-80 transition-opacity duration-300 hover:opacity-100">
-                {{-- Tambahan: opacity 80% dengan hover 100% untuk efek visual yang halus --}}
+                <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}"
+                    class="w-full h-full object-cover">
             @else
-                {{-- Fallback jika gambar utama tidak tersedia --}}
-                <div class="w-full h-full flex items-center justify-center bg-black text-white text-xl">
-                    Gambar Berita Tidak Tersedia
-                </div>
+                <div class="fc-thumb-fallback fc-thumb-fallback--big"><i class="fa-solid fa-building"></i></div>
             @endif
-        </header>
 
-        <div style="background-color: #2D2D2D;">
-            <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-                {{-- Menggunakan h-full dan flex items-center untuk membuat konten di tengah vertikal --}}
-                <div class="h-full flex items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        {{-- Text-lg untuk memperbesar teks --}}
-                        <ol class="inline-flex items-center space-x-2 md:space-x-3 text-lg">
-                            <li class="inline-flex items-center">
-                                <a href="/"
-                                    class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-white text-xs"></i>
-                                    <a href="{{ route('public.facilities.index') }}"
-                                        class="ml-2 font-medium text-white hover:text-white md:ml-3 transition-colors">Facilities</a>
-                                </div>
-                            </li>
-                            <li aria-current="page">
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-white text-xs"></i>
+            <div class="absolute inset-0"
+                style="background: linear-gradient(180deg, rgba(40,40,41,.35) 0%, rgba(40,40,41,.78) 100%)"></div>
 
-                                    {{-- Cukup panggil properti 'name' dari objek $partner --}}
-                                    <span class="ml-2 font-medium md:ml-3 truncate max-w-xs" style="color: #ffffff;">
-                                        {{ $facility->name }}
-                                    </span>
-
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
+            <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-10">
+                <span class="fc-chip fc-chip--green w-fit mb-4"><i class="fa-solid fa-building"></i> Fasilitas</span>
+                <h1 class="text-white text-3xl lg:text-5xl font-extrabold leading-tight max-w-4xl">
+                    {{ $facility->name }}
+                </h1>
+                <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/85">
+                    <span class="fc-chip absolute top-3 left-3 z-10" style="position: static;">
+                        <i class="fa-solid fa-tag"></i>
+                        {{ $facility->type }}
+                    </span>
+                    <span class="inline-flex items-center gap-2">
+                        <i class="fa-solid fa-user-pen"></i>
+                        {{ $facility->publisher }}
+                    </span>
+                    <span class="inline-flex items-center gap-2">
+                        <i class="fa-regular fa-clock"></i>
+                        {{ $readMinutes }} menit baca
+                    </span>
                 </div>
             </div>
         </div>
 
-        {{-- ========================================================== --}}
-        {{-- BAGIAN DETAIL FASILITAS - V3 (KARTU KECIL & GARIS PEMISAH) --}}
-        {{-- ========================================================== --}}
-        <section class="bg-white py-16 sm:py-24 ">
-            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                {{-- PERUBAHAN: Gap dihapus untuk memberi ruang bagi garis pemisah --}}
-                <div class="lg:grid lg:grid-cols-3">
-
-                    {{-- ============================================= --}}
-                    {{-- KOLOM KIRI: DETAIL FASILITAS UTAMA --}}
-                    {{-- ============================================= --}}
-                    <div class="lg:col-span-2 lg:pr-12 xl:pr-16 mt-[-50px]">
-                        {{-- JUDUL DAN METADATA --}}
-                        <div class="mb-8">
-                            <p class="text-base font-semibold text-blue-600 uppercase tracking-wide">{{ $facility->type }}
-                            </p>
-                            <h1 class="mt-2 text-3xl lg:text-4xl font-extrabold text-[#2D2D2D] tracking-tight">
+        {{-- Breadcrumb --}}
+        <div style="background-color:#2D2D2D;">
+            <div class="max-w-screen-xl min-h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-3">
+                <nav aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2 md:space-x-3 text-sm">
+                        <li class="inline-flex items-center flex-shrink-0">
+                            <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
+                                Home
+                            </a>
+                        </li>
+                        <li class="inline-flex items-center flex-shrink-0">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
+                            <a href="{{ route('public.facilities.index') }}"
+                                class="inline-flex items-center ml-2 md:ml-3 font-medium text-gray-300 hover:text-white transition-colors">
+                                Fasilitas
+                            </a>
+                        </li>
+                        <li class="inline-flex items-center min-w-0">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-xs flex-shrink-0"></i>
+                            <span class="ml-2 md:ml-3 font-medium text-[#63cd00] truncate max-w-[40vw] sm:max-w-[55vw]" title="{{ $facility->name }}">
                                 {{ $facility->name }}
-                            </h1>
-                            <p class="mt-4 text-sm text-gray-500">
-                                Dipublikasikan pada {{ $facility->created_at->translatedFormat('d F Y') }}
-                            </p>
-                        </div>
+                            </span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </section>
 
-                        {{-- GAMBAR UTAMA --}}
-                        @if ($facility->image)
-                            <div class="mb-8 aspect-w-16 aspect-h-9">
-                                <img src="{{ asset('storage/' . $facility->image) }}" alt="Gambar {{ $facility->name }}"
-                                    class="w-full h-full object-cover rounded-xl shadow-lg">
-                            </div>
-                        @endif
+    {{-- ============================ KONTEN ============================ --}}
+    <section class="bg-white">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+            <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12 gap-y-10">
 
-                        {{-- DESKRIPSI LENGKAP --}}
-                        <div class="prose prose-lg max-w-none text-gray-600">
+                {{-- Kolom kiri (2/3): artikel --}}
+                <div class="lg:col-span-2 min-w-0">
+                    <a href="{{ route('public.facilities.index') }}"
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#63cd00] transition-colors duration-200 mb-6">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        Kembali ke Daftar Fasilitas
+                    </a>
+
+                    {{-- Gambar besar (jika ada) --}}
+                    @if ($facility->image)
+                        <figure class="mb-8">
+                            <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}"
+                                class="w-full rounded-2xl shadow-md object-cover">
+                            @if ($facility->publisher)
+                                <figcaption class="mt-2 text-sm text-gray-500">
+                                    <i class="fa-solid fa-camera mr-1 text-[#63cd00]"></i>
+                                    Dokumentasi {{ $facility->publisher }}
+                                </figcaption>
+                            @endif
+                        </figure>
+                    @endif
+
+                    {{-- Deskripsi fasilitas --}}
+                    <article class="fc-article bg-gray-50 border border-[#eef0f3] rounded-2xl p-6 sm:p-10">
+                        @if (trim(strip_tags($facility->description ?? '')) !== '')
                             {!! \App\Support\HtmlSanitizer::clean($facility->description) !!}
+                        @else
+                            <p class="text-gray-500 text-center py-8">
+                                Deskripsi detail fasilitas ini belum tersedia.
+                            </p>
+                        @endif
+                    </article>
+
+                    {{-- Bagikan --}}
+                    <footer class="mt-8 bg-[#282829] rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <p class="font-bold text-white">Bagikan fasilitas ini</p>
+                            <p class="text-sm text-white/60 mt-0.5">Bantu sebarkan informasi ke teman & keluarga.</p>
                         </div>
-                    </div>
+                        <div class="flex items-center gap-3">
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ url()->current() }}" target="_blank" rel="noopener noreferrer"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#1877F2] hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Bagikan ke Facebook">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?url={{ url()->current() }}&text={{ urlencode($facility->name) }}" target="_blank" rel="noopener noreferrer"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-black hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Bagikan ke X (Twitter)">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </a>
+                            <a href="https://api.whatsapp.com/send?text={{ urlencode($facility->name . ' - ' . url()->current()) }}" target="_blank" rel="noopener noreferrer"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#25D366] hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Bagikan ke WhatsApp">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </a>
+                            <a href="{{ url()->current() }}" onclick="navigator.clipboard?.writeText(this.href); alert('Tautan disalin!'); return false;"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#63cd00] hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-200"
+                                aria-label="Salin tautan">
+                                <i class="fa-solid fa-link"></i>
+                            </a>
+                        </div>
+                    </footer>
+                </div>
 
-                    {{-- ==================================================== --}}
-                    {{-- KOLOM KANAN: SIDEBAR FASILITAS LAINNYA --}}
-                    {{-- ==================================================== --}}
-                    {{-- PERUBAHAN: Ditambahkan border kiri dan padding kiri sebagai garis pemisah --}}
-                    <div class="lg:col-span-1 mt-12 lg:mt-0 lg:border-l lg:border-gray-200 lg:pl-12 xl:pl-16">
-                        <div class="sticky top-24">
-                            <h3 class="text-2xl font-bold text-[#2D2D2D] mb-6 border-b border-gray-200 pb-4">
-                                Jelajahi Fasilitas Lain
-                            </h3>
+                {{-- Kolom kanan (1/3): sidebar --}}
+                <aside class="lg:col-span-1">
+                    <div class="lg:sticky lg:top-8 space-y-6">
 
-                            {{-- PERUBAHAN: Jarak antar kartu dikurangi menjadi space-y-6 --}}
-                            <div class="space-y-6">
-                                @forelse ($otherFacilities as $other)
-                                    <div
-                                        class="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300">
-                                        <a href="{{ route('public.facilities.show', $other) }}" class="block">
-                                            @if ($other->image)
-                                                {{-- PERUBAHAN: Tinggi gambar diperkecil menjadi h-32 --}}
-                                                <img src="{{ asset('storage/' . $other->image) }}" alt="{{ $other->name }}"
-                                                    class="w-full h-32 object-cover rounded-t-2xl">
-                                            @else
-                                                <div class="w-full h-32 bg-gray-100 rounded-t-2xl flex items-center justify-center">
-                                                    <i class="fas fa-school text-4xl text-gray-300"></i>
-                                                </div>
-                                            @endif
-                                        </a>
-                                        {{-- PERUBAHAN: Padding konten dikurangi menjadi p-4 --}}
-                                        <div class="p-4">
-                                            <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider">
-                                                {{ $other->type }}
-                                            </p>
-                                            <a href="{{ route('public.facilities.show', $other) }}">
-                                                {{-- PERUBAHAN: Ukuran font judul menjadi text-base --}}
-                                                <h4
-                                                    class="font-bold text-base text-[#2D2D2D] mt-1 hover:text-blue-700 transition-colors">
-                                                    {{ $other->name }}
-                                                </h4>
-                                            </a>
-                                            <p class="text-gray-600 text-sm mt-2">
-                                                {{-- PERUBAHAN: Batas karakter deskripsi dikurangi --}}
-                                                {{ Str::limit(strip_tags($other->description), 60) }}
-                                            </p>
-                                            {{-- PERUBAHAN: Ukuran tombol diperkecil --}}
-                                            <a href="{{ route('public.facilities.show', $other) }}"
-                                                class="inline-block bg-[#2D2D2D] text-white text-sm font-semibold px-4 py-2 rounded-lg mt-4 hover:bg-[#2D2D2D] transition-all duration-200 transform hover:scale-105">
-                                                Selengkapnya <span class="ml-1 font-light"><i class="fas fa-chevron-right"></i></span>
-                                            </a>
-                                        </div>
+                        {{-- Info fasilitas --}}
+                        <div class="fc-side">
+                            <h3 class="fc-side__head"><i class="fa-solid fa-circle-info"></i> Info Fasilitas</h3>
+                            <div class="fc-side__body space-y-4 text-sm">
+                                <div class="fc-side__row">
+                                    <span class="fc-side__icon"><i class="fa-solid fa-tag"></i></span>
+                                    <div class="min-w-0">
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Tipe</p>
+                                        <p class="font-semibold text-gray-800 truncate">{{ $facility->type }}</p>
                                     </div>
+                                </div>
+                                <div class="fc-side__row">
+                                    <span class="fc-side__icon"><i class="fa-solid fa-user-pen"></i></span>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Penanggung Jawab</p>
+                                        <p class="font-semibold text-gray-800">{{ $facility->publisher }}</p>
+                                    </div>
+                                </div>
+                                <div class="fc-side__row">
+                                    <span class="fc-side__icon"><i class="fa-regular fa-clock"></i></span>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Waktu Baca</p>
+                                        <p class="font-semibold text-gray-800">{{ $readMinutes }} menit</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Fasilitas lainnya --}}
+                        <div class="fc-side">
+                            <h3 class="fc-side__head"><i class="fa-solid fa-building"></i> Fasilitas Lainnya</h3>
+                            <div class="fc-side__body">
+                                @forelse ($otherFacilities as $item)
+                                    <a href="{{ route('public.facilities.show', $item->id) }}"
+                                        class="fc-rel" aria-label="{{ $item->name }}">
+                                        <div class="fc-rel__thumb">
+                                            @if ($item->image)
+                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" loading="lazy">
+                                            @else
+                                                <i class="fa-solid fa-building"></i>
+                                            @endif
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 hover:text-[#63cd00] transition-colors duration-200">
+                                                {{ $item->name }}
+                                            </p>
+                                            <span class="fc-chip fc-chip--green mt-1.5 inline-flex">
+                                                <i class="fa-solid fa-tag"></i>
+                                                {{ $item->type }}
+                                            </span>
+                                        </div>
+                                    </a>
                                 @empty
-                                    <p class="text-gray-500 bg-gray-50 p-4 rounded-lg">Tidak ada fasilitas lain untuk
-                                        ditampilkan.</p>
+                                    <p class="text-sm text-gray-500 py-4 text-center">Tidak ada fasilitas lain untuk ditampilkan.</p>
                                 @endforelse
                             </div>
 
-                            {{-- Tombol Utama di Bawah Daftar --}}
-                            @if ($otherFacilities->isNotEmpty())
-                                <div class="mt-8 text-center">
-                                    <a href="{{ route('public.facilities.index') }}"
-                                        class="inline-block w-full bg-[#2D2D2D] text-white font-bold py-3 px-8 rounded-lg hover:bg-black transition-all duration-300 transform hover:scale-105 shadow-md">
-                                        Lihat Semua Fasilitas
-                                    </a>
-                                </div>
-                            @endif
+                            <div class="p-4 pt-0">
+                                <a href="{{ route('public.facilities.index') }}"
+                                    class="w-full block text-center py-3 rounded-xl text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90 bg-[#282829]">
+                                    Lihat Semua Fasilitas
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </aside>
+
             </div>
-        </section>
-
-    </body>
-
-    </html>
-
+        </div>
+    </section>
 
 @endsection

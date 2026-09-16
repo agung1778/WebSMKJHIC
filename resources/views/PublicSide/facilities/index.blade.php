@@ -1,354 +1,243 @@
 @extends('layouts.public-app')
 
+@section('title', 'Fasilitas | SMK Amaliah 1 & 2')
+@section('description', 'Fasilitas modern SMK Amaliah 1 & 2 Ciawi-Bogor: laboratorium, ruang kelas, sarana olahraga, dan prasarana pendukung kegiatan belajar mengajar.')
+
+@include('PublicSide.facilities._styles')
+
+@php
+    $hasImages = isset($facilityImages) && $facilityImages->isNotEmpty();
+    $heroImage = $hasImages ? $facilityImages->first() : null;
+    $total = $facilities->count();
+    $types = $facilities->pluck('type')->unique()->values();
+    $typeCounts = $types->mapWithKeys(fn ($t) => [$t => $facilities->where('type', $t)->count()]);
+@endphp
+
+{{-- Aturan CSS khusus per tipe (data-driven) untuk filter radio --}}
+@if ($types->isNotEmpty())
+    <style>
+        @foreach ($types as $type)
+            @php $slug = \Illuminate\Support\Str::slug($type); @endphp
+            #fcr-{{ $slug }}:checked ~ .fc-tabs label[for="fcr-{{ $slug }}"] {
+                background: var(--fc-green); color: #ffffff;
+                box-shadow: 0 4px 12px -2px rgba(99, 205, 0, 0.45);
+            }
+            #fcr-{{ $slug }}:checked ~ .fc-tabs label[for="fcr-{{ $slug }}"] .fc-count { background: rgba(255, 255, 255, 0.25); color: #ffffff; }
+            #fcr-{{ $slug }}:checked ~ .fc-grid .fc-card[data-g~="{{ $slug }}"] { display: flex; }
+            #fcr-{{ $slug }}:checked ~ .fc-empty[data-e="{{ $slug }}"] { display: flex; }
+        @endforeach
+    </style>
+@endif
+
 @section('content')
 
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>@yield('title')</title>
-
-        {{-- Link Extensions --}}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-    </head>
-    @php
-        $amaliahGreen = '#63cd00';
-        $amaliahDark = '#282829';
-        $amaliahBlue = '#E0E7FF';
-
-    @endphp
-
-    <body>
-        <section class="relative max-w-screen">
-            {{-- Slider Gambar Dinamis --}}
-
-            {{-- Gunakan isNotEmpty() langsung di @if. Ini lebih bersih. --}}
-            @if($facilityImages->isNotEmpty())
-
-                <div x-data="{ activeSlide: 1, totalSlides: {{ $facilityImages->count() }} }"
-                    x-init="setInterval(() => { activeSlide = activeSlide % totalSlides + 1 }, 5000)">
-                    <div class="relative w-full h-[300px] overflow-hidden">
-
-                        {{-- Loop ini sekarang akan berjalan dengan benar --}}
-                        @foreach($facilityImages as $image)
-                            <div x-show="activeSlide === {{ $loop->iteration }}"
-                                x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0"
-                                x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
-                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0">
-
-                                <img src="{{ Storage::url($image->path) }}" alt="{{ $image->description ?? $image->filename }}"
-                                    class="w-full h-full object-cover">
-                            </div>
-                        @endforeach
-
-                    </div>
-                </div>
+    {{-- ============================ HERO ============================ --}}
+    <section class="relative bg-[#282829]">
+        <div class="relative h-[320px] lg:h-[420px] overflow-hidden">
+            @if ($heroImage)
+                <img src="{{ Storage::url($heroImage->path) }}"
+                    alt="{{ $heroImage->description ?? $heroImage->filename }}"
+                    class="w-full h-full object-cover">
             @else
-                {{-- Bagian ini akan tampil jika tidak ada gambar dengan title 'FacilityImage' --}}
-                <div>
-                    <div class="relative h-[300px] overflow-hidden bg-black">
-                        {{-- Layar hitam sebagai fallback --}}
-                    </div>
+                <div class="absolute inset-0">
+                    <div class="absolute -top-24 -right-16 w-96 h-96 rounded-full opacity-25"
+                        style="background: radial-gradient(circle, #63cd00 0%, transparent 70%)"></div>
+                    <div class="absolute bottom-0 left-0 w-full h-2/3"
+                        style="background: radial-gradient(ellipse at bottom left, rgba(99,205,0,.18) 0%, transparent 60%)"></div>
                 </div>
             @endif
-        </section>
-        <div style="background-color: #2D2D2D;">
-            <div class="max-w-screen-xl h-[70px] mx-auto px-4 sm:px-6 lg:px-8">
-                {{-- Menggunakan h-full dan flex items-center untuk membuat konten di tengah vertikal --}}
-                <div class="h-full flex items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        {{-- Text-lg untuk memperbesar teks --}}
-                        <ol class="inline-flex items-center space-x-2 md:space-x-3 text-lg">
-                            <li class="inline-flex items-center">
-                                <a href="/"
-                                    class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <div class="flex items-center">
-                                    <i class="fas fa-chevron-right text-white text-xs"></i>
-                                    <a href="{{ route('public.facilities.index') }}"
-                                        class="ml-2 font-medium text-white hover:text-white md:ml-3 transition-colors">Facilities</a>
-                                </div>
-                            </li>
-                        </ol>
-                    </nav>
+
+            <div class="absolute inset-0"
+                style="background: linear-gradient(100deg, rgba(40,40,41,.88) 0%, rgba(40,40,41,.55) 45%, rgba(40,40,41,.15) 100%)"></div>
+
+            <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+                <span
+                    class="inline-flex items-center gap-2 w-fit text-[11px] lg:text-xs font-semibold tracking-widest uppercase text-[#d9ffb3] bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 mb-4">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
+                    Fasilitas & Prasarana
+                </span>
+                <h1 class="text-white text-3xl lg:text-5xl font-bold leading-tight">Fasilitas <span class="text-[#63cd00]">Modern</span></h1>
+                <p class="mt-4 max-w-2xl text-white/85 text-base lg:text-lg leading-relaxed">
+                    {{ $total }} fasilitas lengkap mendukung proses belajar mengajar berkualitas dan pengembangan bakat siswa.
+                </p>
+
+                <div class="mt-8 flex flex-wrap items-center gap-3">
+                    <a href="#daftarFasilitas"
+                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        <i class="fa-solid fa-building"></i> Lihat Fasilitas
+                    </a>
+                    <a href="{{ route('public.about.index') }}"
+                        class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        <i class="fa-solid fa-circle-info"></i> Tentang Kami
+                    </a>
                 </div>
             </div>
         </div>
 
-        <section class="bg-white py-20 sm:py-24">
-            <div class="container mx-auto max-w-7xl px-6 lg:px-8">
-                <div class="grid grid-cols-1 items-center gap-y-16 gap-x-8 lg:grid-cols-2">
-
-                    <div class="flex items-end justify-center gap-4 lg:justify-start">
-
-                        {{--
-                        PERUBAHAN DI SINI:
-                        Looping sekarang menggunakan variabel $image untuk setiap objek dari collection.
-                        --}}
-                        @foreach ($gridImages as $image)
-                            @php
-                                // Logika untuk ukuran dinamis tetap sama, menggunakan $loop->iteration
-                                $sizeClasses = [
-                                    1 => 'h-48 w-28 shadow-sm',
-                                    2 => 'h-64 w-32 shadow-md',
-                                    3 => 'h-80 w-36 shadow-lg',
-                                ][$loop->iteration] ?? 'h-48 w-28 shadow-sm';
-                            @endphp
-
-                            <div class="rounded-xl bg-gray-100 {{ $sizeClasses }}">
-                                {{--
-                                PERUBAHAN DI SINI:
-                                - `src` sekarang mengakses properti 'path' dari objek $image.
-                                - `alt` bisa mengambil dari properti 'alt' atau 'title' untuk aksesibilitas yang lebih baik.
-                                --}}
-                                <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $image->alt_text ?? $image->title }}"
-                                    class="h-full w-full rounded-xl object-cover">
-                            </div>
-                        @endforeach
-
-                    </div>
-
-                    <div class="text-center lg:text-left">
-                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                            Fasilitas Modern untuk Pengalaman Belajar Terbaik
-                        </h2>
-                        <p class="mt-4 text-lg leading-8 text-gray-600">
-                            Kami menyediakan perangkat dan platform terkini yang memungkinkan siswa berkolaborasi dalam
-                            proyek-proyek kreatif, sama seperti di industri profesional.
-                        </p>
-
-                        <ul class="mt-8 space-y-4">
-                            {{-- Poin keunggulan tetap sama --}}
-                            <li class="flex items-start justify-center lg:justify-start">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-check-circle text-xl text-[#63cd00]"></i>
-                                </div>
-                                <span class="ml-3 text-base text-gray-700">Laboratorium Berstandar Industri</span>
-                            </li>
-                            <li class="flex items-start justify-center lg:justify-start">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-check-circle text-xl text-[#63cd00]"></i>
-                                </div>
-                                <span class="ml-3 text-base text-gray-700">Proyek Tim yang Kolaboratif</span>
-                            </li>
-                            <li class="flex items-start justify-center lg:justify-start">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-check-circle text-xl text-[#63cd00]"></i>
-                                </div>
-                                <span class="ml-3 text-base text-gray-700">Simulasi Dunia Kerja Nyata</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
+        {{-- Breadcrumb --}}
+        <div style="background-color:#2D2D2D;">
+            <div class="max-w-screen-xl min-h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-3">
+                <nav aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
+                        <li class="flex items-center">
+                            <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
+                                Home
+                            </a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
+                            <span class="inline-flex items-center ml-2 md:ml-3 font-medium text-[#63cd00]">Fasilitas</span>
+                        </li>
+                    </ol>
+                </nav>
             </div>
-        </section>
+        </div>
+    </section>
 
-
-        <section class="bg-white py-16 sm:py-24 mt-[-40px]">
-            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                {{-- KEPALA BAGIAN (JUDUL DI KIRI, TAB DI KANAN) --}}
-                <div class="flex flex-col md:flex-row justify-between md:items-end gap-8 mb-12">
-
-                    {{-- Kolom Kiri: Judul dan Deskripsi --}}
-                    <div class="md:w-1/2 lg:w-2/3">
-                        <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">
-                            Fasilitas Unggulan Kami
-                        </h2>
-                        <p class="mt-4 text-lg text-gray-600">
-                            Jelajahi beragam sarana dan prasarana modern yang kami sediakan untuk mendukung proses belajar.
-                        </p>
-                    </div>
-
-                    {{-- Kolom Kanan: Tombol Tab Filter --}}
-                    <div class="flex-shrink-0">
-                        {{-- Container untuk tombol tab --}}
-                        <div id="tabs-container" class="flex flex-wrap items-center justify-start md:justify-end gap-3">
-                            {{-- Loop untuk membuat tombol tab dari setiap tipe fasilitas --}}
-                            @foreach($groupedFacilities->keys() as $type)
-                                <button data-tab="{{ Str::slug($type) }}"
-                                    class="tab-button px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-200">
-                                    {{ $type }}
-                                </button>
-                            @endforeach
-                        </div>
+    {{-- ============================ STATISTIK ============================ --}}
+    <section class="bg-white">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 -mt-8 relative z-20">
+                <div class="bg-[#282829] rounded-2xl p-5 lg:p-6 shadow-xl flex items-center gap-4">
+                    <span class="w-11 h-11 lg:w-12 lg:h-12 rounded-xl bg-[#63cd00]/15 flex items-center justify-center text-[#63cd00] text-lg lg:text-xl flex-shrink-0">
+                        <i class="fa-solid fa-building"></i>
+                    </span>
+                    <div class="min-w-0">
+                        <p class="text-2xl lg:text-3xl font-extrabold text-white leading-none">{{ $total }}</p>
+                        <p class="text-xs lg:text-sm text-white/60 mt-1 truncate">Total Fasilitas</p>
                     </div>
                 </div>
-
-
-                @foreach($groupedFacilities as $type => $facilities)
-                    <div id="{{ Str::slug($type) }}" class="tab-content">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            @forelse($facilities as $facility)
-                                {{-- KARTU FASILITAS (Sangat disarankan untuk dijadikan Blade Component) --}}
-                                @php
-                                    $iconClass = 'fa-star'; // Ikon default
-                                    if ($facility->type == 'Akademik')
-                                        $iconClass = 'fa-book-open';
-                                    elseif ($facility->type == 'Olahraga')
-                                        $iconClass = 'fa-futbol';
-                                    elseif ($facility->type == 'Umum')
-                                        $iconClass = 'fa-building';
-                                @endphp
-
-                                <div
-                                    class="group bg-white border border-gray-200 rounded-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-                                    {{-- GAMBAR FASILITAS --}}
-                                    <div class="relative h-56 w-full">
-                                        <img src="{{ $facility->image ? Storage::url($facility->image) : 'https://placehold.co/600x400/e2e8f0/64748b?text=Gambar' }}"
-                                            alt="Gambar {{ $facility->name }}" class="w-full h-full object-cover">
-                                    </div>
-
-                                    {{-- KONTEN CARD --}}
-                                    <div class="p-6 flex flex-col flex-grow">
-                                        {{-- TIPE & IKON --}}
-                                        <div class="flex items-center text-sm font-semibold text-blue-600 mb-2">
-                                            <i class="fas {{ $iconClass }} mr-2 w-4 text-center"></i>
-                                            <span>{{ $facility->type }}</span>
-                                        </div>
-                                        {{-- NAMA FASILITAS --}}
-                                        <h3 class="text-xl font-bold text-gray-900 mb-2 leading-tight">
-                                            {{ $facility->name }}
-                                        </h3>
-                                        {{-- DESKRIPSI SINGKAT --}}
-                                        <p class="text-gray-600 text-sm flex-grow mb-6">
-                                            {{ Str::limit($facility->description, 120) }}
-                                        </p>
-                                        {{-- TOMBOL AKSI --}}
-                                        <div class="mt-auto">
-                                            <a href="{{ route('public.facilities.show', $facility) }}"
-                                                class="inline-flex items-center font-semibold text-blue-600 group/link">
-                                                Baca Selengkapnya
-                                                <i
-                                                    class="fas fa-arrow-right ml-2 text-xs transition-transform duration-300 group-hover/link:translate-x-1"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                {{-- TAMPILAN JIKA TIDAK ADA FASILITAS PADA TIPE INI --}}
-                                <div class="col-span-full border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-                                    <p class="text-gray-500 font-medium">Fasilitas untuk kategori "{{ $type }}" tidak ditemukan.</p>
-                                </div>
-                            @endforelse
+                @foreach ($types as $type)
+                    <div class="bg-[#282829] rounded-2xl p-5 lg:p-6 shadow-xl flex items-center gap-4">
+                        <span class="w-11 h-11 lg:w-12 lg:h-12 rounded-xl bg-[#63cd00]/15 flex items-center justify-center text-[#63cd00] text-lg lg:text-xl flex-shrink-0">
+                            <i class="fa-solid {{ $type === 'Lab' ? 'fa-flask' : ($type === 'Akademik' ? 'fa-book-open' : ($type === 'Olahraga' ? 'fa-futbol' : 'fa-building')) }}"></i>
+                        </span>
+                        <div class="min-w-0">
+                            <p class="text-2xl lg:text-3xl font-extrabold text-white leading-none">{{ $typeCounts[$type] ?? 0 }}</p>
+                            <p class="text-xs lg:text-sm text-white/60 mt-1 truncate">{{ $type }}</p>
                         </div>
                     </div>
                 @endforeach
             </div>
+        </div>
+    </section>
 
-            {{-- SCRIPT UNTUK MEKANISME TAB --}}
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const tabsContainer = document.getElementById('tabs-container');
-                    if (tabsContainer) {
-                        const tabButtons = tabsContainer.querySelectorAll('.tab-button');
-                        const tabContents = document.querySelectorAll('.tab-content');
-                        const firstTabName = tabButtons.length > 0 ? tabButtons[0].dataset.tab : null;
+    {{-- ============================ DAFTAR FASILITAS ============================ --}}
+    <section id="daftarFasilitas" class="bg-gray-50 py-16 sm:py-20">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                        const activeClasses = ['bg-[#59E300]', 'text-white', 'shadow-sm'];
-                        const inactiveClasses = ['bg-gray-100', 'text-gray-700', 'hover:bg-gray-200'];
+            <div class="max-w-2xl mb-10">
+                <span class="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#63cd00] mb-3">
+                    <span class="w-6 h-0.5 rounded-full bg-[#63cd00]"></span>
+                    Sarana & Prasarana
+                </span>
+                <h2 class="text-3xl lg:text-4xl font-extrabold text-[#282829] tracking-tight">Fasilitas Unggulan Kami</h2>
+                <p class="mt-3 text-gray-600 text-lg">Mendukung proses belajar mengajar modern dan pengembangan bakat siswa.</p>
+            </div>
 
-                        function switchTab(tabName) {
-                            if (!tabName) return;
+            @if ($total > 0)
+                <div class="fc-filter">
+                    {{-- Radio filter (tanpa JS) --}}
+                    <input type="radio" name="fcr" id="fcr-all" class="fc-filter-input" checked>
+                    @foreach ($types as $type)
+                        <input type="radio" name="fcr" id="fcr-{{ \Illuminate\Support\Str::slug($type) }}" class="fc-filter-input">
+                    @endforeach
 
-                            // Sembunyikan semua konten
-                            tabContents.forEach(content => {
-                                content.classList.add('hidden');
-                            });
+                    {{-- Tab filter --}}
+                    <div class="fc-tabs mb-8" role="tablist" aria-label="Filter tipe fasilitas">
+                        <label for="fcr-all" class="fc-tab" role="tab">
+                            <i class="fa-solid fa-layer-group"></i> Semua
+                            <span class="fc-count">{{ $total }}</span>
+                        </label>
+                        @foreach ($types as $type)
+                            <label for="fcr-{{ \Illuminate\Support\Str::slug($type) }}" class="fc-tab" role="tab">
+                                <i class="fa-solid {{ $type === 'Lab' ? 'fa-flask' : ($type === 'Akademik' ? 'fa-book-open' : ($type === 'Olahraga' ? 'fa-futbol' : 'fa-building')) }}"></i> {{ $type }}
+                                <span class="fc-count">{{ $typeCounts[$type] ?? 0 }}</span>
+                            </label>
+                        @endforeach
+                    </div>
 
-                            // Atur style tombol
-                            tabButtons.forEach(button => {
-                                if (button.dataset.tab === tabName) {
-                                    button.classList.add(...activeClasses);
-                                    button.classList.remove(...inactiveClasses);
-                                } else {
-                                    button.classList.add(...inactiveClasses);
-                                    button.classList.remove(...activeClasses);
-                                }
-                            });
+                    {{-- Grid kartu --}}
+                    <div class="fc-grid">
+                        @foreach ($facilities as $facility)
+                            <a href="{{ route('public.facilities.show', $facility->id) }}"
+                                class="fc-card group"
+                                data-g="all {{ \Illuminate\Support\Str::slug($facility->type) }}"
+                                aria-label="{{ $facility->name }}">
+                                <div class="fc-card__thumb">
+                                    @if ($facility->image)
+                                        <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}" loading="lazy">
+                                    @else
+                                        <div class="fc-thumb-fallback"><i class="fa-solid fa-building"></i></div>
+                                    @endif
+                                    <span class="fc-chip absolute top-3 left-3 z-10">
+                                        <i class="fa-solid fa-tag"></i>
+                                        {{ $facility->type }}
+                                    </span>
+                                </div>
 
-                            // Tampilkan konten yang dipilih
-                            const activeContent = document.getElementById(tabName);
-                            if (activeContent) {
-                                activeContent.classList.remove('hidden');
-                            }
-                        }
+                                <div class="p-5 flex flex-col flex-1">
+                                    <h3 class="text-lg font-bold text-[#282829] leading-snug line-clamp-2 group-hover:text-[#63cd00] transition-colors duration-200">
+                                        {{ $facility->name }}
+                                    </h3>
+                                    <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mt-2 flex-grow">
+                                        {{ \Illuminate\Support\Str::limit(strip_tags($facility->description), 140) }}
+                                    </p>
+                                    <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                                        <span class="fc-card__hint">
+                                            Selengkapnya
+                                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                                        </span>
+                                        <span class="fc-meta"><i class="fa-solid fa-user-pen"></i> {{ $facility->publisher }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
 
-                        // Tambahkan event listener ke setiap tombol
-                        tabButtons.forEach(button => {
-                            button.addEventListener('click', () => {
-                                switchTab(button.dataset.tab);
-                            });
-                        });
-
-                        // Atur tab default saat halaman dimuat (tab pertama)
-                        if (firstTabName) {
-                            switchTab(firstTabName);
-                        } else {
-                            // Jika tidak ada tab sama sekali, sembunyikan semua konten
-                            tabContents.forEach(content => {
-                                content.classList.add('hidden');
-                            });
-                        }
-                    }
-                });
-            </script>
-        </section>
-
-
-        <section class="bg-[#ffffff] py-16 sm:py-24 mt-[-50px]">
-            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                <!-- Judul dan Deskripsi Section -->
-                <div class="max-w-3xl mx-auto text-center mt-[-30px]">
-                    <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">
-                        Discover Our Facility Video
-                    </h2>
-                    <p class="mt-4 text-lg text-gray-600">
-                        Watch the video below to get a glimpse into our facility
-                    </p>
-                </div>
-
-                <!-- Kontainer Video Responsif 16:9 -->
-                <div class="mt-12 max-w-4xl mx-auto">
-                    <div class="relative w-full" style="padding-top: 56.25%;">
-                        <!-- 
-                                          Catatan: padding-top: 56.25% adalah hasil dari 9 / 16, 
-                                          yang menciptakan rasio aspek 16:9 yang responsif.
-                                        -->
-                        <iframe class="absolute top-0 left-0 w-full h-full rounded-xl shadow-2xl" <iframe width="560"
-                            height="315"
-                            src="https://www.youtube-nocookie.com/embed/V1itS-cUH4M?si=uZIO58_CPQb9nwDA&amp;controls=0"
-                            title="YouTube video player" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>>
-                        </iframe>
+                        @foreach ($types as $type)
+                            <div class="fc-empty" data-e="{{ \Illuminate\Support\Str::slug($type) }}">
+                                <div class="fc-empty__inner">
+                                    <div class="w-14 h-14 mx-auto rounded-full bg-white border border-gray-200 flex items-center justify-center text-[#63cd00] text-xl">
+                                        <i class="fa-solid fa-layer-group"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-600 font-semibold">Belum ada fasilitas tipe {{ $type }}.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
+            @else
+                <div class="border-2 border-dashed border-gray-300 rounded-2xl p-14 text-center bg-white">
+                    <div class="w-14 h-14 mx-auto rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xl mb-3">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <p class="text-gray-600 font-semibold">Belum ada fasilitas yang dipublikasikan.</p>
+                    <p class="text-sm text-gray-500 mt-1">Data fasilitas akan segera hadir.</p>
+                </div>
+            @endif
+        </div>
+    </section>
 
+    {{-- ============================ CTA SECTION ============================ --}}
+    <section class="bg-[#282829] py-16 sm:py-20">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl lg:text-4xl font-extrabold text-white">Tertarik Bergabung?</h2>
+            <p class="mt-4 max-w-2xl mx-auto text-white/80 text-lg">
+                Daftar PPDB dan manfaatkan fasilitas modern untuk masa depan gemilang.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+                <a href="{{ route('public.about.index') }}"
+                    class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-base px-8 py-4 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg">
+                    <i class="fa-solid fa-user-plus"></i> Info PPDB
+                </a>
+                <a href="https://wa.me/6285649011449" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-base px-8 py-4 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300">
+                    <i class="fa-brands fa-whatsapp"></i> Konsultasi WA
+                </a>
             </div>
-        </section>
-
-
-
-
-
-
-
-    </body>
-
-    </html>
-
+        </div>
+    </section>
 
 @endsection
