@@ -53,7 +53,7 @@ class InstaPostController extends Controller
     /**
      * Batasi jumlah data maksimal 16. Data lama otomatis dihapus jika melebihi.
      */
-    protected function trimToLimit(int $limit = 16): void
+    protected function trimToLimit(int $limit = 15): void
     {
         $oldestFirst = InstaPost::orderBy('created_at')->orderBy('id')->get();
 

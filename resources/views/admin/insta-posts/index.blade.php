@@ -13,13 +13,13 @@
             icon="fa-brands fa-instagram"
             kicker="Website"
             title="Feed Instagram"
-            subtitle="Semi-otomatis: unggah foto postingan Instagram yang tampil di website. Maksimal 16 postingan — data tertua otomatis terhapus." />
+            subtitle="Semi-otomatis: unggah foto postingan Instagram yang tampil di website. Maksimal 15 postingan — data tertua otomatis terhapus." />
 
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <x-admin-components::stat-card label="Total Postingan" :value="$posts->count()" icon="fa-brands fa-instagram" tone="brand" />
             <x-admin-components::stat-card label="Aktif di Website" :value="$activeCount" icon="fa-solid fa-circle-check" tone="green" />
             <x-admin-components::stat-card label="Tersembunyi" :value="$posts->where('is_active', false)->count()" icon="fa-solid fa-eye-slash" tone="amber" />
-            <x-admin-components::stat-card label="Kuota" :value="$posts->count() . ' / 16'" icon="fa-solid fa-gauge-high" tone="blue" />
+            <x-admin-components::stat-card label="Kuota" :value="$posts->count() . ' / 15'" icon="fa-solid fa-gauge-high" tone="blue" />
         </div>
 
         <div class="grid gap-6 lg:grid-cols-[360px_1fr]">
