@@ -19,10 +19,10 @@ class PublicTeacherController extends Controller
         $teachers = Teacher::orderBy('name')->get();
 
         $counts = [
-            'amaliah1' => $teachers->where('school', 'Amaliah 1')->count(),
-            'amaliah2' => $teachers->where('school', 'Amaliah 2')->count(),
-            'gabungan' => $teachers->where('school', 'Amaliah 1 & 2')->count(),
-            'staff'    => $teachers->where('school', 'Staff')->count(),
+            'a1'     => $teachers->where('school', 'Amaliah 1')->count(),
+            'a2'     => $teachers->where('school', 'Amaliah 2')->count(),
+            'merged' => $teachers->where('school', 'Amaliah 1 & 2')->count(),
+            'staff'  => $teachers->where('school', 'Staff')->count(),
         ];
 
         //hiraukan ini

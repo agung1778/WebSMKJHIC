@@ -70,6 +70,58 @@
         .ts-btn { flex: 1 1 calc(50% - 0.5rem); padding: 0.55rem 0.5rem; }
     }
 
+    /* ===== Filter kategori tanpa JavaScript (radio + CSS) ===== */
+    .fw { position: relative; }
+    .fw-input {
+        position: absolute; width: 1px; height: 1px; opacity: 0;
+        pointer-events: none; margin: 0; padding: 0;
+    }
+    .fw-tabs {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+        padding: 0.375rem; background: var(--ts-bg-soft);
+        border: 1px solid var(--ts-border); border-radius: 9999px; max-width: 100%;
+    }
+    .fw-btn {
+        display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+        padding: 0.5rem 1rem; border-radius: 9999px;
+        font-size: 0.82rem; font-weight: 600; line-height: 1.2; white-space: nowrap;
+        background: transparent; color: #4b5563; cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .fw-btn:hover { background: #e5e7eb; color: var(--ts-ink); }
+    @media (max-width: 599px) {
+        .fw-tabs { display: flex; flex-wrap: wrap; border-radius: 1rem; }
+        .fw-btn { flex: 1 1 calc(50% - 0.5rem); padding: 0.55rem 0.5rem; }
+    }
+
+    /* Kartu & pesan kosong disembunyikan secara default, baru tampil sesuai radio terpilih */
+    .fw-card { display: none; }
+    .fw-empty { display: none; }
+
+    /* Tombol aktif (hijau) */
+    #fw-all:checked ~ .fw-tabs label[for="fw-all"],
+    #fw-a1:checked ~ .fw-tabs label[for="fw-a1"],
+    #fw-a2:checked ~ .fw-tabs label[for="fw-a2"],
+    #fw-merged:checked ~ .fw-tabs label[for="fw-merged"],
+    #fw-staff:checked ~ .fw-tabs label[for="fw-staff"] {
+        background: var(--ts-green); color: #ffffff;
+        box-shadow: 0 4px 12px -2px rgba(99, 205, 0, 0.45);
+    }
+
+    /* Menampilkan kartu sesuai kategori terpilih */
+    #fw-all:checked ~ .fw-grid .fw-card { display: flex; }
+    #fw-a1:checked ~ .fw-grid .fw-card[data-g~="a1"] { display: flex; }
+    #fw-a2:checked ~ .fw-grid .fw-card[data-g~="a2"] { display: flex; }
+    #fw-merged:checked ~ .fw-grid .fw-card[data-g~="merged"] { display: flex; }
+    #fw-staff:checked ~ .fw-grid .fw-card[data-g~="staff"] { display: flex; }
+
+    /* Pesan untuk kategori yang (masih) kosong */
+    #fw-a1:checked ~ .fw-empty--a1,
+    #fw-a2:checked ~ .fw-empty--a2,
+    #fw-merged:checked ~ .fw-empty--merged,
+    #fw-staff:checked ~ .fw-empty--staff,
+    #fw-all:checked ~ .fw-empty--all { display: flex; }
+
     /* Grid kartu guru */
     .teachers-grid { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 1.25rem; }
     @media (min-width: 480px) { .teachers-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

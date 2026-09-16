@@ -9,28 +9,29 @@
     $amaliahGreen = '#63cd00';
     $amaliahDark = '#282829';
     $total = $teachers->count();
+    $heroImage = $hasImages ? $mainImages->first() : null;
 
     $groupOf = function ($t) {
         return match ($t->school) {
-            'Amaliah 1'    => 'amaliah1',
-            'Amaliah 2'    => 'amaliah2',
-            'Amaliah 1 & 2' => 'gabungan',
-            default        => 'staff',
+            'Amaliah 1'     => 'a1',
+            'Amaliah 2'     => 'a2',
+            'Amaliah 1 & 2' => 'merged',
+            default         => 'staff',
         };
     };
 
     $filterGroups = [
-        ['key' => 'amaliah1', 'label' => 'SMK Amaliah 1',  'icon' => 'fa-school'],
-        ['key' => 'amaliah2', 'label' => 'SMK Amaliah 2',  'icon' => 'fa-school'],
-        ['key' => 'gabungan', 'label' => 'SMK Amaliah 1 & 2', 'icon' => 'fa-school-circle-check'],
-        ['key' => 'staff',    'label' => 'Staff',           'icon' => 'fa-users-gear'],
+        ['key' => 'a1',     'label' => 'SMK Amaliah 1',    'icon' => 'fa-school'],
+        ['key' => 'a2',     'label' => 'SMK Amaliah 2',    'icon' => 'fa-school'],
+        ['key' => 'merged', 'label' => 'SMK Amaliah 1 & 2', 'icon' => 'fa-school-circle-check'],
+        ['key' => 'staff',  'label' => 'Staff',             'icon' => 'fa-users-gear'],
     ];
 
     $statCards = [
-        ['key' => 'amaliah1', 'label' => 'Guru SMK Amaliah 1',    'icon' => 'fa-school',             'fg' => '#3f8600', 'bg' => '#eefde2'],
-        ['key' => 'amaliah2', 'label' => 'Guru SMK Amaliah 2',    'icon' => 'fa-school-flag',        'fg' => '#1d4ed8', 'bg' => '#e0e7ff'],
-        ['key' => 'gabungan', 'label' => 'Guru 1 & 2 (Gabungan)', 'icon' => 'fa-school-circle-check', 'fg' => '#b45309', 'bg' => '#fef3c7'],
-        ['key' => 'staff',    'label' => 'Staf / Kependidikan',   'icon' => 'fa-users-gear',          'fg' => '#282829', 'bg' => '#f1f5f9'],
+        ['key' => 'a1',     'label' => 'Guru SMK Amaliah 1',    'icon' => 'fa-school',              'fg' => '#3f8600', 'bg' => '#eefde2'],
+        ['key' => 'a2',     'label' => 'Guru SMK Amaliah 2',    'icon' => 'fa-school-flag',         'fg' => '#1d4ed8', 'bg' => '#e0e7ff'],
+        ['key' => 'merged', 'label' => 'Guru 1 & 2 (Gabungan)', 'icon' => 'fa-school-circle-check', 'fg' => '#b45309', 'bg' => '#fef3c7'],
+        ['key' => 'staff',  'label' => 'Staf / Kependidikan',   'icon' => 'fa-users-gear',          'fg' => '#282829', 'bg' => '#f1f5f9'],
     ];
 @endphp
 
@@ -39,22 +40,10 @@
     {{-- ============================ HERO ============================ --}}
     <section class="relative bg-[#282829]">
         <div class="relative h-[320px] lg:h-[420px] overflow-hidden">
-            @if($hasImages)
-                <div x-data="{ active: 0 }"
-                    x-init="setInterval(() => { if ({{ $mainImages->count() }} > 1) active = (active + 1) % {{ $mainImages->count() }} }, 5000)">
-                    @foreach($mainImages as $image)
-                        <div x-show="active === {{ $loop->index }}" x-cloak
-                            x-transition:enter="transition ease-out duration-1000"
-                            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                            x-transition:leave="transition ease-in duration-1000"
-                            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                            class="absolute inset-0">
-                            <img src="{{ Storage::url($image->path) }}"
-                                alt="{{ $image->description ?? $image->filename }}"
-                                class="w-full h-full object-cover">
-                        </div>
-                    @endforeach
-                </div>
+            @if ($heroImage)
+                <img src="{{ Storage::url($heroImage->path) }}"
+                    alt="{{ $heroImage->description ?? $heroImage->filename }}"
+                    class="w-full h-full object-cover">
             @else
                 <div class="absolute inset-0">
                     <div class="absolute -top-24 -right-16 w-96 h-96 rounded-full opacity-25"
@@ -147,48 +136,59 @@
                 </p>
             </div>
 
-            {{-- Filter kategori (pill) --}}
-            <div class="mt-8" x-data="{ active: 'all', counts: @json($counts) }">
-                <div class="ts-tabs" role="tablist" aria-label="Filter kategori guru & staf">
-                    <button type="button" class="ts-btn" role="tab" :class="{ 'is-active': active === 'all' }"
-                        @click="active = 'all'">
+            {{-- Filter kategori murni CSS (radio + label, tanpa JavaScript) --}}
+            <div class="fw mt-8">
+                <input type="radio" name="fw" id="fw-all" class="fw-input" checked>
+                <input type="radio" name="fw" id="fw-a1" class="fw-input">
+                <input type="radio" name="fw" id="fw-a2" class="fw-input">
+                <input type="radio" name="fw" id="fw-merged" class="fw-input">
+                <input type="radio" name="fw" id="fw-staff" class="fw-input">
+
+                <div class="fw-tabs" role="tablist" aria-label="Filter kategori guru & staf">
+                    <label for="fw-all" class="fw-btn" role="tab">
                         <i class="fa-solid fa-users mr-1"></i> Semua
-                        <span class="ml-1 opacity-70">({{ $total }})</span>
-                    </button>
+                        <span class="opacity-70 ml-1">({{ $total }})</span>
+                    </label>
                     @foreach($filterGroups as $group)
-                        <button type="button" class="ts-btn" role="tab" :class="{ 'is-active': active === '{{ $group['key'] }}' }"
-                            @click="active = '{{ $group['key'] }}'">
+                        <label for="fw-{{ $group['key'] }}" class="fw-btn" role="tab">
                             <i class="fa-solid {{ $group['icon'] }} mr-1"></i> {{ $group['label'] }}
-                            <span class="ml-1 opacity-70">({{ $counts[$group['key']] ?? 0 }})</span>
-                        </button>
+                            <span class="opacity-70 ml-1">({{ $counts[$group['key']] ?? 0 }})</span>
+                        </label>
                     @endforeach
                 </div>
 
-                {{-- Pesan saat kategori belum ada isinya --}}
-                <div x-show="active !== 'all' && counts[active] === 0"
-                    class="empty-state mt-8">
-                    <div class="w-14 h-14 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[#63cd00] text-xl">
-                        <i class="fa-solid fa-folder-open"></i>
+                {{-- Pesan saat total kosong --}}
+                @if ($total === 0)
+                    <div class="fw-empty fw-empty--all empty-state mt-8">
+                        <div class="w-14 h-14 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[#63cd00] text-xl">
+                            <i class="fa-solid fa-school"></i>
+                        </div>
+                        <p class="font-semibold text-gray-700">Belum ada guru atau staf yang didaftarkan.</p>
                     </div>
-                    <p class="font-semibold text-gray-700">Kategori ini belum memiliki data.</p>
-                    <p class="text-sm text-gray-500">Sedang disiapkan oleh sekolah. Silakan pilih kategori lain.</p>
-                </div>
+                @endif
+
+                {{-- Pesan per kategori yang (masih) kosong --}}
+                @foreach($filterGroups as $group)
+                    @if (($counts[$group['key']] ?? 0) === 0)
+                        <div class="fw-empty fw-empty--{{ $group['key'] }} empty-state mt-8">
+                            <div class="w-14 h-14 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[#63cd00] text-xl">
+                                <i class="fa-solid fa-folder-open"></i>
+                            </div>
+                            <p class="font-semibold text-gray-700">{{ $group['label'] }} belum memiliki data.</p>
+                            <p class="text-sm text-gray-500">Sedang disiapkan oleh sekolah. Silakan pilih kategori lain.</p>
+                        </div>
+                    @endif
+                @endforeach
 
                 {{-- Grid kartu --}}
-                <div class="teachers-grid mt-8">
+                <div class="fw-grid teachers-grid mt-8">
                     @forelse ($teachers as $teacher)
                         @php $g = $groupOf($teacher); @endphp
-                        <div class="h-full" x-show="active === 'all' || active === '{{ $g }}'"
-                            x-transition.opacity.duration.250ms>
+                        <div class="fw-card" data-g="all {{ $g }}">
                             @include('PublicSide.teachers.card', ['teacher' => $teacher])
                         </div>
                     @empty
-                        <div class="empty-state">
-                            <div class="w-14 h-14 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[#63cd00] text-xl">
-                                <i class="fa-solid fa-school"></i>
-                            </div>
-                            <p class="font-semibold text-gray-700">Belum ada guru atau staf yang didaftarkan.</p>
-                        </div>
+                        {{-- total 0, pesan ditangani .fw-empty--all --}}
                     @endforelse
                 </div>
             </div>

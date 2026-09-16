@@ -19,23 +19,14 @@
     <div class="page-section">
 
         {{-- Hero --}}
-        @if ($hasImages)
-            <div x-data="{ activeSlide: 1, totalSlides: {{ $mainImages->count() }} }">
-                <div class="ts-hero">
-                    @foreach ($mainImages as $image)
-                        <div x-show="activeSlide === {{ $loop->iteration }}"
-                            x-transition:enter="transition ease-out duration-1000"
-                            x-transition:leave="transition ease-in duration-1000" class="absolute inset-0">
-                            <img src="{{ Storage::url($image->path) }}" alt="{{ $image->description ?? $image->filename }}"
-                                class="w-full h-full object-cover">
-                        </div>
-                    @endforeach
-                    <div class="absolute inset-0" style="background: rgba(40,40,41,.55)"></div>
-                </div>
-            </div>
-        @else
-            <div class="ts-hero"></div>
-        @endif
+        <div class="ts-hero">
+            @if ($hasImages)
+                <img src="{{ Storage::url($mainImages->first()->path) }}"
+                    alt="{{ $mainImages->first()->description ?? $mainImages->first()->filename }}"
+                    class="w-full h-full object-cover">
+            @endif
+            <div class="absolute inset-0" style="background: rgba(40,40,41,.55)"></div>
+        </div>
 
         {{-- Breadcrumb --}}
         <div class="breadcrumb-bar">
