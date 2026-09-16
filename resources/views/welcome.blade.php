@@ -1029,69 +1029,140 @@
                         </div>
                     </div>
 
-                    {{-- Slider Testimoni (Alpine.js + Tailwind CSS) --}}
-                    <div x-data="{
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    slider: null,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    init() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        this.slider = this.$refs.sliderContainer;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    },
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    scroll(direction) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        // Geser sejauh 80% dari lebar area yang terlihat
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        let scrollAmount = this.slider.offsetWidth * 0.8;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        this.slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                }"
-                        class="mt-12 relative">
-                        {{-- Tombol Panah Kiri --}}
-                        <button @click="scroll(-1)"
-                            class="absolute top-1/2 -left-2 md:-left-8 -translate-y-1/2 w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-10 hover:bg-opacity-80 transition"
-                            style="background-color: {{ $amaliahDark }};" id="testimonialbutton" role="presentation"
-                            aria-label="Testimoni sebelumnya">
-                            <i class="fas fa-chevron-left text-white"></i>
-                        </button>
-                        {{-- Container yang bisa di-scroll --}}
-                        <div x-ref="sliderContainer"
-                            class="flex space-x-8 overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide py-4">
+                    {{-- Slider Testimoni: Satu Kartu + Otomatis (Alpine.js) --}}
+<div class="mx-auto max-w-3xl mt-12" x-data="{
+        index: 0,
+        total: {{ $testimonials->count() }},
+        timer: null,
+        init() {
+            if (this.total > 1) {
+                this.timer = setInterval(() => this.next(), 5000);
+            }
+        },
+        destroy() {
+            if (this.timer) { clearInterval(this.timer); }
+        },
+        next() { this.index = (this.index + 1) % this.total; },
+        prev() { this.index = (this.index - 1 + this.total) % this.total; },
+        go(i) { this.index = i; }
+    }"
+    @mouseenter="if (this.timer) { clearInterval(this.timer); this.timer = null; }"
+    @mouseleave="if (!this.timer && this.total > 1) { this.timer = setInterval(() => this.next(), 5000); }">
 
-                            @forelse ($testimonials as $testimonial)
-                                {{-- Setiap Kartu Testimoni --}}
-                                <div class="flex-shrink-0 w-full sm:w-[48%] snap-start">
-                                    <div
-                                        class="bg-white border border-gray-200 rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-8 h-full">
-                                        {{-- Kolom Teks --}}
-                                        <div class="flex-1 text-center sm:text-left">
-                                            <p class="text-gray-700 leading-relaxed">"{{ $testimonial->description }}"</p>
-                                            <p class="mt-4 text-gray-800 font-semibold italic">-{{ $testimonial->name }}</p>
-                                            <div class="mt-6 flex flex-col sm:flex-row justify-between items-center text-sm">
-                                                <span class="font-semibold mt-2 sm:mt-0" style="color: {{ $amaliahGreen }};">
-                                                    Alumni Jurusan {{ $testimonial->major->name ?? 'N/A' }}
-                                                    {{ $testimonial->alumni_year }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        {{-- Kolom Gambar --}}
-                                        <div class="flex-shrink-0 order-first sm:order-last">
-                                            <img src="{{ asset('storage/' . $testimonial->photo) }}"
-                                                alt="Foto {{ $testimonial->name }}"
-                                                class="w-32 h-32 rounded-full object-cover shadow-md">
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="w-full text-center py-12">
-                                    <p class="text-gray-500">Belum ada testimoni untuk ditampilkan.</p>
-                                </div>
-                            @endforelse
-                        </div>
-
-                        {{-- Tombol Panah Kanan --}}
-                        <button @click="scroll(1)"
-                            class="absolute top-1/2 -right-2 md:-right-8 -translate-y-1/2 w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-10 hover:bg-opacity-80 transition"
-                            style="background-color: {{ $amaliahDark }};" id="testimonialbutton" role="presentation"
-                            aria-label="Testimoni berikutnya">
-                            <i class="fas fa-chevron-right text-white"></i>
-                        </button>
+    <div x-cloak class="relative">
+        @forelse ($testimonials as $i => $t)
+            <div x-show="index === {{ $i }}"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-3"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                class="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 sm:p-12 text-center">
+                <div class="ts-quote"><i class="fas fa-quote-left"></i></div>
+                <p class="text-gray-700 text-base sm:text-lg leading-relaxed mt-6">"{{ $t->description }}"</p>
+                <div class="mt-8 flex items-center justify-center gap-4">
+                    @if ($t->photo)
+                        <img src="{{ asset('storage/' . $t->photo) }}" alt="{{ $t->name }}"
+                            class="w-16 h-16 rounded-full object-cover shadow-md">
+                    @else
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold"
+                            style="background-color: {{ $amaliahGreen }}">{{ collect(explode(' ', $t->name))->take(2)->map(fn($w) => strtoupper(mb_substr($w, 0, 1)))->implode('') }}</div>
+                    @endif
+                    <div class="text-left">
+                        <p class="font-bold text-gray-900">{{ $t->name }}</p>
+                        <p class="text-sm" style="color: {{ $amaliahGreen }};">
+                            Alumni Jurusan {{ $t->major->name ?? 'N/A' }} · {{ $t->alumni_year }}
+                        </p>
                     </div>
+                </div>
+            </div>
+        @empty
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 text-center">
+                <p class="text-gray-500">Belum ada testimoni untuk ditampilkan.</p>
+            </div>
+        @endforelse
+    </div>
+
+    @if ($testimonials->count() > 1)
+        <button @click="prev()" class="ts-arrow ts-arrow-left" aria-label="Testimoni sebelumnya">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button @click="next()" class="ts-arrow ts-arrow-right" aria-label="Testimoni berikutnya">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="ts-dots">
+            @foreach ($testimonials as $i => $t)
+                <button class="ts-dot" :class="{ 'active': index === {{ $i }} }" @click="go({{ $i }})"
+                    :aria-label="'Ke testimoni {{ $i + 1 }}'"></button>
+            @endforeach
+        </div>
+    @endif
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .ts-quote {
+            font-size: 42px;
+            line-height: 1;
+            color: #63cd00;
+        }
+
+        .ts-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 42px;
+            height: 42px;
+            border-radius: 9999px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #282829;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(40, 40, 41, .25);
+            transition: transform .2s, opacity .2s;
+        }
+
+        .ts-arrow:hover {
+            opacity: .8;
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .ts-arrow-left {
+            left: 0;
+        }
+
+        .ts-arrow-right {
+            right: 0;
+        }
+
+        .ts-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .ts-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 9999px;
+            border: none;
+            cursor: pointer;
+            background: #d1d5db;
+            padding: 0;
+            transition: all .3s;
+        }
+
+        .ts-dot.active {
+            width: 28px;
+            background: #282829;
+        }
+    </style>
+</div>
 
                     {{-- Tombol "Baca Semua" --}}
                     <div class="text-center mt-12">
