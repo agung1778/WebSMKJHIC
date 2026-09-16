@@ -1,10 +1,5 @@
 @php
     $teacherInitial = !empty(trim($teacher->name)) ? strtoupper(substr(trim($teacher->name), 0, 1)) : '?';
-    $teacherSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">' .
-        '<rect width="400" height="400" fill="#eef1f5"/>' .
-        '<text x="50%" y="54%" font-family="Poppins, Arial, sans-serif" font-size="170" font-weight="700" fill="#aab4c3" text-anchor="middle" dominant-baseline="middle">' .
-        $teacherInitial . '</text></svg>';
-    $teacherPlaceholder = 'data:image/svg+xml;base64,' . base64_encode($teacherSvg);
 @endphp
 
 <a href="{{ route('public.teachers.show', $teacher->id) }}" class="teacher-card group" aria-label="{{ __('Lihat detail') }} {{ $teacher->name }}">
@@ -20,9 +15,15 @@
             <i class="fas {{ $isStaff ? 'fa-users-gear' : 'fa-school' }}"></i>
             {{ $chipLabel }}
         </span>
-        <img src="{{ $teacher->photo ? asset('storage/' . $teacher->photo) : $teacherPlaceholder }}"
-            alt="{{ __('Foto') }} {{ $teacher->name }}" loading="lazy"
-            onerror="this.onerror=null;this.src='{{ $teacherPlaceholder }}';">
+
+        {{-- Avatar inisial sebagai lapisan bawah (tampil saat foto kosong/gagal dimuat) --}}
+        <div class="teacher-card__avatar">{{ $teacherInitial }}</div>
+
+        @if ($teacher->photo)
+            <img src="{{ asset('storage/' . $teacher->photo) }}"
+                alt="{{ __('Foto') }} {{ $teacher->name }}" loading="lazy"
+                class="teacher-card__img" onerror="this.remove()">
+        @endif
     </div>
 
     {{-- Konten kartu --}}

@@ -93,11 +93,27 @@
     /* Foto guru: selalu 1:1 (square) */
     .teacher-card__photo { position: relative; width: 100%; aspect-ratio: 1 / 1; background: linear-gradient(145deg, #f3f4f6, #e9edf1); overflow: hidden; }
     .teacher-card__photo img {
-        width: 100%; height: 100%; object-fit: cover; object-position: top center;
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; object-position: top center;
         transition: transform 0.45s ease;
     }
     .teacher-card:hover .teacher-card__photo img,
     .teacher-card:focus-visible .teacher-card__photo img { transform: scale(1.05); }
+
+    /* Avatar inisial (fallback saat foto kosong) */
+    .teacher-card__avatar {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 5.5rem; font-weight: 700;
+        color: #63cd00;
+        background: linear-gradient(145deg, #282829 0%, #3b3b3c 100%);
+    }
+    .teacher-card__avatar::after {
+        content: "\f007"; /* fa-user */
+        font-family: "Font Awesome 6 Free"; font-weight: 900;
+        position: absolute; bottom: 0.75rem; right: 0.75rem;
+        font-size: 1rem; color: rgba(255,255,255,.35);
+    }
 
     .teacher-card__hint {
         display: inline-flex; align-items: center; gap: 0.4rem;

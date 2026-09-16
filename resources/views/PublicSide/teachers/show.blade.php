@@ -14,14 +14,6 @@
         $roleLabel = $isStaff ? 'Staf Kependidikan' : 'Tenaga Pendidik';
 
         $initial = !empty(trim($teacher->name)) ? strtoupper(mb_substr(trim($teacher->name), 0, 1)) : '?';
-        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">' .
-            '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' .
-            '<stop offset="0" stop-color="#282829"/><stop offset="1" stop-color="#1f2937"/>' .
-            '</linearGradient></defs>' .
-            '<rect width="600" height="600" fill="url(#g)"/>' .
-            '<text x="50%" y="54%" font-family="Poppins, Arial, sans-serif" font-size="240" font-weight="700" fill="#63cd00" text-anchor="middle" dominant-baseline="middle">' .
-            $initial . '</text></svg>';
-        $placeholder = 'data:image/svg+xml;base64,' . base64_encode($svg);
     @endphp
 
     <div class="page-section">
@@ -85,9 +77,9 @@
                     <div class="teacher-photo-frame">
                         @if ($teacher->photo)
                             <img src="{{ asset('storage/' . $teacher->photo) }}" alt="{{ __('Foto') }} {{ $teacher->name }}"
-                                loading="lazy" onerror="this.onerror=null;this.src='{{ $placeholder }}';">
+                                loading="lazy" onerror="this.remove()">
                         @else
-                            <div class="w-full h-full flex items-center justify-center text-9xl font-bold"
+                            <div class="absolute inset-0 flex items-center justify-center text-9xl font-bold"
                                 style="background: linear-gradient(145deg, #282829, #1f2937); color:#63cd00;">
                                 {{ $initial }}
                             </div>
