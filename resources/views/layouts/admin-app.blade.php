@@ -81,6 +81,7 @@
                 'label' => 'Akademik',
                 'items' => [
                     ['title' => 'Guru & Staf', 'icon' => 'fa-solid fa-user-tie', 'routes' => ['admin.teachers.*'], 'url' => 'admin.teachers.index'],
+                    ['title' => 'Pimpinan Sekolah', 'icon' => 'fa-solid fa-user-tie', 'routes' => ['admin.leaders.*'], 'url' => 'admin.leaders.index'],
                     ['title' => 'Prestasi', 'icon' => 'fa-solid fa-trophy', 'routes' => ['admin.achievements.*'], 'url' => 'admin.achievements.index'],
                     ['title' => 'Ekstrakurikuler', 'icon' => 'fa-solid fa-futbol', 'routes' => ['admin.extracurriculars.*'], 'url' => 'admin.extracurriculars.index'],
                 ],

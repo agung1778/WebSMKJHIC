@@ -585,85 +585,74 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mt-16">
 
                         {{-- Kolom Kiri: Konten Teks --}}
+                        @php
+                            $leader1 = $leaders->where('school', 'Amaliah 1')->first();
+                            $leader2 = $leaders->where('school', 'Amaliah 2')->first();
+                            $leaderImage = function ($leader, $fallback) {
+                                if ($leader && $leader->image) {
+                                    return str_starts_with($leader->image, 'uploads/')
+                                        ? asset('storage/' . $leader->image)
+                                        : (str_starts_with($leader->image, 'http') ? $leader->image : asset($leader->image));
+                                }
+                                return asset($fallback);
+                            };
+                            $leaderProfiles = [
+                                ['tab' => 'amaliah1', 'leader' => $leader1, 'fallback' => 'assets/image/kepsek1.webp', 'alt' => 'Kepala Sekolah Amaliah 1'],
+                                ['tab' => 'amaliah2', 'leader' => $leader2, 'fallback' => 'assets/image/kepsek2.webp', 'alt' => 'Kepala Sekolah Amaliah 2'],
+                            ];
+                        @endphp
                         <div class="relative min-h-[280px] text-center lg:text-left">
-                            {{-- PROFIL KEPALA SEKOLAH 1 --}}
-                            <div x-show="activeTab === 'amaliah1'" x-transition:enter="transition ease-out duration-300"
-                                x-transition:enter-start="opacity-0 transform -translate-x-4"
-                                x-transition:enter-end="opacity-100 transform translate-x-0"
-                                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
-                                x-transition:leave-end="opacity-0" class="absolute w-full">
-                                <h3 class="text-2xl lg:text-3xl font-bold text-white">Tisna Sudrajat S.Kom., Gr., ACA</h3>
-                                <p class="text-base text-[#63cd00] mt-1 mb-4">Kepala Sekolah SMK Amaliah 1</p>
-                                <blockquote class="text-md text-gray-300 italic max-w-lg mx-auto lg:mx-0">
-                                    "Pendidikan adalah paspor masa depan karena hari esok adalah milik mereka yang
-                                    mempersiapkannya hari ini."
-                                </blockquote>
-                                <div class="flex items-center space-x-3 mt-6 justify-center lg:justify-start">
-                                    <a href="https://www.facebook.com/" aria-label="Facebook"
-                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors"><i
-                                            class="fab fa-facebook-f"></i></a>
-                                    <a href="https://www.instagram.com/" aria-label="Instagram"
-                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors"><i
-                                            class="fab fa-instagram"></i></a>
-                                    <a href="https://id.linkedin.com/" aria-label="LinkedIn"
-                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors"><i
-                                            class="fab fa-linkedin-in"></i></a>
-                                </div>
-                            </div>
-
-                            {{-- PROFIL KEPALA SEKOLAH 2 --}}
-                            <div x-show="activeTab === 'amaliah2'" x-transition:enter="transition ease-out duration-300"
-                                x-transition:enter-start="opacity-0 transform -translate-x-4"
-                                x-transition:enter-end="opacity-100 transform translate-x-0"
-                                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
-                                x-transition:leave-end="opacity-0" class="absolute w-full" style="display: none;">
-                                <h3 class="text-2xl lg:text-3xl font-bold text-white">Dr. Gugun Gunadi, S.Pd.I., M.Pd.</h3>
-                                <p class="text-base text-[#63cd00] mt-1 mb-4">Kepala Sekolah SMK Amaliah 2</p>
-                                <blockquote class="text-md text-gray-300 italic max-w-lg mx-auto lg:mx-0">
-                                    "Sekolah adalah rumah untuk tumbuh — di sini kami membimbing peserta didik tidak hanya
-                                    menguasai kompetensi kerja, tetapi juga membentuk akhlak dan sikap profesional. Bersama
-                                    orang tua dan mitra industri, kami membuka peluang nyata agar setiap lulusan membangun
-                                    masa depan yang bermakna."
-                                </blockquote>
-                                <div class="flex items-center space-x-3 mt-6 justify-center lg:justify-start">
-                                    <a href="https://www.facebook.com/" aria-label="Facebook"
-                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors"><i
-                                            class="fab fa-facebook-f"></i></a>
-                                    <a href="https://www.instagram.com/" aria-label="Instagram"
-                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors"><i
-                                            class="fab fa-instagram"></i></a>
-                                    <a href="https://id.linkedin.com/" aria-label="LinkedIn"
-                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors"><i
-                                            class="fab fa-linkedin-in"></i></a>
-                                </div>
-                            </div>
+                            @if ($leader1 || $leader2)
+                                @foreach ($leaderProfiles as $i => $profile)
+                                    @if ($profile['leader'])
+                                        <div x-show="activeTab === '{{ $profile['tab'] }}'" x-transition:enter="transition ease-out duration-300"
+                                            x-transition:enter-start="opacity-0 transform -translate-x-4"
+                                            x-transition:enter-end="opacity-100 transform translate-x-0"
+                                            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+                                            x-transition:leave-end="opacity-0" class="absolute w-full" @if($i === 1) style="display: none;" @endif>
+                                            <h3 class="text-2xl lg:text-3xl font-bold text-white">{{ $profile['leader']->name }}</h3>
+                                            <p class="text-base text-[#63cd00] mt-1 mb-4">{{ $profile['leader']->position }}</p>
+                                            @if ($profile['leader']->quote)
+                                                <blockquote class="text-md text-gray-300 italic max-w-lg mx-auto lg:mx-0">{!! nl2br(e($profile['leader']->quote)) !!}</blockquote>
+                                            @endif
+                                            <div class="flex items-center space-x-3 mt-6 justify-center lg:justify-start">
+                                                <a href="{{ $profile['leader']->facebook_url ?: 'https://www.facebook.com/' }}" aria-label="Facebook"
+                                                    class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors"><i
+                                                        class="fab fa-facebook-f"></i></a>
+                                                <a href="{{ $profile['leader']->instagram_url ?: 'https://www.instagram.com/' }}" aria-label="Instagram"
+                                                    class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors"><i
+                                                        class="fab fa-instagram"></i></a>
+                                                <a href="{{ $profile['leader']->linkedin_url ?: 'https://id.linkedin.com/' }}" aria-label="LinkedIn"
+                                                    class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors"><i
+                                                        class="fab fa-linkedin-in"></i></a>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @else
+                                <p class="text-gray-400 italic">Belum ada data pemimpin sekolah.</p>
+                            @endif
                         </div>
 
                         {{-- Kolom Kanan: Gambar --}}
                         <div class="relative flex justify-center items-center min-h-[320px] lg:min-h-0">
-                            {{-- GAMBAR KEPALA SEKOLAH 1 --}}
-                            <div x-show="activeTab === 'amaliah1'" x-transition:enter="transition ease-out duration-500"
-                                x-transition:enter-start="opacity-0 transform scale-90"
-                                x-transition:enter-end="opacity-100 transform scale-100" class="absolute">
-                                <div
-                                    class="w-64 h-64 sm:w-80 sm:h-80 bg-gray-400 rounded-full flex items-center justify-center text-gray-600 shadow-2xl">
-                                    <img src="{{ asset('assets/image/kepsek1.webp') }}"
-                                        class="w-full h-full object-cover rounded-full items-center"
-                                        alt="Kepala Sekolah Amaliah 1">
-                                </div>
-                            </div>
-                            {{-- GAMBAR KEPALA SEKOLAH 2 --}}
-                            <div x-show="activeTab === 'amaliah2'" x-transition:enter="transition ease-out duration-500"
-                                x-transition:enter-start="opacity-0 transform scale-90"
-                                x-transition:enter-end="opacity-100 transform scale-100" class="absolute"
-                                style="display: none;">
-                                <div
-                                    class="w-64 h-64 sm:w-80 sm:h-80 bg-gray-400 rounded-full flex items-center justify-center text-gray-600 shadow-2xl">
-                                    <img src="{{ asset('assets/image/kepsek2.webp') }}"
-                                        class="w-full h-full object-cover rounded-full items-center"
-                                        alt="Kepala Sekolah Amaliah 2">
-                                </div>
-                            </div>
+                            @if ($leader1 || $leader2)
+                                @foreach ($leaderProfiles as $i => $profile)
+                                    @if ($profile['leader'])
+                                        <div x-show="activeTab === '{{ $profile['tab'] }}'" x-transition:enter="transition ease-out duration-500"
+                                            x-transition:enter-start="opacity-0 transform scale-90"
+                                            x-transition:enter-end="opacity-100 transform scale-100" class="absolute"
+                                            @if($i === 1) style="display: none;" @endif>
+                                            <div
+                                                class="w-64 h-64 sm:w-80 sm:h-80 bg-gray-400 rounded-full flex items-center justify-center text-gray-600 shadow-2xl overflow-hidden">
+                                                <img src="{{ $leaderImage($profile['leader'], $profile['fallback']) }}"
+                                                    class="w-full h-full object-cover rounded-full items-center"
+                                                    alt="{{ $profile['alt'] }}">
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @endif
                         </div>
 
                     </div>

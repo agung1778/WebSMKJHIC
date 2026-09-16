@@ -13,6 +13,7 @@ use App\Models\Major;
 use App\Models\SchoolSetting;
 use App\Models\Teacher;
 use App\Models\InstaPost;
+use App\Models\SchoolLeader;
 
 class HomeController extends Controller
 {
@@ -44,6 +45,11 @@ class HomeController extends Controller
 
         $instaPosts = InstaPost::where('is_active', true)->latest()->take(16)->get();
 
+        $leaders = SchoolLeader::where('is_active', true)
+            ->orderBy('order_column')
+            ->orderBy('id')
+            ->get();
+
         return view('welcome', [
             'latestNews'      => $latestNews,
             'partners'        => $partners,
@@ -57,6 +63,7 @@ class HomeController extends Controller
             'teachersCount'   => $teachersCount,
             'facilitiesCount' => $facilitiesCount,
             'instaPosts'      => $instaPosts,
+            'leaders'         => $leaders,
         ]);
     }
 }

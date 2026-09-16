@@ -19,6 +19,7 @@ use App\Http\Controllers\SchoolSettingController;
 use App\Http\Controllers\PkkProjectController;
 use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\InstaPostController;
+use App\Http\Controllers\SchoolLeaderController;
 
 use App\Models\SchoolProgram;
 use App\Http\Controllers\SearchController;
@@ -152,6 +153,9 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
         Route::resource('teachers', TeacherController::class);
 
         Route::post('/teachers/{teacher}/upload-photo', [App\Http\Controllers\TeacherController::class, 'uploadPhoto'])->name('teachers.uploadPhoto');
+
+        // Rute untuk Pemimpin Sekolah (Get To Know Our School Leaders)
+        Route::resource('leaders', SchoolLeaderController::class);
 
         // Rute untuk Prestasi
         Route::resource('achievements', AchievementController::class);
