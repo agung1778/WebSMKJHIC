@@ -91,6 +91,10 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 // Halaman traffic publik (rekap bulanan agregat)
 Route::get('/traffic', [PublicTrafficController::class, 'index'])->name('public.traffic.index');
 
+// Halaman legal publik
+Route::view('/kebijakan-privasi', 'PublicSide.legal.privacy')->name('public.legal.privacy');
+Route::view('/syarat-ketentuan', 'PublicSide.legal.terms')->name('public.legal.terms');
+
 // Authentication Routes
 // Tambahkan rute untuk menampilkan form login dan beri nama 'login'
 Route::get('/developer', [AuthController::class, 'showLoginForm'])->name('login');

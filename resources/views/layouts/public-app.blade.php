@@ -613,143 +613,407 @@
             @yield('content')
         </main>
 
-        {{--
-        Saya memperbaiki 'fade-in-section' yang sebelumnya ada di dalam atribut 'style'.
-        Sekarang 'fade-in-section' ada di atribut 'class' agar bisa berfungsi.
-        --}}
-        <footer style="background-color: {{ $amaliahDark }};" class="fade-in-section">
+        {{-- ===== Footer (redesign) ===== --}}
+        <style>
+            .ft-footer {
+                position: relative;
+                background: #202021;
+                color: #cfcfd2;
+                overflow: hidden;
+            }
 
-            {{-- Wrapper Utama Konten --}}
-            <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            .ft-footer::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, #63cd00 0%, #8ef03a 50%, #63cd00 100%);
+            }
 
-                {{-- Konten Utama Footer (Multi-kolom) --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            .ft-footer::after {
+                content: '';
+                position: absolute;
+                top: -160px;
+                right: -120px;
+                width: 420px;
+                height: 420px;
+                background: radial-gradient(circle, rgba(99, 205, 0, 0.14) 0%, transparent 65%);
+                pointer-events: none;
+            }
 
-                    {{-- Kolom 1: Logo, Deskripsi, dan Sosial Media --}}
-                    <div class="space-y-6">
-                        {{-- 1. Struktur Branding yang lebih rapi --}}
-                        <a href="/" class="flex items-center gap-3">
-                            <img src="{{ asset('assets/logo/amaliah_white.webp') }}" alt="Logo SMK Amaliah"
-                                class="h-10">
-                            <div>
-                                <span class="text-white font-semibold text-lg leading-tight">SMK Amaliah 1 & 2</span>
-                                <span class="block text-gray-400 text-xs">Ciawi - Bogor</span>
-                            </div>
+            .ft-container {
+                width: 100%;
+                max-width: 80rem;
+                margin: 0 auto;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                position: relative;
+                z-index: 1;
+            }
+
+            .ft-top {
+                padding-top: 3.5rem;
+                padding-bottom: 3rem;
+            }
+
+            .ft-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .ft-brand__logo {
+                display: flex;
+                align-items: center;
+                gap: 0.85rem;
+                text-decoration: none;
+            }
+
+            .ft-brand__logo img {
+                height: 2.75rem;
+                width: auto;
+            }
+
+            .ft-brand__name {
+                display: block;
+                color: #ffffff;
+                font-weight: 700;
+                font-size: 1.05rem;
+                line-height: 1.2;
+            }
+
+            .ft-brand__loc {
+                display: block;
+                color: #63cd00;
+                font-size: 0.75rem;
+                font-weight: 600;
+                letter-spacing: 0.05em;
+            }
+
+            .ft-brand__desc {
+                margin-top: 1.15rem;
+                font-size: 0.875rem;
+                line-height: 1.75;
+                color: #9a9aa0;
+                max-width: 22rem;
+            }
+
+            .ft-socials {
+                display: flex;
+                align-items: center;
+                gap: 0.65rem;
+                margin-top: 1.4rem;
+            }
+
+            .ft-social {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 2.4rem;
+                height: 2.4rem;
+                border-radius: 9999px;
+                background: #333335;
+                color: #b8b8bd;
+                font-size: 1rem;
+                text-decoration: none;
+                transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+            }
+
+            .ft-social:hover {
+                transform: translateY(-3px);
+                background: #63cd00;
+                color: #ffffff;
+                box-shadow: 0 10px 20px -8px rgba(99, 205, 0, 0.6);
+            }
+
+            .ft-col__title {
+                position: relative;
+                margin: 0 0 1.25rem;
+                padding-bottom: 0.6rem;
+                color: #ffffff;
+                font-size: 0.8rem;
+                font-weight: 700;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+            }
+
+            .ft-col__title::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 2.25rem;
+                height: 3px;
+                border-radius: 9999px;
+                background: #63cd00;
+            }
+
+            .ft-links {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .ft-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.55rem;
+                color: #9a9aa0;
+                font-size: 0.875rem;
+                text-decoration: none;
+                transition: color 0.2s ease, transform 0.2s ease;
+            }
+
+            .ft-link i {
+                color: #63cd00;
+                font-size: 0.68rem;
+                transition: transform 0.2s ease;
+            }
+
+            .ft-link:hover {
+                color: #ffffff;
+                transform: translateX(4px);
+            }
+
+            .ft-link:hover i {
+                transform: translateX(2px);
+            }
+
+            .ft-contact {
+                display: flex;
+                flex-direction: column;
+                gap: 1.1rem;
+            }
+
+            .ft-contact__item {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.85rem;
+                font-size: 0.875rem;
+                color: #9a9aa0;
+                line-height: 1.6;
+            }
+
+            .ft-contact__icon {
+                flex-shrink: 0;
+                width: 2.35rem;
+                height: 2.35rem;
+                border-radius: 0.7rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(99, 205, 0, 0.12);
+                color: #63cd00;
+                font-size: 0.85rem;
+            }
+
+            .ft-contact__item a {
+                color: #cfcfd2;
+                text-decoration: none;
+                transition: color 0.2s ease;
+            }
+
+            .ft-contact__item a:hover {
+                color: #63cd00;
+            }
+
+            .ft-contact__nums {
+                display: flex;
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+
+            .ft-bottom {
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                background: rgba(0, 0, 0, 0.25);
+            }
+
+            .ft-bottom__inner {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.9rem;
+                padding-top: 1.4rem;
+                padding-bottom: 1.4rem;
+                text-align: center;
+            }
+
+            .ft-copy {
+                margin: 0;
+                font-size: 0.8rem;
+                color: #7c7c82;
+            }
+
+            .ft-copy strong {
+                color: #b8b8bd;
+                font-weight: 600;
+            }
+
+            .ft-legal {
+                display: flex;
+                align-items: center;
+                gap: 0.9rem;
+                font-size: 0.8rem;
+            }
+
+            .ft-legal a {
+                color: #9a9aa0;
+                text-decoration: none;
+                transition: color 0.2s ease;
+            }
+
+            .ft-legal a:hover {
+                color: #63cd00;
+            }
+
+            .ft-legal__dot {
+                color: #4a4a4e;
+            }
+
+            @media (min-width: 640px) {
+                .ft-container {
+                    padding-left: 1.5rem;
+                    padding-right: 1.5rem;
+                }
+
+                .ft-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
+                .ft-bottom__inner {
+                    flex-direction: row;
+                    justify-content: space-between;
+                    text-align: left;
+                }
+            }
+
+            @media (min-width: 1024px) {
+                .ft-container {
+                    padding-left: 2rem;
+                    padding-right: 2rem;
+                }
+
+                .ft-grid {
+                    grid-template-columns: 1.5fr 1fr 1fr 1.3fr;
+                    gap: 3rem;
+                }
+            }
+        </style>
+
+        <footer class="ft-footer">
+            <div class="ft-container ft-top">
+                <div class="ft-grid">
+
+                    {{-- Kolom 1: Brand, deskripsi, sosial media --}}
+                    <div>
+                        <a href="/" class="ft-brand__logo">
+                            <img src="{{ asset('assets/logo/amaliah_white.webp') }}" alt="Logo SMK Amaliah">
+                            <span>
+                                <span class="ft-brand__name">SMK Amaliah 1 &amp; 2</span>
+                                <span class="ft-brand__loc">CIAWI - BOGOR</span>
+                            </span>
                         </a>
 
-                        <p class="text-gray-400 text-sm leading-relaxed">
+                        <p class="ft-brand__desc">
                             Berkomitmen untuk mencetak lulusan yang kompeten, berakhlak mulia, dan siap bersaing di
                             dunia industri global.
                         </p>
 
-                        {{-- 2. Ikon Sosial Media dengan efek hover modern --}}
-                        <div class="flex items-center space-x-3">
+                        <div class="ft-socials">
                             <a href="https://youtube.com/@smkamaliahciawi?si=j67hYjVWMNc2F3vK" target="_blank"
-                                aria-label="Kunjungi YouTube SMK Amaliah"
-                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                <i
-                                    class="fab fa-youtube text-gray-400 text-xl group-hover:text-red-600 transition-colors"></i>
+                                rel="noopener" aria-label="Kunjungi YouTube SMK Amaliah" class="ft-social">
+                                <i class="fab fa-youtube"></i>
                             </a>
-                            <a href="https://www.instagram.com/smkamaliah" target="_blank"
-                                aria-label="Kunjungi Instagram SMK Amaliah"
-                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                <i
-                                    class="fab fa-instagram text-gray-400 text-xl group-hover:text-pink-600 transition-colors"></i>
+                            <a href="https://www.instagram.com/smkamaliah" target="_blank" rel="noopener"
+                                aria-label="Kunjungi Instagram SMK Amaliah" class="ft-social">
+                                <i class="fab fa-instagram"></i>
                             </a>
-                            <a href="https://www.facebook.com/smk.amaliah.1.dan.2" target="_blank"
-                                aria-label="Kunjungi Facebook SMK Amaliah"
-                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                <i
-                                    class="fab fa-facebook-f text-gray-400 text-xl group-hover:text-blue-600 transition-colors"></i>
+                            <a href="https://www.facebook.com/smk.amaliah.1.dan.2" target="_blank" rel="noopener"
+                                aria-label="Kunjungi Facebook SMK Amaliah" class="ft-social">
+                                <i class="fab fa-facebook-f"></i>
                             </a>
                             <a href="https://www.tiktok.com/@smk.amaliah?_t=ZS-90cdH7Gk5Ml&_r=1" target="_blank"
-                                aria-label="Kunjungi TikTok SMK Amaliah"
-                                class="group w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white">
-                                <i
-                                    class="fab fa-tiktok text-gray-400 text-xl group-hover:text-black transition-colors"></i>
+                                rel="noopener" aria-label="Kunjungi TikTok SMK Amaliah" class="ft-social">
+                                <i class="fab fa-tiktok"></i>
                             </a>
                         </div>
                     </div>
 
-                    {{-- Kolom 2: Link Navigasi Cepat --}}
+                    {{-- Kolom 2: Jelajahi --}}
                     <div>
-                        <h4 class="font-semibold text-white tracking-wider uppercase">Jelajahi</h4>
-                        <ul class="mt-4 space-y-3 text-sm">
-                            <li><a href="/"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Beranda</a>
-                            </li>
-                            <li><a href="{{ route('public.about.index') }}"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Tentang
-                                    Kami</a></li>
-                            <li><a href="{{ route('public.news.index') }}"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Berita</a>
-                            </li>
-                            <li><a href="{{ route('public.majors.index') }}"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Jurusan</a>
-                            </li>
+                        <h4 class="ft-col__title">Jelajahi</h4>
+                        <ul class="ft-links">
+                            <li><a href="/" class="ft-link"><i class="fas fa-chevron-right"></i>Beranda</a></li>
+                            <li><a href="{{ route('public.about.index') }}" class="ft-link"><i
+                                        class="fas fa-chevron-right"></i>Tentang Kami</a></li>
+                            <li><a href="{{ route('public.news.index') }}" class="ft-link"><i
+                                        class="fas fa-chevron-right"></i>Berita</a></li>
+                            <li><a href="{{ route('public.majors.index') }}" class="ft-link"><i
+                                        class="fas fa-chevron-right"></i>Jurusan</a></li>
                         </ul>
                     </div>
 
-                    {{-- Kolom 3: Link Informasi --}}
+                    {{-- Kolom 3: Informasi --}}
                     <div>
-                        <h4 class="font-semibold text-white tracking-wider uppercase">Informasi</h4>
-                        <ul class="mt-4 space-y-3 text-sm">
-                            <li><a href="https://ppdb.smkamaliah.sch.id/login   "
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Info
-                                    PPDB</a></li>
-                            <li><a href="{{ route('public.facilities.index') }}"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Fasilitas</a>
-                            </li>
-                            <li><a href="https://yourdisc710.itch.io/amaliah-tour"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Virtual
-                                    Tour</a></li>
-                            <li><a href="https://wa.me/6285649011449"
-                                    class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">Kontak</a>
-                            </li>
+                        <h4 class="ft-col__title">Informasi</h4>
+                        <ul class="ft-links">
+                            <li><a href="https://ppdb.smkamaliah.sch.id/login" target="_blank" rel="noopener"
+                                    class="ft-link"><i class="fas fa-chevron-right"></i>Info PPDB</a></li>
+                            <li><a href="{{ route('public.facilities.index') }}" class="ft-link"><i
+                                        class="fas fa-chevron-right"></i>Fasilitas</a></li>
+                            <li><a href="https://yourdisc710.itch.io/amaliah-tour" target="_blank" rel="noopener"
+                                    class="ft-link"><i class="fas fa-chevron-right"></i>Tur Virtual</a></li>
+                            <li><a href="https://wa.me/6285649011449" target="_blank" rel="noopener" class="ft-link"><i
+                                        class="fas fa-chevron-right"></i>Kontak</a></li>
                         </ul>
                     </div>
 
-                    {{-- Kolom 4: Informasi Kontak --}}
+                    {{-- Kolom 4: Hubungi Kami --}}
                     <div>
-                        <h4 class="font-semibold text-white tracking-wider uppercase">Hubungi Kami</h4>
-                        <div class="mt-4 flex flex-col gap-4 text-sm">
-                            <div class="flex items-start gap-3 text-gray-400">
-                                <i class="fas fa-map-marker-alt w-4 h-4 mt-1 flex-shrink-0"></i>
+                        <h4 class="ft-col__title">Hubungi Kami</h4>
+                        <div class="ft-contact">
+                            <div class="ft-contact__item">
+                                <span class="ft-contact__icon"><i class="fas fa-map-marker-alt"></i></span>
                                 <span>Jl. Raya Jl. Tol Jagorawi No.1, Ciawi, Kec. Ciawi, Kabupaten Bogor, Jawa Barat
                                     16720</span>
                             </div>
-                            <div class="flex items-start gap-3 text-gray-400">
-                                <i class="fas fa-envelope w-4 h-4 mt-1 flex-shrink-0"></i>
-                                <a href="mailto:{{ $email ?? 'smkamaliahciawi@gmail.com' }}"
-                                    class="hover:text-white transition">smkamaliahciawi@gmail.com</a>
+                            <div class="ft-contact__item">
+                                <span class="ft-contact__icon"><i class="fas fa-envelope"></i></span>
+                                <a href="mailto:{{ $email ?? 'smkamaliahciawi@gmail.com' }}">smkamaliahciawi@gmail.com</a>
                             </div>
-                            <div class="flex items-start gap-3 text-gray-400">
-                                <i class="fas fa-phone-alt w-4 h-4 mt-1 flex-shrink-0"></i>
-                                <a href="https://wa.me/6285649011449" class="hover:text-white transition">0856-1922-827
-                                    /
-                                    0856-4901-1449</a>
+                            <div class="ft-contact__item">
+                                <span class="ft-contact__icon"><i class="fas fa-phone-alt"></i></span>
+                                <span class="ft-contact__nums">
+                                    <a href="https://wa.me/628561922827" target="_blank" rel="noopener">0856-1922-827</a>
+                                    <a href="https://wa.me/6285649011449" target="_blank" rel="noopener">0856-4901-1449</a>
+                                </span>
                             </div>
                         </div>
                     </div>
 
-                </div>
-
-            </div> {{-- Bagian Copyright di Bawah (Tidak ada perubahan di sini) --}}
-            <div class="border-t border-gray-800">
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4">
-                        <p class="text-sm text-gray-500">
-                            &copy; {{ date('Y') }} Tim IT SMK Amaliah. All Rights Reserved.
-                        </p>
-                        <div class="flex space-x-6 text-sm text-gray-500">
-                            <a href="#" class="hover:text-white transition">Kebijakan Privasi</a>
-                            <a href="#" class="hover:text-white transition">Syarat & Ketentuan</a>
-                        </div>
-                    </div>
                 </div>
             </div>
 
+            <div class="ft-bottom">
+                <div class="ft-container ft-bottom__inner">
+                    <p class="ft-copy">&copy; {{ date('Y') }} <strong>Tim IT SMK Amaliah</strong>. All Rights Reserved.
+                    </p>
+                    <div class="ft-legal">
+                        <a href="{{ route('public.legal.privacy') }}">Kebijakan Privasi</a>
+                        <span class="ft-legal__dot">&bull;</span>
+                        <a href="{{ route('public.legal.terms') }}">Syarat &amp; Ketentuan</a>
+                    </div>
+                </div>
+            </div>
         </footer>
+
+    {{-- Pelacakan traffic (kunjungan halaman & klik) --}}
+    @include('partials.traffic-tracking')
 
 </body>
 
