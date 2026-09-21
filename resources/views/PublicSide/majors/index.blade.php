@@ -28,7 +28,7 @@
                             x-transition:leave="transition ease-in duration-1000"
                             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                             class="absolute inset-0">
-                            <img src="{{ Storage::url($image->path) }}"
+                            <img src="{{ img_url($image->path, 1600, 900) }}" width="1600" height="900"
                                 alt="{{ $image->description ?? $image->filename }}"
                                 class="w-full h-full object-cover">
                         </div>
@@ -182,7 +182,7 @@
                             {{-- Gambar Utama --}}
                             <a href="{{ route('public.majors.show', $major) }}" class="block h-52 lg:h-60 relative overflow-hidden">
                                 @if($major->image)
-                                    <img src="{{ Storage::url($major->image) }}" loading="lazy" alt="Gambar {{ $major->name }}"
+                                    <img src="{{ img_url($major->image, 900, 520) }}" width="900" height="520" loading="lazy" alt="Gambar {{ $major->name }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]">
                                 @else
                                     <div class="w-full h-full bg-gray-300"></div>
@@ -197,7 +197,7 @@
                                 {{-- Logo --}}
                                 <div class="absolute -top-12 left-6 bg-white p-2.5 rounded-2xl shadow-xl border border-gray-100">
                                     @if($major->logo)
-                                        <img src="{{ Storage::url($major->logo) }}" loading="lazy" alt="Logo {{ $major->abbreviation ?? $major->name }}"
+                                        <img src="{{ img_url($major->logo, 160, 90) }}" width="160" height="90" loading="lazy" alt="Logo {{ $major->abbreviation ?? $major->name }}"
                                             class="h-14 w-14 object-contain">
                                     @else
                                         <div class="h-14 w-14 bg-gray-200 rounded-xl flex items-center justify-center text-gray-400">

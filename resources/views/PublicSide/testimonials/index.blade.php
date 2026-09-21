@@ -41,7 +41,7 @@
                                 x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000"
                                 x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0">
 
-                                <img src="{{ Storage::url($image->path) }}" loading="lazy" alt="{{ $image->description ?? $image->filename }}"
+                                <img src="{{ img_url($image->path, 1600, 900) }}" width="1600" height="900" loading="lazy" alt="{{ $image->description ?? $image->filename }}"
                                     class="w-full h-full object-cover">
                             </div>
                         @endforeach
@@ -117,7 +117,7 @@
                                 </div>
                                 {{-- Kolom Gambar --}}
                                 <div class="flex-shrink-0 order-first sm:order-last">
-                                    <img src="{{ asset('storage/' . $testimonial->photo) }}" loading="lazy" alt="Foto {{ $testimonial->name }}"
+                                    <img src="{{ img_url($testimonial->photo, 400, 400) }}" width="400" height="400" loading="lazy" alt="Foto {{ $testimonial->name }}"
                                         class="w-32 h-32 rounded-full object-cover shadow-md">
                                 </div>
                             </div>

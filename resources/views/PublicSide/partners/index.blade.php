@@ -31,7 +31,7 @@
                             x-transition:leave="transition ease-in duration-1000"
                             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                             class="absolute inset-0">
-                            <img src="{{ Storage::url($image->path) }}"
+                            <img src="{{ img_url($image->path, 1600, 900) }}" width="1600" height="900"
                                 alt="{{ $image->description ?? $image->filename }}"
                                 class="w-full h-full object-cover">
                         </div>
@@ -168,7 +168,7 @@
                         <div
                             class="relative h-28 w-full bg-gray-50 rounded-xl flex items-center justify-center p-4 mb-5 border border-gray-200 overflow-hidden transition-colors duration-300 group-hover:bg-[#63cd00]/5">
                             @if($partner->logo)
-                                <img src="{{ Storage::url($partner->logo) }}" loading="lazy" alt="Logo {{ $partner->name }}"
+                                <img src="{{ img_url($partner->logo, 160, 90) }}" width="160" height="90" loading="lazy" alt="Logo {{ $partner->name }}"
                                     class="max-h-20 w-auto object-contain">
                             @else
                                 <div class="flex flex-col items-center justify-center text-slate-400">

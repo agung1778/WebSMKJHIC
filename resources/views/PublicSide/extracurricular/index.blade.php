@@ -19,7 +19,7 @@
     <section class="relative bg-[#282829]">
         <div class="relative h-[320px] lg:h-[420px] overflow-hidden">
             @if ($heroImage)
-                <img src="{{ Storage::url($heroImage->path) }}"
+                <img src="{{ img_url($heroImage->path, 1600, 900) }}" width="1600" height="900"
                     alt="{{ $heroImage->description ?? $heroImage->filename }}"
                     class="w-full h-full object-cover">
             @else
@@ -134,7 +134,7 @@
                             aria-label="{{ $item->name }}">
                             <div class="ec-card__thumb">
                                 @if ($item->image)
-                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" loading="lazy">
+                                    <img src="{{ img_url($item->image, 900, 520) }}" width="900" height="520" alt="{{ $item->name }}" loading="lazy">
                                 @else
                                     <div class="ec-thumb-fallback"><i class="fa-solid fa-futbol"></i></div>
                                 @endif

@@ -74,7 +74,7 @@
                         {{-- 1. HEADER IMAGE --}}
                         <div class="relative h-[300px] md:h-[400px] bg-gray-100 overflow-hidden group">
                             @if ($project->photo)
-                                <img src="{{ asset('storage/' . $project->photo) }}" alt="{{ $project->title }}"
+                                <img src="{{ img_url($project->photo, 700, 525) }}" width="700" height="525" alt="{{ $project->title }}"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-gray-300">
@@ -104,7 +104,7 @@
                                 <div
                                     class="w-24 h-24 bg-white rounded-2xl shadow-lg p-2 flex items-center justify-center border border-gray-100">
                                     @if ($project->logo)
-                                        <img src="{{ asset('storage/' . $project->logo) }}" loading="lazy"
+                                        <img src="{{ img_url($project->logo, 160, 90) }}" width="160" height="90" loading="lazy"
                                             class="w-full h-full object-contain rounded-xl">
                                     @else
                                         <i class="fas fa-cube text-gray-300 text-3xl"></i>

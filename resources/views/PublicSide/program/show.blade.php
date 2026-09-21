@@ -17,7 +17,7 @@
     <section class="relative bg-[#282829]">
         <div class="relative h-[340px] lg:h-[440px] overflow-hidden">
             @if ($program->image)
-                <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->name }}"
+                <img src="{{ img_url($program->image, 1600, 900) }}" width="1600" height="900" alt="{{ $program->name }}"
                     class="w-full h-full object-cover">
             @else
                 <div class="pg-thumb-fallback pg-thumb-fallback--big"><i class="fa-solid fa-book-open"></i></div>
@@ -89,7 +89,7 @@
                     {{-- Gambar besar (jika ada) --}}
                     @if ($program->image)
                         <figure class="mb-8">
-                            <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->name }}"
+                            <img src="{{ img_url($program->image, 900, 520) }}" width="900" height="520" alt="{{ $program->name }}"
                                 class="w-full rounded-2xl shadow-md object-cover">
                             @if ($program->publisher)
                                 <figcaption class="mt-2 text-sm text-gray-500">
@@ -136,7 +136,7 @@
                             <h2 class="text-2xl font-bold text-[#282829] mb-6">Koordinator Program</h2>
                             <div class="bg-gray-50 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6 border border-gray-200">
                                 @if (isset($program->coordinator_photo) && $program->coordinator_photo)
-                                    <img src="{{ asset('storage/' . $program->coordinator_photo) }}"
+                                    <img src="{{ img_url($program->coordinator_photo, 400, 400) }}" width="400" height="400"
                                         alt="Foto {{ $program->coordinator_name }}"
                                         class="w-24 h-24 rounded-full object-cover shadow-md border-4 border-white flex-shrink-0">
                                 @else
@@ -224,7 +224,7 @@
                                         class="pg-rel" aria-label="{{ $item->name }}">
                                         <div class="pg-rel__thumb">
                                             @if ($item->image)
-                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" loading="lazy">
+                                                <img src="{{ img_url($item->image, 400, 400) }}" width="400" height="400" alt="{{ $item->name }}" loading="lazy">
                                             @else
                                                 <i class="fa-solid fa-book-open"></i>
                                             @endif

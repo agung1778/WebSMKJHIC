@@ -41,7 +41,7 @@
     <section class="relative bg-[#282829]">
         <div class="relative h-[320px] lg:h-[420px] overflow-hidden">
             @if ($heroImage)
-                <img src="{{ Storage::url($heroImage->path) }}"
+                <img src="{{ img_url($heroImage->path, 1600, 900) }}" width="1600" height="900"
                     alt="{{ $heroImage->description ?? $heroImage->filename }}"
                     class="w-full h-full object-cover">
             @else

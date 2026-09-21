@@ -16,7 +16,7 @@
     <section class="relative bg-[#282829]">
         <div class="relative h-[340px] lg:h-[440px] overflow-hidden">
             @if ($news->image)
-                <img src="{{ asset('storage/' . $news->image) }}" alt="{{ $news->title }}"
+                <img src="{{ img_url($news->image, 1600, 900) }}" width="1600" height="900" alt="{{ $news->title }}"
                     class="w-full h-full object-cover">
             @else
                 <div class="nw-thumb-fallback nw-thumb-fallback--big"><i class="fa-solid fa-newspaper"></i></div>
@@ -173,7 +173,7 @@
                                         class="nw-rel" aria-label="{{ $item->title }}">
                                         <div class="nw-rel__thumb">
                                             @if ($item->image)
-                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" loading="lazy">
+                                                <img src="{{ img_url($item->image, 400, 400) }}" width="400" height="400" alt="{{ $item->title }}" loading="lazy">
                                             @else
                                                 <i class="fa-solid fa-newspaper"></i>
                                             @endif

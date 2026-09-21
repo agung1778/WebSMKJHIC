@@ -17,7 +17,7 @@
     <section class="relative bg-[#282829]">
         <div class="relative h-[320px] lg:h-[420px] overflow-hidden">
             @if ($heroImage)
-                <img src="{{ Storage::url($heroImage->path) }}"
+                <img src="{{ img_url($heroImage->path, 1600, 900) }}" width="1600" height="900"
                     alt="{{ $heroImage->description ?? $heroImage->filename }}"
                     class="w-full h-full object-cover">
             @else
@@ -97,7 +97,7 @@
                             aria-label="{{ $program->name }}">
                             <div class="pg-card__thumb">
                                 @if ($program->image)
-                                    <img src="{{ asset('storage/' . $program->image) }}" alt="{{ $program->name }}" loading="lazy">
+                                    <img src="{{ img_url($program->image, 900, 520) }}" width="900" height="520" alt="{{ $program->name }}" loading="lazy">
                                 @else
                                     <div class="pg-thumb-fallback"><i class="fa-solid fa-book-open"></i></div>
                                 @endif

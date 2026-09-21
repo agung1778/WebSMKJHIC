@@ -39,12 +39,19 @@ use App\Http\Controllers\PublicPage\PublicAchievementController;
 use App\Http\Controllers\PublicPage\PublicProgramController;
 use App\Http\Controllers\PublicPage\PublicExtracurricularController;
 use App\Http\Controllers\PublicPage\PublicHelpcenterController;
+use App\Http\Controllers\PublicPage\OptimizedImageController;
 
 use App\Http\Controllers\TrafficController;
 use App\Http\Controllers\PublicPage\PublicTrafficController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+
+// Rute Gambar Teroptimasi (resize + WebP + cache)
+Route::get('/img/{path}', [OptimizedImageController::class, 'show'])
+    ->where('path', '.*')
+    ->name('public.image.optimized');
 
 
 // Rute Halaman Publik Jurusan

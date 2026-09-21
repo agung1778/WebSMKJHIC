@@ -35,7 +35,7 @@
     <section class="relative bg-[#282829]">
         <div class="relative h-[320px] lg:h-[420px] overflow-hidden">
             @if ($heroImage)
-                <img src="{{ Storage::url($heroImage->path) }}"
+                <img src="{{ img_url($heroImage->path, 1600, 900) }}" width="1600" height="900"
                     alt="{{ $heroImage->description ?? $heroImage->filename }}"
                     class="w-full h-full object-cover">
             @else
@@ -166,7 +166,7 @@
                                 aria-label="{{ $facility->name }}">
                                 <div class="fc-card__thumb">
                                     @if ($facility->image)
-                                        <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}" loading="lazy">
+                                        <img src="{{ img_url($facility->image, 900, 520) }}" width="900" height="520" alt="{{ $facility->name }}" loading="lazy">
                                     @else
                                         <div class="fc-thumb-fallback"><i class="fa-solid fa-building"></i></div>
                                     @endif

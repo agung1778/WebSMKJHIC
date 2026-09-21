@@ -56,7 +56,7 @@
                     <div class="p-8 lg:p-10">
                         <div class="flex items-center gap-4 mb-6">
                             @if ($testimonial->photo)
-                                <img src="{{ asset('storage/' . $testimonial->photo) }}" loading="lazy" alt="{{ __('Foto') }} {{ $testimonial->name }}"
+                                <img src="{{ img_url($testimonial->photo, 400, 400) }}" width="400" height="400" loading="lazy" alt="{{ __('Foto') }} {{ $testimonial->name }}"
                                     class="w-20 h-20 rounded-full object-cover ring-4 ring-white shadow-lg">
                             @else
                                 <div

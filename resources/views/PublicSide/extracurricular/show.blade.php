@@ -20,7 +20,7 @@
     <section class="relative bg-[#282829]">
         <div class="relative h-[340px] lg:h-[440px] overflow-hidden">
             @if ($extracurricular->image)
-                <img src="{{ asset('storage/' . $extracurricular->image) }}" alt="{{ $extracurricular->name }}"
+                <img src="{{ img_url($extracurricular->image, 1600, 900) }}" width="1600" height="900" alt="{{ $extracurricular->name }}"
                     class="w-full h-full object-cover">
             @else
                 <div class="ec-thumb-fallback ec-thumb-fallback--big"><i class="fa-solid fa-futbol"></i></div>
@@ -93,7 +93,7 @@
                     {{-- Gambar besar (jika ada) --}}
                     @if ($extracurricular->image)
                         <figure class="mb-8">
-                            <img src="{{ asset('storage/' . $extracurricular->image) }}" alt="{{ $extracurricular->name }}"
+                            <img src="{{ img_url($extracurricular->image, 900, 520) }}" width="900" height="520" alt="{{ $extracurricular->name }}"
                                 class="w-full rounded-2xl shadow-md object-cover">
                             @if ($extracurricular->publisher)
                                 <figcaption class="mt-2 text-sm text-gray-500">
@@ -216,7 +216,7 @@
                                         class="ec-rel" aria-label="{{ $item->name }}">
                                         <div class="ec-rel__thumb">
                                             @if ($item->image)
-                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" loading="lazy">
+                                                <img src="{{ img_url($item->image, 400, 400) }}" width="400" height="400" alt="{{ $item->name }}" loading="lazy">
                                             @else
                                                 <i class="fa-solid fa-futbol"></i>
                                             @endif

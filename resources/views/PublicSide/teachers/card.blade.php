@@ -20,7 +20,7 @@
         <div class="teacher-card__avatar">{{ $teacherInitial }}</div>
 
         @if ($teacher->photo)
-            <img src="{{ asset('storage/' . $teacher->photo) }}"
+            <img src="{{ img_url($teacher->photo, 400, 400) }}" width="400" height="400"
                 alt="{{ __('Foto') }} {{ $teacher->name }}" loading="lazy"
                 class="teacher-card__img" onerror="this.remove()">
         @endif

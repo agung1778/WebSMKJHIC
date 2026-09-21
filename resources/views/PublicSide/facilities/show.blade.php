@@ -17,7 +17,7 @@
     <section class="relative bg-[#282829]">
         <div class="relative h-[340px] lg:h-[440px] overflow-hidden">
             @if ($facility->image)
-                <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}"
+                <img src="{{ img_url($facility->image, 1600, 900) }}" width="1600" height="900" alt="{{ $facility->name }}"
                     class="w-full h-full object-cover">
             @else
                 <div class="fc-thumb-fallback fc-thumb-fallback--big"><i class="fa-solid fa-building"></i></div>
@@ -93,7 +93,7 @@
                     {{-- Gambar besar (jika ada) --}}
                     @if ($facility->image)
                         <figure class="mb-8">
-                            <img src="{{ asset('storage/' . $facility->image) }}" alt="{{ $facility->name }}"
+                            <img src="{{ img_url($facility->image, 900, 520) }}" width="900" height="520" alt="{{ $facility->name }}"
                                 class="w-full rounded-2xl shadow-md object-cover">
                             @if ($facility->publisher)
                                 <figcaption class="mt-2 text-sm text-gray-500">
@@ -187,7 +187,7 @@
                                         class="fc-rel" aria-label="{{ $item->name }}">
                                         <div class="fc-rel__thumb">
                                             @if ($item->image)
-                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" loading="lazy">
+                                                <img src="{{ img_url($item->image, 400, 400) }}" width="400" height="400" alt="{{ $item->name }}" loading="lazy">
                                             @else
                                                 <i class="fa-solid fa-building"></i>
                                             @endif

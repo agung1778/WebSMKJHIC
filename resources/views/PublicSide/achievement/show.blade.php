@@ -18,7 +18,7 @@
     <section class="relative bg-[#282829]">
         <div class="relative h-[340px] lg:h-[440px] overflow-hidden">
             @if ($achievement->image)
-                <img src="{{ asset('storage/' . $achievement->image) }}" alt="{{ $achievement->title }}"
+                <img src="{{ img_url($achievement->image, 1600, 900) }}" width="1600" height="900" alt="{{ $achievement->title }}"
                     class="w-full h-full object-cover">
             @else
                 <div class="ac-thumb-fallback ac-thumb-fallback--big"><i class="fa-solid fa-trophy"></i></div>
@@ -100,7 +100,7 @@
                     {{-- Gambar besar (jika ada) --}}
                     @if ($achievement->image)
                         <figure class="mb-8">
-                            <img src="{{ asset('storage/' . $achievement->image) }}" alt="{{ $achievement->title }}"
+                            <img src="{{ img_url($achievement->image, 900, 520) }}" width="900" height="520" alt="{{ $achievement->title }}"
                                 class="w-full rounded-2xl shadow-md object-cover">
                             @if ($achievement->publisher)
                                 <figcaption class="mt-2 text-sm text-gray-500">
@@ -203,7 +203,7 @@
                                         class="ac-rel" aria-label="{{ $item->title }}">
                                         <div class="ac-rel__thumb">
                                             @if ($item->image)
-                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" loading="lazy">
+                                                <img src="{{ img_url($item->image, 400, 400) }}" width="400" height="400" alt="{{ $item->title }}" loading="lazy">
                                             @else
                                                 <i class="fa-solid fa-trophy"></i>
                                             @endif

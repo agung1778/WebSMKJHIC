@@ -18,7 +18,7 @@
     <section class="relative bg-[#282829]">
         <div class="relative h-[320px] lg:h-[420px] overflow-hidden">
             @if ($heroImage)
-                <img src="{{ Storage::url($heroImage->path) }}"
+                <img src="{{ img_url($heroImage->path, 1600, 900) }}" width="1600" height="900"
                     alt="{{ $heroImage->description ?? $heroImage->filename }}"
                     class="w-full h-full object-cover">
             @else
@@ -99,7 +99,7 @@
                     <div class="grid md:grid-cols-2">
                         <div class="relative overflow-hidden aspect-[16/10] md:aspect-auto md:h-full nw-card__thumb">
                             @if ($featured->image)
-                                <img src="{{ asset('storage/' . $featured->image) }}" alt="{{ $featured->title }}" loading="lazy" class="w-full h-full object-cover">
+                                <img src="{{ img_url($featured->image, 900, 520) }}" width="900" height="520" alt="{{ $featured->title }}" loading="lazy" class="w-full h-full object-cover">
                             @else
                                 <div class="nw-thumb-fallback nw-thumb-fallback--big"><i class="fa-solid fa-newspaper"></i></div>
                             @endif
@@ -136,7 +136,7 @@
                         class="nw-card group" aria-label="{{ $item->title }}">
                         <div class="nw-card__thumb">
                             @if ($item->image)
-                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}" loading="lazy">
+                                <img src="{{ img_url($item->image, 900, 520) }}" width="900" height="520" alt="{{ $item->title }}" loading="lazy">
                             @else
                                 <div class="nw-thumb-fallback"><i class="fa-solid fa-newspaper"></i></div>
                             @endif

@@ -25,7 +25,7 @@
                             x-transition:leave="transition ease-in duration-1000"
                             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                             class="absolute inset-0">
-                            <img src="{{ Storage::url($image->path) }}"
+                            <img src="{{ img_url($image->path, 1600, 900) }}" width="1600" height="900"
                                 alt="{{ $image->description ?? $image->filename }}"
                                 class="w-full h-full object-cover">
                         </div>
@@ -117,7 +117,7 @@
                             <div
                                 class="flex-shrink-0 mx-auto sm:mx-0 h-32 w-32 bg-gray-50 rounded-2xl border border-gray-200 flex items-center justify-center p-4 shadow-sm">
                                 @if($partner->logo)
-                                    <img src="{{ Storage::url($partner->logo) }}" loading="lazy" alt="Logo {{ $partner->name }}"
+                                    <img src="{{ img_url($partner->logo, 160, 90) }}" width="160" height="90" loading="lazy" alt="Logo {{ $partner->name }}"
                                         class="max-h-full w-auto object-contain">
                                 @else
                                     <div class="flex flex-col items-center justify-center text-slate-400">
@@ -229,7 +229,7 @@
                                     <div
                                         class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center p-1.5 border border-gray-200 mr-4 flex-shrink-0">
                                         @if($suggestedPartner->logo)
-                                            <img src="{{ Storage::url($suggestedPartner->logo) }}" loading="lazy"
+                                            <img src="{{ img_url($suggestedPartner->logo, 160, 90) }}" width="160" height="90" loading="lazy"
                                                 alt="Logo {{ $suggestedPartner->name }}" class="max-h-12 w-auto object-contain">
                                         @else
                                             <i class="fas fa-building text-slate-300 text-xl"></i>

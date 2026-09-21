@@ -21,7 +21,7 @@
         {{-- Hero --}}
         <div class="ts-hero">
             @if ($hasImages)
-                <img src="{{ Storage::url($mainImages->first()->path) }}"
+                <img src="{{ img_url($mainImages->first()->path, 1600, 900) }}" width="1600" height="900"
                     alt="{{ $mainImages->first()->description ?? $mainImages->first()->filename }}"
                     class="w-full h-full object-cover">
             @endif
@@ -67,7 +67,7 @@
                 <aside class="teacher-detail__aside">
                     <div class="teacher-photo-frame">
                         @if ($teacher->photo)
-                            <img src="{{ asset('storage/' . $teacher->photo) }}" alt="{{ __('Foto') }} {{ $teacher->name }}"
+                            <img src="{{ img_url($teacher->photo, 640, 640) }}" width="640" height="640" alt="{{ __('Foto') }} {{ $teacher->name }}"
                                 loading="lazy" onerror="this.remove()">
                         @else
                             <div class="absolute inset-0 flex items-center justify-center text-9xl font-bold"

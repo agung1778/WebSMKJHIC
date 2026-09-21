@@ -172,7 +172,7 @@
                         {{-- 1. IMAGE SECTION (Slim Height) --}}
                         <div class="relative h-48 bg-gray-100 overflow-hidden">
                             @if ($project->photo)
-                                <img src="{{ asset('storage/' . $project->photo) }}" loading="lazy" alt="{{ $project->title }}"
+                                <img src="{{ img_url($project->photo, 900, 520) }}" width="900" height="520" loading="lazy" alt="{{ $project->title }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-gray-300">
@@ -199,7 +199,7 @@
                                 <div
                                     class="w-16 h-16 bg-white rounded-2xl shadow-lg border border-gray-100 flex items-center justify-center p-2">
                                     @if ($project->logo)
-                                        <img src="{{ asset('storage/' . $project->logo) }}" loading="lazy"
+                                        <img src="{{ img_url($project->logo, 160, 90) }}" width="160" height="90" loading="lazy"
                                             class="w-full h-full object-contain rounded-lg">
                                     @else
                                         <i class="fas fa-cube text-gray-300 text-xl"></i>

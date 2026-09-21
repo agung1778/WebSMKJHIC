@@ -33,7 +33,7 @@
                         x-transition:leave="transition ease-in duration-1000"
                         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                         class="absolute inset-0">
-                        <img src="{{ Storage::url($image->path) }}" alt="{{ $image->description ?? $image->filename }}"
+                        <img src="{{ img_url($image->path, 1600, 900) }}" width="1600" height="900" alt="{{ $image->description ?? $image->filename }}"
                             class="w-full h-full object-cover">
                     </div>
                 @endforeach
