@@ -17,6 +17,18 @@ $app = new Illuminate\Foundation\Application(
 
 /*
 |--------------------------------------------------------------------------
+| Load Global Helpers
+|--------------------------------------------------------------------------
+|
+| Dimuat langsung agar helper img_url() tersedia walau composer
+| dump-autoload belum dijalankan di server produksi.
+|
+*/
+
+require_once dirname(__DIR__) . '/app/Support/helpers.php';
+
+/*
+|--------------------------------------------------------------------------
 | Bind Important Interfaces
 |--------------------------------------------------------------------------
 |

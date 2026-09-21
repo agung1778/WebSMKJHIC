@@ -33,6 +33,11 @@ class OptimizedImageController extends Controller
             abort(404);
         }
 
+        // Host tanpa GD/WebP: sajikan file asli supaya situs tetap berfungsi
+        if (!function_exists('imagecreatefromstring') || !function_exists('imagewebp')) {
+            return $this->stream($fullPath, $this->mimeOf($fullPath), $path);
+        }
+
         $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
         // SVG dan file raster yang tidak mampu di-generate GD langsung disajikan apa adanya
@@ -48,7 +53,7 @@ class OptimizedImageController extends Controller
             $source = @imagecreatefromstring((string) file_get_contents($fullPath));
 
             if ($source === false) {
-                return $this->stream($fullPath, mime_content_type($fullPath) ?: 'application/octet-stream', $path);
+                return $this->stream($fullPath, $this->mimeOf($fullPath), $path);
             }
 
             $source = $this->fixOrientation($source, $fullPath);
@@ -127,6 +132,29 @@ class OptimizedImageController extends Controller
             'Content-Type' => $mime,
             'Cache-Control' => 'public, max-age=31536000, immutable',
         ]);
+    }
+
+    private function mimeOf(string $file): string
+    {
+        if (function_exists('mime_content_type')) {
+            $mime = mime_content_type($file);
+
+            if ($mime && $mime !== 'application/octet-stream') {
+                return $mime;
+            }
+        }
+
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+
+        return match ($ext) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            'svg' => 'image/svg+xml',
+            'avif' => 'image/avif',
+            default => 'application/octet-stream',
+        };
     }
 
     private function fixOrientation($image, string $fullPath)
