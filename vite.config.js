@@ -9,16 +9,8 @@ export default defineConfig({
         }),
     ],
     build: {
-        // Code splitting: separate vendor chunks
         rollupOptions: {
             output: {
-manualChunks: {
-                // Vendor libraries
-                'vendor-alpine': ['alpinejs'],
-                'vendor-splide': ['@splidejs/splide'],
-                // Core utilities
-                'vendor-core': ['axios'],
-            },
                 // Consistent chunk naming for caching
                 chunkFileNames: 'js/[name]-[hash].js',
                 entryFileNames: 'js/[name]-[hash].js',

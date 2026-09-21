@@ -18,13 +18,7 @@
     </style>
 
 
-    <div class="font-['Poppins'] bg-gray-100">
-        <div id="loader-wrapper">
-            <div class="loader-content">
-                <div class="loader-spinner"></div>
-                <p class="loader-message">Tenang, pengalaman terbaik sedang kami siapkan untuk Anda.</p>
-            </div>
-        </div>
+<div class="font-['Poppins'] bg-gray-100">
         @php
             $amaliahBlue = '#E0E7FF';
             $hasImages = isset($mainImages) && $mainImages->isNotEmpty();
@@ -291,7 +285,7 @@
 
                         {{-- Gambar 1 (Slot Paling Kiri, Tinggi) --}}
                         @if(isset($gridImages[0]))
-                            <img src="{{ Storage::url($gridImages[0]->path) }}" alt="Grid Image 1"
+<img src="{{ Storage::url($gridImages[0]->path) }}" alt="Grid Image 1" loading="lazy"
                                 class="w-full h-full object-cover rounded-lg row-span-2">
                         @else
                             <div class="bg-gray-200 rounded-lg row-span-2"></div>
@@ -299,7 +293,7 @@
 
                         {{-- Gambar 2 (Slot Kanan Atas, Besar) --}}
                         @if(isset($gridImages[1]))
-                            <img src="{{ Storage::url($gridImages[1]->path) }}" alt="Grid Image 2"
+<img src="{{ Storage::url($gridImages[1]->path) }}" alt="Grid Image 2" loading="lazy"
                                 class="w-full h-full object-cover rounded-lg col-span-2 row-span-2">
                         @else
                             <div class="bg-gray-200 rounded-lg col-span-2 row-span-2"></div>
@@ -307,7 +301,7 @@
 
                         {{-- Gambar 3 (Slot Kiri Bawah) --}}
                         @if(isset($gridImages[2]))
-                            <img src="{{ Storage::url($gridImages[2]->path) }}" alt="Grid Image 3"
+<img src="{{ Storage::url($gridImages[2]->path) }}" alt="Grid Image 3" loading="lazy"
                                 class="w-full h-full object-cover rounded-lg">
                         @else
                             <div class="bg-gray-200 rounded-lg"></div>
@@ -315,7 +309,7 @@
 
                         {{-- Gambar 4 (Slot Tengah Bawah) --}}
                         @if(isset($gridImages[3]))
-                            <img src="{{ Storage::url($gridImages[3]->path) }}" alt="Grid Image 4"
+<img src="{{ Storage::url($gridImages[3]->path) }}" alt="Grid Image 4" loading="lazy"
                                 class="w-full h-full object-cover rounded-lg">
                         @else
                             <div class="bg-gray-200 rounded-lg"></div>
@@ -323,7 +317,7 @@
 
                         {{-- Gambar 5 (Slot Kanan Bawah) --}}
                         @if(isset($gridImages[4]))
-                            <img src="{{ Storage::url($gridImages[4]->path) }}" alt="Grid Image 5"
+<img src="{{ Storage::url($gridImages[4]->path) }}" alt="Grid Image 5" loading="lazy"
                                 class="w-full h-full object-cover rounded-lg">
                         @else
                             <div class="bg-gray-200 rounded-lg"></div>
@@ -519,7 +513,7 @@ $stats = [
                                     <div class="text-center">
                                         <div class="bg-white h-24 w-full rounded-lg mb-3 flex items-center justify-center p-4 
                                                                                border border-dashed border-gray-300">
-                                            <img src="{{ asset('storage/' . $partner->logo) }}" alt="Logo {{ $partner->name }}"
+<img src="{{ asset('storage/' . $partner->logo) }}" alt="Logo {{ $partner->name }}" loading="lazy"
                                                 class="max-h-full max-w-full object-contain">
                                         </div>
                                     </div>
@@ -534,7 +528,7 @@ $stats = [
                                     <div class="text-center">
                                         <div class="bg-white h-24 w-full rounded-lg mb-3 flex items-center justify-center p-4 
                                                                                border border-dashed border-gray-300">
-                                            <img src="{{ asset('storage/' . $partner->logo) }}" alt="Logo {{ $partner->name }}"
+<img src="{{ asset('storage/' . $partner->logo) }}" alt="Logo {{ $partner->name }}" loading="lazy"
                                                 class="max-h-full max-w-full object-contain">
                                         </div>
                                     </div>
@@ -646,7 +640,7 @@ $stats = [
                                             @if($i === 1) style="display: none;" @endif>
                                             <div
                                                 class="w-64 h-64 sm:w-80 sm:h-80 bg-gray-400 rounded-full flex items-center justify-center text-gray-600 shadow-2xl overflow-hidden">
-                                                <img src="{{ $leaderImage($profile['leader'], $profile['fallback']) }}"
+<img src="{{ $leaderImage($profile['leader'], $profile['fallback']) }}" loading="lazy"
                                                     class="w-full h-full object-cover rounded-full items-center"
                                                     alt="{{ $profile['alt'] }}">
                                             </div>
@@ -714,7 +708,7 @@ $stats = [
                             <div class="flex flex-col space-y-6">
                                 {{-- Gambar 1 --}}
                                 @if (isset($majorGridImages[0]) && $majorGridImages[0]->path)
-                                    <img src="{{ asset('storage/' . $majorGridImages[0]->path) }}"
+<img src="{{ asset('storage/' . $majorGridImages[0]->path) }}" loading="lazy"
                                         alt="{{ $majorGridImages[0]->description ?? 'Gambar Grid Jurusan 1' }}"
                                         class="h-48 w-full rounded-xl object-cover">
                                 @else
@@ -726,7 +720,7 @@ $stats = [
 
                                 {{-- Gambar 2 --}}
                                 @if (isset($majorGridImages[1]) && $majorGridImages[1]->path)
-                                    <img src="{{ asset('storage/' . $majorGridImages[1]->path) }}"
+<img src="{{ asset('storage/' . $majorGridImages[1]->path) }}" loading="lazy"
                                         alt="{{ $majorGridImages[1]->description ?? 'Gambar Grid Jurusan 2' }}"
                                         class="h-48 w-full rounded-xl object-cover">
                                 @else
@@ -765,7 +759,7 @@ $stats = [
 
                                     {{-- Menampilkan Gambar Jurusan dengan fallback --}}
                                     @if ($major->image)
-                                        <img src="{{ asset('storage/' . $major->image) }}" alt="Gambar Jurusan {{ $major->name }}"
+<img src="{{ asset('storage/' . $major->image) }}" alt="Gambar Jurusan {{ $major->name }}" loading="lazy"
                                             class="h-48 w-full rounded-lg object-cover mb-4">
                                     @else
                                         {{-- Placeholder jika tidak ada gambar --}}
@@ -849,7 +843,7 @@ $stats = [
                                 <a href="{{ route('public.news.show', $newsItem->id) }}" class="block">
 
                                     {{-- GAMBAR: Mengambil dari storage --}}
-                                    <img src="{{ asset('storage/' . $newsItem->image) }}" alt="{{ $newsItem->title }}"
+<img src="{{ asset('storage/' . $newsItem->image) }}" alt="{{ $newsItem->title }}" loading="lazy"
                                         class="w-full h-56 object-cover">
 
                                     <div class="p-6">
@@ -942,7 +936,7 @@ $stats = [
                         {{-- Gambar 1 (Tinggi di Kiri) --}}
                         <div class="col-span-1 row-span-2 rounded-xl overflow-hidden">
                             @if (isset($facilities[0]) && $facilities[0]->image)
-                                <img src="{{ asset('storage/' . $facilities[0]->image) }}" alt="{{ $facilities[0]->name }}"
+<img src="{{ asset('storage/' . $facilities[0]->image) }}" alt="{{ $facilities[0]->name }}" loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
                             @else
                                 {{-- Placeholder jika gambar tidak ada --}}
@@ -953,7 +947,7 @@ $stats = [
                         {{-- Gambar 2 (Tengah Atas) --}}
                         <div class="col-span-1 row-span-1 rounded-xl overflow-hidden">
                             @if (isset($facilities[1]) && $facilities[1]->image)
-                                <img src="{{ asset('storage/' . $facilities[1]->image) }}" alt="{{ $facilities[1]->name }}"
+<img src="{{ asset('storage/' . $facilities[1]->image) }}" alt="{{ $facilities[1]->name }}" loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
                             @else
                                 <div class="w-full h-full bg-black"></div>
@@ -963,7 +957,7 @@ $stats = [
                         {{-- Gambar 3 (Kanan Atas) --}}
                         <div class="col-span-1 md:col-span-2 row-span-1 rounded-xl overflow-hidden">
                             @if (isset($facilities[2]) && $facilities[2]->image)
-                                <img src="{{ asset('storage/' . $facilities[2]->image) }}" alt="{{ $facilities[2]->name }}"
+<img src="{{ asset('storage/' . $facilities[2]->image) }}" alt="{{ $facilities[2]->name }}" loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
                             @else
                                 <div class="w-full h-full bg-black"></div>
@@ -973,7 +967,7 @@ $stats = [
                         {{-- Gambar 4 (Tengah Bawah) --}}
                         <div class="col-span-1 row-span-1 rounded-xl overflow-hidden">
                             @if (isset($facilities[3]) && $facilities[3]->image)
-                                <img src="{{ asset('storage/' . $facilities[3]->image) }}" alt="{{ $facilities[3]->name }}"
+<img src="{{ asset('storage/' . $facilities[3]->image) }}" alt="{{ $facilities[3]->name }}" loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
                             @else
                                 <div class="w-full h-full bg-black"></div>
@@ -983,7 +977,7 @@ $stats = [
                         {{-- Gambar 5 (Kanan Bawah) --}}
                         <div class="col-span-1 md:col-span-2 row-span-1 rounded-xl overflow-hidden">
                             @if (isset($facilities[4]) && $facilities[4]->image)
-                                <img src="{{ asset('storage/' . $facilities[4]->image) }}" alt="{{ $facilities[4]->name }}"
+<img src="{{ asset('storage/' . $facilities[4]->image) }}" alt="{{ $facilities[4]->name }}" loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
                             @else
                                 <div class="w-full h-full bg-black"></div>
@@ -1061,7 +1055,7 @@ $stats = [
                 <p class="text-gray-700 text-base sm:text-lg leading-relaxed mt-6">"{{ $t->description }}"</p>
                 <div class="mt-8 flex items-center justify-center gap-4">
                     @if ($t->photo)
-                        <img src="{{ asset('storage/' . $t->photo) }}" alt="{{ $t->name }}"
+<img src="{{ asset('storage/' . $t->photo) }}" alt="{{ $t->name }}" loading="lazy"
                             class="w-16 h-16 rounded-full object-cover shadow-md">
                     @else
                         <div class="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold"
@@ -1200,7 +1194,7 @@ $stats = [
                         {{-- Kepala kartu: avatar + username + tombol follow --}}
                         <div class="ig-head">
                             <a class="ig-avatar" href="https://www.instagram.com/smkamaliah" target="_blank" rel="noopener" aria-label="Profil Instagram SMK Amaliah">
-                                <img src="{{ asset('assets/logo/am.webp') }}" alt="SMK Amaliah">
+                                <img src="{{ asset('assets/logo/am.webp') }}" alt="SMK Amaliah" loading="lazy">
                             </a>
                             <div class="ig-user">
                                 <span class="ig-username">@smkamaliah</span>

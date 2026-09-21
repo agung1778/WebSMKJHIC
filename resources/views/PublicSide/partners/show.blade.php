@@ -117,7 +117,7 @@
                             <div
                                 class="flex-shrink-0 mx-auto sm:mx-0 h-32 w-32 bg-gray-50 rounded-2xl border border-gray-200 flex items-center justify-center p-4 shadow-sm">
                                 @if($partner->logo)
-                                    <img src="{{ Storage::url($partner->logo) }}" alt="Logo {{ $partner->name }}"
+                                    <img src="{{ Storage::url($partner->logo) }}" loading="lazy" alt="Logo {{ $partner->name }}"
                                         class="max-h-full w-auto object-contain">
                                 @else
                                     <div class="flex flex-col items-center justify-center text-slate-400">
@@ -229,7 +229,7 @@
                                     <div
                                         class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center p-1.5 border border-gray-200 mr-4 flex-shrink-0">
                                         @if($suggestedPartner->logo)
-                                            <img src="{{ Storage::url($suggestedPartner->logo) }}"
+                                            <img src="{{ Storage::url($suggestedPartner->logo) }}" loading="lazy"
                                                 alt="Logo {{ $suggestedPartner->name }}" class="max-h-12 w-auto object-contain">
                                         @else
                                             <i class="fas fa-building text-slate-300 text-xl"></i>

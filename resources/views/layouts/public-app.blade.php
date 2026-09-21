@@ -106,105 +106,18 @@
         }
 
         .fade-in-section {
-            opacity: 0;
-            transform: translateY(20px);
-            /* Bergerak 20px ke bawah */
             transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
 
-        .fade-in-section.is-visible {
+        /* Animasi fade-in hanya aktif jika JS tersedia; tanpa JS konten langsung tampil */
+        html.js .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        html.js .fade-in-section.is-visible {
             opacity: 1;
             transform: translateY(0);
-        }
-
-        :root {
-            --loader-bg-color: #ffffff;
-            --loader-primary-color: #59E300;
-            --loader-secondary-color: #E6F7F5;
-            --loader-text-color: #333333;
-        }
-
-
-        #loader-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            background-color: var(--loader-bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.7s ease-out, visibility 0.7s ease-out;
-            /* Transisi lebih panjang */
-        }
-
-        #loader-wrapper.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .loader-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-
-        .loader-spinner {
-            width: 60px;
-            /* Lebih besar */
-            height: 60px;
-            border: 6px solid var(--loader-secondary-color);
-            /* Warna dasar spinner */
-            border-top: 6px solid var(--loader-primary-color);
-            /* Warna utama yang berputar */
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            /* Kombinasi animasi */
-        }
-
-        /* Animasi untuk teks */
-        .loader-message {
-            margin-top: 20px;
-            /* Jarak dari spinner */
-            font-family: 'Poppins', sans-serif;
-            /* Ganti dengan font web Anda jika sudah dimuat */
-            font-size: 1.1rem;
-            color: var(--loader-text-color);
-            opacity: 0;
-            transform: translateY(10px);
-            animation: fadeInMessage 1s ease-out 0.8s forwards;
-
-        }
-
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-
-        @keyframes fadeInMessage {
-            0% {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
     </style>
 
@@ -244,28 +157,9 @@
 </head>
 
 <script>
+    // Tandai JS aktif agar animasi fade-in aktif; tanpa JS konten langsung tampil
+    document.documentElement.classList.add('js');
 
-
-
-    // Fungsi untuk menyembunyikan loader
-    function hideLoader() {
-        const loader = document.getElementById('loader-wrapper');
-
-        // Pastikan loader-nya ada
-        if (loader) {
-            loader.classList.add('hidden');
-
-            // Hapus dari DOM setelah animasi transisi selesai
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 700); // 700ms = durasi transisi fade-out di CSS Anda
-        }
-    }
-
-    setTimeout(hideLoader, 3000); // 10000 milidetik = 10 detik
-</script>
-
-<script>
     document.addEventListener("DOMContentLoaded", function () {
 
         // Pilih semua section yang ingin dianimasikan

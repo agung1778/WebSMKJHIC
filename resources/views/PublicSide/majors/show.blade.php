@@ -140,7 +140,7 @@
                                             <p class="text-base italic text-gray-700 mt-2 ml-10 leading-relaxed">"{{ $testimonial->description }}"</p>
                                             <div class="flex items-center mt-6 pt-4 border-t border-gray-100">
                                                 @if($testimonial->photo)
-                                                    <img src="{{ Storage::url($testimonial->photo) }}" alt="Foto {{ $testimonial->name }}"
+                                                    <img src="{{ Storage::url($testimonial->photo) }}" loading="lazy" alt="Foto {{ $testimonial->name }}"
                                                         class="w-12 h-12 object-cover rounded-full flex-shrink-0 mr-4 border border-gray-100">
                                                 @else
                                                     <div class="w-12 h-12 bg-gray-300 rounded-full flex-shrink-0 mr-4"></div>
@@ -181,7 +181,7 @@
                         </h2>
                         <div class="bg-white rounded-2xl p-6 flex flex-col sm:flex-row items-center text-center sm:text-left gap-6 border border-gray-200 shadow-sm">
                             @if($major->competency_head_photo)
-                                <img src="{{ Storage::url($major->competency_head_photo) }}"
+                                <img src="{{ Storage::url($major->competency_head_photo) }}" loading="lazy"
                                     alt="Foto {{ $major->competency_head }}"
                                     class="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-white flex-shrink-0">
                             @endif
@@ -204,14 +204,14 @@
                                 <div class="bg-white rounded-2xl shadow-md transition-all duration-300 group overflow-hidden flex flex-col hover:shadow-xl">
                                     <a href="{{ route('public.majors.show', $otherMajor) }}" class="block h-32">
                                         @if($otherMajor->image)
-                                            <img src="{{ Storage::url($otherMajor->image) }}" alt="Gambar {{ $otherMajor->name }}"
+                                            <img src="{{ Storage::url($otherMajor->image) }}" loading="lazy" alt="Gambar {{ $otherMajor->name }}"
                                                 class="w-full h-full object-cover">
                                         @endif
                                     </a>
                                     <div class="p-5 relative flex flex-col flex-grow">
                                         <div class="absolute -top-10 left-4 bg-white p-2 rounded-xl shadow-lg">
                                             @if($otherMajor->logo)
-                                                <img src="{{ Storage::url($otherMajor->logo) }}" alt="Logo {{ $otherMajor->abbreviation ?? $otherMajor->name }}"
+                                                <img src="{{ Storage::url($otherMajor->logo) }}" loading="lazy" alt="Logo {{ $otherMajor->abbreviation ?? $otherMajor->name }}"
                                                     class="h-10 w-10 object-contain">
                                             @else
                                                 <div class="h-10 w-10 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">

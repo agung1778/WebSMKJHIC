@@ -182,7 +182,7 @@
                             {{-- Gambar Utama --}}
                             <a href="{{ route('public.majors.show', $major) }}" class="block h-52 lg:h-60 relative overflow-hidden">
                                 @if($major->image)
-                                    <img src="{{ Storage::url($major->image) }}" alt="Gambar {{ $major->name }}"
+                                    <img src="{{ Storage::url($major->image) }}" loading="lazy" alt="Gambar {{ $major->name }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]">
                                 @else
                                     <div class="w-full h-full bg-gray-300"></div>
@@ -197,7 +197,7 @@
                                 {{-- Logo --}}
                                 <div class="absolute -top-12 left-6 bg-white p-2.5 rounded-2xl shadow-xl border border-gray-100">
                                     @if($major->logo)
-                                        <img src="{{ Storage::url($major->logo) }}" alt="Logo {{ $major->abbreviation ?? $major->name }}"
+                                        <img src="{{ Storage::url($major->logo) }}" loading="lazy" alt="Logo {{ $major->abbreviation ?? $major->name }}"
                                             class="h-14 w-14 object-contain">
                                     @else
                                         <div class="h-14 w-14 bg-gray-200 rounded-xl flex items-center justify-center text-gray-400">

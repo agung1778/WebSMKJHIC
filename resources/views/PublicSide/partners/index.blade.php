@@ -168,7 +168,7 @@
                         <div
                             class="relative h-28 w-full bg-gray-50 rounded-xl flex items-center justify-center p-4 mb-5 border border-gray-200 overflow-hidden transition-colors duration-300 group-hover:bg-[#63cd00]/5">
                             @if($partner->logo)
-                                <img src="{{ Storage::url($partner->logo) }}" alt="Logo {{ $partner->name }}"
+                                <img src="{{ Storage::url($partner->logo) }}" loading="lazy" alt="Logo {{ $partner->name }}"
                                     class="max-h-20 w-auto object-contain">
                             @else
                                 <div class="flex flex-col items-center justify-center text-slate-400">

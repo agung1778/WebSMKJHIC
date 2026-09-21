@@ -99,7 +99,7 @@
                     <div class="grid md:grid-cols-2">
                         <div class="relative overflow-hidden aspect-[16/10] md:aspect-auto md:h-full nw-card__thumb">
                             @if ($featured->image)
-                                <img src="{{ asset('storage/' . $featured->image) }}" alt="{{ $featured->title }}" class="w-full h-full object-cover">
+                                <img src="{{ asset('storage/' . $featured->image) }}" alt="{{ $featured->title }}" loading="lazy" class="w-full h-full object-cover">
                             @else
                                 <div class="nw-thumb-fallback nw-thumb-fallback--big"><i class="fa-solid fa-newspaper"></i></div>
                             @endif

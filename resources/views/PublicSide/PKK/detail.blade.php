@@ -104,7 +104,7 @@
                                 <div
                                     class="w-24 h-24 bg-white rounded-2xl shadow-lg p-2 flex items-center justify-center border border-gray-100">
                                     @if ($project->logo)
-                                        <img src="{{ asset('storage/' . $project->logo) }}"
+                                        <img src="{{ asset('storage/' . $project->logo) }}" loading="lazy"
                                             class="w-full h-full object-contain rounded-xl">
                                     @else
                                         <i class="fas fa-cube text-gray-300 text-3xl"></i>

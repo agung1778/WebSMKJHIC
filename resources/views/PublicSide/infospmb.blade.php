@@ -149,7 +149,7 @@
                         {{-- Gambar Preview Brosur (Ratio Aman & Tidak Terpotong) --}}
                         <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-gray-50 border border-gray-100 cursor-pointer group flex items-center justify-center p-2"
                             id="btn-buka-brosur">
-                            <img src="{{ $spmbSetting && $spmbSetting->brochure_image_1 ? asset('storage/' . $spmbSetting->brochure_image_1) : asset('assets/image/Brosur.jpeg') }}"
+                            <img src="{{ $spmbSetting && $spmbSetting->brochure_image_1 ? asset('storage/' . $spmbSetting->brochure_image_1) : asset('assets/image/Brosur.jpeg') }}" loading="lazy"
                                 alt="Pratinjau Brosur"
                                 class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.02]">
 
@@ -370,7 +370,7 @@
         </button>
 
         <div class="relative w-full h-full flex items-center justify-center">
-            <img src="{{ $spmbSetting && $spmbSetting->brochure_full_image ? asset('storage/' . $spmbSetting->brochure_full_image) : asset('assets/image/brosur-spmb-full.jpg') }}"
+            <img src="{{ $spmbSetting && $spmbSetting->brochure_full_image ? asset('storage/' . $spmbSetting->brochure_full_image) : asset('assets/image/brosur-spmb-full.jpg') }}" loading="lazy"
                 class="max-w-full max-h-full rounded-lg object-contain select-none shadow-2xl">
         </div>
     </div>
