@@ -7,9 +7,11 @@ use App\Models\Extracurricular;
 use App\Models\Facility;
 use App\Models\Major;
 use App\Models\News;
+use App\Models\Partner;
 use App\Models\SchoolProgram;
 use App\Models\SpmbSetting;
 use App\Models\Teacher;
+use App\Models\Testimonial;
 use App\Models\Writing;
 
 /**
@@ -325,6 +327,22 @@ class ChatbotService
             }
         }
 
+        // 0a) Partner / mitra industri.
+        if ($this->matchAny($q, ['partner', 'mitra', 'kerja sama', 'pkl', 'prakerin', 'industri'])) {
+            $partner = $this->partnerAnswer($q);
+            if ($partner !== null) {
+                return $partner;
+            }
+        }
+
+        // 0b) Testimoni / alumni.
+        if ($this->matchAny($q, ['testimoni', 'testimonial', 'kata mereka', 'alumni', 'lulusan'])) {
+            $testimonial = $this->testimonialAnswer($q);
+            if ($testimonial !== null) {
+                return $testimonial;
+            }
+        }
+
         // 1) Nama guru spesifik (paling kuat, dicoba pertama).
         $teacher = $this->findBestTeacher($q);
         if ($teacher !== null) {
@@ -448,6 +466,8 @@ class ChatbotService
             'instagram', 'youtube', 'spmb', 'ppdb', 'pendaftaran', 'daftar', 'gelombang',
             'kuota', 'sejarah', 'visi', 'misi', 'profil', 'tentang', 'yayasan',
             'syarat', 'beasiswa', 'prestasi', 'akreditasi',
+            'partner', 'mitra', 'industri', 'kerja sama', 'pkl', 'prakerin', 'magang',
+            'testimoni', 'testimonial', 'alumni', 'lulusan',
         ])) {
             return true;
         }
@@ -675,6 +695,61 @@ class ChatbotService
 
         $lines = $headmasters->take(5)->map(fn (Teacher $t) => '• **' . $t->name . '** — ' . $t->position)->implode("\n");
         return "Berikut kepala sekolah SMK Amaliah:\n\n{$lines}";
+    }
+
+    /**
+     * Jawab langsung pertanyaan tentang partner / mitra industri.
+     * Bila query menyebut nama partner tertentu, tampilkan detailnya.
+     */
+    protected function partnerAnswer(string $q): ?string
+    {
+        $partners = Partner::orderBy('id', 'asc')->get();
+        if ($partners->isEmpty()) {
+            return null;
+        }
+
+        // Nama partner spesifik yang disebut.
+        foreach ($partners as $partner) {
+            $name = $this->normalize((string) $partner->name);
+            if ($name !== '' && $this->contains($q, $name)) {
+                $desc = $this->clean($partner->description ?: $partner->industry ?: '');
+                return "**{$partner->name}**\n\n"
+                    . ($desc !== '' ? $desc : 'Mitra kerja sama SMK Amaliah 1 & 2 Ciawi.')
+                    . ($this->clean($partner->link) !== '' ? "\n\n🌐 {$partner->link}" : '');
+            }
+        }
+
+        $names = $partners->take(25)->pluck('name')->map(fn ($n) => '• ' . $n)->implode("\n");
+        $total = $partners->count();
+
+        return "Berikut partner / mitra industri SMK Amaliah:\n\n{$names}\n\n"
+            . "Total: **{$total}** mitra. Ketik nama mitra untuk info lebih detail.";
+    }
+
+    /**
+     * Jawab pertanyaan tentang testimoni / pengalaman alumni.
+     */
+    protected function testimonialAnswer(string $q): ?string
+    {
+        $items = Testimonial::with('major')->orderBy('id', 'asc')->take(6)->get();
+        if ($items->isEmpty()) {
+            return null;
+        }
+
+        $lines = $items->map(function (Testimonial $t) {
+            $meta = trim(collect([
+                $t->publisher ?: $t->name,
+                $t->major?->name,
+                $t->alumni_year ? "Angkatan {$t->alumni_year}" : null,
+            ])->filter()->implode(' • '));
+            $desc = $this->clean($t->description);
+            return "• **" . ($t->publisher ?: $t->name) . "**"
+                . ($meta !== '' ? "\n  {$meta}" : '')
+                . ($desc !== '' ? "\n  {$desc}" : '');
+        })->implode("\n\n");
+
+        return "Berikut beberapa testimoni alumni SMK Amaliah:\n\n{$lines}\n\n"
+            . "Ketik nama alumni untuk info lebih detail.";
     }
 
     protected function findBestTeacher(string $q): ?Teacher

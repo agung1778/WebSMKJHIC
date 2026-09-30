@@ -43,9 +43,15 @@ use App\Http\Controllers\PublicPage\OptimizedImageController;
 
 use App\Http\Controllers\TrafficController;
 use App\Http\Controllers\PublicPage\PublicTrafficController;
+use App\Http\Controllers\PublicPage\AIChatbotController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+
+// Rute Chatbot AI lokal (Tanya Amaliah AI)
+Route::post('/public/ai/ask', [AIChatbotController::class, 'ask'])
+    ->name('public.ai.ask');
 
 
 // Rute Gambar Teroptimasi (resize + WebP + cache)

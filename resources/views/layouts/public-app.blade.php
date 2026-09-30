@@ -7,6 +7,7 @@
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <meta name="description"
         content="@yield('description', 'Situs web resmi SMK Amaliah 1 & 2 Ciawi-Bogor. Temukan informasi tentang jurusan, pendaftaran, fasilitas, dan berita terbaru.')">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/webp" href="{{ asset('assets/logo/am.webp') }}">
 
     <title>@yield('title', 'SMK Amaliah 1 & 2')</title>
@@ -135,30 +136,6 @@
     {{-- ============================================================ --}}
     {{-- PERFORMANCE: Defer non-critical third-party scripts --}}
     {{-- ============================================================ --}}
-    {{-- Elfsight Chatbot - deferred with lazy initialization --}}
-    <script>
-        // Defer Elfsight loading until user interaction or idle time
-        (function() {
-            function loadElfsight() {
-                if (document.querySelector('.elfsight-app-26bf6423-b36c-42c5-a8db-b1c223ee9ec9')) return;
-                var s = document.createElement('script');
-                s.src = 'https://elfsightcdn.com/platform.js';
-                s.async = true;
-                document.head.appendChild(s);
-                var d = document.createElement('div');
-                d.className = 'elfsight-app-26bf6423-b36c-42c5-a8db-b1c223ee9ec9';
-                d.setAttribute('data-elfsight-app-lazy', '');
-                document.body.appendChild(d);
-                ['click','scroll','mousemove','keydown','touchstart'].forEach(function(e) {
-                    window.removeEventListener(e, loadElfsight, {passive:true});
-                });
-            }
-            ['click','scroll','mousemove','keydown','touchstart'].forEach(function(e) {
-                window.addEventListener(e, loadElfsight, {passive:true, once:true});
-            });
-            setTimeout(loadElfsight, 3000);
-        })();
-    </script>
 </head>
 
 <script>
@@ -474,28 +451,6 @@
             {{-- ================================================================= --}}
             {{-- TOMBOL CEPAT & WIDGET (WHATSAPP, UP BUTTON) --}}
             {{-- ================================================================= --}}
-
-            {{-- PERBAIKAN: Menambah jarak vertikal (space-y) dan posisi dari bawah (bottom) untuk desktop --}}
-            <div
-                class="fixed bottom-[90px] lg:bottom-[100px] right-5 z-40 flex flex-col items-end gap-3">
-
-                {{-- TOMBOL CEPAT WHATSAPP --}}
-                <a href="https://wa.me/{{ $whatsappNumber }}?text={{ urlencode($whatsappMessage) }}" target="_blank"
-                    rel="noopener noreferrer" aria-label="Hubungi via WhatsApp"
-                    class="w-12 h-12 lg:w-[65px] lg:h-[65px] rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110"
-                    style="background-color: {{ $amaliahGreen }};">
-                    <i class="fab fa-whatsapp text-xl lg:text-2xl"></i>
-                </a>
-
-                {{-- TOMBOL STATISTIK KUNJUNGAN (DI BAWAH WHATSAPP) --}}
-                <a href="{{ route('public.traffic.index') }}" target="_blank" rel="noopener noreferrer"
-                    aria-label="Lihat statistik kunjungan website" title="Statistik Kunjungan"
-                    class="w-12 h-12 lg:w-[55px] lg:h-[55px] rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110"
-                    style="background-color: {{ $amaliahDark }};">
-                    <i class="fa-solid fa-chart-column text-xl lg:text-2xl"></i>
-                </a>
-
-            </div>
 
             {{-- TOMBOL KEMBALI KE ATAS (DIPISAH, POSISI BAWAH TENGAH) --}}
             <div class="fixed bottom-6 inset-x-0 z-40 flex justify-center pointer-events-none">
@@ -913,6 +868,10 @@
 
     {{-- Pelacakan traffic (kunjungan halaman & klik) --}}
     @include('partials.traffic-tracking')
+
+    {{-- Chatbot AI lokal: tombol gantung + modal Tanya Amaliah AI --}}
+    @include('partials.floating-tools')
+    @include('partials.ai-chatbot')
 
 </body>
 

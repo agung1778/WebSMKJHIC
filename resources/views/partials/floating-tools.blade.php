@@ -1,56 +1,124 @@
 {{-- ============================================================== --}}
-{{-- FLOATING TOOLS MENU (Posisi Kanan Bawah)                      --}}
+{{-- FLOATING TOOLS (Kanan Bawah, sejajar vertikal, selalu tampil)   --}}
+{{-- Isi vertikal: 1) Chatbot AI  2) WhatsApp  3) Traffic Website    --}}
+{{-- Tampilan: gradient tema hijau amaliah, ring, glow, halo AI       --}}
 {{-- ============================================================== --}}
-<div x-data="{ toolsOpen: false }" @click.outside="toolsOpen = false">
-    <div class="fixed bottom-6 lg:bottom-8 right-5 lg:right-8 z-50 flex flex-col items-center gap-3">
+<style>
+    .fl-float-wrap {
+        position: fixed;
+        bottom: 18px;
+        right: 16px;
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+    }
 
-        {{-- Kumpulan Tombol Expandable (Muncul ke atas saat di-klik) --}}
-        <div x-show="toolsOpen" x-transition:enter="transition ease-out duration-300 transform"
-            x-transition:enter-start="opacity-0 translate-y-10 scale-50"
-            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-            x-transition:leave="transition ease-in duration-200 transform"
-            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-            x-transition:leave-end="opacity-0 translate-y-10 scale-50"
-            style="display: none;" class="flex flex-col gap-3 origin-bottom pb-2 items-center">
+    @media (min-width: 640px) {
+        .fl-float-wrap { bottom: 24px; right: 22px; gap: 18px; }
+    }
 
-            {{-- Tombol Tanya AI --}}
-            <button type="button" @click.stop="toolsOpen = false; window.dispatchEvent(new CustomEvent('open-ai-chat'))"
-                class="w-12 h-12 lg:w-[50px] lg:h-[50px] rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110"
-                style="background-color: {{ $amaliahGreen ?? '#63cd00' }};"
-                aria-label="{{ __('Tanya AI') }}">
-                <i class="fas fa-robot text-xl lg:text-2xl"></i>
-            </button>
+    @media (min-width: 1024px) {
+        .fl-float-wrap { bottom: 30px; right: 30px; gap: 20px; }
+    }
 
-            {{-- Tombol WhatsApp --}}
-            <a href="https://wa.me/{{ $whatsappNumber ?? '6285649011449' }}?text={{ urlencode($whatsappMessage ?? __('Halo, saya ingin bertanya tentang informasi SMK Amaliah 1 & 2 Ciawi')) }}"
-                target="_blank" rel="noopener noreferrer" aria-label="{{ __('Hubungi via WhatsApp') }}"
-                class="w-12 h-12 lg:w-[50px] lg:h-[50px] rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110"
-                style="background-color: #25D366;">
-                <i class="fab fa-whatsapp text-xl lg:text-2xl"></i>
-            </a>
+    .fl-float-btn {
+        width: 52px;
+        height: 52px;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        box-shadow:
+            0 8px 22px rgba(10, 58, 33, 0.35),
+            inset 0 2px 4px rgba(255, 255, 255, 0.35),
+            inset 0 -3px 6px rgba(0, 0, 0, 0.18);
+        text-decoration: none;
+        cursor: pointer;
+        flex-shrink: 0;
+        position: relative;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+    }
 
-            {{-- Tombol Traffic Website --}}
-            <a href="{{ route('public.traffic.index') }}" target="_blank" rel="noopener noreferrer"
-                aria-label="{{ __('Lihat Traffic Website') }}"
-                class="w-12 h-12 lg:w-[50px] lg:h-[50px] rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110"
-                style="background-color: #94a3b8;">
-                <i class="fa-solid fa-chart-line text-xl lg:text-2xl"></i>
-            </a>
-        </div>
+    .fl-float-btn i {
+        font-size: 20px;
+        line-height: 1;
+        filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.28));
+    }
 
-        {{-- TOMBOL UTAMA (TOGGLE MENU TOOLS) --}}
-        <button @click.stop="toolsOpen = !toolsOpen"
-            class="w-14 h-14 lg:w-[56px] lg:h-[56px] rounded-full text-white shadow-xl flex items-center justify-center transition-transform active:scale-95 relative"
-            style="background-color: {{ $amaliahDark ?? '#282829' }};">
+    @media (min-width: 640px) {
+        .fl-float-btn { width: 58px; height: 58px; }
+        .fl-float-btn i { font-size: 23px; }
+    }
 
-            {{-- Icon Setting/Tools (Muncul saat tertutup) --}}
-            <i class="fas fa-sliders-h text-xl lg:text-2xl transition-all duration-300 absolute"
-                :class="toolsOpen ? 'rotate-90 opacity-0 scale-50' : 'opacity-100 scale-100'"></i>
+    @media (min-width: 1024px) {
+        .fl-float-btn { width: 62px; height: 62px; }
+        .fl-float-btn i { font-size: 26px; }
+    }
 
-            {{-- Icon Close 'X' (Muncul saat terbuka) --}}
-            <i class="fas fa-times text-xl lg:text-2xl transition-all duration-300 absolute"
-                :class="toolsOpen ? 'opacity-100 rotate-0 scale-100' : '-rotate-90 opacity-0 scale-50'"></i>
-        </button>
+    .fl-float-btn:hover {
+        transform: translateY(-3px) scale(1.06);
+        box-shadow:
+            0 12px 26px var(--fl-glow, rgba(10, 58, 33, 0.4)),
+            inset 0 2px 4px rgba(255, 255, 255, 0.35),
+            inset 0 -3px 6px rgba(0, 0, 0, 0.18);
+        filter: saturate(1.1);
+    }
 
-    </div>
+    .fl-float-btn:active {
+        transform: scale(0.94);
+    }
+
+    .fl-float-btn--ai::after {
+        content: "";
+        position: absolute;
+        inset: -5px;
+        border-radius: 9999px;
+        border: 2px solid rgba(139, 227, 51, 0.5);
+        pointer-events: none;
+        animation: flHalo 2.4s ease-out infinite;
+    }
+
+    @keyframes flHalo {
+        0%   { transform: scale(0.9);   opacity: .9; }
+        70%  { transform: scale(1.14);  opacity: 0; }
+        100% { transform: scale(1.14);  opacity: 0; }
+    }
+</style>
+
+<div class="fl-float-wrap">
+
+    {{-- Tombol Chatbot AI --}}
+    <button type="button"
+        onclick="window.dispatchEvent(new CustomEvent('open-ai-chat'))"
+        class="fl-float-btn fl-float-btn--ai"
+        style="background: linear-gradient(135deg, #8be333 0%, #3aa527 45%, #0a5c2e 100%); --fl-glow: 0 12px 28px rgba(139, 227, 51, 0.5);"
+        aria-label="{{ __('Tanya AI') }}"
+        title="{{ __('Tanya AI') }}">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    {{-- Tombol WhatsApp --}}
+    <a href="https://wa.me/{{ $whatsappNumber ?? '6285649011449' }}?text={{ urlencode($whatsappMessage ?? __('Halo, saya ingin bertanya tentang informasi SMK Amaliah 1 & 2 Ciawi')) }}"
+        target="_blank" rel="noopener noreferrer"
+        class="fl-float-btn"
+        style="background: linear-gradient(135deg, #3bed7a 0%, #25d366 50%, #0f9d58 100%); --fl-glow: 0 12px 28px rgba(37, 211, 102, 0.45);"
+        aria-label="{{ __('Hubungi via WhatsApp') }}"
+        title="{{ __('Hubungi via WhatsApp') }}">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    {{-- Tombol Traffic Website --}}
+    <a href="{{ route('public.traffic.index') }}" target="_blank" rel="noopener noreferrer"
+        class="fl-float-btn"
+        style="background: linear-gradient(135deg, #5b6b5f 0%, #283f31 100%); --fl-glow: 0 12px 28px rgba(122, 142, 132, 0.45);"
+        aria-label="{{ __('Lihat Traffic Website') }}"
+        title="{{ __('Lihat Traffic Website') }}">
+        <i class="fa-solid fa-chart-line"></i>
+    </a>
+
 </div>
