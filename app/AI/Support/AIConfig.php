@@ -134,6 +134,12 @@ class AIConfig
     }
 
     /** Refresh cache (dipakai command & test). */
+    public static function disclaimer(): string
+    {
+        return (string) self::get('disclaimer', '');
+    }
+
+    /** Refresh cache (dipakai command & test). */
     public static function flush(): void
     {
         self::$cached = null;
