@@ -51,6 +51,14 @@ class KnowledgeBaseService
     protected const STRONG_SCORE = 0.38;
 
     /**
+     * Ambang frekuensi dokumen (DF): sebuah token disebut "pembeda" bila
+     * muncul di <= MAX_DISTINCT_DF chunk dari seluruh knowledge base.
+     * Dipakai agar jalur skor-kuat tidak mengandalkan kata umum yang muncul di
+     * puluhan chunk (mis. "siswa", "guru") — penyebab jawaban tidak nyambung.
+     */
+    protected const MAX_DISTINCT_DF = 25;
+
+    /**
      * Bangun seluruh knowledge base dari database website ke tabel ai_knowledge_chunks.
      * Memangkas data lama (khusus chunk) lalu menyimpan ulang.
      */
@@ -113,26 +121,47 @@ class KnowledgeBaseService
         // Ambil semua chunk (batasi untuk performa pada data besar).
         $chunks = AiKnowledgeChunk::query()->latest('id')->limit(5000)->get();
 
-        $scored = $chunks->map(function (AiKnowledgeChunk $chunk) use ($queryVector, $queryTokens) {
-            $contentVector = $this->tokenize($chunk->title . ' ' . $chunk->content);
+        // Pass 1: tokenisasi seluruh chunk + hitung frekuensi dokumen (DF) per
+        // token. DF dipakai untuk membedakan kata umum (siswa, guru, jurusan)
+        // dari token pembeda/nama khas (paskibra, pramuka, nama mitra).
+        $vectors = [];
+        $freq = [];
+        foreach ($chunks as $chunk) {
+            $vector = $this->tokenize($chunk->title . ' ' . $chunk->content);
+            $vectors[] = $vector;
+            foreach (array_keys($vector) as $token) {
+                $freq[$token] = ($freq[$token] ?? 0) + 1;
+            }
+        }
+
+        // Pass 2: scoring tiap chunk terhadap pertanyaan.
+        $scored = $chunks->map(function (AiKnowledgeChunk $chunk, int $i) use ($queryVector, $queryTokens, $vectors, $freq) {
+            $contentVector = $vectors[$i];
             $score = $this->cosineSimilarity($queryVector, $contentVector);
 
             // Petakan token query mana yang benar-benar muncul di konten.
             $overlap = 0;
+            $distinctOverlap = 0;
             foreach ($queryTokens as $token) {
                 if (isset($contentVector[$token])) {
                     $overlap++;
+                    // Token pembeda: jarang muncul di korpus, sehingga cocok
+                    // dengannya benar-benar menandakan topik yang dimaksud.
+                    if (($freq[$token] ?? 0) <= self::MAX_DISTINCT_DF) {
+                        $distinctOverlap++;
+                    }
                 }
             }
 
             return [
-                'chunk'   => $chunk,
-                'score'   => $score,
-                'overlap' => $overlap,
+                'chunk'           => $chunk,
+                'score'           => $score,
+                'overlap'         => $overlap,
+                'distinctOverlap' => $distinctOverlap,
             ];
         })
             // Wajib: overlap kata bermakna memadai ATAU skor sangat kuat
-            // (lihat isPlausibleMatch untuk aturan detail).
+            // dengan minimal satu token pembeda (lihat isPlausibleMatch).
             ->filter(fn ($item) => $this->isPlausibleMatch($item))
             ->sortByDesc('score')
             ->take($limit)
@@ -161,7 +190,9 @@ class KnowledgeBaseService
             $haystack = mb_strtolower($chunk->title . ' ' . $chunk->content);
             $hits = 0;
             foreach ($queryTokens as $token) {
-                if (mb_strpos($haystack, $token) !== false) {
+                // Kata utuh (bukan substring): "in" tidak boleh cocok dengan
+                // "industri", "asean" tidak boleh cocok dengan "sekolah".
+                if (preg_match('/\b' . preg_quote($token, '/') . '\b/u', $haystack)) {
                     $hits++;
                 }
             }
@@ -206,8 +237,16 @@ class KnowledgeBaseService
      */
     protected function isPlausibleMatch(array $item): bool
     {
-        // Dianggap relevan bila overlap kata bermakna memadai ATAU skor sangat kuat.
-        return $item['overlap'] >= self::MIN_OVERLAP || $item['score'] >= self::STRONG_SCORE;
+        // Overlap dua kata bermakna atau lebih => relevansi cukup.
+        if ($item['overlap'] >= self::MIN_OVERLAP) {
+            return true;
+        }
+
+        // Skor sangat kuat hanya diloloskan bila overlap memuat minimal SATU
+        // token PEMBEDA (jarang di korpus). Mencegah query pendek (mis.
+        // "perpisahan siswa") mencocokkan chunk hanya lewat kata umum seperti
+        // "siswa" yang ada di puluhan chunk.
+        return $item['score'] >= self::STRONG_SCORE && $item['distinctOverlap'] >= 1;
     }
 
     /** --- Pembangun chunk per sumber --- */

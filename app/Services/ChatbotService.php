@@ -121,8 +121,11 @@ class ChatbotService
         // sehingga TIDAK boleh dihitung sebagai kata kunci pencocokan.
         // (mis. "apa itu smk amaliah" tidak boleh cocok dengan berita/ekskul acak).
         'smk', 'amaliah', 'sekolah', 'siswa', 'murid', 'kelas', 'tahun', 'ajaran',
-        // Kata pengisi umum yang tidak bermakna untuk scoring.
+        // Kata pengisi umum yang tidak bermakna untuk scoring. "aja" (slang
+        // "saja") penting dibuang karena bisa menempel di dalam nama
+        // (mis. "aja" ada di dalam "Sudrajat") dan menyebabkan jawaban salah.
         'seperti', 'begitu', 'tersebut', 'sih', 'ly', 'dulu', 'dong', 'kak',
+        'aja', 'nih', 'kok', 'deh', 'tuh', 'ya', 'yah', 'siapa', 'gimana', 'ngapa',
     ];
 
     /**
@@ -228,7 +231,9 @@ class ChatbotService
         // Kontak / alamat (statis; walau juga bisa muncul dari tabel settings bila ada)
         if ($this->matchAny($q, ['kontak', 'alamat', 'lokasi', 'telp', 'telepon',
             'whatsapp', 'email', 'instagram', 'youtube',
-            'dimana sekolah', 'di mana sekolah', 'dimanakah sekolah'])) {
+            'dimana sekolah', 'di mana sekolah', 'dimanakah sekolah',
+            'sekolah di mana', 'sekolahnya di mana', 'sekolah nya di mana',
+            'lokasi sekolah', 'lokasinya', 'alamatnya'])) {
             return $this->contactAnswer();
         }
 
@@ -244,11 +249,42 @@ class ChatbotService
                 return $this->shortExtracurricularAnswer();
             }
         }
-        if ($this->matchAny($q, ['jam layanan', 'jam operasional', 'jam belajar', 'jam buka'])) {
+        if ($this->matchAny($q, ['jam layanan', 'jam operasional', 'jam belajar', 'jam buka',
+            'jam pelajaran', 'jam sekolah', 'jam masuk', 'jam mulai', 'jam berapa'])) {
             return $this->hoursAnswer();
         }
 
+        // Beasiswa/bantuan: cek dulu apakah ada informasinya di berita, kalau
+        // tidak ada jawab jujur + arahkan ke kontak sekolah (jangan asal jawab).
+        if ($this->matchAny($q, ['beasiswa', 'beasant', 'bantuan', 'subsidi', 'gratis'])) {
+            return $this->scholarshipAnswer();
+        }
+
         return null;
+    }
+
+    protected function scholarshipAnswer(): string
+    {
+        $news = News::where('title', 'like', '%beasiswa%')
+            ->orWhere('title', 'like', '%bantuan%')
+            ->orWhere('description', 'like', '%beasiswa%')
+            ->orderBy('date_published', 'desc')
+            ->first();
+
+        if ($news) {
+            $date = $news->date_published
+                ? \Carbon\Carbon::parse($news->date_published)->format('d M Y')
+                : '';
+            return "Info beasiswa di website kami:\n\n• **{$news->title}**"
+                . ($date !== '' ? " ({$date})" : '') . "\n\n"
+                . $this->truncate($this->clean($news->description), 500);
+        }
+
+        $s = self::SCHOOL;
+        return "Mohon maaf, informasi beasiswa belum tersedia di website kami. 🙏\n\n"
+            . "Untuk informasi lebih lanjut, silakan hubungi sekolah:\n"
+            . "📞 {$s['phone']}\n"
+            . "💬 WhatsApp: {$s['whatsapp']}";
     }
 
     // ---- Jawaban singkat LAPISAN 1 (fallback statis; tetap cek DB bila isi) ----
@@ -328,7 +364,8 @@ class ChatbotService
         }
 
         // 0a) Partner / mitra industri.
-        if ($this->matchAny($q, ['partner', 'mitra', 'kerja sama', 'pkl', 'prakerin', 'industri'])) {
+        if ($this->matchAny($q, ['partner', 'mitra', 'kerja sama', 'kerjasama',
+            'perusahaan', 'company', 'pkl', 'prakerin', 'industri'])) {
             $partner = $this->partnerAnswer($q);
             if ($partner !== null) {
                 return $partner;
@@ -365,7 +402,9 @@ class ChatbotService
 
         // 2b) Daftar jurusan ("Ada jurusan apa saja?", "daftar jurusan").
         if ($this->matchAny($q, ['jurusan apa', 'jurusan apa saja', 'jurusan apa aja',
-            'daftar jurusan', 'jurusan yang ada', 'jurusan di smk', 'jurusan ada apa'])) {
+            'daftar jurusan', 'jurusan yang ada', 'jurusan di smk', 'jurusan ada apa',
+            'apa saja jurusan', 'apa aja jurusan', 'jurusan apa yang', 'jurusan apa yang ada',
+            'sebutkan jurusan', 'jurusan yang tersedia', 'jurusan yang ditawarkan'])) {
             return $this->shortMajorsAnswer();
         }
 
@@ -397,10 +436,14 @@ class ChatbotService
         // topik (mis. "berapa biaya hidup di jakarta") tidak dijawab SPMB.
         $hasSchoolContext = $this->matchAny($q, [
             'sekolah', 'smk', 'amaliah', 'siswa', 'murid', 'masuk', 'kelas',
+            'daftar', 'spmb', 'ppdb',
         ]);
-        $weakSpmb = $this->matchAny($q, ['daftar', 'biaya', 'kuota', 'gelombang', 'syarat']);
+        $weakSpmb = $this->matchAny($q, ['daftar', 'biaya', 'kuota', 'gelombang', 'syarat',
+            'masuk', 'nilai', 'rapor', 'tes']);
 
-        if (! $this->isEntityListRequest($q) && ($strongSpmb || ($hasSchoolContext && $weakSpmb))) {
+        if (! $this->isEntityListRequest($q)
+            && ! $this->matchAny($q, ['prestasi', 'juara', 'penghargaan', 'berita'])
+            && ($strongSpmb || ($hasSchoolContext && $weakSpmb))) {
             return $this->spmbAnswer();
         }
 
@@ -465,8 +508,10 @@ class ChatbotService
             'kontak', 'alamat', 'lokasi', 'telp', 'telepon', 'whatsapp', 'email',
             'instagram', 'youtube', 'spmb', 'ppdb', 'pendaftaran', 'daftar', 'gelombang',
             'kuota', 'sejarah', 'visi', 'misi', 'profil', 'tentang', 'yayasan',
-            'syarat', 'beasiswa', 'prestasi', 'akreditasi',
-            'partner', 'mitra', 'industri', 'kerja sama', 'pkl', 'prakerin', 'magang',
+            'syarat', 'beasiswa', 'beasant', 'bantuan', 'subsidi', 'prestasi', 'akreditasi',
+            'nilai', 'rapor', 'masuk',
+            'partner', 'mitra', 'industri', 'kerja sama', 'kerjasama', 'perusahaan',
+            'company', 'pkl', 'prakerin', 'magang',
             'testimoni', 'testimonial', 'alumni', 'lulusan',
         ])) {
             return true;
@@ -632,7 +677,7 @@ class ChatbotService
             }
         }
 
-        $description = $this->clean($row->description ?? null);
+        $description = $this->dedupeLeading($this->clean($row->description ?? null));
         if ($description !== '' && ! $this->contains($this->normalize($description), $this->normalize($title))) {
             $reply .= "\n\n{$description}";
         }
@@ -731,7 +776,42 @@ class ChatbotService
      */
     protected function testimonialAnswer(string $q): ?string
     {
-        $items = Testimonial::with('major')->orderBy('id', 'asc')->take(6)->get();
+        // Bila query menyebut jurusan tertentu, saring testimoni sesuai jurusan
+        // itu agar jawaban tidak menumpuk semua testimoni dari semua jurusan.
+        $majorFilter = null;
+        foreach (Major::query()->get(['id', 'name']) as $major) {
+            $name = $this->normalize((string) $major->name);
+            if ($name === '') {
+                continue;
+            }
+            // Cocokkan bila nama jurusan utuh muncul, ATAU minimal satu kata
+            // khas nama jurusan (>=4 huruf) muncul di pertanyaan (mis. "lulusan
+            // perbankan" -> cocok dengan jurusan "Layanan Perbankan Syariah").
+            $wordMatch = false;
+            foreach (preg_split('/\s+/', $name) ?: [] as $word) {
+                if (mb_strlen($word) >= 4 && $this->matchesWord($q, $word)) {
+                    $wordMatch = true;
+                    break;
+                }
+            }
+            if ($this->contains($q, $name) || $wordMatch) {
+                $majorFilter = $major->id;
+                break;
+            }
+        }
+
+        $items = Testimonial::with('major')
+            ->when($majorFilter, fn ($query) => $query->where('major_id', $majorFilter))
+            ->orderBy('id', 'asc')
+            ->take(6)
+            ->get();
+
+        // Bila penyaring jurusan ternyata tidak punya testimoni, tampilkan
+        // testimoni umum sebagai pengganti agar tidak berakhir kosong.
+        if ($items->isEmpty() && $majorFilter !== null) {
+            $items = Testimonial::with('major')->orderBy('id', 'asc')->take(6)->get();
+        }
+
         if ($items->isEmpty()) {
             return null;
         }
@@ -778,7 +858,9 @@ class ChatbotService
 
             $score = 0;
             foreach ($queryWords as $word) {
-                if ($this->contains($norm, $word)) {
+                // Kata utuh (bukan substring): "aja" tidak boleh cocok dengan
+                // "Sudrajat", "an" tidak boleh cocok dengan "Animasi".
+                if (mb_strlen($word) >= 3 && $this->matchesWord($norm, $word)) {
                     $score++;
                 }
             }
@@ -897,6 +979,52 @@ class ChatbotService
                     return $this->majorDetail($major);
                 }
             }
+        }
+
+        // Pertanyaan "apakah ada jurusan <nama>?" dengan nama yang TIDAK ada: 
+        // jawab jujur + tampilkan jurusan yang tersedia (bukan daftar umum).
+        if (($this->contains($q, 'ada jurusan') || $this->contains($q, 'jurusan ada')
+             || $this->contains($q, 'ada kompetensi'))
+            && $this->matchAny($q, ['jurusan', 'kompetensi'])
+            && $this->contains($q, 'ada')) {
+            $candidate = $this->candidateMajorName($q);
+            if ($candidate !== null) {
+                $list = $majors->where('name', '!=', $candidate)->pluck('name')
+                    ->map(fn ($n) => '• ' . $n)->implode("\n");
+                if ($list !== '') {
+                    return "Belum ada jurusan bernama **{$candidate}** di SMK Amaliah 1 & 2 Ciawi. 🙏\n\n"
+                        . "Jurusan yang tersedia:\n\n{$list}\n\n"
+                        . "Ketik nama jurusan untuk info lebih detail, misalnya \"RPL\". 😊";
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Tebak nama jurusan yang disebut dalam pertanyaan periksa-ketersediaan
+     * (mis. "apakah ada jurusan multimedia?" -> "multimedia"). Mengabaikan
+     * kata tanya/kata populer domain agar tidak menebak kata salah.
+     */
+    protected function candidateMajorName(string $q): ?string
+    {
+        $domain = ['jurusan', 'kompetensi', 'keahlian', 'program', 'prodi', 'ada',
+            'apakah', 'tidak', 'nggak', 'ga', 'ya', 'kah'];
+        $words = preg_split('/\s+/u', $this->normalize($q)) ?: [];
+
+        foreach ($words as $word) {
+            $word = trim($word);
+            if (mb_strlen($word) < 4) {
+                continue;
+            }
+            if (in_array($word, $domain, true)) {
+                continue;
+            }
+            if (in_array($word, self::STOP_WORDS, true)) {
+                continue;
+            }
+            return ucfirst($word);
         }
 
         return null;
@@ -1092,7 +1220,8 @@ class ChatbotService
     {
         $listSignal = $this->matchAny($q, [
             'apa saja', 'apa aja', 'apa ya', 'daftar', 'sebutkan', 'macam', 'yang ada',
-            'nama', 'list', 'ada apa', 'pilih', 'semua',
+            'nama', 'list', 'ada apa', 'pilih', 'semua', 'tersedia', 'ditawarkan',
+            'tawarkan', 'disediakan',
         ]);
         if (! $listSignal) {
             return false;
@@ -1101,9 +1230,10 @@ class ChatbotService
         $entityTypes = [
             'guru', 'pendidik', 'pengajar', 'staf', 'staff', 'wali',
             'ekskul', 'eskul', 'ekstrakurikuler', 'extra',
-            'fasilitas', 'sarana', 'prasarana',
+            'fasilitas', 'sarana', 'prasarana', 'lab', 'laboratorium', 'laboratory',
             'program', 'kegiatan', 'acara', 'agenda', 'event',
             'jurusan', 'kompetensi', 'keahlian',
+            'prestasi', 'penghargaan', 'juara', 'berita',
         ];
 
         foreach ($entityTypes as $type) {
@@ -1124,7 +1254,8 @@ class ChatbotService
         // Deteksi niat meminta daftar: frasa kunci ATAU kombinasi kata topik + isyarat daftar.
         $listSignal = fn () => $this->matchAny($q, [
             'apa saja', 'apa aja', 'apa ya', 'daftar', 'sebutkan', 'macam', 'yang ada',
-            'nama', 'list', 'ada apa', 'pilih', 'semua',
+            'nama', 'list', 'ada apa', 'pilih', 'semua', 'tersedia', 'ditawarkan',
+            'tawarkan', 'disediakan',
         ]);
 
         $entry = function (array $types) use ($q, $listSignal) {
@@ -1138,6 +1269,16 @@ class ChatbotService
             }
             return false;
         };
+
+        // Jurusan didahulukan sebelum cabang "program/kegiatan" agar kata
+        // "program keahlian" tidak jatuh ke daftar program kegiatan sekolah.
+        if ($entry(['jurusan', 'kompetensi', 'keahlian', 'program keahlian'])) {
+            if (Major::query()->count() > 0) {
+                $names = Major::orderBy('id', 'asc')->pluck('name')->map(fn ($n) => '• ' . $n)->implode("\n");
+                return "Jurusan SMK Amaliah 1 & 2 Ciawi:\n\n{$names}\n\n"
+                    . "Ketik nama jurusan untuk info lebih detail, misalnya \"RPL\". 😊";
+            }
+        }
 
         if ($entry(['guru', 'pendidik', 'pengajar', 'staf', 'staff'])) {
             if (Teacher::query()->count() > 0) {
@@ -1153,11 +1294,26 @@ class ChatbotService
             }
         }
 
-        if ($entry(['fasilitas', 'sarana', 'prasarana'])) {
+        if ($entry(['fasilitas', 'sarana', 'prasarana', 'lab', 'laboratorium', 'laboratory'])) {
             if (Facility::query()->count() > 0) {
-                $names = Facility::orderBy('id', 'asc')->pluck('name')->map(fn ($n) => '• ' . $n)->implode("\n");
-                return "Fasilitas di SMK Amaliah:\n\n{$names}\n\n"
-                    . "Tanyakan nama fasilitas untuk info lebih detail 😊";
+                $facilities = Facility::orderBy('id', 'asc')->get();
+
+                // Bila yang ditanya spesifik "lab/laboratorium", tampilkan
+                // fasilitas lab saja — bukan seluruh fasilitas sekolah.
+                $wantLab = $this->contains($q, 'lab') || $this->contains($q, 'laboratorium');
+                if ($wantLab) {
+                    $facilities = $facilities->filter(function ($f) {
+                        $n = $this->normalize((string) ($f->name ?? ''));
+                        return $this->contains($n, 'lab') || $this->contains($n, 'laboratorium');
+                    });
+                }
+
+                $names = $facilities->pluck('name')->map(fn ($n) => '• ' . $n)->implode("\n");
+                $label = $wantLab ? 'Laboratorium / lab' : 'Fasilitas';
+                $sub = $wantLab
+                    ? "\n\nTanyakan nama lab untuk info lebih detail 😊"
+                    : "\n\nTanyakan nama fasilitas untuk info lebih detail 😊";
+                return "{$label} di SMK Amaliah:\n\n{$names}{$sub}";
             }
         }
 
@@ -1174,7 +1330,12 @@ class ChatbotService
     protected function majorDetail(Major $major): string
     {
         $reply = "**{$major->name}**\n";
-        $desc = $this->clean($major->description);
+        $desc = $this->dedupeLeading($this->clean($major->description));
+        // Buang nama jurusan yang berulang di awal deskripsi (HTML tidak rapi).
+        while ($major->name !== '' && mb_stripos($desc, $major->name) === 0) {
+            $desc = trim(mb_substr($desc, mb_strlen($major->name)));
+        }
+        $desc = trim($desc);
         if ($desc !== '') {
             $reply .= $desc . "\n";
         }
@@ -1283,7 +1444,7 @@ class ChatbotService
             return null;
         }
 
-        $chunks = $this->knowledgeBase->retrieve($q, 5);
+        $chunks = $this->knowledgeBase->retrieve($q, 6);
 
         // Bila pencarian vektor tidak menemukan hasil yang meyakinkan,
         // coba rawu kata kunci — tetapi hanya bila jawaban benar-benar relevan.
@@ -1310,9 +1471,22 @@ class ChatbotService
             $unique[] = $chunk;
         }
 
+        // Fokus jawaban pada satu kelompok topik (source_type) yang paling
+        // relevan saja. Ini mencegah satu pertanyaan melempar data dari
+        // berbagai topik sekaligus (berita + prestasi + fasilitas + ...).
+        $bestType = $unique[0]->source_type ?? null;
+        $focused = array_values(array_filter(
+            $unique,
+            fn ($chunk) => ($chunk->source_type ?? null) === $bestType
+        ));
+        if (empty($focused)) {
+            $focused = $unique;
+        }
+
+        // Batasi jumlah data agar jawaban ringkas & persis dengan yang ditanya.
         $parts = [];
-        foreach ($unique as $chunk) {
-            $label = $chunk->title ?? ucfirst($chunk->source_type);
+        foreach (array_slice($focused, 0, 3) as $chunk) {
+            $label = $chunk->title ?? ucfirst((string) ($chunk->source_type ?? ''));
             $content = trim((string) $chunk->content);
             if ($content === '') {
                 continue;
@@ -1410,6 +1584,26 @@ class ChatbotService
             return '';
         }
         return trim((string) preg_replace('/\s+/u', ' ', strip_tags((string) $value)));
+    }
+
+    /**
+     * Buang teks yang terulang persis dari awal (artefak HTML editor admin),
+     * mis. "Rekayasa Perangkat Lunak (RPL)Rekayasa Perangkat Lunak (RPL) adalah ..."
+     * menjadi "... adalah ...". Mencegah jawaban kembar/berulang.
+     */
+    protected function dedupeLeading(string $text): string
+    {
+        $text = trim(preg_replace('/\s+/u', ' ', $text));
+        $len = mb_strlen($text);
+
+        for ($i = 1; $i <= intdiv($len, 2); $i++) {
+            $prefix = mb_substr($text, 0, $i);
+            if ($prefix !== '' && mb_strpos($text, $prefix, $i) === $i) {
+                return trim(mb_substr($text, $i));
+            }
+        }
+
+        return $text;
     }
 
     /**
