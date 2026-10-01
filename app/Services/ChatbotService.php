@@ -136,7 +136,9 @@ class ChatbotService
         'guru'      => ['guru', 'pendidik', 'pengajar', 'staf', 'staff', 'wali', 'kepala sekolah', 'tenaga'],
         'ekskul'    => ['ekskul', 'eskul', 'ekstrakurikuler', 'extra', 'pramuka', 'paskibra', 'futsal', 'basket'],
         'berita'    => ['berita', 'news', 'artikel', 'postingan', 'kabar', 'terbaru'],
-        'fasilitas' => ['fasilitas', 'facility', 'sarana', 'prasarana', 'lab', 'laboratorium', 'perpustakaan', 'aula', 'mushola'],
+        'fasilitas' => ['fasilitas', 'facility', 'sarana', 'prasarana', 'lab', 'laboratorium',
+            'laboratory', 'labkom', 'lab komputer', 'perpustakaan', 'aula', 'mushola',
+            'musala', 'lapangan', 'kantin', 'toilet', 'wc'],
         'kegiatan'  => ['kegiatan', 'agenda', 'event', 'program', 'acara', 'mpls'],
     ];
 
@@ -160,6 +162,24 @@ class ChatbotService
         'br'            => ['br', 'retail'],
         'matematika'    => ['matematika'],
         'bahasa inggris'=> ['bahasa inggris', 'inggris'],
+    ];
+
+    /**
+     * Nama mapel yang enak dibaca untuk alias di atas (dipakai sebagai judul
+     * jawaban), mis. alias "rpl" -> judul "Rekayasa Perangkat Lunak".
+     */
+    protected const SUBJECT_LABELS = [
+        'rpl'            => 'Rekayasa Perangkat Lunak',
+        'tkj'            => 'Teknik Komputer & Jaringan',
+        'animasi'        => 'Animasi',
+        'dkv'            => 'Desain Komunikasi Visual',
+        'mp'             => 'Manajemen Perkantoran',
+        'lps'            => 'Layanan Perbankan Syariah',
+        'dpb'            => 'Desain & Produksi Busana',
+        'ak'             => 'Akuntansi',
+        'br'             => 'Bisnis Retail',
+        'matematika'     => 'Matematika',
+        'bahasa inggris' => 'Bahasa Inggris',
     ];
 
     protected KnowledgeBaseService $knowledgeBase;
@@ -258,6 +278,22 @@ class ChatbotService
         // tidak ada jawab jujur + arahkan ke kontak sekolah (jangan asal jawab).
         if ($this->matchAny($q, ['beasiswa', 'beasant', 'bantuan', 'subsidi', 'gratis'])) {
             return $this->scholarshipAnswer();
+        }
+
+        // Kritik & saran / keluhan: arahkan ke kanal kontak resmi.
+        if ($this->matchAny($q, ['kritik', 'saran', 'keluhan', 'komplain', 'kritikan', 'feedback'])) {
+            return "Untuk **kritik, saran, atau keluhan**, silakan sampaikan melalui kanal resmi sekolah:\n\n"
+                . "• **Kontak sekolah** — bisa diisi lewat halaman Kontak di website ini\n"
+                . "• **Surel/telepon resmi** yang tertera di halaman Kontak\n\n"
+                . "Masukan kamu akan diteruskan ke pihak sekolah ya. 🙏 Ada lagi yang bisa saya bantu?";
+        }
+
+        // Rapor/nilai: data nilai siswa tidak tersimpan di situs, jadi jawab
+        // jujur dan arahkan ke sekolah — jangan mengarang angka atau prediksi.
+        if ($this->matchAny($q, ['nilai', 'rapor', 'nilai rapor', 'bobot nilai', 'semester'])) {
+            return "Informasi nilai/rapor siswa tidak dipublikasikan di website sekolah. 🙏\n\n"
+                . "Untuk nilai rapor atau informasi terkait kelas, silakan hubungi sekolah melalui kontak resmi. 😊\n\n"
+                . "Ingin tahu soal **jurusan, kurikulum, atau pendaftaran (SPMB)**? Itu bisa saya bantu.";
         }
 
         return null;
@@ -386,8 +422,21 @@ class ChatbotService
             return $this->teacherDetail($teacher);
         }
 
-        // 1b) Guru berdasarkan mapel/bidang, mis. "Siapa saja guru RPL?".
-        if ($this->matchAny($q, ['guru', 'pendidik', 'pengajar', 'staf', 'staff', 'siapa saja'])) {
+        // 1a) Berapa banyak guru — lebih masuk akal dijawab angka, bukan daftar.
+        if ($this->matchesWord($q, 'berapa') && $this->matchAny($q, ['guru', 'staf', 'staff', 'pendidik', 'pengajar'])) {
+            $total = Teacher::query()->count();
+
+            return "Total **{$total}** orang tercatat sebagai guru/tenaga pendidik di SMK Amaliah 1 & 2 Ciawi. 📊\n\n"
+                . "Sebut nama mapel atau guru tertentu untuk info lebih detail, misalnya \"siapa guru IPAS\".";
+        }
+
+        // 1b) Guru berdasarkan mapel/bidang, mis. "Siapa saja guru RPL?" atau
+        //     "siapa guru ipas". Dijalankan sebelum daftar umum agar
+        //     "siapa guru <mapel>" TIDAK dijawab dengan semua nama guru.
+        if ($this->matchAny($q, [
+            'guru', 'pendidik', 'pengajar', 'staf', 'staff', 'siapa saja',
+            'mengajar', 'mengampu', 'mapel', 'pelajaran', 'ajar',
+        ])) {
             $teachersBySubject = $this->findTeachersBySubject($q);
             if ($teachersBySubject !== null) {
                 return $teachersBySubject;
@@ -887,6 +936,22 @@ class ChatbotService
         return ($best !== null && $bestScore > 0) ? $best : null;
     }
 
+    /**
+     * Jawaban untuk mapel yang tidak ada gurunya di data.
+     */
+    protected function noTeacherForSubjectAnswer(string $subject): string
+    {
+        $available = Teacher::query()->pluck('subject')
+            ->map(fn ($s) => trim((string) $s))
+            ->filter(fn ($s) => $s !== '' && $s !== '--' && $s !== '-')
+            ->unique()->sort()->values();
+        $list = $available->take(20)->map(fn ($s) => '• ' . $s)->implode("\n");
+
+        return "Belum ada guru yang tercatat mengampu **{$subject}**. 🙏\n\n"
+            . "Mapel yang ada di sekolah:\n\n{$list}\n\n"
+            . "Ketik nama guru atau mapel lain, ya 😊";
+    }
+
     // ---- Cari khusus: guru berdasarkan mapel/bidang ----
 
     protected function findTeachersBySubject(string $q): ?string
@@ -896,27 +961,17 @@ class ChatbotService
             return null;
         }
 
-        // Cari istilah mapel yang muncul di pertanyaan (via alias kelompok).
-        $subjectNeedles = [];
-        foreach (self::SUBJECT_ALIASES as $subject => $aliases) {
-            foreach ($aliases as $alias) {
-                // Alias pendek (<= 3 huruf) dicocokkan sebagai KATA UTUH agar
-                // "ak" tidak cocok di dalam "pak", "an" tidak di "kapan", dst.
-                $found = mb_strlen($alias) <= 3
-                    ? $this->matchesWord($q, $alias)
-                    : $this->contains($q, $alias);
-
-                if ($found) {
-                    // Gunakan SEMUA alias dari grup yang cocok, bukan cuma yang
-                    // muncul di query. Contoh: query "guru rpl" harus memuat
-                    // guru ber-subject "PPLG".
-                    $subjectNeedles = array_merge($subjectNeedles, $aliases);
-                    break;
-                }
-            }
-        }
+        [$label, $subjectNeedles] = $this->subjectNeedles($q);
 
         if (empty($subjectNeedles)) {
+            // Mapel yang ditanyakan mungkin memang tidak ada di sekolah
+            // (mis. "siapa guru fisika") — jawab jujur, jangan listing SEMUA
+            // guru karena tidak ada yang cocok.
+            $guess = $this->unknownSubjectGuess($q);
+            if ($guess !== null) {
+                return $this->noTeacherForSubjectAnswer($guess);
+            }
+
             return null;
         }
 
@@ -934,17 +989,241 @@ class ChatbotService
         });
 
         if ($filtered->isEmpty()) {
+            return $this->noTeacherForSubjectAnswer($label);
+        }
+
+        $lines = $filtered->take(15)->map(function (Teacher $t) {
+            $meta = collect([
+                $t->subject && $t->subject !== '--' ? $this->clean($t->subject) : null,
+                $t->position && $t->position !== '--' ? $this->clean($t->position) : null,
+            ])->filter()->implode(' • ');
+
+            return '• **' . $t->name . '**' . ($meta !== '' ? "\n  " . $meta : '');
+        })->implode("\n\n");
+
+        $total = $filtered->count();
+        $more = $total > 15 ? "\n\n... dan " . ($total - 15) . ' lainnya.' : '';
+
+        return "Guru yang mengampu **{$label}**:\n\n{$lines}{$more}\n\n"
+            . "Total: **{$total}** orang. Ketik nama guru untuk info lengkap.";
+    }
+
+    /**
+     * Kata yang HANYA muncul sebagai "permintaan", bukan nama mapel.
+     * Dipakai agar "siapa guru" tidak dianggap sedang menanyakan mapel.
+     */
+    protected const TEACHER_QUERY_WORDS = [
+        'guru', 'gugur', 'staf', 'staff', 'pendidik', 'pengajar', 'tenaga',
+        'mengajar', 'mengampu', 'ajar', 'ngajar', 'pelajaran', 'mapel',
+        'mata', 'kepala', 'wali', 'koordinator', 'nama', 'siapa', 'daftar',
+        'orang', 'sekolah', 'smk', 'amaliah', 'siswa', 'murid', 'kelas',
+        'sebutkan', 'sebut', 'macam', 'jenis', 'semua', 'seluruh', 'banyak',
+        'ada', 'coba', 'carikan', 'carilah', 'tolong', 'tolongnya',
+        'info', 'informasi', 'tolong', 'mohon', 'tanya', 'tentang', 'yaitu',
+        'yangk', 'yg', 'yang', 'saja', 'aja', 'juga', 'dong', 'kak',
+    ];
+
+    /**
+     * Cari istilah mapel yang disebut pengguna, lalu kembalikan bentuk siap
+     * tampil (label) + kunci untuk mencocokkan kolom subject guru.
+     *
+     * Dua sumber:
+     *   1) SUBJECT_ALIASES (peta statis: rpl/pplg, tkj/tjkt, dst) — label-nya
+     *      memakai NAMA GRUP, bukan daftar alias ("RPL", bukan "rpl/pplg/...").
+     *   2) DINAMIS dari kolom `subject` milik guru — sehingga mapel baru
+     *      (mis. "IPAS", "Informatika", "Full Stack Developer") langsung
+     *      dikenali tanpa perlu menambah kode.
+     *
+     * @return array{0: string, 1: array<int,string>}
+     *         [0] = label mapel, [1] = daftar needle untuk pencocokan.
+     */
+    protected function subjectNeedles(string $q): array
+    {
+        $needles = [];
+        $labels = [];
+
+        // 1) Alias statis.
+        foreach (self::SUBJECT_ALIASES as $group => $aliases) {
+            foreach ($aliases as $alias) {
+                // Alias pendek (<= 3 huruf) dicocokkan sebagai KATA UTUH agar
+                // "ak" tidak cocok di dalam "pak", "an" tidak di "kapan", dst.
+                $found = mb_strlen($alias) <= 3
+                    ? $this->matchesWord($q, $alias)
+                    : $this->contains($q, $alias);
+
+                if ($found) {
+                    $needles = array_merge($needles, $aliases);
+                    $labels[] = self::SUBJECT_LABELS[$group] ?? ucfirst($group);
+                    break;
+                }
+            }
+        }
+
+        // 2) Cocokkan kata di pertanyaan dengan mapel yang benar-benar ada.
+        $subjects = Teacher::query()->pluck('subject')->filter(function ($s) {
+            return $s !== null && trim((string) $s) !== '' && trim((string) $s) !== '--';
+        })->map(fn ($s) => trim((string) $s))->unique()->values();
+
+        // Kata kunci dari pertanyaan, untuk pencocokan prefiks ("ipa" -> "ipas").
+        $queryWords = preg_split('/[^a-z0-9]+/u', $q) ?: [];
+
+        // Kumpulkan kandidat: needle => [subject, posisi di pertanyaan].
+        $dynamic = [];
+        foreach ($subjects as $subject) {
+            $words = preg_split('/[^a-z0-9]+/u', $this->normalize($subject)) ?: [];
+            foreach ($words as $word) {
+                if (mb_strlen($word) < 3
+                    || in_array($word, self::STOP_WORDS, true)
+                    || in_array($word, self::TEACHER_QUERY_WORDS, true)) {
+                    continue;
+                }
+
+                // Cocok utuh ("pjok" = "PJOK") atau sebagai awalan
+                // ("ipa" -> "IPAS", "mat" -> "Matematika").
+                $pos = null;
+                if ($this->matchesWord($q, $word)) {
+                    $pos = strpos($q, $word);
+                } else {
+                    foreach ($queryWords as $i => $qw) {
+                        if (mb_strlen($qw) >= 3 && str_starts_with($word, $qw)) {
+                            $pos = strpos($q, $qw);
+                            break;
+                        }
+                    }
+                }
+
+                if ($pos !== false && $pos !== null) {
+                    $dynamic[$word] = ['subject' => $subject, 'pos' => $pos];
+                    break;
+                }
+            }
+        }
+
+        // Ambil SATU needle terbaik supaya tidak mencampur mapel lain yang
+        // kebetulan punya kata umum yang sama ("bahasa jepang" harusnya
+        // Bahasa Jepang, bukan Bahasa Inggris). Kunci: kata paling akhir
+        // di pertanyaan (= paling spesifik), lalu kata terpanjang.
+        if ($dynamic !== []) {
+            uasort($dynamic, function ($a, $b) {
+                if ($a['pos'] !== $b['pos']) {
+                    return $b['pos'] <=> $a['pos'];
+                }
+                return mb_strlen($b['subject']) <=> mb_strlen($a['subject']);
+            });
+            $bestNeedle = array_key_first($dynamic);
+            $best = $dynamic[$bestNeedle];
+            $needles[] = $bestNeedle;
+            $labels[] = $best['subject'];
+        }
+
+        $needles = array_values(array_unique(array_filter($needles)));
+
+        // Label unik tanpa duplikasi kapitalisasi ("matematika" vs "Matematika").
+        $seen = [];
+        $labels = array_values(array_filter($labels, function ($l) use (&$seen) {
+            $key = mb_strtolower($l);
+            if (isset($seen[$key])) {
+                return false;
+            }
+            $seen[$key] = true;
+            return true;
+        }));
+
+        // Prioritas label: alias statis lebih enak dibaca (mis. "Bahasa Inggris"),
+        // jadi didahulukan; nama mapel mentah jadi cadangan.
+        usort($labels, function ($a, $b) {
+            $rank = function ($l) {
+                foreach (array_keys(self::SUBJECT_LABELS) as $group) {
+                    if (mb_strtolower($l) === self::SUBJECT_LABELS[$group]) {
+                        return 0;
+                    }
+                }
+                return 1;
+            };
+
+            return [$rank($a), mb_strlen($a)] <=> [$rank($b), mb_strlen($b)];
+        });
+
+        // Label: pakai nama mapel asli bila ada (lebih enak dibaca), maksimal 2.
+        $label = count($labels) > 0
+            ? implode(' / ', array_slice($labels, 0, 2))
+            : 'mapel yang ditanyakan';
+
+        return [$label, $needles];
+    }
+
+    /**
+     * Deteksi pengguna sedang menanyakan mapel yang TIDAK ada di data
+     * (mis. "siapa guru fisika"). Mengembalikan nama mapel itu, atau null.
+     */
+    protected function unknownSubjectGuess(string $q): ?string
+    {
+        if (! $this->matchAny($q, [
+            'guru', 'staf', 'staff', 'pendidik', 'pengajar', 'mengajar', 'mengampu',
+            'ngajar', 'mapel', 'pelajaran',
+        ])) {
             return null;
         }
 
-        $names = $filtered->take(15)->map(fn ($t) => '• ' . $t->name)->implode("\n");
-        $total = $filtered->count();
-        $extra = $total - 15;
-        $more = $extra > 0 ? "\n\n... dan {$extra} lainnya." : '';
+        $known = [];
+        foreach (Teacher::query()->pluck('subject')->filter() as $subject) {
+            foreach (preg_split('/[^a-z0-9]+/u', $this->normalize((string) $subject)) ?: [] as $word) {
+                if (mb_strlen($word) >= 3) {
+                    $known[$word] = true;
+                }
+            }
+        }
+        foreach (self::SUBJECT_ALIASES as $aliases) {
+            foreach ($aliases as $alias) {
+                foreach (preg_split('/[^a-z0-9]+/u', $this->normalize($alias)) ?: [] as $word) {
+                    if (mb_strlen($word) >= 3) {
+                        $known[$word] = true;
+                    }
+                }
+            }
+        }
 
-        return "Berikut guru/tenaga pendidik yang mengampu bidang terkait:\n\n"
-            . "{$names}{$more}\n\n"
-            . "Total: **{$total}** orang. Ketik nama guru untuk detail.";
+        foreach (preg_split('/\s+/', $q) ?: [] as $word) {
+            $word = trim($word, ".,!?");
+            if (mb_strlen($word) < 3) {
+                continue;
+            }
+            if (in_array($word, self::STOP_WORDS, true) || in_array($word, self::TEACHER_QUERY_WORDS, true)) {
+                continue;
+            }
+            if (isset($known[$word])) {
+                continue;
+            }
+
+            // Kata tempelan ("gurusejarah" = "guru"+"sejarah") bukan mapel baru.
+            foreach (array_keys($known) as $knownWord) {
+                if ($knownWord !== $word && str_contains($word, $knownWord)) {
+                    continue 2;
+                }
+            }
+
+            // Jangan considers kata yang utuhnya nama guru.
+            if (Teacher::query()->pluck('name')->contains(fn ($n) => $this->contains($this->normalize((string) $n), $word))) {
+                continue;
+            }
+
+            return $this->prettySubject($word);
+        }
+
+        return null;
+    }
+
+    /**
+     * Rapikan nama mapel: akronim pendek jadi huruf besar ("ips" -> "IPS"),
+     * kata biasa tetap kapital di awal ("fisika" -> "Fisika").
+     */
+    protected function prettySubject(string $word): string
+    {
+        if (mb_strlen($word) <= 4) {
+            return mb_strtoupper($word);
+        }
+
+        return ucfirst($word);
     }
 
     // ---- Cari khusus: jurusan (termasuk akronim) ----
@@ -1255,11 +1534,14 @@ class ChatbotService
         $listSignal = fn () => $this->matchAny($q, [
             'apa saja', 'apa aja', 'apa ya', 'daftar', 'sebutkan', 'macam', 'yang ada',
             'nama', 'list', 'ada apa', 'pilih', 'semua', 'tersedia', 'ditawarkan',
-            'tawarkan', 'disediakan',
+            'tawarkan', 'disediakan', 'siapa', 'siapa saja', 'siapa aja',
+            'siapa nama', 'siapa orang', 'siapa saja yang',
         ]);
 
+        // "apa" harus dicocokkan sebagai KATA UTUH: contains() akan menganggap
+        // "si**apa**" sebagai permintaan daftar, padahal itu pertanyaan orang.
         $entry = function (array $types) use ($q, $listSignal) {
-            if (! $listSignal() && ! $this->contains($q, 'apa')) {
+            if (! $listSignal() && ! $this->matchesWord($q, 'apa')) {
                 return false;
             }
             foreach ($types as $type) {

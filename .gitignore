@@ -18,3 +18,4 @@ yarn-error.log
 error_log
 render_view.php
 error_log.*
+/.phpunit.result.cache
