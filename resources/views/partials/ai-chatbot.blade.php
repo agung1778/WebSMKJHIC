@@ -930,8 +930,41 @@
             },
 
 
+{{-- =================================================
+                     SESSION ID
+            ================================================== --}}
+
+            {{-- Dipakai agar pertanyaan lanjutan ("terus bagaimana?") 
+                 tetap terhubung ke percakapan yang sama di sisi server. --}}
+            sessionId() {
+
+                const KEY = 'amaliah_ai_sid';
+
+                try {
+
+                    let sid = window.localStorage.getItem(KEY);
+
+                    if (!sid) {
+
+                        sid = 's_' + Math.random().toString(36).slice(2)
+                            + Date.now().toString(36);
+
+                        window.localStorage.setItem(KEY, sid);
+
+                    }
+
+                    return sid;
+
+                } catch (e) {
+
+                    return 's_anon';
+
+                }
+
+            },
+
             {{-- =================================================
-                 ASK
+                     ASK
             ================================================== --}}
             ask(q) {
 
@@ -968,20 +1001,30 @@
                         'X-CSRF-TOKEN': token
 
                     },
-
-                    body: JSON.stringify({
-                        question: q
+body: JSON.stringify({
+                        question: q,
+                        session_id: this.sessionId()
                     })
 
                 })
 
                 .then(async response => {
 
-                    if (!response.ok) {
-                        throw new Error('Server error');
+                    const data = await response.json().catch(() => ({}));
+
+                    if (response.status === 429) {
+
+                        throw new Error(data.reply || @json(__('Terlalu banyak pertanyaan.')));
+
                     }
 
-                    return response.json();
+                    if (!response.ok) {
+
+                        throw new Error('server-error');
+
+                    }
+
+                    return data;
 
                 })
 
@@ -999,14 +1042,19 @@
 
                 })
 
-                .catch(() => {
+                .catch((err) => {
 
                     this.pushBot(
-                        @json(__('Maaf, terjadi kendala koneksi. 😊 Silakan coba lagi beberapa saat.'))
+
+                        err && err.message && err.message !== 'server-error'
+
+                            ? err.message
+
+                            : @json(__('Maaf, terjadi kendala koneksi. 😊 Silakan coba lagi beberapa saat.'))
+
                     );
 
                 })
-
                 .finally(() => {
 
                     this.loading = false;

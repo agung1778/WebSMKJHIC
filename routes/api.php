@@ -22,3 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Endpoint pelacakan traffic (publik, tanpa CSRF karena dipanggil via sendBeacon/fetch)
 Route::post('/traffic/track/page', [TrafficController::class, 'trackPage'])->name('traffic.track.page');
 Route::post('/traffic/track/click', [TrafficController::class, 'trackClick'])->name('traffic.track.click');
+
+// Endpoint AI Chat (lokal, tanpa API eksternal)
+Route::post('/ai/chat', [\App\Http\Controllers\Api\AI\ChatController::class, 'chat'])->name('api.ai.chat');
+
