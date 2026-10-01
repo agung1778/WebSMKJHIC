@@ -118,6 +118,22 @@ class AIConfig
     }
 
     /** Refresh cache (dipakai command & test). */
+    public static function api(string $key, $default = null)
+    {
+        return ((array) self::get('api', []))[$key] ?? $default;
+    }
+
+    public static function maxQuestionLength(): int
+    {
+        return (int) self::api('max_message', 500);
+    }
+
+    public static function cacheTtl(): int
+    {
+        return (int) self::api('cache_ttl', 300);
+    }
+
+    /** Refresh cache (dipakai command & test). */
     public static function flush(): void
     {
         self::$cached = null;
