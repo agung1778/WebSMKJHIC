@@ -2,7 +2,6 @@
 
 namespace App\AI\Data;
 
-<<<<<<< HEAD
 use App\AI\Support\AIConfig;
 use Illuminate\Support\Facades\File;
 
@@ -11,7 +10,7 @@ use Illuminate\Support\Facades\File;
  *
  * Format: .txt, .md, .json, .csv di folder config('ai.sources.documents.paths').
  * Tujuannya agar dokumen resmi (brosur, panduan, SOP internal) bisa masuk
- * knowledge index tanpa harus dih-trad ke tabel database.
+ * knowledge index tanpa harus di-import ke tabel database.
  */
 class DocumentSource extends BaseSource
 {
@@ -180,10 +179,6 @@ class DocumentSource extends BaseSource
         return null;
     }
 
-    /**
-     * @param  array<int,string>  $tokens
-     * @return array<int,array>
-     */
     public function search(string $query, array $tokens): array
     {
         if ($tokens === []) {
@@ -234,74 +229,5 @@ class DocumentSource extends BaseSource
         }
 
         return $this->documents;
-=======
-use App\AI\Knowledge\KnowledgeRecord;
-
-/**
- * Sumber knowledge dari berkas teks/markdown lokal (mis. FAQ, profil,
- * prosedur). Membaca folder atau satu berkas, tanpa koneksi jaringan.
- */
-class DocumentSource implements KnowledgeSource
-{
-    protected array $records = [];
-
-    public function __construct(protected string $path)
-    {
-    }
-
-    public function fetch(): array
-    {
-        $this->records = [];
-
-        foreach ($this->files() as $file) {
-            $this->readFile($file);
-        }
-
-        return $this->records;
-    }
-
-    /** @return array<int,string> */
-    protected function files(): array
-    {
-        if (! file_exists($this->path)) {
-            return [];
-        }
-
-        if (is_file($this->path)) {
-            return [$this->path];
-        }
-
-        $files = [];
-
-        foreach (glob(rtrim($this->path, '/\\') . '/*.{txt,md}', GLOB_BRACE) ?: [] as $file) {
-            $files[] = $file;
-        }
-
-        return $files;
-    }
-
-    protected function readFile(string $file): void
-    {
-        $raw = @file_get_contents($file);
-
-        if ($raw === false || trim($raw) === '') {
-            return;
-        }
-
-        $name = pathinfo($file, PATHINFO_FILENAME);
-        $slug = preg_replace('/[^\p{L}\p{N}]+/u', '_', strtolower($name)) ?: 'document';
-        $slug = trim((string) $slug, '_');
-
-        // Judul: baris pertama bertanda "#", atau nama berkas.
-        $title = $name;
-        if (preg_match('/^#\s*(.+)$/m', $raw, $matches)) {
-            $title = trim($matches[1]);
-        }
-
-        $this->records[] = KnowledgeRecord::make('document', 'document', $title, $raw)
-            ->withSourceId($slug)
-            ->withKeywords(array_filter([$title, 'dokumen', 'informasi']))
-            ->withMetadata(['field' => 'document', 'file' => basename($file)]);
->>>>>>> 6370583c48bc189c4dbb3cee9a4971f0925a062c
     }
 }
