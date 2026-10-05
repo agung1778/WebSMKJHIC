@@ -43,6 +43,7 @@ use App\Http\Controllers\PublicPage\OptimizedImageController;
 
 use App\Http\Controllers\TrafficController;
 use App\Http\Controllers\PublicPage\PublicTrafficController;
+use App\Http\Controllers\PublicPage\InfoSPMBController;
 use App\Http\Controllers\PublicPage\AIChatbotController;
 
 
@@ -103,6 +104,9 @@ Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 // Halaman traffic publik (rekap bulanan agregat)
 Route::get('/traffic', [PublicTrafficController::class, 'index'])->name('public.traffic.index');
+
+// Halaman detail Info SPMB / PPDB (sumber data popup pengumuman)
+Route::get('/infospmb', [InfoSPMBController::class, 'index'])->name('public.spmb.index');
 
 // Halaman legal publik
 Route::view('/kebijakan-privasi', 'PublicSide.legal.privacy')->name('public.legal.privacy');
@@ -194,9 +198,11 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
         Route::post('/programs/{program}/duplicate', [SchoolProgramController::class, 'duplicate'])->name('programs.duplicate');
         Route::post('/programs/bulk', [SchoolProgramController::class, 'bulkAction'])->name('programs.bulk');
 
-        // Pengaturan Info SPMB & Jumlah Siswa (controller & view sudah ada, tinggal route)
-        Route::get('/spmb-settings', [SpmbSettingController::class, 'edit'])->name('spmb_settings.edit');
-        Route::post('/spmb-settings', [SpmbSettingController::class, 'update'])->name('spmb_settings.update');
+        // Info SPMB (daftar, tambah, edit, hapus)
+        Route::resource('spmb-settings', SpmbSettingController::class)
+            ->parameters(['spmb-settings' => 'spmb_setting'])
+            ->names('spmb_settings')
+            ->except(['show']);
         Route::get('/school-settings', [SchoolSettingController::class, 'edit'])->name('school_settings.edit');
         Route::post('/school-settings', [SchoolSettingController::class, 'update'])->name('school_settings.update');
 

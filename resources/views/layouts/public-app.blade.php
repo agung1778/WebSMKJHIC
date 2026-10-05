@@ -866,6 +866,11 @@
             </div>
         </footer>
 
+    {{-- Popup pengumuman PPDB (muncul sekali per versi pengumuman) --}}
+    @if (!empty($ppdbSetting))
+        @include('partials.ppdb-popup')
+    @endif
+
     {{-- Pelacakan traffic (kunjungan halaman & klik) --}}
     @include('partials.traffic-tracking')
 

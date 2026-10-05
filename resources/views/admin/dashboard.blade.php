@@ -124,7 +124,7 @@
                     ['label' => 'Prestasi', 'icon' => 'fa-solid fa-trophy',         'url' => route('admin.achievements.create'), 'bg' => '#FFFBEB', 'fg' => '#D97706'],
                     ['label' => 'Fasilitas','icon' => 'fa-solid fa-building',       'url' => route('admin.facilities.create'), 'bg' => '#F0FDFA', 'fg' => '#0D9488'],
                     ['label' => 'Hero',     'icon' => 'fa-solid fa-images',         'url' => route('admin.image.index'),       'bg' => '#FDF4FF', 'fg' => '#C026D3'],
-                    ['label' => 'SPMB',     'icon' => 'fa-solid fa-file-circle-check', 'url' => route('admin.spmb_settings.edit'), 'bg' => '#E8FBF0', 'fg' => '#16A34A'],
+                    ['label' => 'SPMB',     'icon' => 'fa-solid fa-file-circle-check', 'url' => route('admin.spmb_settings.index'), 'bg' => '#E8FBF0', 'fg' => '#16A34A'],
                 ];
             @endphp
             @foreach($quickActions as $qa)
@@ -148,7 +148,7 @@
                 <div class="text-sm font-bold dash-title">Info SPMB</div>
                 <div class="text-xs dash-sub mt-0.5">Status pendaftaran: <b style="color:{{ $spmb->status === 'Buka' ? '#16A34A' : '#9CA3AF' }}">{{ $spmb->status }}</b> @if($spmb->wave_name) · {{ $spmb->wave_name }} @endif</div>
             </div>
-            <a href="{{ route('admin.spmb_settings.edit') }}" class="app-btn app-btn-soft-brand">Atur SPMB &rarr;</a>
+            <a href="{{ route('admin.spmb_settings.index') }}" class="app-btn app-btn-soft-brand">Atur SPMB &rarr;</a>
         </div>
     @endif
 

@@ -13,6 +13,7 @@ class SpmbSettingSeeder extends Seeder
         if (SpmbSetting::count() == 0) {
             SpmbSetting::create([
                 'status' => 'Buka',
+                'is_active' => true,
                 'wave_name' => 'Gelombang Inden Dibuka!',
                 'period_date' => '1 Oktober 2025 - 4 Januari 2026',
                 'quota_note' => '*Kuota Terbatas',

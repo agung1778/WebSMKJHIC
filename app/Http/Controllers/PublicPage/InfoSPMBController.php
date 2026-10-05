@@ -13,7 +13,7 @@ class InfoSPMBController extends Controller
      */
     public function index()
     {
-        $spmbSetting = SpmbSetting::first();
+        $spmbSetting = SpmbSetting::active();
         return view('PublicSide.infospmb', compact('spmbSetting'));
     }
 }

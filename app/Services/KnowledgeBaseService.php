@@ -273,7 +273,7 @@ class KnowledgeBaseService
 
     protected function spmbChunks(): Collection
     {
-        $spmb = SpmbSetting::first();
+        $spmb = SpmbSetting::active();
         if (! $spmb) {
             return collect();
         }

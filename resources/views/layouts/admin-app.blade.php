@@ -89,7 +89,7 @@
             [
                 'label' => 'Pengaturan',
                 'items' => [
-                    ['title' => 'Info SPMB', 'icon' => 'fa-solid fa-file-circle-check', 'routes' => ['admin.spmb_settings.*'], 'url' => 'admin.spmb_settings.edit'],
+                    ['title' => 'Info SPMB', 'icon' => 'fa-solid fa-file-circle-check', 'routes' => ['admin.spmb_settings.*'], 'url' => 'admin.spmb_settings.index'],
                 ],
             ],
             [
@@ -136,7 +136,7 @@
             ['title' => 'Tambah Guru', 'icon' => 'fa-solid fa-user-tie', 'url' => route('admin.teachers.create')],
             ['title' => 'Tambah Prestasi', 'icon' => 'fa-solid fa-trophy', 'url' => route('admin.achievements.create')],
             ['title' => 'Tambah Fasilitas', 'icon' => 'fa-solid fa-building', 'url' => route('admin.facilities.create')],
-            ['title' => 'Atur Info SPMB', 'icon' => 'fa-solid fa-file-circle-check', 'url' => route('admin.spmb_settings.edit')],
+            ['title' => 'Atur Info SPMB', 'icon' => 'fa-solid fa-file-circle-check', 'url' => route('admin.spmb_settings.index')],
         ];
 
         $paletteGroups = [];

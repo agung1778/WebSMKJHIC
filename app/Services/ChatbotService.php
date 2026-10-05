@@ -1409,7 +1409,7 @@ class ChatbotService
 
     protected function spmbAnswer(): string
     {
-        $spmb = SpmbSetting::first();
+        $spmb = SpmbSetting::active();
 
         $rows = collect([
             'Status pendaftaran' => $spmb?->status ?? 'Tidak ada data',

@@ -51,7 +51,7 @@ class AdminController extends Controller
         $latestPartners = Partner::latest()->take(5)->get();
         $latestTeachers = Teacher::latest()->take(5)->get();
 
-        $spmb = SpmbSetting::first();
+        $spmb = SpmbSetting::active();
 
         return view('admin.dashboard', compact(
             'stats',
