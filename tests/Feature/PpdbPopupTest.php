@@ -33,6 +33,7 @@ class PpdbPopupTest extends TestCase
             '2026_02_28_062855_create_spmb_settings_table.php',
             '2026_10_05_000001_add_crud_fields_to_spmb_settings_table.php',
             '2026_10_05_000002_add_popup_fields_to_spmb_settings_table.php',
+            '2026_10_05_000003_add_popup_layout_fields_to_spmb_settings_table.php',
         ] as $file) {
             Artisan::call('migrate', [
                 '--force' => true,
@@ -171,14 +172,27 @@ class PpdbPopupTest extends TestCase
         $this->assertStringContainsString('#8b5cf6', $html);
     }
 
-    public function test_frekuensi_session_membuat_popup_muncul_lagi_setiap_refresh(): void
+    public function test_frekuensi_default_popup_selalu_muncul_setiap_refresh(): void
+    {
+        $setting = $this->buka();
+
+        // Tanpa 설정 frekuensi, popup harus memakai mode 'always' (tidak ada penanda yang disimpan)
+        $this->assertSame('always', $setting->popup_frequency ?: 'always');
+
+        $html = $this->get('/kebijakan-privasi')->assertOk()->getContent();
+
+        $this->assertStringContainsString("var mode = 'always'", $html);
+        $this->assertStringNotContainsString("mode === 'always'", $html);
+    }
+
+    public function test_frekuensi_session_menyimpan_penanda_di_session_storage(): void
     {
         $this->buka(['popup_frequency' => 'session']);
 
         $html = $this->get('/kebijakan-privasi')->assertOk()->getContent();
 
         $this->assertStringContainsString("var mode = 'session'", $html);
-        // sessionStorage = hilang saat tab ditutup, tapi tetap ada saat refresh
+        // sessionStorage bertahan saat refresh, jadi mode ini tidak cocok untuk "muncul tiap refresh"
         $this->assertStringContainsString('window.sessionStorage.getItem(key)', $html);
         $this->assertStringContainsString('window.sessionStorage.setItem(key', $html);
     }
@@ -212,6 +226,37 @@ class PpdbPopupTest extends TestCase
 
         $this->assertStringContainsString("var mode = 'once'", $html);
         $this->assertStringContainsString('window.localStorage.setItem(key, \'1\')', $html);
+    }
+
+    public function test_popup_memiliki_jaring_pengaman_jika_alpine_gagal(): void
+    {
+        $this->buka();
+
+        $html = $this->get('/kebijakan-privasi')->assertOk()->getContent();
+
+        $this->assertStringContainsString('id="ppdb-popup-fallback"', $html);
+        $this->assertStringContainsString("if (window.Alpine)", $html);
+        $this->assertStringContainsString("removeAttribute('x-cloak')", $html);
+    }
+
+    public function test_ukuran_dan_posisi_popup_bisa_diatur(): void
+    {
+        $this->buka(['popup_size' => 'besar', 'popup_position' => 'bawah']);
+
+        $html = $this->get('/kebijakan-privasi')->assertOk()->getContent();
+
+        $this->assertStringContainsString('--ppdb-width: 720px', $html);
+        $this->assertStringContainsString('--ppdb-align: flex-end', $html);
+    }
+
+    public function test_gambar_popup_bisa_disembunyikan(): void
+    {
+        $setting = $this->buka(['popup_image' => 'spmb/poster.png', 'popup_show_image' => false]);
+
+        $html = $this->get('/kebijakan-privasi')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('spmb/poster.png', $html);
+        $this->assertFalse($setting->popup_show_image);
     }
 
     public function test_jeda_tampil_bisa_diatur(): void

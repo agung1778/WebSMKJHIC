@@ -35,6 +35,7 @@ class SpmbSettingCrudTest extends TestCase
             '2026_02_28_062855_create_spmb_settings_table.php',
             '2026_10_05_000001_add_crud_fields_to_spmb_settings_table.php',
             '2026_10_05_000002_add_popup_fields_to_spmb_settings_table.php',
+            '2026_10_05_000003_add_popup_layout_fields_to_spmb_settings_table.php',
         ] as $file) {
             Artisan::call('migrate', [
                 '--force' => true,
@@ -190,6 +191,59 @@ class SpmbSettingCrudTest extends TestCase
         $this->assertSame('Daftar Gelombang 3', $setting->popup_button_text);
         $this->assertNotNull($setting->popup_logo);
         Storage::disk('public')->assertExists($setting->popup_logo);
+    }
+
+    public function test_pratinjau_popup_tampil_di_halaman_admin(): void
+    {
+        SpmbSetting::create([
+            'status' => 'Buka',
+            'is_active' => true,
+            'popup_title' => 'Pratinjau Gelombang 4',
+        ]);
+
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.spmb_settings.edit', SpmbSetting::query()->latest('id')->first()))
+            ->assertOk()
+            ->getContent();
+
+        // Mode pratinjau: tidak memakai layer fixed, ada panel live preview
+        $this->assertStringContainsString('data-popup-frame', $html);
+        $this->assertStringNotContainsString('id="ppdb-popup-fallback"', $html);
+        $this->assertStringContainsString('Pratinjau Gelombang 4', $html);
+        $this->assertStringContainsString('data-popup-source="popup_title"', $html);
+    }
+
+    public function test_admin_bisa_mengatur_ukuran_posisi_dan_tampilan_popup(): void
+    {
+        $response = $this->actingAs($this->admin())->post(route('admin.spmb_settings.store'), [
+            'status' => 'Buka',
+            'popup_size' => 'kecil',
+            'popup_position' => 'atas',
+            'popup_show_image' => '0',
+            'popup_show_detail_button' => '1',
+        ]);
+
+        $response->assertRedirect(route('admin.spmb_settings.index'));
+
+        $setting = SpmbSetting::query()->latest('id')->first();
+
+        $this->assertSame('kecil', $setting->popup_size);
+        $this->assertSame('atas', $setting->popup_position);
+        $this->assertFalse($setting->popup_show_image);
+        $this->assertTrue($setting->popup_show_detail_button);
+        // Frekuensi default agar popup terlihat di setiap halaman/refresh
+        $this->assertSame('always', $setting->popup_frequency);
+    }
+
+    public function test_ukuran_dan_posisi_popup_hanya_menerima_nilai_valid(): void
+    {
+        $this->actingAs($this->admin())
+            ->post(route('admin.spmb_settings.store'), [
+                'status' => 'Buka',
+                'popup_size' => 'raksasa',
+                'popup_position' => 'tengah-kiri',
+            ])
+            ->assertSessionHasErrors(['popup_size', 'popup_position']);
     }
 
     public function test_popup_bisa_dimatikan_lewat_admin(): void

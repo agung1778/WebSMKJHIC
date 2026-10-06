@@ -868,7 +868,7 @@
 
     {{-- Popup pengumuman PPDB (muncul sekali per versi pengumuman) --}}
     @if (!empty($ppdbSetting))
-        @include('partials.ppdb-popup')
+        <x-ppdb-popup :setting="$ppdbSetting" />
     @endif
 
     {{-- Pelacakan traffic (kunjungan halaman & klik) --}}

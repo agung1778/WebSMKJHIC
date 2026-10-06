@@ -17,6 +17,10 @@ class SpmbSetting extends Model
         'popup_frequency',
         'popup_theme',
         'popup_delay',
+        'popup_size',
+        'popup_position',
+        'popup_show_image',
+        'popup_show_detail_button',
         'popup_subtitle',
         'popup_title',
         'popup_badge',
@@ -35,10 +39,21 @@ class SpmbSetting extends Model
         'registration_link',
     ];
 
+    protected $attributes = [
+        'popup_frequency' => 'always',
+        'popup_theme' => 'hijau',
+        'popup_size' => 'sedang',
+        'popup_position' => 'tengah',
+        'popup_show_image' => true,
+        'popup_show_detail_button' => true,
+    ];
+
     protected $casts = [
         'is_active' => 'boolean',
         'popup_enabled' => 'boolean',
         'popup_delay' => 'integer',
+        'popup_show_image' => 'boolean',
+        'popup_show_detail_button' => 'boolean',
     ];
 
     /**
@@ -47,10 +62,34 @@ class SpmbSetting extends Model
     public static function popupFrequencies(): array
     {
         return [
-            'always' => 'Setiap halaman dimuat (termasuk refresh)',
-            'session' => 'Sekali per sesi browser (refresh = muncul lagi)',
+            'always' => 'Setiap halaman & refresh (paling disarankan)',
+            'session' => 'Sekali per sesi browser (sembunyi sampai tab ditutup)',
             'daily' => 'Sekali per hari',
             'once' => 'Hanya sekali sampai data diubah',
+        ];
+    }
+
+    /**
+     * Opsi ukuran (lebar) kartu popup.
+     */
+    public static function popupSizes(): array
+    {
+        return [
+            'kecil' => 'Kecil (420px)',
+            'sedang' => 'Sedang (560px)',
+            'besar' => 'Besar (720px)',
+        ];
+    }
+
+    /**
+     * Opsi posisi popup di layar.
+     */
+    public static function popupPositions(): array
+    {
+        return [
+            'atas' => 'Atas',
+            'tengah' => 'Tengah',
+            'bawah' => 'Bawah',
         ];
     }
 

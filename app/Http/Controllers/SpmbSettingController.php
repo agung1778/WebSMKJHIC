@@ -29,6 +29,10 @@ class SpmbSettingController extends Controller
             'popup_frequency'   => 'nullable|in:' . implode(',', array_keys(SpmbSetting::popupFrequencies())),
             'popup_theme'       => 'nullable|in:' . implode(',', array_keys(SpmbSetting::popupThemes())),
             'popup_delay'       => 'nullable|integer|min:0|max:10000',
+            'popup_size'        => 'nullable|in:' . implode(',', array_keys(SpmbSetting::popupSizes())),
+            'popup_position'    => 'nullable|in:' . implode(',', array_keys(SpmbSetting::popupPositions())),
+            'popup_show_image'  => 'nullable|boolean',
+            'popup_show_detail_button' => 'nullable|boolean',
             'popup_subtitle'    => 'nullable|string|max:120',
             'popup_title'       => 'nullable|string|max:160',
             'popup_badge'       => 'nullable|string|max:60',
@@ -76,7 +80,7 @@ class SpmbSettingController extends Controller
 
     public function edit(SpmbSetting $spmb_setting)
     {
-        return view('admin.spmb_settings.edit', compact('spmb_setting'));
+        return view('admin.spmb_settings.edit', ['spmbSetting' => $spmb_setting]);
     }
 
     public function update(Request $request, SpmbSetting $spmb_setting)
@@ -121,14 +125,18 @@ class SpmbSettingController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active');
         $validated['popup_enabled'] = $request->boolean('popup_enabled');
+        $validated['popup_show_image'] = $request->boolean('popup_show_image');
+        $validated['popup_show_detail_button'] = $request->boolean('popup_show_detail_button');
 
         if ($validated['is_active'] || ! $this->hasActive()) {
             $validated['is_active'] = true;
         }
 
-        $validated['popup_frequency'] = $validated['popup_frequency'] ?? 'session';
+        $validated['popup_frequency'] = $validated['popup_frequency'] ?? 'always';
         $validated['popup_theme'] = $validated['popup_theme'] ?? 'hijau';
         $validated['popup_delay'] = $validated['popup_delay'] ?? 900;
+        $validated['popup_size'] = $validated['popup_size'] ?? 'sedang';
+        $validated['popup_position'] = $validated['popup_position'] ?? 'tengah';
 
         return $validated;
     }
