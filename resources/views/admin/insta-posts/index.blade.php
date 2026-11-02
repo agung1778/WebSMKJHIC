@@ -22,7 +22,7 @@
             <x-admin-components::stat-card label="Kuota" :value="$posts->count() . ' / 15'" icon="fa-solid fa-gauge-high" tone="blue" />
         </div>
 
-        <div class="grid gap-6 lg:grid-cols-[360px_1fr]">
+        <div class="admin-media-layout grid gap-6">
             {{-- Form tambah --}}
             <div class="app-card p-0 h-fit lg:sticky lg:top-24">
                 <div class="p-5 border-b" style="border-color:var(--border)">
@@ -59,7 +59,7 @@
 
             {{-- Daftar postingan --}}
             <div>
-                <div data-filter-root class="app-card overflow-hidden">
+                <div data-filter-root class="app-card">
                     <div class="toolbar">
                         <div class="search-field">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -87,19 +87,19 @@
                                         $imgUrl = asset('storage/' . $p->path);
                                     @endphp
                                     <tr data-row>
-                                        <td>
+                                        <td data-label="Pratinjau">
                                             <img class="thumb cursor-zoom-in" src="{{ $imgUrl }}" alt="{{ $caption }}" loading="lazy" style="width:56px;height:56px;border-radius:14px" onclick="window.open('{{ $imgUrl }}')">
                                         </td>
-                                        <td style="min-width:220px">
+                                        <td data-label="Caption">
                                             <div class="cell-main truncate" style="max-width:280px">{{ $caption }}</div>
                                             @if ($p->post_url)
                                                 <a class="cell-sub truncate d-block" style="max-width:280px;color:var(--blue,#1d6fd6)" href="{{ $p->post_url }}" target="_blank">{{ $p->post_url }}</a>
                                             @endif
                                         </td>
-                                        <td><span class="badge {{ $active ? 'badge-published' : 'badge-archived' }}">{{ $active ? 'Aktif' : 'Tersembunyi' }}</span></td>
-                                        <td><span class="cell-sub" style="white-space:nowrap">{{ $p->created_at->translatedFormat('d M Y') }}</span></td>
-                                        <td>
-                                            <div class="flex items-center justify-end gap-2">
+                                        <td data-label="Status"><span class="badge {{ $active ? 'badge-published' : 'badge-archived' }}">{{ $active ? 'Aktif' : 'Tersembunyi' }}</span></td>
+                                        <td data-label="Ditambahkan"><span class="cell-sub">{{ $p->created_at->translatedFormat('d M Y') }}</span></td>
+                                        <td data-label="Aksi">
+                                            <div class="table-actions flex items-center justify-end gap-2">
                                                 <form action="{{ route('admin.insta-posts.toggle', $p) }}" method="POST" title="{{ $active ? 'Sembunyikan' : 'Tampilkan' }}">
                                                     @csrf
                                                     <button class="icon-btn" type="submit" aria-label="{{ $active ? 'Sembunyikan' : 'Tampilkan' }}">

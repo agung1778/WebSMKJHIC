@@ -38,6 +38,7 @@
     <script defer src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
     @stack('styles')
+    <link rel="stylesheet" href="{{ asset('admin/admin-theme.css') }}?v={{ @filemtime(public_path('admin/admin-theme.css')) }}" />
 </head>
 
 <body class="font-sans">
@@ -154,31 +155,52 @@
     <div class="app-shell">
 
         {{-- ============ SIDEBAR ============ --}}
-        <aside class="sidebar" aria-label="Menu admin">
+        <aside class="sidebar" id="admin-sidebar" aria-label="Menu admin">
             <div class="sidebar-brand">
                 <div class="logo-wrap">
                     <img src="{{ asset('assets/logo/amaliah_white.png') }}" alt="Logo SMK Amaliah" />
                 </div>
                 <div class="brand-text">
-                    <div class="brand-name">SMK Amaliah 1 &amp; 2</div>
-                    <div class="brand-tag">Tauhid Is Our Fundament</div>
+                    <div class="brand-name">SMK AMALIAH</div>
+                    <div class="brand-tag">Admin Panel · 1 &amp; 2</div>
                 </div>
             </div>
 
+            <button type="button" class="sidebar-close show-mob" data-sidebar-mobile-close><i class="fa-solid fa-xmark" aria-hidden="true"></i> Tutup Menu</button>
             <nav class="sidebar-scroll">
+                <div class="menu-label">Menu Utama</div>
                 @foreach ($menu as $section)
-                    <div class="menu-section">
-                        <div class="menu-label">{{ $section['label'] }}</div>
+                    @php
+                        $isDashboard = $section['label'] === 'Dashboard';
+                        $sectionActive = collect($section['items'])->contains(fn($entry) => count(array_filter($entry['routes'], fn($r) => request()->routeIs($r))) > 0);
+                        $sectionIcon = match ($section['label']) {
+                            'Website' => 'fa-solid fa-globe',
+                            'Konten' => 'fa-solid fa-database',
+                            'Akademik' => 'fa-solid fa-book-open',
+                            'Pengaturan' => 'fa-solid fa-gear',
+                            default => 'fa-solid fa-chart-column',
+                        };
+                    @endphp
+                    <div class="menu-section {{ $isDashboard ? '' : 'nav-group' }} {{ $sectionActive && !$isDashboard ? 'open' : '' }}">
+                        @unless($isDashboard)
+                            <button type="button" class="nav-group-toggle {{ $sectionActive ? 'section-active' : '' }}" aria-expanded="{{ $sectionActive ? 'true' : 'false' }}" aria-controls="admin-menu-{{ $loop->index }}" title="{{ $section['label'] }}">
+                                <i class="nav-icon {{ $sectionIcon }}" aria-hidden="true"></i>
+                                <span class="nav-text">{{ $section['label'] }}</span>
+                                <i class="fa-solid fa-chevron-right chevron" aria-hidden="true"></i>
+                            </button>
+                            <div class="nav-submenu" id="admin-menu-{{ $loop->index }}">
+                        @endunless
                         @foreach ($section['items'] as $item)
                             @php
                                 $itemActive = count(array_filter($item['routes'], fn($r) => request()->routeIs($r))) > 0;
                                 $itemUrl = Route::has($item['url']) ? route($item['url']) : '#';
                             @endphp
-                            <a class="nav-link @if($itemActive) active @endif" href="{{ $itemUrl }}" title="{{ $item['title'] }}">
+                            <a class="nav-link @if($itemActive) active @endif" href="{{ $itemUrl }}" title="{{ $item['title'] }}" @if($itemActive) aria-current="page" @endif>
                                 <i class="nav-icon {{ $item['icon'] }}"></i>
                                 <span class="nav-text">{{ $item['title'] }}</span>
                             </a>
                         @endforeach
+                        @unless($isDashboard)</div>@endunless
                     </div>
                 @endforeach
             </nav>
@@ -199,9 +221,9 @@
                         </div>
                     </div>
                 </div>
-                <a class="app-btn btn-block" style="width:100%" href="{{ url('/') }}" target="_blank">
+                <a class="app-btn app-btn-primary btn-block" style="width:100%" href="{{ url('/') }}" target="_blank" rel="noopener">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    <span class="foot-text">Lihat Website</span>
+                    <span class="foot-text">Kunjungi Website</span>
                 </a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
@@ -216,7 +238,7 @@
         {{-- ============ MAIN ============ --}}
         <div class="app-main">
             <header class="topbar">
-                <button type="button" class="icon-btn show-mob" data-sidebar-mobile-toggle aria-label="Buka menu">
+                <button type="button" class="icon-btn show-mob" data-sidebar-mobile-toggle aria-label="Buka menu" aria-controls="admin-sidebar" aria-expanded="false">
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <button type="button" class="icon-btn hide-mob" data-sidebar-toggle aria-label="Ciutkan sidebar">
@@ -224,6 +246,8 @@
                 </button>
 
                 <div class="topbar-title">
+                    <div class="admin-panel-name">Admin Panel SMK Amaliah 1 &amp; 2</div>
+                    <div class="admin-panel-caption">Sistem Manajemen Website Sekolah</div>
                     <nav class="topbar-crumb" aria-label="Breadcrumb">
                         <span><a href="{{ route('admin.dashboard') }}">Beranda</a></span>
                         @if ($pageParent && $pageParent !== 'Dashboard')
@@ -234,11 +258,6 @@
                         <span style="color:var(--text-2);font-weight:600">{{ $pageActive }}</span>
                     </nav>
                     <h1 class="topbar-h1">@hasSection('title') @yield('title') @else {{ $pageActive }} @endif</h1>
-                </div>
-
-                <div class="topbar-greet">
-                    <span class="tg-hi">{{ $greeting }}, {{ $userName }} 👋</span>
-                    <span class="tg-date"><i class="fa-regular fa-calendar"></i>{{ $todayId }}</span>
                 </div>
 
                 <div class="topbar-actions">
@@ -307,7 +326,7 @@
 
                     {{-- Profile --}}
                     <div class="dropdown">
-                        <button type="button" class="icon-btn" data-dropdown aria-label="Menu profil" style="width:auto;padding:3px 8px 3px 4px;gap:8px">
+                        <button type="button" class="icon-btn profile-menu-button" data-dropdown aria-label="Menu profil" style="width:auto;padding:3px 8px 3px 4px;gap:8px">
                             <span style="width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#282829,#3E3E40);color:#63CD00;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;overflow:hidden">
                                 @if($hasAvatar)
                                     <img src="{{ \Storage::disk('public')->url($user->avatar) }}" alt="" style="width:100%;height:100%;object-fit:cover" />
@@ -315,6 +334,7 @@
                                     {{ $initials }}
                                 @endif
                             </span>
+                            <span class="profile-menu-label"><strong>{{ $userName }}</strong><small>{{ $userRole === 'superadmin' ? 'Super Admin' : 'Admin' }}</small></span>
                             <i class="fa-solid fa-chevron-down" style="font-size:10px;color:var(--text-3)"></i>
                         </button>
                         <div class="dropdown-menu" style="display:none">
@@ -337,6 +357,10 @@
             </header>
 
             <main class="app-content">
+                <div class="content-context">
+                    <span>{{ $pageActive }}</span>
+                    <time datetime="{{ now()->toDateString() }}"><i class="fa-regular fa-calendar" aria-hidden="true"></i> {{ $todayId }}</time>
+                </div>
                 @yield('content')
             </main>
         </div>

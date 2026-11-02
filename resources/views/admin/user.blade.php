@@ -60,7 +60,7 @@
                                     : 'Belum pernah login';
                             @endphp
                             <tr data-row data-cat="{{ $u->role }}">
-                                <td>
+                                <td data-label="Admin">
                                     <div class="flex items-center gap-3">
                                         <span class="initials-avatar">{{ strtoupper(mb_substr($u->name, 0, 1)) }}</span>
                                         <div>
@@ -69,17 +69,17 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td><span class="badge {{ $u->role === 'superadmin' ? 'badge-info' : 'badge-published' }}">{{ $u->role === 'superadmin' ? 'Super Admin' : 'Admin' }}</span></td>
-                                <td><span class="cell-sub" style="white-space:nowrap">{{ $u->created_at->format('d M Y, H:i') }}</span></td>
-                                <td>
+                                <td data-label="Role"><span class="badge {{ $u->role === 'superadmin' ? 'badge-info' : 'badge-published' }}">{{ $u->role === 'superadmin' ? 'Super Admin' : 'Admin' }}</span></td>
+                                <td data-label="Tanggal Dibuat"><span class="cell-sub">{{ $u->created_at->format('d M Y, H:i') }}</span></td>
+                                <td data-label="Aktivitas Terakhir">
                                     <div class="flex items-center gap-2">
                                         <span class="status-dot {{ $online ? 'online' : '' }}"></span>
                                         <span class="cell-sub">{{ $lastBy }}</span>
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Aksi">
                                     @if ($isSuperadmin)
-                                        <div class="flex items-center justify-end gap-2">
+                                        <div class="table-actions flex items-center justify-end gap-2">
                                             <a class="app-btn app-btn-sm" href="{{ route('admin.users.edit', $u) }}" title="Edit profil admin"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
                                             <form action="{{ route('admin.users.updateRole', $u) }}" method="POST">
                                                 @csrf

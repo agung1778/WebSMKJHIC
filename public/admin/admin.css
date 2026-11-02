@@ -178,7 +178,7 @@ body.sidebar-collapsed .nav-group-toggle .nav-text,
 body.sidebar-collapsed .sidebar-foot .foot-text,
 body.sidebar-collapsed .sidebar-foot .btn-block .foot-text { display: none; }
 
-.sidebar-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 14px 14px 18px; }
+.sidebar-scroll { flex: 1; min-width: 0; overflow-y: auto; padding: 14px 14px 18px; }
 
 .menu-section { margin-bottom: 20px; }
 .menu-label {

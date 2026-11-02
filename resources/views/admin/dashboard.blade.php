@@ -37,15 +37,17 @@
     }
 @endphp
 
-<div class="space-y-6">
+<div class="dashboard-sections space-y-6">
 
     {{-- ==================== HERO CARD ==================== --}}
-    <div class="hero-card fade-up">
+    <div class="hero-card dashboard-hero fade-up">
         <div class="hero-grid">
             <div class="hero-msg">
-                <div class="hero-hi">{{ $today }}</div>
-                <div class="hero-title">{{ $hi }}, {{ $userName }} 👋</div>
-                <div class="hero-sub">Kelola seluruh informasi website SMK Amaliah dari dashboard ini — berita, jurusan, fasilitas, hingga pendaftaran SPMB.</div>
+                <div class="hero-hi"><i class="fa-solid fa-sun" aria-hidden="true"></i> {{ $hi }}, {{ $userName }}</div>
+                <div class="hero-heading">
+                    <h2 class="hero-title">Content Management System <span>SMK Amaliah 1 &amp; 2</span></h2>
+                    <div class="hero-sub">Kelola informasi sekolah, konten, dan publikasi secara terpadu dalam satu sistem yang terintegrasi.</div>
+                </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <span class="hero-chip">
@@ -58,14 +60,60 @@
                 </span>
                 <a href="{{ url('/') }}" target="_blank" class="app-btn app-btn-primary">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    <span class="hide-mob">Lihat Website</span>
+                    <span>Lihat Website</span>
                 </a>
             </div>
         </div>
     </div>
 
+    <section class="app-card traffic-overview fade-up" aria-labelledby="traffic-overview-title">
+        <div class="overview-header">
+            <div>
+                <h2 id="traffic-overview-title"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i> Website Traffic</h2>
+                <p>Pantau aktivitas pengunjung dan jangkauan website sekolah</p>
+            </div>
+            <a href="{{ route('admin.traffic.index') }}" class="app-btn app-btn-soft-brand">Lihat Semua <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a>
+        </div>
+        <div class="traffic-overview-body">
+            <span class="overview-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
+            <div class="traffic-overview-copy">
+                <h3>Aktivitas Website Sekolah</h3>
+                <p><strong>{{ number_format($stats['visitorsToday']) }} pengunjung</strong> tercatat hari ini. Lihat laporan lengkap untuk memantau perkembangan website sekolah.</p>
+                <div class="traffic-overview-meta">
+                    <span><i class="fa-regular fa-calendar" aria-hidden="true"></i> {{ now()->locale('id')->translatedFormat('d F Y') }}</span>
+                    <span><i class="fa-solid fa-users" aria-hidden="true"></i> {{ number_format($monthVisitors) }} pengunjung bulan ini</span>
+                    <span class="badge badge-brand">Statistik Website</span>
+                </div>
+            </div>
+            <a href="{{ route('admin.traffic.index') }}" class="app-btn traffic-report-link"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Lihat Laporan <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a>
+        </div>
+    </section>
+
+    <section class="dashboard-access fade-up" aria-labelledby="dashboard-access-title">
+        <div class="dashboard-section-heading">
+            <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>
+            <div><h2 id="dashboard-access-title">Akses Cepat</h2><p>Menu yang sering digunakan untuk mempermudah pengelolaan website</p></div>
+        </div>
+        <div class="dashboard-access-grid">
+            @foreach([
+                ['title' => 'Data Peserta Didik', 'description' => 'Perbarui jumlah peserta didik sekolah', 'icon' => 'fa-users', 'route' => 'admin.school_settings.edit'],
+                ['title' => 'Kelola Berita', 'description' => 'Kelola informasi dan berita sekolah', 'icon' => 'fa-newspaper', 'route' => 'admin.news.index'],
+                ['title' => 'Galeri & Media', 'description' => 'Kelola foto dan media website', 'icon' => 'fa-images', 'route' => 'admin.image.index'],
+                ['title' => 'Pengaturan SPMB', 'description' => 'Atur informasi pendaftaran sekolah', 'icon' => 'fa-gear', 'route' => 'admin.spmb_settings.index'],
+            ] as $access)
+                <a href="{{ route($access['route']) }}" class="access-card">
+                    <span class="access-icon"><i class="fa-solid {{ $access['icon'] }}" aria-hidden="true"></i></span>
+                    <h3>{{ $access['title'] }}</h3>
+                    <p>{{ $access['description'] }}</p>
+                    <span class="access-arrow"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </a>
+            @endforeach
+        </div>
+    </section>
+
     {{-- ==================== STATISTIK ==================== --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="dashboard-section-heading"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i><div><h2>Ringkasan Sekolah</h2><p>Data konten, sekolah, dan pengunjung website</p></div></div>
+    <div class="dashboard-stats grid grid-cols-2 md:grid-cols-4 gap-4">
         @foreach([
             ['label' => 'Total Artikel',     'value' => number_format($stats['news']),           'icon' => 'fa-solid fa-newspaper', 'bg' => '#EFF6FF', 'fg' => '#2563EB', 'sub' => 'Berita terpublish'],
             ['label' => 'Jumlah Guru',       'value' => number_format($stats['teachers']),       'icon' => 'fa-solid fa-user-tie',  'bg' => '#F0F9FF', 'fg' => '#0284C7', 'sub' => 'Tenaga pendidik'],
@@ -172,6 +220,7 @@
         };
 
         window.__drawChart = function (range) {
+            window.__chartRange = range;
             const data = window.__chartData[range] || window.__chartData['7d'];
             const isYear = range === '12m';
             if (chart) chart.destroy();
@@ -230,9 +279,7 @@
 
         window.__drawChart(window.__chartRange);
 
-        const toggle = document.getElementById('theme-toggle');
-        const onToggle = () => window.__drawChart(window.__chartRange);
-        if (toggle) toggle.addEventListener('click', onToggle);
+        document.addEventListener('admin:theme-changed', () => window.__drawChart(window.__chartRange));
     });
 </script>
 @endpush

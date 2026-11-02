@@ -25,7 +25,7 @@
             <x-admin-components::stat-card label="Terakhir Diperbarui" :value="$images->max('updated_at') ? \Carbon\Carbon::parse($images->max('updated_at'))->locale('id')->diffForHumans() : '-'" icon="fa-solid fa-clock-rotate-left" tone="amber" />
         </div>
 
-        <div class="grid gap-6 lg:grid-cols-[340px_1fr]">
+        <div class="admin-media-layout grid gap-6">
             {{-- Form unggah --}}
             <div class="app-card p-0 h-fit lg:sticky lg:top-24">
                 <div class="p-5 border-b" style="border-color:var(--border)">
@@ -128,16 +128,16 @@
                                         $imgUrl = asset('storage/' . $g->path);
                                     @endphp
                                     <tr data-row>
-                                        <td>
+                                        <td data-label="Pratinjau">
                                             <img class="thumb cursor-zoom-in" src="{{ $imgUrl }}" alt="{{ $imgName }}" loading="lazy" style="width:72px;height:48px;border-radius:10px" onclick="window.open('{{ $imgUrl }}')">
                                         </td>
-                                        <td style="min-width:260px">
+                                        <td data-label="Judul / Path">
                                             <div class="cell-main truncate">{{ $imgName }}</div>
                                             <code class="cell-sub truncate d-block" style="max-width:340px">{{ $imgSub }}</code>
                                         </td>
-                                        <td><span class="badge badge-info">{{ $imgSize }}</span></td>
-                                        <td>
-                                            <div class="flex items-center justify-end gap-2">
+                                        <td data-label="Ukuran"><span class="badge badge-info">{{ $imgSize }}</span></td>
+                                        <td data-label="Aksi">
+                                            <div class="table-actions flex items-center justify-end gap-2">
                                                 <a class="app-btn app-btn-sm app-btn-primary" href="{{ route('admin.image.edit', $g) }}"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
                                                 <div class="dropdown">
                                                     <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>

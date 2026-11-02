@@ -247,7 +247,7 @@
                 <span class="ml-auto text-xs text-slate-400 font-medium">{{ $fmt($totalLinks) }} total klik</span>
             </div>
 
-            <div class="md:hidden space-y-3">
+            <div class="traffic-record-cards space-y-3">
                 @forelse($links['rows'] as $row)
                     @php
                         $p = $row->clicks > 0 && $totalLinks > 1 ? ((float) $row->clicks / (float) $totalLinks) * 100 : 0;
@@ -272,7 +272,7 @@
                             </div>
                             <div>
                                 <p class="text-[10px] font-bold text-slate-600">
-                                    {{ $row->last_click ? \Carbon\Carbon::parse($row->last_click)->format('d M Y') : '-' }}</p>
+                                    {{ $row->last_click ? \Carbon\Carbon::parse($row->last_click)->format('d M Y H:i') : '-' }}</p>
                                 <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Terakhir</p>
                             </div>
                         </div>
@@ -291,8 +291,8 @@
                 @endforelse
             </div>
 
-            <div class="hidden md:block app-card overflow-hidden">
-                <div class="overflow-x-auto">
+            <div class="traffic-record-table app-card">
+                <div class="traffic-table-wrap">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-500 font-bold">
@@ -349,7 +349,7 @@
                 <span class="ml-auto text-xs text-slate-400 font-medium">{{ $fmt($totalButtons) }} total klik</span>
             </div>
 
-            <div class="md:hidden space-y-3">
+            <div class="traffic-record-cards space-y-3">
                 @forelse($buttons['rows'] as $row)
                     @php
                         $p = $row->clicks > 0 && $totalButtons > 1 ? ((float) $row->clicks / (float) $totalButtons) * 100 : 0;
@@ -373,7 +373,7 @@
                             </div>
                             <div>
                                 <p class="text-[10px] font-bold text-slate-600">
-                                    {{ $row->last_click ? \Carbon\Carbon::parse($row->last_click)->format('d M Y') : '-' }}</p>
+                                    {{ $row->last_click ? \Carbon\Carbon::parse($row->last_click)->format('d M Y H:i') : '-' }}</p>
                                 <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Terakhir</p>
                             </div>
                         </div>
@@ -392,8 +392,8 @@
                 @endforelse
             </div>
 
-            <div class="hidden md:block app-card overflow-hidden">
-                <div class="overflow-x-auto">
+            <div class="traffic-record-table app-card">
+                <div class="traffic-table-wrap">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-500 font-bold">
@@ -448,7 +448,7 @@
                 <span class="ml-auto text-xs text-slate-400 font-medium">{{ $fmt($visitors->total()) }} data</span>
             </div>
 
-            <div class="space-y-3 md:hidden">
+            <div class="traffic-record-cards space-y-3">
                 @forelse($visitors as $visitor)
                     <div class="app-card p-4 flex flex-col gap-3 shadow-sm">
                         <div class="flex items-center justify-between gap-3 text-xs text-slate-500">
@@ -502,8 +502,8 @@
                 @endif
             </div>
 
-            <div class="hidden md:block app-card overflow-hidden">
-                <div class="overflow-x-auto">
+            <div class="traffic-record-table app-card">
+                <div class="traffic-table-wrap">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-500 font-bold">

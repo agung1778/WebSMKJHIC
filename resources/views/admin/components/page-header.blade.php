@@ -4,7 +4,7 @@
     'icon' => null,
     'kicker' => null,
 ])
-<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7 fade-up">
+<div class="admin-page-header flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7 fade-up">
     <div>
         <div class="flex items-center gap-3">
             @if($icon)
@@ -27,7 +27,7 @@
         </div>
     </div>
     @isset($actions)
-        <div class="flex flex-wrap items-center gap-3 shrink-0">
+        <div class="admin-page-actions flex flex-wrap items-center gap-3">
             {{ $actions }}
         </div>
     @endisset
