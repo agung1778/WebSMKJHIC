@@ -814,6 +814,8 @@ $stats = [
                     </div>
                 </div>
             </section>
+            @include('partials.home-downloads')
+
             <section class="bg-gray-50 py-16 sm:py-24 fade-in-section">
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 

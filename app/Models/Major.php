@@ -35,4 +35,9 @@ class Major extends Model
     {
         return $this->hasMany(Testimonial::class);
     }
+
+    public function downloads(): HasMany
+    {
+        return $this->hasMany(SchoolDownload::class);
+    }
 }

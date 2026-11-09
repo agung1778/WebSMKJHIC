@@ -19,3 +19,5 @@ error_log
 render_view.php
 error_log.*
 /.phpunit.result.cache
+/.deploy.env
+/.deploy.lock/

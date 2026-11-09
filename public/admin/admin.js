@@ -446,6 +446,9 @@
             reader.onload = function (ev) { img.src = ev.target.result; };
             reader.readAsDataURL(file);
             box.classList.add('visible');
+        } else if (img) {
+            img.removeAttribute('src');
+            box.classList.remove('visible');
         }
         var label = document.querySelector('[data-file-label="' + input.id + '"]');
         if (label) label.textContent = file.name;

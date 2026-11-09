@@ -45,6 +45,8 @@ use App\Http\Controllers\TrafficController;
 use App\Http\Controllers\PublicPage\PublicTrafficController;
 use App\Http\Controllers\PublicPage\InfoSPMBController;
 use App\Http\Controllers\PublicPage\AIChatbotController;
+use App\Http\Controllers\PublicPage\PublicDownloadController;
+use App\Http\Controllers\DownloadController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -100,6 +102,19 @@ Route::get('/extracurriculars/{extracurricular}', [PublicExtracurricularControll
 Route::get('/help/faq', [PublicHelpcenterController::class, 'faq'])->name('public.help.faq');
 Route::get('/help/feedback', [PublicHelpcenterController::class, 'feedback'])->name('public.help.feedback');
 
+// Public catalog: only active, admin-uploaded files can be downloaded.
+Route::get('/unduhan', [PublicDownloadController::class, 'index'])->name('public.downloads.index');
+Route::get('/unduhan/berkas/{download}/download', [PublicDownloadController::class, 'download'])
+    ->whereNumber('download')->name('public.downloads.file');
+Route::get('/unduhan/berkas/{download}/preview', [PublicDownloadController::class, 'preview'])
+    ->whereNumber('download')->name('public.downloads.preview');
+// Preserve existing logo URLs; new links use the general-purpose file endpoint.
+Route::get('/unduhan/logo/{download}/download', [PublicDownloadController::class, 'download'])
+    ->whereNumber('download')
+    ->name('public.downloads.logo');
+Route::get('/unduhan/logo/{download}/preview', [PublicDownloadController::class, 'preview'])
+    ->whereNumber('download')->name('public.downloads.legacy-preview');
+
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 // Halaman traffic publik (rekap bulanan agregat)
@@ -152,6 +167,14 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
 
     // Grup rute untuk manajemen konten di dashboard admin
     Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('downloads/{download}/preview', [DownloadController::class, 'preview'])->name('downloads.preview');
+        Route::get('downloads/{download}/download', [DownloadController::class, 'download'])->name('downloads.download');
+        Route::resource('downloads', DownloadController::class)->parameters(['downloads' => 'download'])->except('show');
+        Route::get('logo-downloads/{download}/preview', [DownloadController::class, 'preview'])->name('logo-downloads.preview');
+        Route::get('logo-downloads/{download}/download', [DownloadController::class, 'download'])->name('logo-downloads.download');
+        Route::resource('logo-downloads', DownloadController::class)
+            ->parameters(['logo-downloads' => 'download'])->except('show');
+
         // Rute untuk Berita
         Route::resource('news', NewsController::class);
 

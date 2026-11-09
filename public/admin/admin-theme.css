@@ -291,3 +291,7 @@ body.sidebar-collapsed .nav-group-toggle, body.sidebar-collapsed .nav-link { jus
     .app-content .table-app td .dropdown { position: static; }
     .app-content .table-app td .dropdown-menu { width: 100%; min-width: 0; max-width: 100%; }
 }
+@media (max-width: 639px) {
+    /* flex-basis is height in the stacked page header, not its desired width. */
+    .admin-page-header > :first-child { flex: 0 1 auto; }
+}

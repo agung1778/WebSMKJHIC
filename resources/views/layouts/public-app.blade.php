@@ -125,6 +125,25 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        .public-header-row { flex-wrap: wrap; gap: 12px 20px; }
+        .public-brand { display: flex; align-items: center; gap: 12px; flex: 1 1 220px; min-width: 0; }
+        .public-brand img { flex-shrink: 0; }
+        .public-brand-text { min-width: 0; overflow-wrap: anywhere; }
+        .public-header-tools { flex-wrap: wrap; justify-content: flex-end; gap: 12px 20px; min-width: 0; }
+        .public-quick-links { flex-wrap: wrap; gap: 12px 20px; }
+        .public-main-nav { flex-wrap: wrap; gap: 4px clamp(16px, 3vw, 48px); min-height: 48px; padding-block: 4px; }
+        .public-main-nav > a, .public-main-nav > div > button { min-height: 44px; display: inline-flex; align-items: center; }
+        .public-main-nav .dropdown-content { max-width: calc(100vw - 32px); }
+        .public-main-nav > .group:last-child .dropdown-content { right: 0; left: auto; }
+        .public-main-nav .group:focus-within .dropdown-content { opacity: 1; transform: translateY(0); visibility: visible; }
+        .public-mobile-download { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+        .public-back-to-top { background: #237c2b; border: 1px solid #fff; box-shadow: none; }
+        .public-back-to-top:hover { background: #196322; }
+        .public-back-to-top:focus-visible { outline: 3px solid #63cd00; outline-offset: 3px; }
+        @media (max-width: 1023px) {
+            .public-brand { flex: 1 1 0; }
+        }
     </style>
 
     {{-- ============================================================ --}}
@@ -193,20 +212,20 @@
         <header x-data="{ mobileMenuOpen: false }" class="sticky top-0 z-50 bg-white shadow-md">
             {{-- TOP BAR --}}
             <div class="border-b border-gray-200">
-                <div class="max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
+                <div class="public-header-row max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
 
                     {{-- Grup 1: Logo & Nama (Kiri) --}}
-                    <div class="flex-shrink-0 flex items-center space-x-4">
+                    <div class="public-brand">
                         <img src="{{ asset('assets/logo/amaliah.webp') }}" alt="Logo SMK Amaliah" class="h-12 w-12">
-                        <div class="flex flex-col">
-                            <span class="text-gray-900 font-times text-base font-bold whitespace-nowrap">SMK AMALIAH
+                        <div class="public-brand-text flex flex-col">
+                            <span class="text-gray-900 font-times text-base font-bold">SMK AMALIAH
                                 1&2
                                 CIAWI</span>
                             <span class="text-xs font-times text-gray-600"><i>Tauhid Is Our Fundament</i></span>
                         </div>
                     </div>
 
-                    <div class="hidden lg:flex items-center space-x-10">
+                    <div class="public-header-tools hidden lg:flex items-center">
 
                         {{-- Grup 2: Tombol Pemicu Search (Style Baru) --}}
                         <button @click="searchModalOpen = true"
@@ -216,7 +235,7 @@
                         </button>
 
                         {{-- Grup 3: Tautan Cepat --}}
-                        <div class="flex items-center space-x-8 text-sm text-gray-700">
+                        <div class="public-quick-links flex items-center text-sm text-gray-700">
                             <a href="https://ppdb.smkamaliah.sch.id/login"
                                 class="hover:text-[#63cd00] transition-colors whitespace-nowrap ">Info SPMB</a>
                             <a href="https://www.instagram.com/bkksmkamaliah/"
@@ -247,7 +266,7 @@
 
             {{-- MAIN NAV (HIJAU - Desktop) --}}
             <nav class="bg-[#63cd00] hidden lg:block text-white">
-                <div class="max-w-screen-xl mx-auto flex items-center justify-center gap-x-14 px-4 h-12">
+                <div class="public-main-nav max-w-screen-xl mx-auto flex items-center justify-center px-4">
                     <a href="/" class="nav-link {{ Request::is('/') ? 'nav-active' : '' }}">Home</a>
                     <div class="relative group">
                         <button class="nav-link">Discover Amaliah <i
@@ -297,6 +316,10 @@
                     <a href="{{ route('public.facilities.index') }}"
                         class="nav-link {{ Request::is('facilities*') ? 'nav-active' : '' }}">
                         Facilities
+                    </a>
+                    <a href="{{ route('public.downloads.index') }}"
+                        class="nav-link {{ request()->routeIs('public.downloads.*') ? 'nav-active' : '' }}" @if(request()->routeIs('public.downloads.*')) aria-current="page" @endif>
+                        <i class="fa-solid fa-download" aria-hidden="true" style="margin-right:8px"></i> Unduhan
                     </a>
                     <div class="relative group">
                         <button class="nav-link">Help Center<i
@@ -378,6 +401,10 @@
                     </div>
                     <a href="{{ route('public.facilities.index') }}"
                         class="block px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Facilitation</a>
+                    <a href="{{ route('public.downloads.index') }}"
+                        class="public-mobile-download px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]" @if(request()->routeIs('public.downloads.*')) aria-current="page" @endif>
+                        <i class="fa-solid fa-download" aria-hidden="true"></i> Unduhan
+                    </a>
                     <div x-data="{ open: false }">
                         <button @click="open = !open"
                             class="w-full flex justify-between items-center px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]"><span>Help
@@ -458,8 +485,7 @@
                     x-init="window.addEventListener('scroll', () => { shown = window.scrollY > 300 })"
                     class="pointer-events-auto" x-show="shown" x-transition>
                     <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Kembali ke atas"
-                        class="w-12 h-12 lg:w-[65px] lg:h-[65px] rounded-full text-white shadow-lg flex items-center justify-center transition-transform hover:scale-110"
-                        style="background-color: {{ $amaliahGreen }};">
+                        class="public-back-to-top w-12 h-12 lg:w-[65px] lg:h-[65px] rounded-full text-white flex items-center justify-center transition-colors">
                         <i class="fas fa-arrow-up text-xl lg:text-2xl"></i>
                     </button>
                 </div>
@@ -473,7 +499,6 @@
                 position: relative;
                 background: #202021;
                 color: #cfcfd2;
-                overflow: hidden;
             }
 
             .ft-footer::before {
@@ -489,10 +514,10 @@
             .ft-footer::after {
                 content: '';
                 position: absolute;
-                top: -160px;
-                right: -120px;
-                width: 420px;
-                height: 420px;
+                top: 0;
+                right: 0;
+                width: min(420px, 100%);
+                height: min(420px, 100%);
                 background: radial-gradient(circle, rgba(99, 205, 0, 0.14) 0%, transparent 65%);
                 pointer-events: none;
             }
@@ -816,6 +841,8 @@
                     <div>
                         <h4 class="ft-col__title">Informasi</h4>
                         <ul class="ft-links">
+                            <li><a href="{{ route('public.downloads.index') }}" class="ft-link"><i
+                                        class="fas fa-download" aria-hidden="true"></i>Unduhan Berkas</a></li>
                             <li><a href="https://ppdb.smkamaliah.sch.id/login" target="_blank" rel="noopener"
                                     class="ft-link"><i class="fas fa-chevron-right"></i>Info PPDB</a></li>
                             <li><a href="{{ route('public.facilities.index') }}" class="ft-link"><i
