@@ -2,6 +2,8 @@
 
 Script ini untuk instalasi Laravel yang sudah berjalan. PHP CLI, Git, `realpath`, dependency Composer, dan `.env` server harus sudah tersedia. Jalankan dari Terminal/SSH hosting, bukan dari browser. Jangan unggah seluruh folder project ke folder publik.
 
+Penting: `npm run build` tidak membangun atau menyalin `public/admin/admin-theme.css`; tema dashboard adalah aset statis. Jika Document Root berbeda dari folder `project/public`, deploy aset dengan script di bawah agar CSS dan JavaScript admin sama dengan versi aplikasi. Aplikasi juga menyediakan fallback route untuk tema jika file statis belum tersalin, tetapi deploy aset tetap diperlukan agar semua aset tetap sinkron.
+
 ## Pengaturan sekali
 
 Di folder project tempat `artisan` berada:
@@ -65,7 +67,7 @@ php artisan migrate --path=database/migrations/2026_11_05_000003_expand_download
 php artisan migrate --path=database/migrations/2026_11_06_000001_add_major_to_school_downloads.php --force
 ```
 
-Menu admin: **Website → Unduhan Berkas** (`/admin/downloads`). Kategori yang tersedia adalah **Logo Sekolah** dan **Contoh Laporan PKL**. Halaman publik `/unduhan` hanya menampilkan berkas aktif dan menyediakan filter kategori. Admin dapat menambah, mengubah file/informasi/kategori, mengatur urutan/latar pratinjau logo, menyembunyikan, dan menghapus berkas. Ganti kategori dengan format file yang tidak sesuai harus disertai file pengganti.
+Menu admin: **Website → Unduhan Berkas** (`/admin/downloads`). Kategori yang tersedia adalah **Logo Sekolah**, **Logo Perusahaan**, dan **Contoh Laporan PKL**. Halaman publik `/unduhan` hanya menampilkan berkas aktif dan menyediakan filter kategori. Admin dapat menambah, mengubah file/informasi/kategori, mengatur urutan/latar pratinjau logo, menyembunyikan, dan menghapus berkas. Logo perusahaan memakai format yang sama dengan logo sekolah (PNG, JPG/JPEG, WebP, atau PDF). Ganti kategori dengan format file yang tidak sesuai harus disertai file pengganti.
 
 Laporan PKL dapat dikaitkan ke satu jurusan melalui pilihan dari data menu **Jurusan** yang sudah ada. Kosongkan pilihan untuk **Umum / Semua Jurusan**. Laporan lama tetap menjadi contoh umum sampai admin memilih jurusannya. Berkas kategori Logo tidak menggunakan jurusan.
 

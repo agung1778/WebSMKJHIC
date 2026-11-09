@@ -13,6 +13,7 @@ class HomeDownloadsTest extends TestCase
         $view->assertSee('Pusat Unduhan')->assertSee('Lihat Unduhan')
             ->assertSee(route('public.downloads.index'), false)
             ->assertSee(route('public.downloads.index', ['kategori' => 'logo']), false)
+            ->assertSee(route('public.downloads.index', ['kategori' => 'company_logo']), false)
             ->assertSee(route('public.downloads.index', ['kategori' => 'pkl']), false)
             ->assertSee('aria-labelledby="home-downloads-title"', false);
     }

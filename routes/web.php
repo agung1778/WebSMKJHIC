@@ -20,6 +20,7 @@ use App\Http\Controllers\PkkProjectController;
 use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\InstaPostController;
 use App\Http\Controllers\SchoolLeaderController;
+use App\Http\Controllers\AdminThemeController;
 
 use App\Models\SchoolProgram;
 use App\Http\Controllers\SearchController;
@@ -50,6 +51,10 @@ use App\Http\Controllers\DownloadController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Serve the admin theme from the application when a separate document root
+// has not yet received the static file during deployment.
+Route::get('/admin/admin-theme.css', AdminThemeController::class)->name('admin.theme');
 
 
 // Rute Chatbot AI lokal (Tanya Amaliah AI)

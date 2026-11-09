@@ -98,6 +98,20 @@ class AdminThemeTest extends TestCase
         $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
     }
 
+    public function test_admin_theme_stylesheet_is_publicly_available_as_a_fallback(): void
+    {
+        $response = $this->get(route('admin.theme'));
+
+        $response->assertOk()
+            ->assertHeader('Content-Type', 'text/css; charset=UTF-8')
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('Cache-Control', 'public, max-age=3600');
+
+        $css = $response->getContent();
+        $this->assertStringContainsString('.dashboard-hero', $css);
+        $this->assertGuest();
+    }
+
     public function test_content_pages_share_theme_and_keep_forms_and_actions(): void
     {
         $this->actingAs(User::factory()->create(['role' => 'superadmin']));

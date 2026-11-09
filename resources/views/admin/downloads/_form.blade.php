@@ -32,7 +32,7 @@
         </section>
         <section class="form-section space-y-5" x-effect="$el.querySelector('input[type=file]').accept = category === 'pkl' ? '.pdf,.docx' : '.png,.jpg,.jpeg,.webp,.pdf'">
             <h2 class="form-section-title"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> File Asli</h2>
-            <p class="field-hint">Logo: PNG, JPG, WebP, atau PDF. Contoh laporan PKL: PDF atau DOCX tanpa macro. Maksimal 10 MB. File tidak dikompresi, diubah ukurannya, atau dikonversi.</p>
+            <p class="field-hint">Logo sekolah/perusahaan: PNG, JPG, WebP, atau PDF. Contoh laporan PKL: PDF atau DOCX tanpa macro. Maksimal 10 MB. File tidak dikompresi, diubah ukurannya, atau dikonversi.</p>
             <p class="field-hint" x-show="category === 'pkl'" x-cloak>Gunakan contoh laporan yang sudah diizinkan untuk dibagikan dan tidak memuat data pribadi siswa atau perusahaan.</p>
             @if($item)
                 <div style="overflow-wrap:anywhere">
@@ -63,7 +63,7 @@
         </label>
         @error('is_active')<p class="field-error">{{ $message }}</p>@enderror
         <p class="field-hint">Berkas yang disembunyikan tidak dapat dilihat atau diunduh oleh pengunjung. Admin tetap dapat mengunduhnya.</p>
-        <div x-show="category === 'logo'">
+        <div x-show="category !== 'pkl'">
         <input type="hidden" name="dark_preview" value="0">
         <label class="flex items-start gap-3" for="logo-dark-preview">
             <input type="checkbox" id="logo-dark-preview" name="dark_preview" value="1" @checked((bool) old('dark_preview', $item?->dark_preview ?? false))>

@@ -28,7 +28,11 @@ class SchoolDownload extends Model
 
     public static function categories(): array
     {
-        return ['logo' => 'Logo Sekolah', 'pkl' => 'Contoh Laporan PKL'];
+        return [
+            'logo' => 'Logo Sekolah',
+            'company_logo' => 'Logo Perusahaan',
+            'pkl' => 'Contoh Laporan PKL',
+        ];
     }
 
     public function getCategoryLabelAttribute(): string
@@ -39,7 +43,7 @@ class SchoolDownload extends Model
     public static function formatsFor(string $category): array
     {
         return match ($category) {
-            'logo' => ['png', 'jpg', 'jpeg', 'webp', 'pdf'],
+            'logo', 'company_logo' => ['png', 'jpg', 'jpeg', 'webp', 'pdf'],
             'pkl' => ['pdf', 'docx'],
             default => [],
         };

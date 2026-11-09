@@ -16,7 +16,7 @@ class DownloadRequest extends FormRequest
         }
         if ($this->input('category') === 'pkl') {
             $this->merge(['dark_preview' => false]);
-        } elseif ($this->input('category') === 'logo') {
+        } else {
             $this->merge(['major_id' => null]);
         }
     }

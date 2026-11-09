@@ -4,7 +4,7 @@
 @section('content')
     <div class="space-y-6 fade-up">
         <x-admin-components::page-header icon="fa-solid fa-download" kicker="Website" title="Unduhan Berkas"
-            subtitle="Kelola logo sekolah dan contoh laporan PKL. File diunduh dalam kualitas asli.">
+            subtitle="Kelola logo sekolah, logo perusahaan, dan contoh laporan PKL. File diunduh dalam kualitas asli.">
             <x-slot:actions>
                 <a href="{{ route('public.downloads.index') }}" target="_blank" rel="noopener" class="app-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> Halaman Publik</a>
                 <a href="{{ route('admin.downloads.create') }}" class="app-btn app-btn-primary"><i class="fa-solid fa-plus"></i> Tambah Berkas</a>
@@ -77,7 +77,7 @@
                 @empty
                     <tr data-row data-empty><td colspan="5">
                         <x-admin-components::empty-state icon="fa-solid fa-folder-open" title="Belum ada berkas"
-                            :description="$majorFilter !== null ? 'Belum ada laporan PKL untuk jurusan yang dipilih. Pilih filter lain atau tambahkan berkas.' : 'Tambahkan logo sekolah atau contoh laporan PKL. Pengunjung menerima file asli tanpa kompresi.'"
+                            :description="$majorFilter !== null ? 'Belum ada laporan PKL untuk jurusan yang dipilih. Pilih filter lain atau tambahkan berkas.' : 'Tambahkan logo sekolah, logo perusahaan, atau contoh laporan PKL. Pengunjung menerima file asli tanpa kompresi.'"
                             action-label="Tambah Berkas" :action-url="route('admin.downloads.create')" />
                     </td></tr>
                 @endforelse

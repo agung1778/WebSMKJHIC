@@ -33,13 +33,18 @@
         <div>
             <span class="home-downloads__eyebrow"><i class="fa-solid fa-folder-open" aria-hidden="true"></i> Berkas Sekolah</span>
             <h2 id="home-downloads-title">Pusat Unduhan</h2>
-            <p class="home-downloads__intro">Butuh logo sekolah atau referensi laporan PKL? Temukan berkas yang kamu perlukan dalam satu tempat.</p>
+            <p class="home-downloads__intro">Butuh logo sekolah, logo perusahaan, atau referensi laporan PKL? Temukan berkas yang kamu perlukan dalam satu tempat.</p>
             <a class="home-downloads__cta" href="{{ route('public.downloads.index') }}">Lihat Unduhan <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         </div>
         <div class="home-downloads__links">
             <a class="home-downloads__link" href="{{ route('public.downloads.index', ['kategori' => 'logo']) }}">
                 <span class="home-downloads__icon"><i class="fa-regular fa-image" aria-hidden="true"></i></span>
                 <span class="home-downloads__label"><strong>Logo Sekolah</strong><span>Unduh logo dalam kualitas asli.</span></span>
+                <i class="fa-solid fa-arrow-right home-downloads__arrow" aria-hidden="true"></i>
+            </a>
+            <a class="home-downloads__link" href="{{ route('public.downloads.index', ['kategori' => 'company_logo']) }}">
+                <span class="home-downloads__icon"><i class="fa-regular fa-building" aria-hidden="true"></i></span>
+                <span class="home-downloads__label"><strong>Logo Perusahaan</strong><span>Unduh logo perusahaan mitra.</span></span>
                 <i class="fa-solid fa-arrow-right home-downloads__arrow" aria-hidden="true"></i>
             </a>
             <a class="home-downloads__link" href="{{ route('public.downloads.index', ['kategori' => 'pkl']) }}">

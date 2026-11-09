@@ -47,10 +47,15 @@ class DownloadCategoriesTest extends TestCase
     public function test_category_filters_keep_other_files_and_hidden_reports_out(): void
     {
         $logo = $this->uploadedLogo(['name' => 'Identitas Sekolah QA']);
+        $companyLogo = $this->uploadedLogo([
+            'category' => 'company_logo', 'name' => 'Logo Perusahaan Mitra QA',
+        ], UploadedFile::fake()->image('logo-mitra.png'));
         $report = $this->uploadedLogo(['category' => 'pkl', 'name' => 'Dokumen Panduan QA'], $this->docxUpload());
         $this->uploadedLogo(['category' => 'pkl', 'name' => 'Belum Dipublikasikan QA', 'is_active' => false], $this->docxUpload());
-        $this->get('/unduhan')->assertOk()->assertSee($logo->name)->assertSee($report->name)->assertDontSee('Belum Dipublikasikan QA');
+        $this->get('/unduhan')->assertOk()->assertSee($logo->name)->assertSee($companyLogo->name)->assertSee($report->name)->assertDontSee('Belum Dipublikasikan QA');
         $this->get('/unduhan?kategori=logo')->assertOk()->assertSee($logo->name)->assertDontSee($report->name);
+        $this->get('/unduhan?kategori=company_logo')->assertOk()
+            ->assertSee($companyLogo->name)->assertSee('Logo Perusahaan')->assertDontSee($logo->name);
         $this->get('/unduhan?kategori=pkl')->assertOk()->assertSee($report->name)->assertDontSee($logo->name);
         $this->get('/unduhan?kategori[]=pkl')->assertOk();
         $this->get('/unduhan?kategori=tidak-valid')->assertOk();
@@ -66,9 +71,15 @@ class DownloadCategoriesTest extends TestCase
             'category' => 'logo', 'file' => $this->docxUpload(),
         ]))->assertSessionHasErrors('file');
         $this->post(route('admin.downloads.store'), $this->logoAttributes([
+            'category' => 'company_logo', 'file' => UploadedFile::fake()->image('logo-perusahaan.png'),
+            'major_id' => 1,
+        ]))->assertRedirect(route('admin.downloads.index'))->assertSessionHasNoErrors();
+        $companyLogo = SchoolDownload::where('category', 'company_logo')->firstOrFail();
+        $this->assertNull($companyLogo->major_id);
+        $this->post(route('admin.downloads.store'), $this->logoAttributes([
             'category' => ['logo'], 'file' => UploadedFile::fake()->image('logo.png'),
         ]))->assertSessionHasErrors('category');
-        $this->assertSame(0, SchoolDownload::count());
+        $this->assertSame(1, SchoolDownload::count());
     }
 
     public function test_disguised_macro_oversized_xml_and_invalid_docx_are_rejected(): void

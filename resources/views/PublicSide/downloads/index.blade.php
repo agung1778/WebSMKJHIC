@@ -1,7 +1,7 @@
 @extends('layouts.public-app')
 
 @section('title', 'Pusat Unduhan — SMK Amaliah 1 & 2')
-@section('description', 'Unduh logo sekolah dan contoh laporan PKL yang disediakan pengelola SMK Amaliah 1 & 2.')
+@section('description', 'Unduh logo sekolah, logo perusahaan, dan contoh laporan PKL yang disediakan pengelola SMK Amaliah 1 & 2.')
 
 @section('content')
     <style>
@@ -55,7 +55,7 @@
             <div class="download-container">
                 <span class="download-kicker"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i> Pusat Unduhan</span>
                 <h1 id="download-title">Pusat Unduhan Sekolah</h1>
-                <p>Temukan logo sekolah dan contoh laporan PKL yang disediakan pengelola SMK Amaliah 1 &amp; 2. Semua berkas dapat diunduh tanpa login dalam kualitas asli.</p>
+                <p>Temukan logo sekolah, logo perusahaan, dan contoh laporan PKL yang disediakan pengelola SMK Amaliah 1 &amp; 2. Semua berkas dapat diunduh tanpa login dalam kualitas asli.</p>
             </div>
         </section>
 
@@ -123,7 +123,7 @@
 
             <section class="download-note" aria-labelledby="download-note-title">
                 <h2 id="download-note-title"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Panduan penggunaan</h2>
-                <p>Setiap unduhan menggunakan file asli dari pengelola sekolah. Logo tersedia sesuai versi yang diunggah. Contoh laporan PKL hanya menjadi panduan; sesuaikan isi dan formatnya dengan arahan sekolah atau pembimbing. Berkas PDF dan DOCX diunduh sebagai lampiran.</p>
+                <p>Setiap unduhan menggunakan file asli dari pengelola sekolah. Logo sekolah dan perusahaan tersedia sesuai versi yang diunggah. Contoh laporan PKL hanya menjadi panduan; sesuaikan isi dan formatnya dengan arahan sekolah atau pembimbing. Berkas PDF dan DOCX diunduh sebagai lampiran.</p>
             </section>
         </div>
     </div>
