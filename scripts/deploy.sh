@@ -139,9 +139,9 @@ main() {
 
     if [[ "$SKIP_CACHE" == 0 ]]; then
         if [[ "$DRY_RUN" == 1 ]]; then
-            info '[dry-run] Artisan view:clear, config:cache, view:cache (tidak dijalankan)'
+            info '[dry-run] Artisan route:clear, view:clear, config:cache, view:cache (tidak dijalankan)'
         else
-            (cd -- "$ROOT" && "$PHP_BIN" artisan view:clear && "$PHP_BIN" artisan config:cache && "$PHP_BIN" artisan view:cache)
+            (cd -- "$ROOT" && "$PHP_BIN" artisan route:clear && "$PHP_BIN" artisan view:clear && "$PHP_BIN" artisan config:cache && "$PHP_BIN" artisan view:cache)
         fi
     fi
     if [[ "$DRY_RUN" == 1 ]]; then

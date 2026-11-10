@@ -62,7 +62,7 @@ grep -q 'original-domain-env' "$DOCROOT/.env"
 grep -q 'original-domain-rules' "$DOCROOT/.htaccess"
 grep -q 'preserve-existing' "$DOCROOT/admin/extra.css"
 [[ ! -e "$DOCROOT/admin/private.php" && ! -e "$DOCROOT/storage/upload.txt" ]]
-printf 'artisan view:clear\nartisan config:cache\nartisan view:cache\n' > "$FIXTURE/expected-php.log"
+printf 'artisan route:clear\nartisan view:clear\nartisan config:cache\nartisan view:cache\n' > "$FIXTURE/expected-php.log"
 cmp "$DEPLOY_PHP_LOG" "$FIXTURE/expected-php.log"
 [[ ! -d "$REPO/.deploy.lock" ]]
 printf 'PASS: assets updated; domain entrypoint, rules, env, extra assets and uploads preserved; only intended cache commands run\n'

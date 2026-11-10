@@ -30,7 +30,7 @@ File `.deploy.env` tidak ikut Git. Jika PHP CLI default berbeda dengan versi apl
 bash scripts/deploy.sh
 ```
 
-Script menjalankan `git pull --ff-only`, menyalin aset statis yang terdaftar di Git ke document root, lalu menjalankan `view:clear`, `config:cache`, dan `view:cache`. Cukup satu perintah; bukan webhook otomatis setiap push. Jika `composer.lock` atau kebutuhan build berubah pada pembaruan lain, dependency/build tetap perlu ditangani sesuai perubahan tersebut.
+Script menjalankan `git pull --ff-only`, menyalin aset statis yang terdaftar di Git ke document root, lalu menjalankan `route:clear`, `view:clear`, `config:cache`, dan `view:cache`. Cukup satu perintah; bukan webhook otomatis setiap push. Jika `composer.lock` atau kebutuhan build berubah pada pembaruan lain, dependency/build tetap perlu ditangani sesuai perubahan tersebut.
 
 Jika sudah melakukan `git pull`:
 
