@@ -31,4 +31,20 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'instagram' => [
+        'api_version' => env('INSTAGRAM_GRAPH_API_VERSION', 'v23.0'),
+        'account_id' => env('INSTAGRAM_BUSINESS_ACCOUNT_ID'),
+        'access_token' => env('INSTAGRAM_ACCESS_TOKEN'),
+        'profile_url' => env('INSTAGRAM_PROFILE_URL', 'https://www.instagram.com/smkamaliah'),
+    ],
+
+    'tiktok' => [
+        'username' => env('TIKTOK_USERNAME', 'smk.amaliah'),
+        'profile_url' => env('TIKTOK_PROFILE_URL', 'https://www.tiktok.com/@smk.amaliah'),
+        'video_ids' => array_values(array_filter(array_map('trim', explode(',', env(
+            'TIKTOK_VIDEO_IDS',
+            '7701197482784541973,7700908599970647316,7698562646173355272'
+        ))))),
+    ],
+
 ];

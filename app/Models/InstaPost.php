@@ -13,6 +13,7 @@ class InstaPost extends Model
         'caption',
         'path',
         'post_url',
+        'instagram_media_id',
         'is_active',
     ];
 

@@ -317,10 +317,6 @@
                         class="nav-link {{ Request::is('facilities*') ? 'nav-active' : '' }}">
                         Facilities
                     </a>
-                    <a href="{{ route('public.downloads.index') }}"
-                        class="nav-link {{ request()->routeIs('public.downloads.*') ? 'nav-active' : '' }}" @if(request()->routeIs('public.downloads.*')) aria-current="page" @endif>
-                        <i class="fa-solid fa-download" aria-hidden="true" style="margin-right:8px"></i> Unduhan
-                    </a>
                     <div class="relative group">
                         <button class="nav-link">Help Center<i
                                 class="fa-solid fa-chevron-down ml-1.5 text-xs"></i></button>
@@ -332,9 +328,12 @@
                             <a href="https://wa.me/6285649011449"
                                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Contact
                                 Us</a>
-
                         </div>
                     </div>
+                    <a href="{{ route('public.downloads.index') }}"
+                        class="nav-link {{ request()->routeIs('public.downloads.*') ? 'nav-active' : '' }}" @if(request()->routeIs('public.downloads.*')) aria-current="page" @endif>
+                        <i class="fa-solid fa-download" aria-hidden="true" style="margin-right:8px"></i> Pusat Unduhan
+                    </a>
                 </div>
             </nav>
 
@@ -401,10 +400,6 @@
                     </div>
                     <a href="{{ route('public.facilities.index') }}"
                         class="block px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Facilitation</a>
-                    <a href="{{ route('public.downloads.index') }}"
-                        class="public-mobile-download px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]" @if(request()->routeIs('public.downloads.*')) aria-current="page" @endif>
-                        <i class="fa-solid fa-download" aria-hidden="true"></i> Unduhan
-                    </a>
                     <div x-data="{ open: false }">
                         <button @click="open = !open"
                             class="w-full flex justify-between items-center px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]"><span>Help
@@ -419,6 +414,10 @@
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Contact</a>
                         </div>
                     </div>
+                    <a href="{{ route('public.downloads.index') }}"
+                        class="public-mobile-download px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]" @if(request()->routeIs('public.downloads.*')) aria-current="page" @endif>
+                        <i class="fa-solid fa-download" aria-hidden="true"></i> Pusat Unduhan
+                    </a>
 
 
                     <hr class="my-2">
@@ -842,7 +841,7 @@
                         <h4 class="ft-col__title">Informasi</h4>
                         <ul class="ft-links">
                             <li><a href="{{ route('public.downloads.index') }}" class="ft-link"><i
-                                        class="fas fa-download" aria-hidden="true"></i>Unduhan Berkas</a></li>
+                                        class="fas fa-download" aria-hidden="true"></i>Pusat Unduhan</a></li>
                             <li><a href="https://ppdb.smkamaliah.sch.id/login" target="_blank" rel="noopener"
                                     class="ft-link"><i class="fas fa-chevron-right"></i>Info PPDB</a></li>
                             <li><a href="{{ route('public.facilities.index') }}" class="ft-link"><i

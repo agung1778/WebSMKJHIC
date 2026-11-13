@@ -61,7 +61,7 @@
                 'items' => [
                     ['title' => 'Home & Tulisan', 'icon' => 'fa-solid fa-house', 'routes' => ['admin.writings.*'], 'url' => 'admin.writings.index'],
                     ['title' => 'Hero & Media', 'icon' => 'fa-solid fa-images', 'routes' => ['admin.image.*'], 'url' => 'admin.image.index'],
-                    ['title' => 'Unduhan Berkas', 'icon' => 'fa-solid fa-download', 'routes' => ['admin.downloads.*', 'admin.logo-downloads.*'], 'url' => 'admin.downloads.index'],
+                    ['title' => 'Pusat Unduhan', 'icon' => 'fa-solid fa-download', 'routes' => ['admin.downloads.*', 'admin.logo-downloads.*'], 'url' => 'admin.downloads.index'],
                     ['title' => 'Menu Navigasi', 'icon' => 'fa-solid fa-bars-staggered', 'routes' => ['admin.navigations.*'], 'url' => 'admin.navigations.index'],
                     ['title' => 'Feed Instagram', 'icon' => 'fa-brands fa-instagram', 'routes' => ['admin.insta-posts.*'], 'url' => 'admin.insta-posts.index'],
                     ['title' => 'Jumlah Peserta Didik', 'icon' => 'fa-solid fa-users', 'routes' => ['admin.school_settings.*'], 'url' => 'admin.school_settings.edit'],

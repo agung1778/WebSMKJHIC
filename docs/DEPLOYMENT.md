@@ -84,3 +84,22 @@ bash tests/deploy-smoke.sh
 ```
 
 Tes menggunakan repository Git lokal, domain tiruan, dan PHP tiruan di folder sementara; tidak menyentuh server atau database aplikasi. Hasil fixture disimpan untuk inspeksi. Tes symlink dilewati jika sistem tidak mendukung pembuatannya.
+
+## Feed Instagram dan TikTok
+
+Feed Instagram dapat disinkronkan melalui Instagram Graph API. Hubungkan akun Instagram Professional ke Facebook Page dan siapkan aplikasi Meta dengan akses baca media. Isi `INSTAGRAM_BUSINESS_ACCOUNT_ID`, `INSTAGRAM_ACCESS_TOKEN`, serta versi API yang masih didukung di `.env` server; jangan masukkan token ke Git. Video TikTok publik ditampilkan sebagai embed individual dalam susunan vertikal; atur ID video yang ditampilkan melalui `TIKTOK_VIDEO_IDS` (pisahkan dengan koma), serta profil melalui `TIKTOK_USERNAME` dan `TIKTOK_PROFILE_URL`.
+
+Setelah deploy kode, jalankan migration dan uji koneksi:
+
+```bash
+php artisan migrate --force
+php artisan instagram:sync
+```
+
+Sinkronisasi otomatis berjalan setiap 30 menit jika scheduler Laravel dipanggil oleh cron hosting:
+
+```cron
+* * * * * cd /path/ke/project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Tanpa konfigurasi token Instagram, halaman tetap dapat menampilkan postingan yang diunggah manual dari menu Feed Instagram. TikTok memuat video publik yang ID-nya dikonfigurasi dari embed resmi TikTok.

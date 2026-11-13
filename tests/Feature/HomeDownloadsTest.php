@@ -18,17 +18,19 @@ class HomeDownloadsTest extends TestCase
             ->assertSee('aria-labelledby="home-downloads-title"', false);
     }
 
-    public function test_home_card_is_between_the_major_section_and_news(): void
+    public function test_homepage_does_not_render_the_downloads_section(): void
     {
         $template = file_get_contents(resource_path('views/welcome.blade.php'));
-        $major = strpos($template, 'Major Competency');
-        $downloads = strpos($template, "@include('partials.home-downloads')");
-        $news = strpos($template, 'Baca Berita Terbaru Kami');
 
-        $this->assertNotFalse($major);
-        $this->assertNotFalse($downloads);
-        $this->assertNotFalse($news);
-        $this->assertTrue($major < $downloads && $downloads < $news);
-        $this->assertSame(1, substr_count($template, "@include('partials.home-downloads')"));
+        $this->assertStringNotContainsString("@include('partials.home-downloads')", $template);
+    }
+
+    public function test_home_leader_tabs_rotate_automatically_and_pause_on_hover(): void
+    {
+        $template = file_get_contents(resource_path('views/welcome.blade.php'));
+
+        $this->assertStringContainsString('setInterval(() => { if (autoRotate) activeTab = activeTab ===', $template);
+        $this->assertStringContainsString('@mouseenter="autoRotate = false"', $template);
+        $this->assertStringContainsString('@mouseleave="autoRotate = true"', $template);
     }
 }

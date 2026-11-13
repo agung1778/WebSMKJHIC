@@ -13,7 +13,7 @@
             icon="fa-brands fa-instagram"
             kicker="Website"
             title="Feed Instagram"
-            subtitle="Semi-otomatis: unggah foto postingan Instagram yang tampil di website. Maksimal 15 postingan — data tertua otomatis terhapus." />
+            subtitle="Postingan terbaru tersinkron otomatis dari Instagram jika API terhubung. Unggah manual tetap tersedia. Maksimal 15 postingan — data tertua otomatis terhapus." />
 
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <x-admin-components::stat-card label="Total Postingan" :value="$posts->count()" icon="fa-brands fa-instagram" tone="brand" />

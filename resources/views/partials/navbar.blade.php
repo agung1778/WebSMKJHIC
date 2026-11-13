@@ -108,6 +108,10 @@
                         class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">{{ __('Pusat Bantuan BK A2') }}</a>
                 </div>
             </div>
+            <a href="{{ route('public.downloads.index') }}"
+                class="nav-link {{ request()->routeIs('public.downloads.*') ? 'nav-active' : '' }}" @if(request()->routeIs('public.downloads.*')) aria-current="page" @endif>
+                <i class="fa-solid fa-download" aria-hidden="true" style="margin-right:8px"></i> {{ __('Pusat Unduhan') }}
+            </a>
         </div>
     </nav>
 
@@ -190,6 +194,11 @@
                         class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">{{ __('Pusat Bantuan BK A2') }}</a>
                 </div>
             </div>
+
+            <a href="{{ route('public.downloads.index') }}"
+                class="block px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]" @if(request()->routeIs('public.downloads.*')) aria-current="page" @endif>
+                <i class="fa-solid fa-download mr-2"></i>{{ __('Pusat Unduhan') }}
+            </a>
 
             <hr class="my-2 border-gray-100">
 

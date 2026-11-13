@@ -547,8 +547,15 @@ $stats = [
                 </div>
             </section>
 
+            @php
+                $hasBothLeaders = $leaders->where('school', 'Amaliah 1')->isNotEmpty()
+                    && $leaders->where('school', 'Amaliah 2')->isNotEmpty();
+            @endphp
             <section class="bg-[#282829] py-16 sm:py-20 overflow-hidden fade-in-section">
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8" x-data="{ activeTab: 'amaliah1' }">
+                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8"
+                    x-data="{ activeTab: 'amaliah1', autoRotate: {{ $hasBothLeaders ? 'true' : 'false' }} }"
+                    x-init="if (autoRotate) setInterval(() => { if (autoRotate) activeTab = activeTab === 'amaliah1' ? 'amaliah2' : 'amaliah1' }, 6500)"
+                    @mouseenter="autoRotate = false" @mouseleave="autoRotate = true">
 
                     {{-- Bagian Header: Judul dan Tombol Tab --}}
                     <div class="text-center mb-12">
@@ -814,8 +821,6 @@ $stats = [
                     </div>
                 </div>
             </section>
-            @include('partials.home-downloads')
-
             <section class="bg-gray-50 py-16 sm:py-24 fade-in-section">
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -1175,60 +1180,107 @@ $stats = [
             {{-- ================================================================= --}}
             {{-- SECTION INSTAGRAM (GRID ALA INSTAGRAM) --}}
             {{-- ================================================================= --}}
-            <section class="bg-white py-16 sm:py-24 fade-in-section">
+            <section class="social-feed-section bg-white py-16 sm:py-24 fade-in-section">
 
-                <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                    {{-- Header Section --}}
-                    <div class="text-center mb-10">
-                        <h2 class="text-3xl md:text-4xl font-bold" style="color: {{ $amaliahDark }};">
-                            Our Latest Instagram Post
-                        </h2>
-                        <div class="flex items-center justify-center gap-x-2 mx-auto mt-4">
-                            <div class="w-20 h-1 rounded-full" style="background-color: {{ $amaliahDark }};"></div>
-                            <div class="w-8 h-1 rounded-full" style="background-color: {{ $amaliahDark }};"></div>
-                            <div class="w-4 h-1 rounded-full" style="background-color: {{ $amaliahDark }};"></div>
-                        </div>
-                    </div>
-
-                    {{-- Kartu ala profil Instagram --}}
-                    <div class="ig-card mx-auto">
-
-                        {{-- Kepala kartu: avatar + username + tombol follow --}}
-                        <div class="ig-head">
-                            <a class="ig-avatar" href="https://www.instagram.com/smkamaliah" target="_blank" rel="noopener" aria-label="Profil Instagram SMK Amaliah">
-                                <img src="{{ asset('assets/logo/am.webp') }}" alt="SMK Amaliah" loading="lazy">
-                            </a>
-                            <div class="ig-user">
-                                <span class="ig-username">@smkamaliah</span>
-                                <span class="ig-sub">SMK Amaliah 1 &amp; 2 · Ciawi-Bogor</span>
+                <div class="social-feed-container max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="social-feed-grid grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+                        <div class="min-w-0">
+                            <div class="text-center mb-10">
+                                <h2 class="text-3xl md:text-4xl font-bold" style="color: {{ $amaliahDark }};">
+                                    Instagram Terbaru
+                                </h2>
+                                <div class="flex items-center justify-center gap-x-2 mx-auto mt-4">
+                                    <div class="w-20 h-1 rounded-full" style="background-color: {{ $amaliahDark }};"></div>
+                                    <div class="w-8 h-1 rounded-full" style="background-color: {{ $amaliahDark }};"></div>
+                                    <div class="w-4 h-1 rounded-full" style="background-color: {{ $amaliahDark }};"></div>
+                                </div>
                             </div>
-                            <a class="ig-follow" href="https://www.instagram.com/smkamaliah" target="_blank" rel="noopener">Follow</a>
+
+                            <div class="ig-card mx-auto">
+
+                                <div class="ig-head">
+                                    <a class="ig-avatar" href="{{ config('services.instagram.profile_url') }}" target="_blank" rel="noopener" aria-label="Profil Instagram SMK Amaliah">
+                                        <img src="{{ asset('assets/logo/am.webp') }}" alt="SMK Amaliah" loading="lazy">
+                                    </a>
+                                    <div class="ig-user">
+                                        <span class="ig-username">@smkamaliah</span>
+                                        <span class="ig-sub">SMK Amaliah 1 &amp; 2 · Ciawi-Bogor</span>
+                                    </div>
+                                    <a class="ig-follow" href="{{ config('services.instagram.profile_url') }}" target="_blank" rel="noopener">Follow</a>
+                                </div>
+
+                                <div class="ig-grid">
+                                    @forelse ($instaPosts as $post)
+                                        <a href="{{ $post->post_url ?: '#' }}" target="{{ $post->post_url ? '_blank' : '_self' }}"
+                                            class="ig-item" title="{{ $post->caption ?? 'Postingan Instagram' }}">
+                                            <img src="{{ img_url($post->path, 420, 420) }}" alt="{{ $post->caption ?? 'Instagram' }}" loading="lazy" width="420" height="420">
+                                            @if ($post->post_url)
+                                                <span class="ig-stats">
+                                                    <span class="ig-stat"><i class="fa-regular fa-heart"></i></span>
+                                                    <span class="ig-stat"><i class="fa-regular fa-comment"></i></span>
+                                                </span>
+                                            @endif
+                                        </a>
+                                    @empty
+                                        <div class="ig-empty">Belum ada postingan Instagram.</div>
+                                    @endforelse
+                                </div>
+                            </div>
                         </div>
 
-                        {{-- Grid postingan: persegi, rapat tanpa jarak --}}
-                        <div class="ig-grid">
-                            @forelse ($instaPosts as $post)
-                                <a href="{{ $post->post_url ?: '#' }}" target="{{ $post->post_url ? '_blank' : '_self' }}"
-                                    class="ig-item" title="{{ $post->caption ?? 'Postingan Instagram' }}">
-                                    <img src="{{ img_url($post->path, 420, 420) }}" alt="{{ $post->caption ?? 'Instagram' }}" loading="lazy" width="420" height="420">
-                                    @if ($post->post_url)
-                                        <span class="ig-stats">
-                                            <span class="ig-stat"><i class="fa-regular fa-heart"></i></span>
-                                            <span class="ig-stat"><i class="fa-regular fa-comment"></i></span>
-                                        </span>
-                                    @endif
+                        <div class="min-w-0">
+                            <div class="text-center mb-10">
+                                <h2 class="text-3xl md:text-4xl font-bold" style="color: {{ $amaliahDark }};">
+                                    TikTok Terbaru
+                                </h2>
+                                <div class="flex items-center justify-center gap-x-2 mx-auto mt-4">
+                                    <div class="w-20 h-1 rounded-full" style="background-color: {{ $amaliahDark }};"></div>
+                                    <div class="w-8 h-1 rounded-full" style="background-color: {{ $amaliahDark }};"></div>
+                                    <div class="w-4 h-1 rounded-full" style="background-color: {{ $amaliahDark }};"></div>
+                                </div>
+                            </div>
+                            <div class="tiktok-card">
+                                @forelse (config('services.tiktok.video_ids', []) as $videoId)
+                                    @php
+                                        $videoUrl = rtrim(config('services.tiktok.profile_url'), '/') . '/video/' . $videoId;
+                                    @endphp
+                                    <div class="tiktok-video">
+                                        <blockquote class="tiktok-embed" cite="{{ $videoUrl }}" data-video-id="{{ $videoId }}">
+                                            <section>
+                                                <a target="_blank" rel="noopener" href="{{ $videoUrl }}">
+                                                    {{ '@' . config('services.tiktok.username') }}
+                                                </a>
+                                            </section>
+                                        </blockquote>
+                                    </div>
+                                @empty
+                                    <p class="tiktok-empty">
+                                        Belum ada video yang dipilih.
+                                        <a href="{{ config('services.tiktok.profile_url') }}" target="_blank" rel="noopener">Lihat profil TikTok</a>
+                                    </p>
+                                @endforelse
+                                <a class="tiktok-profile-link" href="{{ config('services.tiktok.profile_url') }}" target="_blank" rel="noopener">
+                                    Lihat semua video di TikTok <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                 </a>
-                            @empty
-                                <div class="ig-empty">Belum ada postingan Instagram.</div>
-                            @endforelse
+                            </div>
                         </div>
-
                     </div>
                 </div>
 
+                <script async src="https://www.tiktok.com/embed.js"></script>
                 <style>
+                    .social-feed-container,
+                    .social-feed-grid {
+                        width: 100%;
+                        min-width: 0;
+                    }
+
+                    .social-feed-grid > * {
+                        min-width: 0;
+                    }
+
                     .ig-card {
+                        width: 100%;
                         max-width: 935px;
                         background: #fff;
                         border: 1px solid #dbdbdb;
@@ -1242,6 +1294,63 @@ $stats = [
                         gap: 12px;
                         padding: 14px 16px;
                         border-bottom: 1px solid #dbdbdb;
+                    }
+
+                    .tiktok-card {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 16px;
+                        width: 100%;
+                        min-width: 0;
+                    }
+
+                    .tiktok-video {
+                        min-width: 0;
+                        overflow-x: hidden;
+                    }
+
+                    .tiktok-video .tiktok-embed {
+                        width: 100%;
+                        max-width: 100% !important;
+                        min-width: 0 !important;
+                        margin: 0 !important;
+                    }
+
+                    .tiktok-video iframe {
+                        display: block;
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        min-width: 0 !important;
+                        margin-inline: auto !important;
+                    }
+
+                    .tiktok-profile-link {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+                        min-height: 44px;
+                        padding: 10px 16px;
+                        border: 1px solid #d1d5db;
+                        border-radius: 8px;
+                        color: #282829;
+                        font-size: 13px;
+                        font-weight: 600;
+                        text-decoration: none;
+                    }
+
+                    .tiktok-empty {
+                        padding: 24px;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 8px;
+                        color: #6b7280;
+                        text-align: center;
+                    }
+
+                    @media (max-width: 1023px) {
+                        .tiktok-card {
+                            max-width: calc(100vw - 2rem);
+                        }
                     }
 
                     .ig-avatar {

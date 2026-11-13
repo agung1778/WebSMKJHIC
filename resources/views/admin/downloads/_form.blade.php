@@ -59,7 +59,7 @@
         <input type="hidden" name="is_active" value="0">
         <label class="flex items-start gap-3" for="logo-is-active">
             <input type="checkbox" id="logo-is-active" name="is_active" value="1" @checked((bool) old('is_active', $item?->is_active ?? true))>
-            <span>Tampilkan di halaman Unduhan</span>
+            <span>Tampilkan di halaman Pusat Unduhan</span>
         </label>
         @error('is_active')<p class="field-error">{{ $message }}</p>@enderror
         <p class="field-hint">Berkas yang disembunyikan tidak dapat dilihat atau diunduh oleh pengunjung. Admin tetap dapat mengunduhnya.</p>
