@@ -1240,25 +1240,46 @@ $stats = [
                                 </div>
                             </div>
                             <div class="tiktok-card">
-                                @forelse (config('services.tiktok.video_ids', []) as $videoId)
-                                    @php
-                                        $videoUrl = rtrim(config('services.tiktok.profile_url'), '/') . '/video/' . $videoId;
-                                    @endphp
-                                    <div class="tiktok-video">
-                                        <blockquote class="tiktok-embed" cite="{{ $videoUrl }}" data-video-id="{{ $videoId }}">
-                                            <section>
-                                                <a target="_blank" rel="noopener" href="{{ $videoUrl }}">
-                                                    {{ '@' . config('services.tiktok.username') }}
-                                                </a>
-                                            </section>
-                                        </blockquote>
+                                <div class="tiktok-head">
+                                    <a class="tiktok-avatar" href="{{ config('services.tiktok.profile_url') }}" target="_blank" rel="noopener" aria-label="Profil TikTok SMK Amaliah">
+                                        <img src="{{ asset('assets/logo/am.webp') }}" alt="SMK Amaliah" loading="lazy">
+                                    </a>
+                                    <div class="tiktok-account">
+                                        <strong>{{ '@' . config('services.tiktok.username') }}</strong>
+                                        <span>SMK Amaliah 1 &amp; 2 · Ciawi-Bogor</span>
                                     </div>
-                                @empty
-                                    <p class="tiktok-empty">
-                                        Belum ada video yang dipilih.
-                                        <a href="{{ config('services.tiktok.profile_url') }}" target="_blank" rel="noopener">Lihat profil TikTok</a>
-                                    </p>
-                                @endforelse
+                                    <a class="tiktok-follow" href="{{ config('services.tiktok.profile_url') }}" target="_blank" rel="noopener">TikTok</a>
+                                </div>
+                                @php
+                                    $tiktokFallbackCovers = [
+                                        'assets/image/DroneView.jpg',
+                                        'assets/image/Classmeet.JPG',
+                                        'assets/image/17Agustus.JPG',
+                                    ];
+                                @endphp
+                                <div class="tiktok-grid">
+                                    @forelse (config('services.tiktok.video_ids', []) as $videoId)
+                                        @php
+                                            $videoUrl = rtrim(config('services.tiktok.profile_url'), '/') . '/video/' . $videoId;
+                                            $gridImage = $gridImages[$loop->index] ?? null;
+                                            $tiktokCover = $gridImage && $gridImage->path
+                                                ? $gridImage->path
+                                                : $tiktokFallbackCovers[$loop->index % count($tiktokFallbackCovers)];
+                                        @endphp
+                                        <a class="tiktok-video-link" href="{{ $videoUrl }}" target="_blank" rel="noopener"
+                                            aria-label="Tonton video TikTok {{ $loop->iteration }}">
+                                            <img src="{{ img_url($tiktokCover, 500, 500) }}"
+                                                alt="" loading="lazy" width="500" height="500">
+                                            <span class="tiktok-play"><i class="fas fa-play"></i></span>
+                                            <span class="tiktok-video-label">Tonton video {{ $loop->iteration }}</span>
+                                        </a>
+                                    @empty
+                                        <p class="tiktok-empty">
+                                            Belum ada video yang dipilih.
+                                            <a href="{{ config('services.tiktok.profile_url') }}" target="_blank" rel="noopener">Lihat profil TikTok</a>
+                                        </p>
+                                    @endforelse
+                                </div>
                                 <a class="tiktok-profile-link" href="{{ config('services.tiktok.profile_url') }}" target="_blank" rel="noopener">
                                     Lihat semua video di TikTok <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                 </a>
@@ -1267,7 +1288,6 @@ $stats = [
                     </div>
                 </div>
 
-                <script async src="https://www.tiktok.com/embed.js"></script>
                 <style>
                     .social-feed-container,
                     .social-feed-grid {
@@ -1299,29 +1319,142 @@ $stats = [
                     .tiktok-card {
                         display: flex;
                         flex-direction: column;
-                        gap: 16px;
+                        gap: 0;
                         width: 100%;
                         min-width: 0;
+                        overflow: hidden;
+                        border: 1px solid #dbdbdb;
+                        border-radius: 4px;
+                        background: #fff;
                     }
 
-                    .tiktok-video {
-                        min-width: 0;
-                        overflow-x: hidden;
+                    .tiktok-head {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        padding: 14px 16px;
+                        border-bottom: 1px solid #dbdbdb;
                     }
 
-                    .tiktok-video .tiktok-embed {
-                        width: 100%;
-                        max-width: 100% !important;
-                        min-width: 0 !important;
-                        margin: 0 !important;
+                    .tiktok-avatar {
+                        flex: 0 0 46px;
+                        width: 46px;
+                        height: 46px;
+                        padding: 2px;
+                        border-radius: 50%;
+                        background: #171717;
                     }
 
-                    .tiktok-video iframe {
+                    .tiktok-avatar img {
                         display: block;
-                        width: 100% !important;
-                        max-width: 100% !important;
-                        min-width: 0 !important;
-                        margin-inline: auto !important;
+                        width: 100%;
+                        height: 100%;
+                        border: 2px solid #fff;
+                        border-radius: 50%;
+                        object-fit: cover;
+                    }
+
+                    .tiktok-account {
+                        display: flex;
+                        flex: 1;
+                        flex-direction: column;
+                        gap: 4px;
+                        min-width: 0;
+                    }
+
+                    .tiktok-account strong {
+                        font-size: 14px;
+                    }
+
+                    .tiktok-account span {
+                        color: #6b7280;
+                        font-size: 12px;
+                    }
+
+                    .tiktok-follow {
+                        display: inline-flex;
+                        flex: 0 0 auto;
+                        align-items: center;
+                        justify-content: center;
+                        min-height: 36px;
+                        padding: 6px 16px;
+                        border-radius: 6px;
+                        background: #171717;
+                        color: #fff;
+                        font-size: 13px;
+                        font-weight: 600;
+                        text-decoration: none;
+                    }
+
+                    .tiktok-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, minmax(0, 1fr));
+                        gap: 3px;
+                        background: #fff;
+                    }
+
+                    .tiktok-video-link {
+                        position: relative;
+                        display: block;
+                        min-width: 0;
+                        overflow: hidden;
+                        aspect-ratio: 1 / 1;
+                        background: #171717;
+                    }
+
+                    .tiktok-video-link img {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        transition: transform .25s ease, opacity .25s ease;
+                    }
+
+                    .tiktok-video-link:hover img {
+                        transform: scale(1.04);
+                        opacity: .8;
+                    }
+
+                    .tiktok-video-fallback {
+                        display: grid;
+                        place-items: center;
+                        width: 100%;
+                        height: 100%;
+                        color: #fff;
+                        font-size: 30px;
+                    }
+
+                    .tiktok-play {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        display: grid;
+                        place-items: center;
+                        width: 40px;
+                        height: 40px;
+                        border: 1px solid rgba(255, 255, 255, .8);
+                        border-radius: 50%;
+                        background: rgba(0, 0, 0, .55);
+                        color: #fff;
+                        font-size: 13px;
+                        transform: translate(-50%, -50%);
+                    }
+
+                    .tiktok-video-label {
+                        position: absolute;
+                        right: 0;
+                        bottom: 0;
+                        left: 0;
+                        padding: 18px 8px 7px;
+                        background: linear-gradient(transparent, rgba(0, 0, 0, .72));
+                        color: #fff;
+                        font-size: 11px;
+                    }
+
+                    .tiktok-video-link:focus-visible,
+                    .tiktok-profile-link:focus-visible {
+                        outline: 3px solid #63cd00;
+                        outline-offset: 3px;
                     }
 
                     .tiktok-profile-link {
