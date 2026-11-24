@@ -227,22 +227,120 @@ body.sidebar-collapsed .nav-group-toggle, body.sidebar-collapsed .nav-link { jus
 .app-content .form-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .app-content .badge { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 .app-content .page-btns, .app-content .form-actions, .modal-foot { flex-wrap: wrap; }
-.app-content .act-btn { min-width: 44px; min-height: 44px; }
-.app-content .table-wrap { overflow: visible; }
-.app-content .table-app { table-layout: fixed; }
-.app-content .table-app :is(th, td) { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
-.app-content .table-app tbody td :is(.cell-main, .cell-sub, .truncate, [style*="white-space"]) {
-    white-space: normal !important;
-    max-width: 100% !important;
-    overflow: visible;
-    text-overflow: clip;
-    -webkit-line-clamp: unset;
-    overflow-wrap: anywhere;
+.app-content .act-btn { min-width: 34px; min-height: 34px; }
+
+/* Struktur Tabel Admin yang Rapi, Bersih, dan Terstruktur */
+.app-content .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: 0 1px 3px rgba(28, 28, 29, 0.04), 0 4px 14px rgba(28, 28, 29, 0.05);
 }
-.app-content .table-app .table-main { flex-wrap: wrap; }
-.app-content .table-app .table-main > :not(img) { flex: 1 1 140px; min-width: 0; }
-.app-content .table-app tbody td .table-actions { flex-wrap: wrap; }
-.app-content .table-app tbody td .table-actions .act-btn { width: 44px; height: 44px; }
+.app-content .table-app {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: auto;
+    display: table !important;
+}
+.app-content .table-app thead {
+    display: table-header-group !important;
+}
+.app-content .table-app thead th {
+    display: table-cell !important;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--brand-deep);
+    background: var(--brand-softer);
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+.app-content .table-app thead th.text-right {
+    text-align: right;
+}
+.app-content .table-app thead th:first-child { border-radius: 16px 0 0 0; }
+.app-content .table-app thead th:last-child { border-radius: 0 16px 0 0; }
+.app-content .table-app tbody {
+    display: table-row-group !important;
+}
+.app-content .table-app tbody tr {
+    display: table-row !important;
+    transition: background 0.14s ease;
+}
+.app-content .table-app tbody tr:nth-child(even) {
+    background: var(--surface-2);
+}
+.app-content .table-app tbody tr:hover {
+    background: var(--brand-softer);
+}
+.app-content .table-app tbody td {
+    display: table-cell !important;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-2);
+    vertical-align: middle;
+    font-size: 13px;
+    white-space: normal;
+}
+.app-content .table-app tbody tr:last-child td {
+    border-bottom: 0;
+}
+.app-content .table-app tbody td[data-label]::before {
+    display: none !important;
+    content: none !important;
+}
+.app-content .table-app .table-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.app-content .table-app .thumb {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.app-content .table-app .cell-main {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.4;
+}
+.app-content .table-app .cell-sub {
+    font-size: 11.5px;
+    color: var(--text-3);
+    margin-top: 2px;
+    line-height: 1.35;
+}
+.app-content .table-app tbody td .table-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    white-space: nowrap;
+}
+.app-content .table-app tbody td .table-actions .act-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
 .traffic-record-table { display: none; }
 .traffic-record-cards { display: block; }
 .traffic-table-wrap table { width: 100%; table-layout: fixed; }
@@ -285,11 +383,6 @@ body.sidebar-collapsed .nav-group-toggle, body.sidebar-collapsed .nav-link { jus
     .app-content .grid:is(.grid-cols-2, .md\:grid-cols-3, .xl\:grid-cols-4, .xl\:grid-cols-5) { grid-template-columns: minmax(0, 1fr); }
     .app-content .form-section { padding: 16px; }
     .app-content .admin-page-actions, .app-content .admin-page-actions > * { width: 100%; }
-    .app-content .table-app tbody td { align-items: flex-start; flex-direction: column; }
-    .app-content .table-app tbody td .table-actions { flex: none; width: 100%; justify-content: flex-start; }
-    .app-content .table-app td { position: relative; }
-    .app-content .table-app td .dropdown { position: static; }
-    .app-content .table-app td .dropdown-menu { width: 100%; min-width: 0; max-width: 100%; }
 }
 @media (max-width: 639px) {
     /* flex-basis is height in the stacked page header, not its desired width. */
@@ -310,13 +403,13 @@ body.sidebar-collapsed .nav-group-toggle, body.sidebar-collapsed .nav-link { jus
         height: 38px;
         padding: 0;
     }
-    .search-field {
+    .topbar .search-field {
         width: 38px !important;
         padding: 0 !important;
         justify-content: center;
     }
-    .search-field kbd,
-    .search-field span {
+    .topbar .search-field kbd,
+    .topbar .search-field span {
         display: none !important;
     }
     .profile-menu-button {
@@ -347,6 +440,12 @@ body.sidebar-collapsed .nav-group-toggle, body.sidebar-collapsed .nav-link { jus
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
+        padding: 8px 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        border-radius: 10px;
+        background: var(--surface);
+        border: 1px solid var(--border);
     }
     .toolbar .app-select {
         width: 100% !important;
@@ -419,24 +518,5 @@ body.sidebar-collapsed .nav-group-toggle, body.sidebar-collapsed .nav-link { jus
     }
     .topbar-title .admin-panel-name {
         font-size: 15px;
-    }
-}
-
-@media (max-width: 900px) {
-    .table-app tbody tr {
-        padding: 14px;
-        border-radius: 14px;
-        gap: 10px;
-    }
-    .table-app tbody td {
-        padding: 6px 0;
-        font-size: 12px;
-    }
-    .table-app tbody td .table-actions {
-        margin-top: 8px;
-        padding-top: 8px;
-        border-top: 1px dashed var(--border);
-        width: 100%;
-        justify-content: flex-end;
     }
 }
