@@ -1,4 +1,4 @@
-﻿@extends('layouts.admin-app')
+@extends('layouts.admin-app')
 
 @section('title', 'Home & Tulisan')
 
@@ -17,12 +17,12 @@
             subtitle="Kelola tulisan dan konten halaman beranda website sekolah.">
             <x-slot:actions>
                 <a class="app-btn app-btn-primary app-btn-lg" href="{{ route('admin.writings.create') }}">
-                    <i class="fa-solid fa-plus"></i><span class="hide-mob">Tulis Baru</span>
+                    <i class="fa-solid fa-plus"></i><span>Tulis Baru</span>
                 </a>
             </x-slot:actions>
         </x-admin-components::page-header>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Tulisan" :value="$total" icon="fa-solid fa-pen-nib" tone="brand" />
             <x-admin-components::stat-card label="Total Kata" :value="number_format($wordCount)" icon="fa-solid fa-font" tone="green" />
             <x-admin-components::stat-card label="Kontributor" :value="$writings->pluck('publisher')->unique()->count()" icon="fa-solid fa-user-pen" tone="blue" />
@@ -37,9 +37,14 @@
                 @forelse ($writings as $w)
                     <tr data-row>
                         <td data-label="Judul">
-                            <div style="min-width:0">
-                                <div class="cell-main truncate">{{ $w->title }}</div>
-                                <div class="cell-sub truncate">{{ \Illuminate\Support\Str::limit(strip_tags($w->content ?? ''), 160) }}</div>
+                            <div class="table-main">
+                                <span class="thumb flex items-center justify-center font-bold text-sm" style="background:var(--brand-soft);color:var(--brand-deep)">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                </span>
+                                <div style="min-width:0">
+                                    <div class="cell-main truncate">{{ $w->title }}</div>
+                                    <div class="cell-sub truncate">{{ \Illuminate\Support\Str::limit(strip_tags($w->content ?? ''), 160) }}</div>
+                                </div>
                             </div>
                         </td>
                         <td data-label="Terbit"><span class="badge badge-published" style="white-space:nowrap">{{ $w->release_date ? \Carbon\Carbon::parse($w->release_date)->translatedFormat('d M Y') : '-' }}</span></td>

@@ -18,7 +18,6 @@
     {{-- DNS Prefetch for third-party domains --}}
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link rel="dns-prefetch" href="https://elfsightcdn.com">
     <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
     <link rel="dns-prefetch" href="https://www.google.com">
     <link rel="dns-prefetch" href="https://maps.googleapis.com">
@@ -27,7 +26,6 @@
     {{-- Preconnect for critical third-party origins --}}
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://elfsightcdn.com" crossorigin>
     <link rel="preconnect" href="https://www.youtube-nocookie.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
@@ -49,6 +47,26 @@
 
 
     <style>
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
+        /* Responsif Breadcrumb Global */
+        nav[aria-label="Breadcrumb"] {
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        nav[aria-label="Breadcrumb"]::-webkit-scrollbar {
+            display: none;
+        }
+        nav[aria-label="Breadcrumb"] ol {
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             font-weight: 500;
@@ -209,19 +227,17 @@
     {{-- WRAPPER UNTUK MODAL SEARCH --}}
     <div x-data="{ searchModalOpen: false }" @keydown.escape.window="searchModalOpen = false">
 
-        <header x-data="{ mobileMenuOpen: false }" class="sticky top-0 z-50 bg-white shadow-md">
+        <header x-data="{ mobileMenuOpen: false }" class="fixed top-0 inset-x-0 z-50 bg-white shadow-md">
             {{-- TOP BAR --}}
             <div class="border-b border-gray-200">
                 <div class="public-header-row max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
 
                     {{-- Grup 1: Logo & Nama (Kiri) --}}
                     <div class="public-brand">
-                        <img src="{{ asset('assets/logo/amaliah.webp') }}" alt="Logo SMK Amaliah" class="h-12 w-12">
-                        <div class="public-brand-text flex flex-col">
-                            <span class="text-gray-900 font-times text-base font-bold">SMK AMALIAH
-                                1&2
-                                CIAWI</span>
-                            <span class="text-xs font-times text-gray-600"><i>Tauhid Is Our Fundament</i></span>
+                        <img src="{{ asset('assets/logo/amaliah.webp') }}" alt="Logo SMK Amaliah" class="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
+                        <div class="public-brand-text flex flex-col min-w-0">
+                            <span class="text-gray-900 font-times text-sm sm:text-base font-bold leading-tight truncate">SMK AMALIAH 1&2 CIAWI</span>
+                            <span class="text-[10px] sm:text-xs font-times text-gray-600 truncate"><i>Tauhid Is Our Fundament</i></span>
                         </div>
                     </div>
 
@@ -253,9 +269,13 @@
 
                     </div>
 
-                    {{-- Tombol Hamburger (Mobile) --}}
-                    <div class="lg:hidden">
-                        <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-2xl text-gray-700 p-2"
+                    {{-- Tombol Mobile Tools: Search & Hamburger --}}
+                    <div class="flex items-center gap-1 lg:hidden">
+                        <button @click="searchModalOpen = true" class="text-gray-700 hover:text-[#63cd00] p-2 text-lg transition-colors flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100"
+                            aria-label="Cari di website">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                        <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-2xl text-gray-700 p-2 flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors"
                             aria-label="Buka menu navigasi" :aria-expanded="mobileMenuOpen.toString()">
                             <i class="fa-solid fa-bars" x-show="!mobileMenuOpen"></i>
                             <i class="fa-solid fa-times" x-show="mobileMenuOpen" x-cloak></i>
@@ -337,15 +357,27 @@
                 </div>
             </nav>
 
-            {{-- MOBILE MENU --}}
+            {{-- MOBILE MENU BACKDROP --}}
+            <div x-show="mobileMenuOpen" x-cloak @click="mobileMenuOpen = false"
+                x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                class="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-xs top-[65px] sm:top-[73px]"></div>
+
+            {{-- MOBILE MENU DRAWER --}}
             <div x-show="mobileMenuOpen" x-cloak @click.away="mobileMenuOpen = false"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
-                class="lg:hidden bg-white w-full absolute shadow-xl">
-                {{-- Konten mobile menu tetap sama --}}
-                <div class="flex flex-col space-y-1 p-4 text-sm max-h-[calc(100vh-80px)] overflow-y-auto">
+                class="lg:hidden bg-white w-full absolute inset-x-0 top-full shadow-2xl z-50 border-t border-gray-100">
+                <div class="flex flex-col space-y-1 p-4 text-sm max-h-[calc(100dvh-70px)] overflow-y-auto" style="-webkit-overflow-scrolling: touch;">
+                    {{-- Quick Search on Mobile Drawer --}}
+                    <button @click="searchModalOpen = true; mobileMenuOpen = false"
+                        class="w-full flex items-center gap-3 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-xl px-4 py-2.5 text-sm transition-colors mb-2">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                        <span>Cari di SMK Amaliah...</span>
+                    </button>
+
                     <a href="/"
                         class="block px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Home</a>
                     <div x-data="{ open: false }">
@@ -439,12 +471,15 @@
             </div>
         </header>
 
+        {{-- Spacer agar konten tidak tertutup fixed header --}}
+        <div class="h-[68px] sm:h-[76px] lg:h-[135px] w-full pointer-events-none" aria-hidden="true"></div>
+
         {{-- MODAL PENCARIAN --}}
         <div x-show="searchModalOpen" x-cloak x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-50 bg-opacity-50 flex items-start justify-center pt-16 sm:pt-24">
+            class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-xs flex items-start justify-center pt-16 sm:pt-24">
 
             <div @click.away="searchModalOpen = false" x-show="searchModalOpen"
                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
@@ -478,16 +513,14 @@
             {{-- TOMBOL CEPAT & WIDGET (WHATSAPP, UP BUTTON) --}}
             {{-- ================================================================= --}}
 
-            {{-- TOMBOL KEMBALI KE ATAS (DIPISAH, POSISI BAWAH TENGAH) --}}
-            <div class="fixed bottom-6 inset-x-0 z-40 flex justify-center pointer-events-none">
-                <div x-data="{ shown: false }"
-                    x-init="window.addEventListener('scroll', () => { shown = window.scrollY > 300 })"
-                    class="pointer-events-auto" x-show="shown" x-transition>
-                    <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Kembali ke atas"
-                        class="public-back-to-top w-12 h-12 lg:w-[65px] lg:h-[65px] rounded-full text-white flex items-center justify-center transition-colors">
-                        <i class="fas fa-arrow-up text-xl lg:text-2xl"></i>
-                    </button>
-                </div>
+            {{-- TOMBOL KEMBALI KE ATAS (POSISI BAWAH KIRI AGAR TIDAK MENGHALANGI KONTEN TENGAH MAUPUN FLOATING TOOLS KANAN) --}}
+            <div x-data="{ shown: false }"
+                x-init="window.addEventListener('scroll', () => { shown = window.scrollY > 300 })"
+                class="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40" x-show="shown" x-cloak x-transition>
+                <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Kembali ke atas"
+                    class="public-back-to-top w-10 h-10 sm:w-11 sm:h-11 rounded-full text-white flex items-center justify-center transition-all shadow-md hover:scale-105">
+                    <i class="fas fa-arrow-up text-sm sm:text-base"></i>
+                </button>
             </div>
             @yield('content')
         </main>
@@ -532,25 +565,41 @@
             }
 
             .ft-top {
-                padding-top: 3.5rem;
-                padding-bottom: 3rem;
+                padding-top: 2.25rem;
+                padding-bottom: 2rem;
             }
 
             .ft-grid {
                 display: grid;
-                grid-template-columns: 1fr;
-                gap: 2.5rem;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.75rem 1.25rem;
+            }
+
+            .ft-col-brand {
+                grid-column: 1 / -1;
+            }
+
+            .ft-col-links-1 {
+                grid-column: 1 / 2;
+            }
+
+            .ft-col-links-2 {
+                grid-column: 2 / 3;
+            }
+
+            .ft-col-contact {
+                grid-column: 1 / -1;
             }
 
             .ft-brand__logo {
                 display: flex;
                 align-items: center;
-                gap: 0.85rem;
+                gap: 0.75rem;
                 text-decoration: none;
             }
 
             .ft-brand__logo img {
-                height: 2.75rem;
+                height: 2.35rem;
                 width: auto;
             }
 
@@ -558,62 +607,63 @@
                 display: block;
                 color: #ffffff;
                 font-weight: 700;
-                font-size: 1.05rem;
+                font-size: 0.95rem;
                 line-height: 1.2;
             }
 
             .ft-brand__loc {
                 display: block;
                 color: #63cd00;
-                font-size: 0.75rem;
+                font-size: 0.7rem;
                 font-weight: 600;
                 letter-spacing: 0.05em;
             }
 
             .ft-brand__desc {
-                margin-top: 1.15rem;
-                font-size: 0.875rem;
-                line-height: 1.75;
+                margin-top: 0.75rem;
+                font-size: 0.8125rem;
+                line-height: 1.55;
                 color: #9a9aa0;
-                max-width: 22rem;
+                max-width: min(28rem, 100%);
             }
 
             .ft-socials {
                 display: flex;
                 align-items: center;
-                gap: 0.65rem;
-                margin-top: 1.4rem;
+                gap: 0.5rem;
+                margin-top: 0.9rem;
+                flex-wrap: wrap;
             }
 
             .ft-social {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                width: 2.4rem;
-                height: 2.4rem;
+                width: 2.15rem;
+                height: 2.15rem;
                 border-radius: 9999px;
                 background: #333335;
                 color: #b8b8bd;
-                font-size: 1rem;
+                font-size: 0.9rem;
                 text-decoration: none;
                 transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
             }
 
             .ft-social:hover {
-                transform: translateY(-3px);
+                transform: translateY(-2px);
                 background: #63cd00;
                 color: #ffffff;
-                box-shadow: 0 10px 20px -8px rgba(99, 205, 0, 0.6);
+                box-shadow: 0 8px 16px -6px rgba(99, 205, 0, 0.6);
             }
 
             .ft-col__title {
                 position: relative;
-                margin: 0 0 1.25rem;
-                padding-bottom: 0.6rem;
+                margin: 0 0 0.85rem;
+                padding-bottom: 0.45rem;
                 color: #ffffff;
-                font-size: 0.8rem;
+                font-size: 0.75rem;
                 font-weight: 700;
-                letter-spacing: 0.12em;
+                letter-spacing: 0.1em;
                 text-transform: uppercase;
             }
 
@@ -622,8 +672,8 @@
                 position: absolute;
                 left: 0;
                 bottom: 0;
-                width: 2.25rem;
-                height: 3px;
+                width: 1.75rem;
+                height: 2.5px;
                 border-radius: 9999px;
                 background: #63cd00;
             }
@@ -634,28 +684,28 @@
                 padding: 0;
                 display: flex;
                 flex-direction: column;
-                gap: 0.8rem;
+                gap: 0.55rem;
             }
 
             .ft-link {
                 display: inline-flex;
                 align-items: center;
-                gap: 0.55rem;
+                gap: 0.45rem;
                 color: #9a9aa0;
-                font-size: 0.875rem;
+                font-size: 0.8125rem;
                 text-decoration: none;
                 transition: color 0.2s ease, transform 0.2s ease;
             }
 
             .ft-link i {
                 color: #63cd00;
-                font-size: 0.68rem;
+                font-size: 0.625rem;
                 transition: transform 0.2s ease;
             }
 
             .ft-link:hover {
                 color: #ffffff;
-                transform: translateX(4px);
+                transform: translateX(3px);
             }
 
             .ft-link:hover i {
@@ -665,29 +715,29 @@
             .ft-contact {
                 display: flex;
                 flex-direction: column;
-                gap: 1.1rem;
+                gap: 0.75rem;
             }
 
             .ft-contact__item {
                 display: flex;
                 align-items: flex-start;
-                gap: 0.85rem;
-                font-size: 0.875rem;
+                gap: 0.65rem;
+                font-size: 0.8125rem;
                 color: #9a9aa0;
-                line-height: 1.6;
+                line-height: 1.5;
             }
 
             .ft-contact__icon {
                 flex-shrink: 0;
-                width: 2.35rem;
-                height: 2.35rem;
-                border-radius: 0.7rem;
+                width: 1.95rem;
+                height: 1.95rem;
+                border-radius: 0.5rem;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 background: rgba(99, 205, 0, 0.12);
                 color: #63cd00;
-                font-size: 0.85rem;
+                font-size: 0.75rem;
             }
 
             .ft-contact__item a {
@@ -702,8 +752,9 @@
 
             .ft-contact__nums {
                 display: flex;
-                flex-direction: column;
-                gap: 0.3rem;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 0.4rem 0.9rem;
             }
 
             .ft-bottom {
@@ -715,15 +766,15 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 0.9rem;
-                padding-top: 1.4rem;
-                padding-bottom: 1.4rem;
+                gap: 0.6rem;
+                padding-top: 1rem;
+                padding-bottom: 1rem;
                 text-align: center;
             }
 
             .ft-copy {
                 margin: 0;
-                font-size: 0.8rem;
+                font-size: 0.75rem;
                 color: #7c7c82;
             }
 
@@ -735,8 +786,8 @@
             .ft-legal {
                 display: flex;
                 align-items: center;
-                gap: 0.9rem;
-                font-size: 0.8rem;
+                gap: 0.75rem;
+                font-size: 0.75rem;
             }
 
             .ft-legal a {
@@ -759,8 +810,21 @@
                     padding-right: 1.5rem;
                 }
 
+                .ft-top {
+                    padding-top: 2.75rem;
+                    padding-bottom: 2.5rem;
+                }
+
                 .ft-grid {
                     grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: 2rem 1.75rem;
+                }
+
+                .ft-col-brand,
+                .ft-col-links-1,
+                .ft-col-links-2,
+                .ft-col-contact {
+                    grid-column: span 1;
                 }
 
                 .ft-bottom__inner {
@@ -776,9 +840,21 @@
                     padding-right: 2rem;
                 }
 
+                .ft-top {
+                    padding-top: 3.25rem;
+                    padding-bottom: 2.75rem;
+                }
+
                 .ft-grid {
-                    grid-template-columns: 1.5fr 1fr 1fr 1.3fr;
-                    gap: 3rem;
+                    grid-template-columns: 1.4fr 0.9fr 1fr 1.3fr;
+                    gap: 2.5rem;
+                }
+
+                .ft-col-brand,
+                .ft-col-links-1,
+                .ft-col-links-2,
+                .ft-col-contact {
+                    grid-column: auto;
                 }
             }
         </style>
@@ -788,7 +864,7 @@
                 <div class="ft-grid">
 
                     {{-- Kolom 1: Brand, deskripsi, sosial media --}}
-                    <div>
+                    <div class="ft-col-brand">
                         <a href="/" class="ft-brand__logo">
                             <img src="{{ asset('assets/logo/amaliah_white.webp') }}" alt="Logo SMK Amaliah">
                             <span>
@@ -823,7 +899,7 @@
                     </div>
 
                     {{-- Kolom 2: Jelajahi --}}
-                    <div>
+                    <div class="ft-col-links-1">
                         <h4 class="ft-col__title">Jelajahi</h4>
                         <ul class="ft-links">
                             <li><a href="/" class="ft-link"><i class="fas fa-chevron-right"></i>Beranda</a></li>
@@ -837,7 +913,7 @@
                     </div>
 
                     {{-- Kolom 3: Informasi --}}
-                    <div>
+                    <div class="ft-col-links-2">
                         <h4 class="ft-col__title">Informasi</h4>
                         <ul class="ft-links">
                             <li><a href="{{ route('public.downloads.index') }}" class="ft-link"><i
@@ -854,7 +930,7 @@
                     </div>
 
                     {{-- Kolom 4: Hubungi Kami --}}
-                    <div>
+                    <div class="ft-col-contact">
                         <h4 class="ft-col__title">Hubungi Kami</h4>
                         <div class="ft-contact">
                             <div class="ft-contact__item">
@@ -870,6 +946,7 @@
                                 <span class="ft-contact__icon"><i class="fas fa-phone-alt"></i></span>
                                 <span class="ft-contact__nums">
                                     <a href="https://wa.me/628561922827" target="_blank" rel="noopener">0856-1922-827</a>
+                                    <span class="text-gray-500 hidden sm:inline">&bull;</span>
                                     <a href="https://wa.me/6285649011449" target="_blank" rel="noopener">0856-4901-1449</a>
                                 </span>
                             </div>
@@ -903,6 +980,38 @@
     {{-- Chatbot AI lokal: tombol gantung + modal Tanya Amaliah AI --}}
     @include('partials.floating-tools')
     @include('partials.ai-chatbot')
+
+    {{-- Auto-Refresh CSRF Token & Session Keepalive (Mencegah Halaman Expire 419) --}}
+    <script>
+        (function() {
+            function refreshCsrfToken() {
+                fetch('{{ route("csrf.keepalive") }}', {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin'
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data && data.csrf_token) {
+                        var meta = document.querySelector('meta[name="csrf-token"]');
+                        if (meta) meta.setAttribute('content', data.csrf_token);
+                        var inputs = document.querySelectorAll('input[name="_token"]');
+                        inputs.forEach(function(inp) { inp.value = data.csrf_token; });
+                    }
+                })
+                .catch(function() { /* silent */ });
+            }
+
+            // Refresh setiap 15 menit
+            setInterval(refreshCsrfToken, 15 * 60 * 1000);
+
+            // Refresh saat tab aktif kembali setelah ditinggal
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    refreshCsrfToken();
+                }
+            });
+        })();
+    </script>
 
 </body>
 

@@ -21,7 +21,7 @@
             </x-slot:actions>
         </x-admin-components::page-header>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Jurusan" :value="$total" icon="fa-solid fa-graduation-cap" tone="brand" />
             <x-admin-components::stat-card label="Dengan Gambar" :value="$majors->whereNotNull('image')->count()" icon="fa-solid fa-image" tone="green" />
             <x-admin-components::stat-card label="Dengan Logo" :value="$majors->whereNotNull('logo')->count()" icon="fa-solid fa-fill-drip" tone="blue" />
@@ -29,7 +29,7 @@
         </div>
 
         <x-admin-components::table
-            :head="['Jurusan', 'Kepala Kompetensi', 'Penerbit', 'Diperbarui', ['label' => 'Aksi', 'right' => true]]"
+            :head="['Jurusan', ['label' => 'Kepala Kompetensi', 'class' => 'hide-mob'], ['label' => 'Penerbit', 'class' => 'hide-mob'], ['label' => 'Diperbarui', 'class' => 'hide-mob'], ['label' => 'Aksi', 'right' => true, 'class' => 'has-3-actions']]"
             search-hint="Cari jurusan, kepala kompetensi…"
             :export-url="route('admin.export', ['resource' => 'majors'])">
             <x-slot:body>
@@ -43,19 +43,21 @@
                             <div class="table-main">
                                 <img class="thumb" src="{{ $mImg ?: 'https://placehold.co/64x64/eff9e3/63cd00?text=JRS' }}" alt="{{ $m->name }}" loading="lazy">
                                 <div style="min-width:0">
-                                    <div class="cell-main truncate">{{ $m->name }}</div>
-                                    <div class="cell-sub truncate">{{ $mSub }}</div>
+                                    <div class="cell-main truncate font-medium">{{ $m->name }}</div>
+                                    <div class="cell-sub truncate text-xs">
+                                        <span class="sm:hidden font-medium text-[var(--brand)]">{{ $m->competency_head ? $m->competency_head . ' · ' : '' }}</span>{{ $mSub }}
+                                    </div>
                                 </div>
                             </div>
                         </td>
-                        <td data-label="Kepala Kompetensi"><span style="white-space:nowrap">{{ $m->competency_head ?? '-' }}</span></td>
-                        <td data-label="Penerbit"><span style="white-space:nowrap"><i class="fa-regular fa-user mr-1" style="color:var(--text-3)"></i>{{ $m->publisher ?? '-' }}</span></td>
-                        <td data-label="Diperbarui"><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($m->updated_at)->locale('id')->diffForHumans() }}</span></td>
-                        <td data-label="Aksi" class="text-right">
+                        <td data-label="Kepala Kompetensi" class="hide-mob"><span style="white-space:nowrap">{{ $m->competency_head ?? '-' }}</span></td>
+                        <td data-label="Penerbit" class="hide-mob"><span style="white-space:nowrap"><i class="fa-regular fa-user mr-1" style="color:var(--text-3)"></i>{{ $m->publisher ?? '-' }}</span></td>
+                        <td data-label="Diperbarui" class="hide-mob"><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($m->updated_at)->locale('id')->diffForHumans() }}</span></td>
+                        <td data-label="Aksi" class="has-3-actions text-right">
                             <div class="table-actions">
                                 <a class="act-btn view" href="{{ route('admin.majors.show', $m) }}" title="Lihat detail"><i class="fa-regular fa-eye"></i></a>
                                 <a class="act-btn edit" href="{{ route('admin.majors.edit', $m) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                                <form action="{{ route('admin.majors.destroy', $m) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus jurusan ini?')">
+                                <form action="{{ route('admin.majors.destroy', $m) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus jurusan ini?')" class="inline-block">
                                     @csrf
                                     @method('DELETE')
                                     <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>

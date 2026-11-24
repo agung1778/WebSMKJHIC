@@ -13,6 +13,7 @@ use App\Models\Major;
 use App\Models\SchoolSetting;
 use App\Models\Teacher;
 use App\Models\InstaPost;
+use App\Models\TiktokPost;
 use App\Models\SchoolLeader;
 
 class HomeController extends Controller
@@ -45,6 +46,8 @@ class HomeController extends Controller
 
         $instaPosts = InstaPost::where('is_active', true)->latest()->take(15)->get();
 
+        $tiktokPosts = TiktokPost::where('is_active', true)->latest()->take(18)->get();
+
         $leaders = SchoolLeader::where('is_active', true)
             ->orderBy('order_column')
             ->orderBy('id')
@@ -63,6 +66,7 @@ class HomeController extends Controller
             'teachersCount'   => $teachersCount,
             'facilitiesCount' => $facilitiesCount,
             'instaPosts'      => $instaPosts,
+            'tiktokPosts'     => $tiktokPosts,
             'leaders'         => $leaders,
         ]);
     }

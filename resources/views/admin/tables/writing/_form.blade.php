@@ -2,6 +2,8 @@
     $item = $writing ?? null;
 @endphp
 
+<input type="hidden" name="publisher" value="{{ old('publisher', $item->publisher ?? auth()->user()->name ?? 'Admin') }}">
+
 <div class="grid gap-6 lg:grid-cols-3 items-start">
     <div class="space-y-6 lg:col-span-2">
         <div class="form-section space-y-5">

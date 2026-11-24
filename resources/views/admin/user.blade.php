@@ -19,7 +19,7 @@
             title="Daftar Admin"
             subtitle="Kelola akun admin dan super admin yang memiliki akses ke panel ini." />
 
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Admin" :value="$totalUsers" icon="fa-solid fa-users-gear" tone="brand" />
             <x-admin-components::stat-card label="Sedang Online" :value="$onlineUsers" icon="fa-solid fa-wifi" tone="green"
                 :sub="'Aktif dalam 5 menit terakhir'" />
@@ -45,8 +45,8 @@
                         <tr>
                             <th>Admin</th>
                             <th>Role</th>
-                            <th>Tanggal Dibuat</th>
-                            <th>Aktivitas Terakhir</th>
+                            <th class="hide-mob">Tanggal Dibuat</th>
+                            <th class="hide-mob">Aktivitas Terakhir</th>
                             <th class="text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -61,27 +61,29 @@
                             @endphp
                             <tr data-row data-cat="{{ $u->role }}">
                                 <td data-label="Admin">
-                                    <div class="flex items-center gap-3">
-                                        <span class="initials-avatar">{{ strtoupper(mb_substr($u->name, 0, 1)) }}</span>
-                                        <div>
-                                            <div class="cell-main">{{ $u->name }}</div>
-                                            <div class="cell-sub">{{ $u->email }}</div>
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="initials-avatar shrink-0">{{ strtoupper(mb_substr($u->name, 0, 1)) }}</span>
+                                        <div style="min-width:0">
+                                            <div class="cell-main truncate font-medium">{{ $u->name }}</div>
+                                            <div class="cell-sub truncate text-xs">
+                                                <span class="sm:hidden font-medium text-[var(--brand)]">{{ $online ? '● Online · ' : '' }}</span>{{ $u->email }}
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td data-label="Role"><span class="badge {{ $u->role === 'superadmin' ? 'badge-info' : 'badge-published' }}">{{ $u->role === 'superadmin' ? 'Super Admin' : 'Admin' }}</span></td>
-                                <td data-label="Tanggal Dibuat"><span class="cell-sub">{{ $u->created_at->format('d M Y, H:i') }}</span></td>
-                                <td data-label="Aktivitas Terakhir">
+                                <td data-label="Tanggal Dibuat" class="hide-mob"><span class="cell-sub">{{ $u->created_at ? \Carbon\Carbon::parse($u->created_at)->translatedFormat('d M Y, H:i') : '-' }}</span></td>
+                                <td data-label="Aktivitas Terakhir" class="hide-mob">
                                     <div class="flex items-center gap-2">
                                         <span class="status-dot {{ $online ? 'online' : '' }}"></span>
                                         <span class="cell-sub">{{ $lastBy }}</span>
                                     </div>
                                 </td>
-                                <td data-label="Aksi">
+                                <td data-label="Aksi" class="text-right">
                                     @if ($isSuperadmin)
-                                        <div class="table-actions flex items-center justify-end gap-2">
-                                            <a class="app-btn app-btn-sm" href="{{ route('admin.users.edit', $u) }}" title="Edit profil admin"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
-                                            <form action="{{ route('admin.users.updateRole', $u) }}" method="POST">
+                                        <div class="table-actions flex items-center justify-end gap-1">
+                                            <a class="act-btn edit" href="{{ route('admin.users.edit', $u) }}" title="Edit profil admin"><i class="fa-solid fa-pen"></i></a>
+                                            <form action="{{ route('admin.users.updateRole', $u) }}" method="POST" class="inline-block hide-mob">
                                                 @csrf
                                                 <select name="role" class="app-select" style="width:auto;padding:7px 30px 7px 12px;font-size:12px" onchange="this.form.submit()">
                                                     <option value="admin" {{ $u->role === 'admin' ? 'selected' : '' }}>admin</option>

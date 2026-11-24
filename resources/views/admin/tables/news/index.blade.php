@@ -22,7 +22,7 @@
         </x-admin-components::page-header>
 
         {{-- Ringkasan --}}
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Berita" :value="$total" icon="fa-solid fa-newspaper" tone="brand" />
             <x-admin-components::stat-card label="Diterbitkan Bulan Ini" :value="$news->where('date_published','>=', now()->startOfMonth())->count()" icon="fa-solid fa-calendar-check" tone="green" />
             <x-admin-components::stat-card label="Kontributor" :value="$news->pluck('publisher')->unique()->count()" icon="fa-solid fa-user-pen" tone="blue" />
@@ -31,7 +31,7 @@
 
         {{-- Tabel --}}
         <x-admin-components::table
-            :head="['Berita', 'Tanggal Terbit', 'Penerbit', ['label' => 'Aksi', 'right' => true]]"
+            :head="['Berita', ['label' => 'Tanggal Terbit', 'class' => 'hide-mob'], ['label' => 'Penerbit', 'class' => 'hide-mob'], ['label' => 'Aksi', 'right' => true, 'class' => 'has-3-actions']]"
             search-hint="Cari berita, penerbit…"
             :export-url="route('admin.export', ['resource' => 'news'])">
             <x-slot:body>
@@ -41,18 +41,20 @@
                             <div class="table-main">
                                 <img class="thumb" src="{{ $n->image ? asset('storage/' . $n->image) : 'https://placehold.co/64x64/eff9e3/63cd00?text=BRT' }}" alt="{{ $n->title }}" loading="lazy">
                                 <div style="min-width:0">
-                                    <div class="cell-main truncate">{{ $n->title }}</div>
-                                    <div class="cell-sub truncate">{{ \Illuminate\Support\Str::limit(strip_tags($n->description), 150) }}</div>
+                                    <div class="cell-main truncate font-medium">{{ $n->title }}</div>
+                                    <div class="cell-sub truncate text-xs">
+                                        <span class="sm:hidden font-medium text-[var(--brand)]">{{ \Carbon\Carbon::parse($n->date_published)->translatedFormat('d M Y') }} · </span>{{ \Illuminate\Support\Str::limit(strip_tags($n->description), 100) }}
+                                    </div>
                                 </div>
                             </div>
                         </td>
-                        <td data-label="Tanggal Terbit"><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($n->date_published)->translatedFormat('d M Y') }}</span></td>
-                        <td data-label="Penerbit"><span style="white-space:nowrap"><i class="fa-regular fa-user mr-1" style="color:var(--text-3)"></i>{{ $n->publisher }}</span></td>
-                        <td data-label="Aksi" class="text-right">
+                        <td data-label="Tanggal Terbit" class="hide-mob"><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($n->date_published)->translatedFormat('d M Y') }}</span></td>
+                        <td data-label="Penerbit" class="hide-mob"><span style="white-space:nowrap"><i class="fa-regular fa-user mr-1" style="color:var(--text-3)"></i>{{ $n->publisher }}</span></td>
+                        <td data-label="Aksi" class="has-3-actions text-right">
                             <div class="table-actions">
                                 <a class="act-btn view" href="{{ route('admin.news.show', $n) }}" title="Lihat detail"><i class="fa-regular fa-eye"></i></a>
                                 <a class="act-btn edit" href="{{ route('admin.news.edit', $n) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                                <form action="{{ route('admin.news.destroy', $n) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus berita ini?')">
+                                <form action="{{ route('admin.news.destroy', $n) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus berita ini?')" class="inline-block">
                                     @csrf
                                     @method('DELETE')
                                     <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>

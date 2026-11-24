@@ -162,7 +162,7 @@
                 <div class="dash-sub">Tambahkan konten baru dalam sekali klik</div>
             </div>
         </div>
-        <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+        <div class="grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 sm:gap-3">
             @php
                 $quickActions = [
                     ['label' => 'Berita',   'icon' => 'fa-solid fa-newspaper',      'url' => route('admin.news.create'),       'bg' => '#EFF6FF', 'fg' => '#2563EB'],

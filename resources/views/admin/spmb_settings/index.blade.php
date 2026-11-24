@@ -27,7 +27,7 @@
             </x-slot:actions>
         </x-admin-components::page-header>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Data" :value="$total" icon="fa-solid fa-file-circle-check" tone="brand" />
             <x-admin-components::stat-card label="Aktif Ditampilkan" :value="$settings->where('is_active', true)->count()" icon="fa-solid fa-circle-check" tone="green" />
             <x-admin-components::stat-card label="Status Buka" :value="$open" icon="fa-solid fa-lock-open" tone="blue" />
@@ -35,44 +35,48 @@
         </div>
 
         <x-admin-components::table
-            :head="[['label' => 'Data', 'class' => 'w-16'], 'Gelombang / Periode', 'Status', 'Brosur', 'Ditampilkan', 'Popup', ['label' => 'Aksi', 'right' => true]]"
-            search-hint="C gelombang, periode, kuota…">
+            :head="[['label' => 'Data', 'class' => 'w-16 hide-mob'], 'Gelombang / Periode', 'Status', ['label' => 'Brosur', 'class' => 'hide-mob'], ['label' => 'Ditampilkan', 'class' => 'hide-mob'], ['label' => 'Popup', 'class' => 'hide-mob'], ['label' => 'Aksi', 'right' => true]]"
+            search-hint="Cari gelombang, periode, kuota…">
             <x-slot:body>
                 @forelse ($settings as $s)
                     <tr data-row>
-                        <td data-label="Data"><span class="badge badge-info">#{{ $s->id }}</span></td>
+                        <td data-label="Data" class="hide-mob"><span class="badge badge-info">#{{ $s->id }}</span></td>
                         <td data-label="Gelombang / Periode">
                             <div class="cell-main">
-                                {{ $s->wave_name ?: 'Tanpa nama gelombang' }}
+                                <span class="font-medium">{{ $s->wave_name ?: 'Tanpa nama gelombang' }}</span>
                                 @if ($s->wave_category)
-                                    <span class="badge badge-info ms-1">{{ $s->wave_category }}</span>
+                                    <span class="badge badge-info ms-1 text-[10px]">{{ $s->wave_category }}</span>
                                 @endif
                             </div>
-                            <div class="cell-sub">
+                            <div class="cell-sub text-xs">
+                                <span class="sm:hidden font-medium text-[var(--brand)]">#{{ $s->id }} · </span>
                                 <i class="fa-solid fa-calendar-days"></i> {{ $s->period_date ?: 'Belum ada periode' }}
                                 @if ($s->quota_note)
                                     · {{ $s->quota_note }}
+                                @endif
+                                @if ($s->brochure_image_1 || $s->brochure_file)
+                                    <span class="sm:hidden text-emerald-600 ms-1 font-semibold" title="Brosur ada"><i class="fa-solid fa-file-image"></i> Brosur</span>
                                 @endif
                             </div>
                         </td>
                         <td data-label="Status">
                             <span class="badge {{ $s->status === 'Buka' ? 'badge-published' : 'badge-archived' }}">{{ $s->status }}</span>
                         </td>
-                        <td data-label="Brosur">
+                        <td data-label="Brosur" class="hide-mob">
                             @if ($s->brochure_image_1 || $s->brochure_file)
                                 <span class="badge badge-published"><i class="fa-solid fa-check"></i> Ada</span>
                             @else
                                 <span class="badge badge-archived"><i class="fa-solid fa-minus"></i> Belum</span>
                             @endif
                         </td>
-                        <td data-label="Ditampilkan">
+                        <td data-label="Ditampilkan" class="hide-mob">
                             @if ($s->is_active)
                                 <span class="badge badge-published"><i class="fa-solid fa-eye"></i> Aktif</span>
                             @else
                                 <span class="badge badge-archived"><i class="fa-solid fa-eye-slash"></i> Nonaktif</span>
                             @endif
                         </td>
-                        <td data-label="Popup">
+                        <td data-label="Popup" class="hide-mob">
                             @if ($s->popup_enabled)
                                 <span class="badge badge-published" title="{{ $freqLabels[$s->popup_frequency] ?? $s->popup_frequency }}">
                                     <i class="fa-solid fa-window-maximize"></i> Aktif
@@ -84,7 +88,7 @@
                         <td data-label="Aksi" class="text-right">
                             <div class="table-actions">
                                 <a class="act-btn edit" href="{{ route('admin.spmb_settings.edit', $s) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                                <form action="{{ route('admin.spmb_settings.destroy', $s) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data SPMB ini?')">
+                                <form action="{{ route('admin.spmb_settings.destroy', $s) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data SPMB ini?')" class="inline-block">
                                     @csrf
                                     @method('DELETE')
                                     <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>

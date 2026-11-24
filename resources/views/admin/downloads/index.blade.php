@@ -11,17 +11,21 @@
             </x-slot:actions>
         </x-admin-components::page-header>
 
-        <div class="grid gap-4 sm:grid-cols-3">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Berkas" :value="$downloads->count()" icon="fa-solid fa-folder-open" tone="brand" />
             <x-admin-components::stat-card label="Aktif Ditampilkan" :value="$downloads->where('is_active', true)->where('file_available', true)->count()" icon="fa-solid fa-circle-check" tone="green" />
-            <x-admin-components::stat-card label="Laporan PKL" :value="$downloads->where('category', 'pkl')->count()" icon="fa-solid fa-graduation-cap" tone="blue" />
+            <div class="col-span-2 sm:col-span-1">
+                <x-admin-components::stat-card label="Laporan PKL" :value="$downloads->where('category', 'pkl')->count()" icon="fa-solid fa-graduation-cap" tone="blue" />
+            </div>
         </div>
 
-        <form action="{{ route('admin.downloads.index') }}" method="GET" class="app-card app-card-pad flex flex-wrap items-center justify-between gap-3 text-sm">
-            <div class="flex flex-wrap items-center gap-2.5">
-                <i class="fa-solid fa-filter text-gray-400"></i>
-                <label for="admin-download-major" class="font-medium text-gray-700 dark:text-gray-300">Filter Jurusan PKL:</label>
-                <select name="jurusan" id="admin-download-major" class="app-select !py-1.5 !px-3 !text-sm" onchange="this.form.submit()" style="width:auto;min-width:210px">
+        <form action="{{ route('admin.downloads.index') }}" method="GET" class="app-card p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-gray-400"></i>
+                    <label for="admin-download-major" class="font-medium text-gray-700 dark:text-gray-300 text-xs sm:text-sm whitespace-nowrap">Filter Jurusan PKL:</label>
+                </div>
+                <select name="jurusan" id="admin-download-major" class="app-select !py-1.5 !px-3 !text-sm w-full sm:w-auto" onchange="this.form.submit()">
                     <option value="">Semua Berkas &amp; Jurusan</option>
                     <option value="umum" @selected($majorFilter === 'umum')>Umum / Semua Jurusan</option>
                     @foreach($majors as $major)
@@ -30,7 +34,7 @@
                 </select>
             </div>
             @if($majorFilter !== null)
-                <a href="{{ route('admin.downloads.index') }}" class="app-btn !py-1.5 !px-3 text-xs"><i class="fa-solid fa-rotate-left mr-1"></i> Reset Filter</a>
+                <a href="{{ route('admin.downloads.index') }}" class="app-btn !py-1.5 !px-3 text-xs justify-center"><i class="fa-solid fa-rotate-left mr-1"></i> Reset Filter</a>
             @endif
         </form>
 
@@ -54,6 +58,10 @@
                                     @if($logo->description)
                                         <div class="cell-sub truncate" style="max-width:320px;" title="{{ $logo->description }}">{{ $logo->description }}</div>
                                     @endif
+                                    <div class="cell-sub sm:hidden mt-0.5 text-[10.5px]">
+                                        <span class="font-bold uppercase text-[10px] px-1 py-0.5 rounded bg-[var(--surface-3)] text-[var(--text-2)]">{{ $logo->extension }}</span>
+                                        <span>· {{ $logo->formatted_size }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </td>

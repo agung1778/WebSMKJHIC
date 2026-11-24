@@ -64,6 +64,7 @@
                     ['title' => 'Pusat Unduhan', 'icon' => 'fa-solid fa-download', 'routes' => ['admin.downloads.*', 'admin.logo-downloads.*'], 'url' => 'admin.downloads.index'],
                     ['title' => 'Menu Navigasi', 'icon' => 'fa-solid fa-bars-staggered', 'routes' => ['admin.navigations.*'], 'url' => 'admin.navigations.index'],
                     ['title' => 'Feed Instagram', 'icon' => 'fa-brands fa-instagram', 'routes' => ['admin.insta-posts.*'], 'url' => 'admin.insta-posts.index'],
+                    ['title' => 'Feed TikTok', 'icon' => 'fa-brands fa-tiktok', 'routes' => ['admin.tiktok-posts.*'], 'url' => 'admin.tiktok-posts.index'],
                     ['title' => 'Jumlah Peserta Didik', 'icon' => 'fa-solid fa-users', 'routes' => ['admin.school_settings.*'], 'url' => 'admin.school_settings.edit'],
                 ],
             ],
@@ -165,9 +166,11 @@
                     <div class="brand-name">SMK AMALIAH</div>
                     <div class="brand-tag">Admin Panel · 1 &amp; 2</div>
                 </div>
+                <button type="button" class="sidebar-close-btn show-mob" data-sidebar-mobile-close aria-label="Tutup Menu">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
             </div>
 
-            <button type="button" class="sidebar-close show-mob" data-sidebar-mobile-close><i class="fa-solid fa-xmark" aria-hidden="true"></i> Tutup Menu</button>
             <nav class="sidebar-scroll">
                 <div class="menu-label">Menu Utama</div>
                 @foreach ($menu as $section)
@@ -247,8 +250,8 @@
                 </button>
 
                 <div class="topbar-title">
-                    <div class="admin-panel-name">Admin Panel SMK Amaliah 1 &amp; 2</div>
-                    <div class="admin-panel-caption">Sistem Manajemen Website Sekolah</div>
+                    <div class="admin-panel-name"><span class="hide-mob">Admin Panel </span>SMK Amaliah 1 &amp; 2</div>
+                    <div class="admin-panel-caption hide-mob">Sistem Manajemen Website Sekolah</div>
                     <nav class="topbar-crumb" aria-label="Breadcrumb">
                         <span><a href="{{ route('admin.dashboard') }}">Beranda</a></span>
                         @if ($pageParent && $pageParent !== 'Dashboard')
@@ -267,7 +270,7 @@
                         style="width:auto;gap:8px;padding:0 13px;cursor:text">
                         <i class="fa-solid fa-magnifying-glass" style="color:var(--text-3);font-size:13px"></i>
                         <span class="hide-mob" style="font-size:12.5px;color:var(--text-3)">Cari…</span>
-                        <kbd style="font-size:10px;color:var(--text-3);border:1px solid var(--border);border-radius:7px;padding:2px 7px;font-family:inherit">Ctrl K</kbd>
+                        <kbd class="hide-mob" style="font-size:10px;color:var(--text-3);border:1px solid var(--border);border-radius:7px;padding:2px 7px;font-family:inherit">Ctrl K</kbd>
                     </button>
 
                     {{-- Notification center --}}
@@ -371,6 +374,9 @@
     @if (session('success'))
         <div style="display:none" data-toast-flash="success">{{ session('success') }}</div>
     @endif
+    @if (session('warning'))
+        <div style="display:none" data-toast-flash="warning">{{ session('warning') }}</div>
+    @endif
     @if (session('error'))
         <div style="display:none" data-toast-flash="error">{{ session('error') }}</div>
     @endif
@@ -380,6 +386,38 @@
 
     <script>
         window.__palette = @json($paletteGroups);
+    </script>
+
+    {{-- Auto-Refresh CSRF Token & Session Keepalive (Mencegah Halaman Expire 419) --}}
+    <script>
+        (function() {
+            function refreshCsrfToken() {
+                fetch('{{ route("csrf.keepalive") }}', {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin'
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data && data.csrf_token) {
+                        var meta = document.querySelector('meta[name="csrf-token"]');
+                        if (meta) meta.setAttribute('content', data.csrf_token);
+                        var inputs = document.querySelectorAll('input[name="_token"]');
+                        inputs.forEach(function(inp) { inp.value = data.csrf_token; });
+                    }
+                })
+                .catch(function() { /* silent */ });
+            }
+
+            // Refresh setiap 15 menit
+            setInterval(refreshCsrfToken, 15 * 60 * 1000);
+
+            // Refresh saat tab aktif kembali setelah ditinggal
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    refreshCsrfToken();
+                }
+            });
+        })();
     </script>
 
     @stack('scripts')

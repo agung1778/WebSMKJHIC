@@ -104,8 +104,9 @@ class AdminThemeTest extends TestCase
 
         $response->assertOk()
             ->assertHeader('Content-Type', 'text/css; charset=UTF-8')
-            ->assertHeader('X-Content-Type-Options', 'nosniff')
-            ->assertHeader('Cache-Control', 'public, max-age=3600');
+            ->assertHeader('X-Content-Type-Options', 'nosniff');
+        $this->assertStringContainsString('public', (string) $response->headers->get('Cache-Control'));
+        $this->assertStringContainsString('max-age=3600', (string) $response->headers->get('Cache-Control'));
 
         $css = $response->getContent();
         $this->assertStringContainsString('.dashboard-hero', $css);

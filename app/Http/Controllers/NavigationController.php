@@ -35,6 +35,11 @@ class NavigationController extends Controller
         return redirect()->route('admin.navigations.index')->with('success', 'Menu navigasi berhasil ditambahkan!');
     }
 
+    public function show(Navigation $navigation)
+    {
+        return redirect()->route('admin.navigations.edit', $navigation);
+    }
+
     public function edit(Navigation $navigation)
     {
         return view('admin.navigations.edit', compact('navigation'));

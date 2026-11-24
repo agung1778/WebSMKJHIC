@@ -1315,62 +1315,148 @@ html.dark .form-section { box-shadow:none; }
 .table-actions .app-btn { flex-shrink:0; }
 .table-actions .dropdown { flex-shrink:0; }
 
-/* Mode kartu: setiap baris jadi kartu di layar sempit (label tampil otomatis via data-label) */
-@media (max-width: 1599.98px) {
-    .table-wrap { overflow:visible; border:0; background:transparent; box-shadow:none; border-radius:0; }
-    .table-app, .table-app thead, .table-app tbody, .table-app tr, .table-app th, .table-app td { display:block; }
-    .table-app thead { display:none; }
-    .table-app tbody { display:flex; flex-direction:column; gap:14px; }
-    .table-app tbody tr {
-        background:var(--surface);
-        border:1px solid var(--border);
-        border-radius:16px;
-        box-shadow:0 1px 2px rgba(28,28,29,.04), 0 4px 14px rgba(28,28,29,.05);
-        padding:14px 14px 10px;
-    }
-    .table-app tbody tr:hover { background:var(--surface); }
-    .table-app tbody tr:nth-child(even) { background:var(--surface); }
-    .table-app tbody tr[data-empty] { background:transparent; border:1px dashed var(--border-strong); box-shadow:none; }
-    .table-app tbody td {
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:12px;
-        padding:8px 2px;
-        border:0;
-        color:var(--text-2);
-        font-size:12.5px;
-        vertical-align:top;
-        flex-wrap:wrap;
-    }
-    .table-app tbody td[data-label]::before {
-        content:attr(data-label);
-        flex-shrink:0;
-        font-size:10px;
-        font-weight:700;
-        text-transform:uppercase;
-        letter-spacing:.06em;
-        color:var(--brand-deep);
-        background:var(--brand-softer);
-        border-radius:999px;
-        padding:5px 10px;
-        margin-top:2px;
-    }
-    .table-app tbody td .table-main { flex:1 1 auto; min-width:0; }
-    .table-app tbody td .table-main .cell-sub { max-width:none; -webkit-line-clamp:2; -webkit-box-orient:vertical; display:-webkit-box; overflow:hidden; }
-    .table-app tbody td .table-actions { flex:1 1 auto; justify-content:flex-end; }
-    .table-app tbody td .table-actions .act-btn { width:38px; height:38px; }
-    .table-app tbody td .thumb { width:40px; height:40px; border-radius:10px; flex-shrink:0; }
-    .table-app tbody tr[data-empty] td { display:block; padding:4px 0 0; }
-    .table-app tbody tr[data-empty] .empty-state { padding:28px 12px; }
+/* Struktur Tabel Admin yang Rapi, Pas 100% Bebas Scroll Horizontal */
+.table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: 0 1px 3px rgba(28, 28, 29, 0.04), 0 4px 14px rgba(28, 28, 29, 0.05);
 }
 
-@media (min-width: 1600px) {
-    .table-app thead th { padding: 12px 14px; }
-    .table-app tbody td { padding: 12px 14px; }
-    .table-app .thumb { width: 42px; height: 42px; }
-    .table-app tbody td .cell-main { max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .table-app tbody td .table-main .cell-sub { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .table-app tbody td code { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .table-actions .act-btn { width: 30px; height: 30px; }
+.table-app {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+    table-layout: fixed;
+    display: table !important;
+}
+
+.table-app thead {
+    display: table-header-group !important;
+}
+
+.table-app thead th {
+    display: table-cell !important;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--brand-deep);
+    background: var(--brand-softer);
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-app thead th:first-child { border-radius: 16px 0 0 0; }
+.table-app thead th:last-child { border-radius: 0 16px 0 0; }
+
+.table-app tbody {
+    display: table-row-group !important;
+}
+
+.table-app tbody tr {
+    display: table-row !important;
+    transition: background 0.14s ease;
+}
+
+.table-app tbody tr:nth-child(even) {
+    background: var(--surface-2);
+}
+
+.table-app tbody tr:hover {
+    background: var(--brand-softer);
+}
+
+.table-app tbody td {
+    display: table-cell !important;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-2);
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+}
+
+.table-app tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.table-app tbody td[data-label]::before {
+    display: none !important;
+    content: none !important;
+}
+
+.table-app .thumb {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 10px;
+    object-fit: cover;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+}
+
+.table-app .cell-main {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.35;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-app .cell-sub {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-app .table-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.table-app .table-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.table-app .act-btn {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.table-app tbody tr[data-empty] td {
+    display: table-cell !important;
+    text-align: center;
+    padding: 36px 14px;
 }

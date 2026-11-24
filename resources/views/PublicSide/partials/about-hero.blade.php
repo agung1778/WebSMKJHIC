@@ -76,11 +76,11 @@
         </div>
     </div>
 
-    {{-- Breadcrumb bar --}}
+    {{-- Breadcrumb bar Responsif --}}
     <div style="background-color:#2D2D2D;">
-        <div class="max-w-screen-xl h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-            <nav aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
+        <div class="max-w-screen-xl min-h-12 py-2 mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto scrollbar-hide">
+            <nav aria-label="Breadcrumb" class="min-w-0">
+                <ol class="inline-flex items-center space-x-2 md:space-x-3 text-xs sm:text-sm whitespace-nowrap">
                     @foreach($crumbs as $i => $crumb)
                         <li @if($i > 0) class="flex items-center" @endif>
                             @if($i > 0)

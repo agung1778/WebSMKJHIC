@@ -119,7 +119,7 @@
 
         {{-- SUMMARY CARDS --}}
         <section>
-            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 stat-grid-2">
                 @php
                     $summaryCards = [
                         ['icon' => 'fa-users', 'label' => 'Total Pengunjung', 'value' => $fmt($avg['total_visitors']), 'raw' => (int) $avg['total_visitors'], 'tone' => 'brand'],

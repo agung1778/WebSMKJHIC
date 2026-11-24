@@ -43,8 +43,9 @@
                             $label  = is_array($col) ? ($col['label'] ?? '') : $col;
                             $isRight = is_array($col) && !empty($col['right']);
                             $extra  = is_array($col) ? ($col['class'] ?? '') : '';
+                            $colSlug = \Illuminate\Support\Str::slug($label);
                         @endphp
-                        <th @class([$extra, 'text-right' => $isRight])>{{ $label }}</th>
+                        <th @class([$extra, 'text-right' => $isRight]) data-col="{{ $colSlug }}">{{ $label }}</th>
                     @endforeach
                 </tr>
             </thead>

@@ -21,7 +21,7 @@
             </x-slot:actions>
         </x-admin-components::page-header>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Ekskul" :value="$total" icon="fa-solid fa-futbol" tone="brand" />
             <x-admin-components::stat-card label="Wajib" :value="$extracurriculars->where('type','Wajib')->count()" icon="fa-solid fa-list-check" tone="green" />
             <x-admin-components::stat-card label="Pilihan" :value="$extracurriculars->where('type','Pilihan')->count()" icon="fa-solid fa-hand-pointer" tone="blue" />
@@ -29,7 +29,7 @@
         </div>
 
         <x-admin-components::table
-            :head="['Ekstrakurikuler', 'Tipe', 'Pembina', 'Diperbarui', ['label' => 'Aksi', 'right' => true]]"
+            :head="['Ekstrakurikuler', 'Tipe', ['label' => 'Pembina', 'class' => 'hide-mob'], ['label' => 'Diperbarui', 'class' => 'hide-mob'], ['label' => 'Aksi', 'right' => true, 'class' => 'has-3-actions']]"
             search-hint="Cari ekskul, pembina…"
             :category-options="['' => 'Semua tipe', 'Wajib' => 'Wajib', 'Pilihan' => 'Pilihan']"
             :export-url="route('admin.export', ['resource' => 'extracurriculars'])">
@@ -41,19 +41,21 @@
                             <div class="table-main">
                                 <img class="thumb" src="{{ $e->image ? asset('storage/' . $e->image) : 'https://placehold.co/64x64/eff9e3/63cd00?text=EKS' }}" alt="{{ $e->name }}" loading="lazy">
                                 <div style="min-width:0">
-                                    <div class="cell-main truncate">{{ $e->name }}</div>
-                                    <div class="cell-sub truncate">{{ \Illuminate\Support\Str::limit(strip_tags($e->description ?? ''), 150) }}</div>
+                                    <div class="cell-main truncate font-medium">{{ $e->name }}</div>
+                                    <div class="cell-sub truncate text-xs">
+                                        <span class="sm:hidden font-medium text-[var(--brand)]">{{ $e->coach ? 'Pembina: ' . $e->coach . ' · ' : '' }}</span>{{ \Illuminate\Support\Str::limit(strip_tags($e->description ?? ''), 100) }}
+                                    </div>
                                 </div>
                             </div>
                         </td>
                         <td data-label="Tipe"><span class="badge {{ $type === 'Wajib' ? 'badge-info' : 'badge-warning' }}">{{ $type }}</span></td>
-                        <td data-label="Pembina"><span style="white-space:nowrap"><i class="fa-solid fa-whistle mr-1" style="color:var(--text-3)"></i>{{ $e->coach ?? '-' }}</span></td>
-                        <td data-label="Diperbarui"><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($e->updated_at)->locale('id')->diffForHumans() }}</span></td>
-                        <td data-label="Aksi" class="text-right">
+                        <td data-label="Pembina" class="hide-mob"><span style="white-space:nowrap"><i class="fa-solid fa-whistle mr-1" style="color:var(--text-3)"></i>{{ $e->coach ?? '-' }}</span></td>
+                        <td data-label="Diperbarui" class="hide-mob"><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($e->updated_at)->locale('id')->diffForHumans() }}</span></td>
+                        <td data-label="Aksi" class="has-3-actions text-right">
                             <div class="table-actions">
                                 <a class="act-btn view" href="{{ route('admin.extracurriculars.show', $e) }}" title="Lihat detail"><i class="fa-regular fa-eye"></i></a>
                                 <a class="act-btn edit" href="{{ route('admin.extracurriculars.edit', $e) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                                <form action="{{ route('admin.extracurriculars.destroy', $e) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus ekstrakurikuler ini?')">
+                                <form action="{{ route('admin.extracurriculars.destroy', $e) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus ekstrakurikuler ini?')" class="inline-block">
                                     @csrf
                                     @method('DELETE')
                                     <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>

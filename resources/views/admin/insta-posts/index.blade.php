@@ -15,7 +15,7 @@
             title="Feed Instagram"
             subtitle="Postingan terbaru tersinkron otomatis dari Instagram jika API terhubung. Unggah manual tetap tersedia. Maksimal 15 postingan — data tertua otomatis terhapus." />
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Postingan" :value="$posts->count()" icon="fa-brands fa-instagram" tone="brand" />
             <x-admin-components::stat-card label="Aktif di Website" :value="$activeCount" icon="fa-solid fa-circle-check" tone="green" />
             <x-admin-components::stat-card label="Tersembunyi" :value="$posts->where('is_active', false)->count()" icon="fa-solid fa-eye-slash" tone="amber" />
@@ -25,11 +25,11 @@
         <div class="admin-media-layout grid gap-6">
             {{-- Form tambah --}}
             <div class="app-card p-0 h-fit lg:sticky lg:top-24">
-                <div class="p-5 border-b" style="border-color:var(--border)">
+                <div class="p-4 sm:p-5 border-b" style="border-color:var(--border)">
                     <h3 class="card-title"><i class="fa-brands fa-instagram text-[var(--brand)]"></i> Tambah Postingan</h3>
                     <p class="text-[12.5px]" style="color:var(--text-3)">PNG, JPG, JPEG, WEBP, AVIF (Maks. 5MB)</p>
                 </div>
-                <form action="{{ route('admin.insta-posts.store') }}" method="POST" enctype="multipart/form-data" class="p-5 space-y-4">
+                <form action="{{ route('admin.insta-posts.store') }}" method="POST" enctype="multipart/form-data" class="p-4 sm:p-5 space-y-4">
                     @csrf
                     <div>
                         <label class="app-label">Foto Postingan <span class="req">*</span></label>
@@ -72,11 +72,11 @@
                         <table class="table-app">
                             <thead>
                                 <tr>
-                                    <th>Pratinjau</th>
+                                    <th data-col="pratinjau" class="w-14">Pratinjau</th>
                                     <th>Caption</th>
                                     <th>Status</th>
-                                    <th>Ditambahkan</th>
-                                    <th class="text-right">Aksi</th>
+                                    <th class="hide-mob" data-col="ditambahkan">Ditambahkan</th>
+                                    <th class="text-right has-3-actions" data-col="aksi">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -88,37 +88,37 @@
                                     @endphp
                                     <tr data-row>
                                         <td data-label="Pratinjau">
-                                            <img class="thumb cursor-zoom-in" src="{{ $imgUrl }}" alt="{{ $caption }}" loading="lazy" style="width:56px;height:56px;border-radius:14px" onclick="window.open('{{ $imgUrl }}')">
+                                            <img class="thumb cursor-zoom-in rounded-lg object-cover" src="{{ $imgUrl }}" alt="{{ $caption }}" loading="lazy" style="width:44px;height:44px" onclick="window.open('{{ $imgUrl }}')">
                                         </td>
                                         <td data-label="Caption">
-                                            <div class="cell-main truncate" style="max-width:280px">{{ $caption }}</div>
+                                            <div class="cell-main truncate max-w-[130px] sm:max-w-[280px] font-medium">{{ $caption }}</div>
                                             @if ($p->post_url)
-                                                <a class="cell-sub truncate d-block" style="max-width:280px;color:var(--blue,#1d6fd6)" href="{{ $p->post_url }}" target="_blank">{{ $p->post_url }}</a>
+                                                <a class="cell-sub truncate d-block max-w-[130px] sm:max-w-[280px]" style="color:var(--blue,#1d6fd6)" href="{{ $p->post_url }}" target="_blank">{{ $p->post_url }}</a>
                                             @endif
                                         </td>
                                         <td data-label="Status"><span class="badge {{ $active ? 'badge-published' : 'badge-archived' }}">{{ $active ? 'Aktif' : 'Tersembunyi' }}</span></td>
-                                        <td data-label="Ditambahkan"><span class="cell-sub">{{ $p->created_at->translatedFormat('d M Y') }}</span></td>
-                                        <td data-label="Aksi">
-                                            <div class="table-actions flex items-center justify-end gap-2">
-                                                <form action="{{ route('admin.insta-posts.toggle', $p) }}" method="POST" title="{{ $active ? 'Sembunyikan' : 'Tampilkan' }}">
+                                        <td data-label="Ditambahkan" class="hide-mob"><span class="cell-sub">{{ $p->created_at->translatedFormat('d M Y') }}</span></td>
+                                        <td data-label="Aksi" class="has-3-actions text-right">
+                                            <div class="table-actions flex items-center justify-end gap-1">
+                                                <form action="{{ route('admin.insta-posts.toggle', $p) }}" method="POST" title="{{ $active ? 'Sembunyikan' : 'Tampilkan' }}" class="inline-block">
                                                     @csrf
-                                                    <button class="icon-btn" type="submit" aria-label="{{ $active ? 'Sembunyikan' : 'Tampilkan' }}">
+                                                    <button class="act-btn view" type="submit" aria-label="{{ $active ? 'Sembunyikan' : 'Tampilkan' }}">
                                                         <i class="fa-solid {{ $active ? 'fa-eye-slash' : 'fa-eye' }}"></i>
                                                     </button>
                                                 </form>
-                                                <button class="icon-btn js-edit-insta" type="button"
+                                                <button class="act-btn edit js-edit-insta" type="button"
                                                     title="Edit"
                                                     data-action="{{ route('admin.insta-posts.update', $p) }}"
                                                     data-img="{{ $imgUrl }}"
                                                     data-caption="{{ $p->caption ?? '' }}"
                                                     data-url="{{ $p->post_url ?? '' }}"
                                                     data-active="{{ $active ? '1' : '0' }}">
-                                                    <i class="fa-regular fa-pen-to-square"></i>
+                                                    <i class="fa-solid fa-pen"></i>
                                                 </button>
-                                                <form action="{{ route('admin.insta-posts.destroy', $p) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus postingan ini?')">
+                                                <form action="{{ route('admin.insta-posts.destroy', $p) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus postingan ini?')" class="inline-block">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button class="icon-btn danger" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                                                    <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>
                                                 </form>
                                             </div>
                                         </td>
@@ -147,8 +147,8 @@
 
         {{-- Modal edit --}}
         <div class="modal-overlay" id="editInstaModal" style="display:none">
-            <div class="modal-card" style="max-width:480px">
-                <form action="" method="POST" enctype="multipart/form-data" id="editInstaForm" class="p-5 space-y-4">
+            <div class="modal-card w-full mx-3 sm:mx-auto" style="max-width:480px">
+                <form action="" method="POST" enctype="multipart/form-data" id="editInstaForm" class="p-4 sm:p-5 space-y-4">
                     @csrf
                     <input type="hidden" name="_method" value="PUT">
                     <div class="flex items-center justify-between">
@@ -156,8 +156,8 @@
                         <button class="icon-btn js-edit-close" type="button" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                     <div class="flex items-center gap-4">
-                        <img id="editInstaImg" alt="Pratinjau" class="rounded-xl border" style="width:72px;height:72px;object-fit:cover;border-color:var(--border)">
-                        <div class="flex-1">
+                        <img id="editInstaImg" alt="Pratinjau" class="rounded-xl border shrink-0" style="width:64px;height:64px;object-fit:cover;border-color:var(--border)">
+                        <div class="flex-1 min-w-0">
                             <label class="app-label">Ganti Foto <span class="optional">(opsional)</span></label>
                             <input type="file" name="image_file" accept="image/*" class="app-file">
                         </div>

@@ -21,7 +21,7 @@
             </x-slot:actions>
         </x-admin-components::page-header>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Prestasi" :value="$total" icon="fa-solid fa-trophy" tone="brand" />
             <x-admin-components::stat-card label="Individual" :value="$achievements->where('category','Individual')->count()" icon="fa-solid fa-user" tone="green" />
             <x-admin-components::stat-card label="Institutional" :value="$achievements->where('category','Institutional')->count()" icon="fa-solid fa-building-shield" tone="blue" />
@@ -29,7 +29,7 @@
         </div>
 
         <x-admin-components::table
-            :head="['Prestasi', 'Kategori', 'Pemenang', 'Tanggal', ['label' => 'Aksi', 'right' => true]]"
+            :head="['Prestasi', 'Kategori', ['label' => 'Pemenang', 'class' => 'hide-mob'], ['label' => 'Tanggal', 'class' => 'hide-mob'], ['label' => 'Aksi', 'right' => true, 'class' => 'has-3-actions']]"
             search-hint="Cari prestasi, juara, tingkat…"
             :category-options="['' => 'Semua kategori', 'Individual' => 'Individual', 'Institutional' => 'Institutional']"
             :export-url="route('admin.export', ['resource' => 'achievements'])">
@@ -41,24 +41,26 @@
                             <div class="table-main">
                                 <img class="thumb" src="{{ $a->image ? asset('storage/' . $a->image) : 'https://placehold.co/64x64/eff9e3/63cd00?text=PRS' }}" alt="{{ $a->title }}" loading="lazy">
                                 <div style="min-width:0">
-                                    <div class="cell-main truncate">{{ $a->title }}</div>
-                                    <div class="cell-sub truncate">{{ \Illuminate\Support\Str::limit(strip_tags($a->description ?? ''), 140) }}</div>
+                                    <div class="cell-main truncate font-medium">{{ $a->title }}</div>
+                                    <div class="cell-sub truncate text-xs">
+                                        <span class="sm:hidden font-medium text-[var(--brand)]">{{ $a->winner ? $a->winner . ' (' . ($a->level ?? '') . ') · ' : '' }}</span>{{ \Illuminate\Support\Str::limit(strip_tags($a->description ?? ''), 100) }}
+                                    </div>
                                 </div>
                             </div>
                         </td>
                         <td data-label="Kategori"><span class="badge {{ $category === 'Institutional' ? 'badge-published' : 'badge-info' }}">{{ $category }}</span></td>
-                        <td data-label="Pemenang">
+                        <td data-label="Pemenang" class="hide-mob">
                             <div style="min-width:0">
                                 <div class="cell-main truncate">{{ $a->winner ?? '-' }}</div>
                                 <div class="cell-sub">{{ $a->level ?? '-' }}</div>
                             </div>
                         </td>
-                        <td data-label="Tanggal"><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($a->date)->translatedFormat('d M Y') }}</span></td>
-                        <td data-label="Aksi" class="text-right">
+                        <td data-label="Tanggal" class="hide-mob"><span class="cell-sub" style="white-space:nowrap">{{ \Carbon\Carbon::parse($a->date)->translatedFormat('d M Y') }}</span></td>
+                        <td data-label="Aksi" class="has-3-actions text-right">
                             <div class="table-actions">
                                 <a class="act-btn view" href="{{ route('admin.achievements.show', $a) }}" title="Lihat detail"><i class="fa-regular fa-eye"></i></a>
                                 <a class="act-btn edit" href="{{ route('admin.achievements.edit', $a) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                                <form action="{{ route('admin.achievements.destroy', $a) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus prestasi ini?')">
+                                <form action="{{ route('admin.achievements.destroy', $a) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus prestasi ini?')" class="inline-block">
                                     @csrf
                                     @method('DELETE')
                                     <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>

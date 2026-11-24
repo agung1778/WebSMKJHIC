@@ -18,7 +18,7 @@
             subtitle="Unggah dan kelola aset gambar untuk header, galeri, dan media website Anda." />
 
         {{-- Ringkasan --}}
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Gambar" :value="$total" icon="fa-solid fa-images" tone="brand" />
             <x-admin-components::stat-card label="Total Ukuran" :value="number_format($totalSizeMB, 2) . ' MB'" icon="fa-solid fa-hdd" tone="green" />
             <x-admin-components::stat-card label="Slot Terpakai" :value="collect($allTitles)->filter(fn ($t) => ($imageCounts[$t] ?? 0) > 0)->count() . ' / ' . count($allTitles)" icon="fa-solid fa-sitemap" tone="blue" />
@@ -113,10 +113,10 @@
                         <table class="table-app">
                             <thead>
                                 <tr>
-                                    <th>Preview</th>
+                                    <th data-col="preview" style="width:64px">Preview</th>
                                     <th>Judul / Path</th>
-                                    <th>Ukuran</th>
-                                    <th class="text-right">Aksi</th>
+                                    <th data-col="ukuran" style="width:84px">Ukuran</th>
+                                    <th class="text-right" style="width:80px">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -128,29 +128,23 @@
                                         $imgUrl = asset('storage/' . $g->path);
                                     @endphp
                                     <tr data-row>
-                                        <td data-label="Pratinjau">
-                                            <img class="thumb cursor-zoom-in" src="{{ $imgUrl }}" alt="{{ $imgName }}" loading="lazy" style="width:72px;height:48px;border-radius:10px" onclick="window.open('{{ $imgUrl }}')">
+                                        <td data-label="Preview">
+                                            <img class="thumb cursor-zoom-in" src="{{ $imgUrl }}" alt="{{ $imgName }}" loading="lazy" style="width:54px;height:38px;border-radius:8px;object-fit:cover" onclick="window.open('{{ $imgUrl }}')">
                                         </td>
                                         <td data-label="Judul / Path">
                                             <div class="cell-main truncate">{{ $imgName }}</div>
-                                            <code class="cell-sub truncate d-block" style="max-width:340px">{{ $imgSub }}</code>
+                                            <code class="cell-sub truncate d-block" style="max-width:280px">{{ $imgSub }}</code>
                                         </td>
                                         <td data-label="Ukuran"><span class="badge badge-info">{{ $imgSize }}</span></td>
-                                        <td data-label="Aksi">
-                                            <div class="table-actions flex items-center justify-end gap-2">
-                                                <a class="app-btn app-btn-sm app-btn-primary" href="{{ route('admin.image.edit', $g) }}"><i class="fa-solid fa-pen"></i><span class="hide-mob">Edit</span></a>
-                                                <div class="dropdown">
-                                                    <button class="app-btn app-btn-sm" type="button" data-dropdown aria-label="Aksi lainnya"><i class="fa-solid fa-ellipsis"></i></button>
-                                                    <div class="dropdown-menu" style="display:none">
-                                                        <a class="dropdown-item" href="{{ route('admin.image.show', $g) }}"><i class="fa-regular fa-eye"></i><span>Lihat detail</span></a>
-                                                        <div class="dropdown-sep"></div>
-                                                        <form action="{{ route('admin.image.destroy', $g) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus gambar ini?')">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button class="dropdown-item danger" type="submit"><i class="fa-solid fa-trash"></i><span>Hapus</span></button>
-                                                        </form>
-                                                    </div>
-                                                </div>
+                                        <td data-label="Aksi" class="text-right">
+                                            <div class="table-actions">
+                                                <a class="act-btn view" href="{{ route('admin.image.show', $g) }}" title="Lihat detail"><i class="fa-regular fa-eye"></i></a>
+                                                <a class="act-btn edit" href="{{ route('admin.image.edit', $g) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                                                <form action="{{ route('admin.image.destroy', $g) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus gambar ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>

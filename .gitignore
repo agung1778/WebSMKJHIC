@@ -21,3 +21,6 @@ error_log.*
 /.phpunit.result.cache
 /.deploy.env
 /.deploy.lock/
+/.agents/
+/.gemini/
+/AGENTS.md

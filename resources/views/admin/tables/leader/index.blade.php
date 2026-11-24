@@ -22,7 +22,7 @@
             </x-slot:actions>
         </x-admin-components::page-header>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Pemimpin" :value="$leaders->count()" icon="fa-solid fa-user-tie" tone="brand" />
             <x-admin-components::stat-card label="Aktif di Website" :value="$activeCount" icon="fa-solid fa-circle-check" tone="green" />
             <x-admin-components::stat-card label="Amaliah 1" :value="$leaders->where('school','Amaliah 1')->count()" icon="fa-solid fa-school" tone="blue" />
@@ -30,7 +30,7 @@
         </div>
 
         <x-admin-components::table
-            :head="['Pimpinan', 'Sekolah', 'Urutan', 'Status', ['label' => 'Aksi', 'right' => true]]"
+            :head="['Pimpinan', ['label' => 'Sekolah', 'class' => 'hide-mob'], ['label' => 'Urutan', 'class' => 'hide-mob'], 'Status', ['label' => 'Aksi', 'right' => true, 'class' => 'has-3-actions']]"
             search-hint="Cari nama, jabatan, sekolah…">
             <x-slot:body>
                 @forelse ($leaders as $l)
@@ -48,21 +48,23 @@
                                     <div class="thumb thumb-round" style="background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--brand)"><i class="fa-solid fa-user-tie"></i></div>
                                 @endif
                                 <div style="min-width:0">
-                                    <div class="cell-main truncate">{{ $l->name }}</div>
-                                    <div class="cell-sub truncate">{{ $l->position }}</div>
+                                    <div class="cell-main truncate font-medium">{{ $l->name }}</div>
+                                    <div class="cell-sub truncate text-xs">
+                                        <span class="sm:hidden font-medium text-[var(--brand)]">{{ $l->school ? $l->school . ' · ' : '' }}</span>{{ $l->position }}
+                                    </div>
                                 </div>
                             </div>
                         </td>
-                        <td data-label="Sekolah"><span class="badge badge-info">{{ $l->school }}</span></td>
-                        <td data-label="Urutan"><span class="cell-sub" style="white-space:nowrap">#{{ $l->order_column ?? '-' }}</span></td>
+                        <td data-label="Sekolah" class="hide-mob"><span class="badge badge-info">{{ $l->school }}</span></td>
+                        <td data-label="Urutan" class="hide-mob"><span class="cell-sub" style="white-space:nowrap">#{{ $l->order_column ?? '-' }}</span></td>
                         <td data-label="Status">
                             <span class="badge {{ $l->is_active ? 'badge-published' : 'badge-archived' }}">{{ $l->is_active ? 'Aktif' : 'Tersembunyi' }}</span>
                         </td>
-                        <td data-label="Aksi" class="text-right">
+                        <td data-label="Aksi" class="has-3-actions text-right">
                             <div class="table-actions">
                                 <a class="act-btn view" href="{{ route('admin.leaders.show', $l) }}" title="Lihat detail"><i class="fa-regular fa-eye"></i></a>
                                 <a class="act-btn edit" href="{{ route('admin.leaders.edit', $l) }}" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                                <form action="{{ route('admin.leaders.destroy', $l) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus {{ addslashes($l->name) }}?')">
+                                <form action="{{ route('admin.leaders.destroy', $l) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus {{ addslashes($l->name) }}?')" class="inline-block">
                                     @csrf
                                     @method('DELETE')
                                     <button class="act-btn delete" type="submit" title="Hapus"><i class="fa-solid fa-trash"></i></button>
