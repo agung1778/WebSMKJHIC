@@ -18,7 +18,6 @@
     {{-- DNS Prefetch for third-party domains --}}
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link rel="dns-prefetch" href="https://elfsightcdn.com">
     <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
     <link rel="dns-prefetch" href="https://www.google.com">
     <link rel="dns-prefetch" href="https://maps.googleapis.com">
@@ -27,7 +26,6 @@
     {{-- Preconnect for critical third-party origins --}}
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://elfsightcdn.com" crossorigin>
     <link rel="preconnect" href="https://www.youtube-nocookie.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
@@ -49,6 +47,26 @@
 
 
     <style>
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
+        /* Responsif Breadcrumb Global */
+        nav[aria-label="Breadcrumb"] {
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        nav[aria-label="Breadcrumb"]::-webkit-scrollbar {
+            display: none;
+        }
+        nav[aria-label="Breadcrumb"] ol {
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             font-weight: 500;
@@ -479,13 +497,13 @@
             {{-- ================================================================= --}}
 
             {{-- TOMBOL KEMBALI KE ATAS (DIPISAH, POSISI BAWAH TENGAH) --}}
-            <div class="fixed bottom-6 inset-x-0 z-40 flex justify-center pointer-events-none">
+            <div class="fixed bottom-4 inset-x-0 z-40 flex justify-center pointer-events-none">
                 <div x-data="{ shown: false }"
                     x-init="window.addEventListener('scroll', () => { shown = window.scrollY > 300 })"
                     class="pointer-events-auto" x-show="shown" x-transition>
                     <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Kembali ke atas"
-                        class="public-back-to-top w-12 h-12 lg:w-[65px] lg:h-[65px] rounded-full text-white flex items-center justify-center transition-colors">
-                        <i class="fas fa-arrow-up text-xl lg:text-2xl"></i>
+                        class="public-back-to-top w-10 h-10 lg:w-[48px] lg:h-[48px] rounded-full text-white flex items-center justify-center transition-all shadow-md">
+                        <i class="fas fa-arrow-up text-base lg:text-lg"></i>
                     </button>
                 </div>
             </div>
@@ -903,6 +921,38 @@
     {{-- Chatbot AI lokal: tombol gantung + modal Tanya Amaliah AI --}}
     @include('partials.floating-tools')
     @include('partials.ai-chatbot')
+
+    {{-- Auto-Refresh CSRF Token & Session Keepalive (Mencegah Halaman Expire 419) --}}
+    <script>
+        (function() {
+            function refreshCsrfToken() {
+                fetch('{{ route("csrf.keepalive") }}', {
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin'
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data && data.csrf_token) {
+                        var meta = document.querySelector('meta[name="csrf-token"]');
+                        if (meta) meta.setAttribute('content', data.csrf_token);
+                        var inputs = document.querySelectorAll('input[name="_token"]');
+                        inputs.forEach(function(inp) { inp.value = data.csrf_token; });
+                    }
+                })
+                .catch(function() { /* silent */ });
+            }
+
+            // Refresh setiap 15 menit
+            setInterval(refreshCsrfToken, 15 * 60 * 1000);
+
+            // Refresh saat tab aktif kembali setelah ditinggal
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    refreshCsrfToken();
+                }
+            });
+        })();
+    </script>
 
 </body>
 

@@ -70,7 +70,7 @@
                                     </div>
                                 </td>
                                 <td data-label="Role"><span class="badge {{ $u->role === 'superadmin' ? 'badge-info' : 'badge-published' }}">{{ $u->role === 'superadmin' ? 'Super Admin' : 'Admin' }}</span></td>
-                                <td data-label="Tanggal Dibuat"><span class="cell-sub">{{ $u->created_at->format('d M Y, H:i') }}</span></td>
+                                <td data-label="Tanggal Dibuat"><span class="cell-sub">{{ $u->created_at ? \Carbon\Carbon::parse($u->created_at)->translatedFormat('d M Y, H:i') : '-' }}</span></td>
                                 <td data-label="Aktivitas Terakhir">
                                     <div class="flex items-center gap-2">
                                         <span class="status-dot {{ $online ? 'online' : '' }}"></span>

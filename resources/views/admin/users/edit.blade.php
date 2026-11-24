@@ -163,13 +163,13 @@
                         <div class="space-y-3">
                             <div>
                                 <div class="app-label">Tanggal Dibuat</div>
-                                <p class="text-sm font-semibold" style="color:var(--text)">{{ $user->created_at->translatedFormat('d M Y, H:i') }}</p>
+                                <p class="text-sm font-semibold" style="color:var(--text)">{{ $user->created_at ? \Carbon\Carbon::parse($user->created_at)->translatedFormat('d M Y, H:i') : '-' }}</p>
                             </div>
                             <div>
                                 <div class="app-label">Terakhir Login</div>
                                 <p class="text-sm font-semibold" style="color:var(--text)">
                                     @if ($user->last_login_at)
-                                        {{ $user->last_login_at->diffForHumans() }}
+                                        {{ \Carbon\Carbon::parse($user->last_login_at)->diffForHumans() }}
                                     @else
                                         <span style="color:var(--text-3);font-weight:400;font-style:italic">Belum pernah login</span>
                                     @endif

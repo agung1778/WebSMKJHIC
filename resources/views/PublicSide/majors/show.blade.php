@@ -54,11 +54,11 @@
             </div>
         </div>
 
-        {{-- Breadcrumb --}}
+        {{-- Breadcrumb Responsif --}}
         <div style="background-color:#2D2D2D;">
-            <div class="max-w-screen-xl h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-                <nav aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
+            <div class="max-w-screen-xl min-h-12 py-2 mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto scrollbar-hide">
+                <nav aria-label="Breadcrumb" class="min-w-0">
+                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-xs sm:text-sm whitespace-nowrap">
                         <li class="flex items-center">
                             <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
                                 Home
@@ -67,13 +67,13 @@
                         <li class="flex items-center">
                             <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
                             <a href="{{ route('public.majors.index') }}"
-                                class="inline-flex items-center ml-0 md:ml-3 font-medium text-gray-300 hover:text-white transition-colors">
+                                class="inline-flex items-center ml-2 md:ml-3 font-medium text-gray-300 hover:text-white transition-colors">
                                 Major Competency
                             </a>
                         </li>
                         <li class="flex items-center">
                             <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
-                            <span class="inline-flex items-center ml-0 md:ml-3 font-medium text-[#63cd00]">
+                            <span class="inline-flex items-center ml-2 md:ml-3 font-medium text-[#63cd00] truncate max-w-[200px] sm:max-w-none">
                                 {{ $major->abbreviation ?? $major->name }}
                             </span>
                         </li>
@@ -174,23 +174,29 @@
                     </section>
 
                     {{-- Kepala Kompetensi --}}
-                    <section class="fade-in-section">
-                        <h2 class="flex items-center gap-x-2 text-xl font-semibold mb-6" style="color: {{ $amaliahDark }};">
-                            <i class="fa-solid fa-user-tie text-lg text-gray-400"></i>
-                            <span>Kepala Kompetensi</span>
-                        </h2>
-                        <div class="bg-white rounded-2xl p-6 flex flex-col sm:flex-row items-center text-center sm:text-left gap-6 border border-gray-200 shadow-sm">
-                            @if($major->competency_head_photo)
-                                <img src="{{ img_url($major->competency_head_photo, 400, 400) }}" width="400" height="400" loading="lazy"
-                                    alt="Foto {{ $major->competency_head }}"
-                                    class="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-white flex-shrink-0">
-                            @endif
-                            <div>
-                                <h3 class="text-xl font-bold text-gray-800">{{ $major->competency_head }}</h3>
-                                <p class="text-base text-gray-500">Kepala Kompetensi Keahlian {{ $major->name }}</p>
+                    @if($major->competency_head)
+                        <section class="fade-in-section">
+                            <h2 class="flex items-center gap-x-2 text-xl font-semibold mb-6" style="color: {{ $amaliahDark }};">
+                                <i class="fa-solid fa-user-tie text-lg text-gray-400"></i>
+                                <span>Kepala Kompetensi</span>
+                            </h2>
+                            <div class="bg-white rounded-2xl p-6 flex flex-col sm:flex-row items-center text-center sm:text-left gap-6 border border-gray-200 shadow-sm">
+                                @if($major->competency_head_photo)
+                                    <img src="{{ img_url($major->competency_head_photo, 400, 400) }}" width="400" height="400" loading="lazy"
+                                        alt="Foto {{ $major->competency_head }}"
+                                        class="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-white flex-shrink-0">
+                                @else
+                                    <div class="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-2xl flex-shrink-0">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                @endif
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800">{{ $major->competency_head }}</h3>
+                                    <p class="text-base text-gray-500">Kepala Kompetensi Keahlian {{ $major->name }}</p>
+                                </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    @endif
                 </div>
 
                 {{-- Sidebar --}}

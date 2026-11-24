@@ -19,6 +19,7 @@ use App\Http\Controllers\SchoolSettingController;
 use App\Http\Controllers\PkkProjectController;
 use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\InstaPostController;
+use App\Http\Controllers\TiktokPostController;
 use App\Http\Controllers\SchoolLeaderController;
 use App\Http\Controllers\AdminThemeController;
 
@@ -51,6 +52,15 @@ use App\Http\Controllers\DownloadController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Route Keep-Alive & Auto-Refresh CSRF Token (mencegah Halaman Expire 419)
+Route::get('/csrf-keepalive', function () {
+    return response()->json([
+        'status' => 'ok',
+        'csrf_token' => csrf_token(),
+        'timestamp' => now()->timestamp,
+    ]);
+})->name('csrf.keepalive');
 
 // Serve the admin theme from the application when a separate document root
 // has not yet received the static file during deployment.
@@ -244,5 +254,12 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
         Route::put('/insta-posts/{instaPost}', [InstaPostController::class, 'update'])->name('insta-posts.update');
         Route::post('/insta-posts/{instaPost}/toggle', [InstaPostController::class, 'toggle'])->name('insta-posts.toggle');
         Route::delete('/insta-posts/{instaPost}', [InstaPostController::class, 'destroy'])->name('insta-posts.destroy');
+
+        // Galeri Media TikTok (CRUD Video & Cover Feed)
+        Route::get('/tiktok-posts', [TiktokPostController::class, 'index'])->name('tiktok-posts.index');
+        Route::post('/tiktok-posts', [TiktokPostController::class, 'store'])->name('tiktok-posts.store');
+        Route::put('/tiktok-posts/{tiktokPost}', [TiktokPostController::class, 'update'])->name('tiktok-posts.update');
+        Route::post('/tiktok-posts/{tiktokPost}/toggle', [TiktokPostController::class, 'toggle'])->name('tiktok-posts.toggle');
+        Route::delete('/tiktok-posts/{tiktokPost}', [TiktokPostController::class, 'destroy'])->name('tiktok-posts.destroy');
     });
 });
