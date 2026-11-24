@@ -2,18 +2,32 @@
 
 namespace App\AI\Core;
 
+use App\AI\LLM\GeminiClient;
 use App\AI\NLP\Similarity;
 use App\AI\Support\AIConfig;
 use Illuminate\Support\Str;
 
 /**
- * Generator jawaban berbasis konteks (extractive + template ringan).
+ * Generator jawaban berbasis konteks (extractive + template ringan + LLM RAG).
  *
- * Tidak ada hallucination: jika tidak cukup konteks -> jawaban "tidak tahu"
- * sesuai mode strict/normal. Bahasa Indonesia, ringkas.
+ * Menggunakan Google Gemini API jika aktif & terkonfigurasi.
+ * Jika LLM offline/habis kuota/tidak aktif, otomatis fallback ke jawaban lokal.
  */
 class AnswerGenerator
 {
+    protected GeminiClient $gemini;
+    protected string $engineUsed = 'ai-engine';
+
+    public function __construct(?GeminiClient $gemini = null)
+    {
+        $this->gemini = $gemini ?: new GeminiClient();
+    }
+
+    public function engineUsed(): string
+    {
+        return $this->engineUsed;
+    }
+
     protected array $greetingReplies = [
         'Halo! Saya asisten informasi SMK Amaliah. Ada yang bisa saya bantu terkait sekolah, jurusan, pendaftaran, atau fasilitas?',
         'Hai! Bisa saya bantu mencari informasi tentang SMK Amaliah?',
@@ -37,9 +51,12 @@ class AnswerGenerator
         string $context,
         array $sources,
         float $topConfidence,
-        float $topScore
+        float $topScore,
+        array $history = []
     ): string {
-        // Greeting/thanks/bye
+        $this->engineUsed = 'ai-engine';
+
+        // 1. Sapaan/terima kasih/pamitan tetap dijawab langsung agar instan & hemat kuota
         if ($intent === 'greeting') {
             return $this->greetingReplies[array_rand($this->greetingReplies)];
         }
@@ -52,7 +69,16 @@ class AnswerGenerator
             return $this->byeReplies[array_rand($this->byeReplies)];
         }
 
-        // Tidak ada konteks relevan
+        // 2. Jika LLM Gemini aktif, gunakan RAG untuk menyintesis jawaban yang luwes dan akurat
+        if ($this->gemini->isAvailable()) {
+            $llmReply = $this->gemini->generate($question, $context, $history);
+            if (!empty($llmReply)) {
+                $this->engineUsed = 'gemini';
+                return $llmReply;
+            }
+        }
+
+        // 3. Fallback lokal (Extractive) jika LLM tidak aktif / gagal memproses:
         if ($context === '' || $topConfidence < AIConfig::minConfidence() || $topScore < AIConfig::minRelevance()) {
             if (AIConfig::isStrict()) {
                 return 'Maaf, saya tidak menemukan informasi yang cukup akurat untuk menjawab pertanyaan tersebut berdasarkan data SMK Amaliah.';

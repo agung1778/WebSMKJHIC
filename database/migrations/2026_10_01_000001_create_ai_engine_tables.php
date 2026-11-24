@@ -4,166 +4,144 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/**
- * Tabel inti Custom AI Information Engine.
- *
- * ai_knowledge        : satu baris = satu knowledge record dari sumber data website
- * ai_documents        : breakdown per-field (title/body) + vektor TF-IDF untuk pencarian
- * ai_keywords         : inverted index token -> knowledge_id + tf
- * ai_relationships    : knowledge graph sederhana antar record
- * ai_intents          : definisi intent + keyword + template jawaban
- * ai_synonyms         : kamus sinonim Bahasa Indonesia (bisa ditambah admin)
- * ai_conversations    : sesi percakapan (memory)
- * ai_messages         : pesan user & jawaban AI dalam percakapan
- * ai_search_logs      : log debugging/analitik pencarian
- * ai_index_runs       : riwayat proses indexing
- */
 return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('ai_knowledge', function (Blueprint $table) {
-            $table->id();
-            $table->string('uid', 100)->unique();          // mis. major-001, news-42
-            $table->string('source_type')->index();        // major, teacher, news, ...
-            $table->unsignedBigInteger('source_id')->nullable()->index();
-            $table->string('title');
-            $table->longText('content');
-            $table->string('category')->nullable()->index();
-            $table->string('url')->nullable();
-            $table->string('checksum', 64)->index();        // deteksi perubahan (incremental index)
-            $table->timestamp('indexed_at')->nullable();
-            $table->timestamps();
+        // ---- ai_knowledge: satu baris = satu fakta/atribut Atomic -------
+        if (! Schema::hasTable('ai_knowledge')) {
+            Schema::create('ai_knowledge', function (Blueprint $table) {
+                $table->id();
+                $table->string('category')->index();          // major, teacher, news, ...
+                $table->string('source_type')->index();       // database, website, document
+                $table->string('source_id')->nullable()->index();
+                $table->string('title')->nullable();
+                $table->text('content');
+                $table->string('source_url')->nullable();
+                $table->json('keywords')->nullable();
+                $table->json('metadata')->nullable();
+                $table->string('checksum', 64)->index();       // untuk incremental index
+                $table->timestamp('indexed_at')->nullable();
+                $table->timestamps();
 
-            $table->index(['source_type', 'source_id']);
-        });
+                $table->index(['category', 'source_id'], 'ai_knowledge_category_source_idx');
+            });
+        }
 
-        Schema::create('ai_documents', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('knowledge_id')->constrained('ai_knowledge')->cascadeOnDelete();
-            $table->string('field')->default('body');     // title, body, meta
-            $table->longText('content');
-            $table->unsignedInteger('length')->default(0); // jumlah token
-            $table->timestamps();
+        // ---- ai_keywords: kamus token + DF untuk TF-IDF -------------------
+        if (! Schema::hasTable('ai_keywords')) {
+            Schema::create('ai_keywords', function (Blueprint $table) {
+                $table->id();
+                $table->string('token')->unique();
+                $table->unsignedInteger('document_frequency')->default(0);
+                $table->boolean('is_stopword')->default(false);
+                $table->timestamps();
+            });
+        }
 
-            $table->index(['knowledge_id', 'field']);
-        });
+        // ---- ai_documents: statistik per dokumen untuk BM25 ---------------
+        if (! Schema::hasTable('ai_documents')) {
+            Schema::create('ai_documents', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('knowledge_id')->nullable()->index();
+                $table->string('category')->index();
+                $table->string('source_type')->index();
+                $table->string('source_id')->nullable()->index();
+                $table->unsignedInteger('term_count')->default(0);
+                $table->unsignedInteger('unique_term_count')->default(0);
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('ai_keywords', function (Blueprint $table) {
-            $table->id();
-            $table->string('token', 64)->index();           // token hasil normalisasi+stemming
-            $table->foreignId('knowledge_id')->constrained('ai_knowledge')->cascadeOnDelete();
-            $table->foreignId('document_id')->nullable()->constrained('ai_documents')->cascadeOnDelete();
-            $table->string('field')->default('body');      // di token ini muncul: title/body
-            $table->unsignedInteger('term_frequency')->default(1);
-            $table->timestamps();
+        // ---- ai_relationships: graf relasi antar fakta --------------------
+        if (! Schema::hasTable('ai_relationships')) {
+            Schema::create('ai_relationships', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('from_id')->index();
+                $table->unsignedBigInteger('to_id')->index();
+                $table->string('relation')->default('related_to');
+                $table->float('weight')->default(1.0);
+                $table->timestamps();
 
-            $table->index(['token', 'knowledge_id']);
-        });
+                $table->unique(['from_id', 'to_id', 'relation'], 'ai_rel_unique');
+            });
+        }
 
-        Schema::create('ai_relationships', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('source_knowledge_id')->constrained('ai_knowledge')->cascadeOnDelete();
-            $table->foreignId('target_knowledge_id')->constrained('ai_knowledge')->cascadeOnDelete();
-            $table->string('relation_type')->index();      // has_major, has_teacher, ...
-            $table->unsignedTinyInteger('weight')->default(1);
-            $table->timestamps();
+        // ---- ai_conversations: sesi percakapan ----------------------------
+        if (! Schema::hasTable('ai_conversations')) {
+            Schema::create('ai_conversations', function (Blueprint $table) {
+                $table->id();
+                $table->string('session_id', 100)->index();
+                $table->timestamps();
+            });
+        }
 
-            $table->unique(['source_knowledge_id', 'target_knowledge_id', 'relation_type'], 'ai_rel_unique');
-            $table->index(['relation_type', 'source_knowledge_id']);
-        });
+        // ---- ai_messages: riwayat percakapan ------------------------------
+        if (! Schema::hasTable('ai_messages')) {
+            Schema::create('ai_messages', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('conversation_id')->nullable()->index();
+                $table->enum('role', ['user', 'assistant'])->default('user');
+                $table->text('message');
+                $table->json('meta')->nullable();
+                $table->timestamps();
 
-        Schema::create('ai_intents', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 80)->unique();          // PROGRAM_KEAHLIAN, PPDB, ...
-            $table->string('label');
-            $table->text('keywords')->nullable();          // JSON array
-            $table->text('patterns')->nullable();          // JSON array regex sederhana
-            $table->text('answer_templates')->nullable();  // JSON array (variasi kalimat)
-            $table->string('source_types')->nullable();    // CSV: major,news,...
-            $table->unsignedTinyInteger('priority')->default(50);
-            $table->boolean('is_fallback')->default(false);
-            $table->timestamps();
-        });
+                $table->index(['conversation_id', 'created_at'], 'ai_msg_conv_created_idx');
+            });
+        }
 
-        Schema::create('ai_synonyms', function (Blueprint $table) {
-            $table->id();
-            $table->string('term', 120)->index();          // kata/frasa pada pertanyaan user
-            $table->text('synonyms');                      // JSON array bentuk kanonik
-            $table->string('group_key', 120)->nullable()->index();
-            $table->timestamps();
+        // ---- ai_intents: definisi intent ----------------------------------
+        if (! Schema::hasTable('ai_intents')) {
+            Schema::create('ai_intents', function (Blueprint $table) {
+                $table->id();
+                $table->string('name')->unique();               // greeting, major_info, ...
+                $table->text('description')->nullable();
+                $table->json('patterns')->nullable();           // regex/kata kunci pemicu
+                $table->json('response_template')->nullable();   // templat jawaban
+                $table->string('category')->nullable()->index();
+                $table->boolean('is_active')->default(true);
+                $table->timestamps();
+            });
+        }
 
-            $table->unique(['term', 'group_key']);
-        });
+        // ---- ai_synonyms: kamus sinonim & alias ---------------------------
+        if (! Schema::hasTable('ai_synonyms')) {
+            Schema::create('ai_synonyms', function (Blueprint $table) {
+                $table->id();
+                $table->string('term')->index();
+                $table->string('synonym')->index();
+                $table->float('weight')->default(1.0);
+                $table->timestamps();
 
-        Schema::create('ai_conversations', function (Blueprint $table) {
-            $table->id();
-            $table->string('session_id', 80)->index();
-            $table->string('last_intent', 80)->nullable();
-            $table->text('last_entities')->nullable();     // JSON
-            $table->string('last_source_type', 60)->nullable();
-            $table->unsignedBigInteger('last_knowledge_id')->nullable();
-            $table->text('context')->nullable();            // JSON: {"subject":"IPAS","major":"RPL"}
-            $table->unsignedSmallInteger('turn_count')->default(0);
-            $table->timestamps();
-        });
+                $table->unique(['term', 'synonym'], 'ai_syn_unique');
+            });
+        }
 
-        Schema::create('ai_messages', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('conversation_id')->nullable()->constrained('ai_conversations')->cascadeOnDelete();
-            $table->string('role', 10);                     // user | assistant
-            $table->text('message');
-            $table->string('intent', 80)->nullable();
-            $table->decimal('confidence', 5, 4)->nullable();
-            $table->unsignedInteger('duration_ms')->nullable();
-            $table->timestamps();
-
-            $table->index(['conversation_id', 'created_at']);
-        });
-
-        Schema::create('ai_search_logs', function (Blueprint $table) {
-            $table->id();
-            $table->text('query')->nullable();
-            $table->string('normalized_query', 255)->nullable();
-            $table->string('intent', 80)->nullable();
-            $table->text('entities')->nullable();
-            $table->text('keywords')->nullable();
-            $table->text('matched')->nullable();            // JSON [{id,title,score}]
-            $table->decimal('confidence', 5, 4)->nullable();
-            $table->boolean('answered')->default(false);
-            $table->unsignedInteger('duration_ms')->nullable();
-            $table->timestamps();
-
-            $table->index(['intent', 'created_at']);
-            $table->index('answered');
-        });
-
-        Schema::create('ai_index_runs', function (Blueprint $table) {
-            $table->id();
-            $table->string('source_type')->nullable()->index();
-            $table->string('mode', 20)->default('full');   // full | incremental
-            $table->unsignedInteger('total')->default(0);
-            $table->unsignedInteger('indexed')->default(0);
-            $table->unsignedInteger('skipped')->default(0);
-            $table->unsignedInteger('failed')->default(0);
-            $table->unsignedInteger('removed')->default(0);
-            $table->text('errors')->nullable();
-            $table->unsignedInteger('duration_ms')->nullable();
-            $table->timestamps();
-        });
+        // ---- ai_search_logs: audit/debug pencarian ------------------------
+        if (! Schema::hasTable('ai_search_logs')) {
+            Schema::create('ai_search_logs', function (Blueprint $table) {
+                $table->id();
+                $table->text('question');
+                $table->string('intent')->nullable();
+                $table->json('entities')->nullable();
+                $table->json('expanded_terms')->nullable();
+                $table->string('method')->nullable();           // keyword/tfidf/bm25/hybrid
+                $table->unsignedInteger('result_count')->default(0);
+                $table->float('top_score')->default(0);
+                $table->float('duration_ms')->default(0);
+                $table->timestamps();
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('ai_index_runs');
-        Schema::dropIfExists('ai_search_logs');
-        Schema::dropIfExists('ai_messages');
-        Schema::dropIfExists('ai_conversations');
-        Schema::dropIfExists('ai_synonyms');
-        Schema::dropIfExists('ai_intents');
-        Schema::dropIfExists('ai_relationships');
-        Schema::dropIfExists('ai_keywords');
-        Schema::dropIfExists('ai_documents');
-        Schema::dropIfExists('ai_knowledge');
+        foreach ([
+            'ai_search_logs', 'ai_synonyms', 'ai_intents', 'ai_messages',
+            'ai_conversations', 'ai_relationships', 'ai_documents',
+            'ai_keywords', 'ai_knowledge',
+        ] as $table) {
+            Schema::dropIfExists($table);
+        }
     }
 };

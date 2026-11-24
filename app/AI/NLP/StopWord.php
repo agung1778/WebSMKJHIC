@@ -3,106 +3,91 @@
 namespace App\AI\NLP;
 
 /**
- * Stopword Bahasa Indonesia + kata umum website.
+ * Daftar stopword Bahasa Indonesia.
  *
- * Stopword TIDAK dihapus total sebelum stemming — mesin tetap butuh
- * kata tanya ("apa", "siapa", "berapa") untuk intent. Fungsi stopword di
- * sini adalah menurunkan bobot kata tersebut saat menghitung relevansi.
+ * Berisi kata umum, kata tanya, kata sapaan, preposisi, dan bentuk santai
+ * yang tidak membawa informasi. Sengaja TIDAK memuat kata bermakna domain
+ * seperti "jurusan", "guru", "pembina", atau "siswa" karena kata tersebut
+ * justru menentukan relevansi jawaban.
  */
 class StopWord
 {
-    /** Kata_COMMAND yang tidak pernah jadi sinyal relevansi. */
-    public const HARD = [
-        'yang', 'dan', 'atau', 'di', 'ke', 'dari', 'untuk', 'pada', 'dengan',
-        'itu', 'ini', 'atau', 'adalah', 'yaitu', 'serta', 'dan', 'sudah',
-        'telah', 'akan', 'dapat', 'bisa', 'boleh', 'harus', 'mau', 'ingin',
-        'kalian', 'kami', 'kita', 'saya', 'aku', 'anda', 'kamu', 'silakan',
-        'tolong', 'mohon', 'banget', 'sih', 'dong', 'deh', 'ya', 'iya', 'oke',
-        'eh', 'wah', 'nih', 'tuh', 'kok', 'lah', 'kah', 'pun', 'saja', 'juga',
-        'aja', 'gitu', 'gini', 'begini', 'begitu', 'banyak', 'semua', 'seluruh',
-        'tentang', 'mengenai', 'terhadap', 'oleh', 'karena', 'supaya', 'agar',
+    public const WORDS = [
+        // Preposisi & konjungsi
+        'yang', 'untuk', 'dengan', 'dari', 'pada', 'di', 'ke', 'dalam', 'ke',
+        'dan', 'atau', 'tetapi', 'tapi', 'juga', 'saja', 'hanya', 'sangat',
+        'itu', 'ini', 'adalah', 'ada', 'adanya', 'yaitu', 'bahwa', 'agar',
+        // Kata tanya
+        'apa', 'apakah', 'siapa', 'siapakah', 'mana', 'dimana', 'kapan',
+        'berapa', 'berapakah', 'kenapa', 'mengapa', 'bagaimana', 'gimana',
+        'apamana', 'siapamana', 'berapamana',
+        // Permintaan / sapaan
+        'bisa', 'boleh', 'dapat', 'dapatkah', 'silakan', 'tolong', 'mohon',
+        'kasih', 'tau', 'dong', 'ya', 'sih', 'deh', 'kok', 'lah', 'kah', 'pun',
+        'nih', 'tuh', 'aja', 'banget', 'agak', 'lumayan', 'pake', 'pakai',
+        'mending', 'mendingan', 'kayaknya', 'sepertinya', 'kemungkinan',
+        'mungkin', 'kadang', 'jarang', 'sering', 'selalu',
+        // Kondisi
+        'apabila', 'jika', 'kalau', 'kalo', 'bila', 'misal', 'misalnya',
+        'contoh', 'contohnya', 'seperti', 'tertentu', 'lain', 'lainnya',
+        // Kata kerja sambung
+        'jadi', 'lalu', 'terus', 'kemudian', 'setelah', 'sebelum', 'saat',
+        'ketika', 'waktu', 'tanggal', 'hari', 'tahun', 'bulan', 'minggu',
+        // Kata ganti & sapaan
+        'saya', 'aku', 'kamu', 'kita', 'kalian', 'mereka', 'anda', 'lo', 'gue',
+        'gua', 'kak', 'mas', 'mba', 'min', 'pak', 'bu', 'abang', 'kakak',
+        'adik', 'nya', 'ku', 'mu',
+        // Umum
+        'smk', 'smp', 'sma', 'smu', 'sme', 'sekolah', 'sayaa', 'yaa', 'iya',
+        'iyaa', 'betul', 'memang', 'emang', 'oke', 'ok', 'okey', 'baik',
+        'terima', 'makasih', 'selesai', 'sana', 'sini', 'kesana', 'kesini',
+        'disini', 'dikampus', 'please', 'info', 'tolongin', 'minta', 'mintain',
+        'beritahu', 'bantu', 'caranya', 'carik', 'donggg', 'dongg',
     ];
 
-    /** Kata umum yang tidak relevan tapi tetap dibiarkan untuk intent. */
-    public const SOFT = [
-        'apa', 'apakah', 'apaan', 'siapa', 'siapakah', 'mana', 'manakah',
-        'dimana', 'di mana', 'kapan', 'kapankah', 'berapa', 'berapakah',
-        'bagaimana', 'bagaimanakah', 'mengapa', 'kenapa', 'boleh', 'dong',
-        'ya', 'saya', 'ingin', 'tahu', 'mau', 'bisa', 'dapat', 'itu', 'ini',
-    ];
+    /** @var array<string,true>|null */
+    protected static ?array $index = null;
 
-    /** Kata yang tak pernah dianggap sebagai entitas/nama. */
-    public const NOISE = [
-        'sih', 'dong', 'deh', 'ya', 'kak', 'kakak', 'bang', 'mas', 'bro',
-        'smk', 'amaliah', 'sekolah', 'website', 'site', 'halaman', 'page',
-        'info', 'informasi', 'tolong', 'mohon', 'terima', 'kasih',
-    ];
-
-    /** @var array<string,bool>|null */
-    private static ?array $index = null;
-
-    /**
-     * @return array<string,bool>
-     */
-    public static function index(): array
+    /** @return array<string,true> */
+    protected static function index(): array
     {
         if (self::$index === null) {
             $index = [];
-            foreach (array_merge(self::HARD, self::SOFT, self::NOISE) as $w) {
-                $index[$w] = true;
+
+            foreach (self::WORDS as $word) {
+                $word = trim($word);
+
+                if ($word !== '') {
+                    $index[$word] = true;
+                }
             }
+
             self::$index = $index;
         }
 
         return self::$index;
     }
 
-    public static function isStop(string $token): bool
+    public static function isStopWord(string $token): bool
     {
-        return isset(self::index()[$token]);
-    }
-
-    public static function isHard(string $token): bool
-    {
-        return in_array($token, self::HARD, true);
-    }
-
-    public static function isNoise(string $token): bool
-    {
-        return in_array($token, self::NOISE, true);
+        return isset(self::index()[Tokenizer::lower($token)]);
     }
 
     /**
-     * Buang stopword dari daftar token.
-     *
      * @param  array<int,string>  $tokens
      * @return array<int,string>
      */
-    public static function remove(array $tokens): array
+    public static function filter(array $tokens): array
     {
-        return array_values(array_filter($tokens, fn ($t) => ! self::isStop($t)));
+        return array_values(array_filter(
+            $tokens,
+            static fn (string $token): bool => !self::isStopWord($token)
+        ));
     }
 
-    /**
-     * Pembobotan manual untuk kata tanya — dipakai IntentEngine, bukan dihapus.
-     */
-    public static function weight(string $token): float
+    /** @return array<int,string> */
+    public static function all(): array
     {
-        if (in_array($token, ['apa', 'siapa', 'berapa', 'kapan', 'mana', 'dimana'], true)) {
-            return 1.6; // pertanyaan = sinyal intent kuat
-        }
-        if (self::isHard($token)) {
-            return 0.1;
-        }
-        if (self::isNoise($token)) {
-            return 0.3;
-        }
-
-        return 1.0;
-    }
-
-    public static function flush(): void
-    {
-        self::$index = null;
+        return array_keys(self::index());
     }
 }

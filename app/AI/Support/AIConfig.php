@@ -58,6 +58,16 @@ class AIConfig
         return (float) self::get('min_confidence', 0.55);
     }
 
+    public static function minRelevance(): float
+    {
+        return (float) self::get('min_relevance', 0.15);
+    }
+
+    public static function maxResults(): int
+    {
+        return (int) self::search('top_k', 10);
+    }
+
     /**
      * Label confidence untuk ditampilkan di admin/debugger.
      */

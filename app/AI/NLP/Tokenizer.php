@@ -5,115 +5,87 @@ namespace App\AI\NLP;
 /**
  * Tokenizer Bahasa Indonesia.
  *
- * Menangani:
- *  - huruf besar/kecil + tanda baca + simbol
- *  - contractions: "gimana" -> "gimana", "banget" ->|banget| (dipertahankan)
- *  - angka ("3", "2026")
- *  - frasa gabung dengan tanda hubung ("taylor-made" -> "taylormade")
- *  - email/URL tidak ikut dipecah jadi noise
+ * Menghasilkan token lowercase bebas tanda baca (semua karakter non
+ * huruf/angka dihapus, termasuk tanda baca Unicode) sambil mempertahankan
+ * angka (mis. "3 jurusan").
+ *
+ * Catatan: demi kehati-hatian, token ini TIDAK memotong kata di tengahnya.
+ * Pemenggalan kata majemuk tanpa kamus berisiko merusak nama khas
+ * (mis. "lokasi" -> "kasi"). Kasus seperti "jurusanapaaja" ditangani di
+ * tahap koreksi typo, yang memakai kamus dari knowledge index.
  */
 class Tokenizer
 {
-    /** @var Stemmer */
-    private $stemmer;
-
-    public function __construct(?Stemmer $stemmer = null)
-    {
-        $this->stemmer = $stemmer ?: new Stemmer();
-    }
-
     /**
-     * Bersihkan teks mentah: lowercase, buang tanda baca excess.
-     */
-    public function clean(string $text): string
-    {
-        $text = mb_strtolower(trim($text));
-
-        // Buang URL & email agar domain tidak jadi tokenSEARCH sia-sia.
-        $text = (string) preg_replace('~https?://\S+|www\.\S+|\b[\w.+-]+@[\w.-]+\.\w+\b~', ' ', $text);
-
-        // Tanda baca jadi spasi, kecuali tanda dalam kata (mis. "3.500").
-        $text = (string) preg_replace('~[^\p{L}\p{N}\s\.\,\-]+~u', ' ', $text);
-        $text = (string) preg_replace('~[\.\,\-]+~u', ' ', $text);
-        $text = (string) preg_replace('~\s+~u', ' ', $text);
-
-        return trim($text);
-    }
-
-    /**
-     * Tokenize menjadi kata individual (tanpa stemming).
+     * Pecah teks menjadi token lowercase bebas tanda baca.
      *
      * @return array<int,string>
      */
-    public function tokenize(string $text): array
+    public static function tokenize(string $text): array
     {
-        $clean = $this->clean($text);
+        $text = self::collapseRepeatedLetters($text);
 
-        if ($clean === '') {
-            return [];
+        // Buang semua karakter yang bukan huruf/angka (menangani tanda baca
+        // ASCII maupun Unicode, termasuk ideograf CJK).
+        $text = (string) preg_replace('/[^\p{L}\p{N}\s]+/u', ' ', $text);
+        $text = self::lower($text);
+
+        $chunks = preg_split('/\s+/u', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $tokens = [];
+
+        foreach ($chunks as $chunk) {
+            $chunk = trim($chunk);
+
+            if ($chunk !== '') {
+                $tokens[] = $chunk;
+            }
         }
 
-        return explode(' ', $clean);
+        return $tokens;
     }
 
     /**
-     * Tokenize + stem (untuk index & query alike supaya keduanya sebanding).
+     * Token untuk keperluan pencarian: token bebas stopword.
+     * Angka tetap dipertahankan.
      *
      * @return array<int,string>
      */
-    public function tokenizeStem(string $text): array
+    public static function tokensForSearch(string $text): array
     {
-        return $this->stemMany($this->tokenize($text));
+        $out = [];
+
+        foreach (self::tokenize($text) as $token) {
+            if (self::isNumeric($token) || ! StopWord::isStopWord($token)) {
+                $out[] = $token;
+            }
+        }
+
+        return array_values(array_unique($out));
     }
 
     /**
-     * @param  array<int,string>  $tokens
-     * @return array<int,string>
+     * Rapatkan huruf berulang yang biasanya hasil salah ketik: "sekolahhh" ->
+     * "sekolah". Hanya berlaku untuk tiga+ huruf identik berurutan, sehingga
+     * huruf kembar yang sah (mis. "ll" pada "sekolah") tetap utuh.
      */
-    public function stemMany(array $tokens): array
+    public static function collapseRepeatedLetters(string $text): string
     {
-        return $this->stemmer->stemMany($tokens);
+        return (string) preg_replace('/(\p{L})\1{2,}/u', '$1', $text);
     }
 
-    /**
-     * Frasa (bigram/trigram) dari token — untuk semantic-like matching.
-     *
-     * @param  array<int,string>  $tokens
-     * @return array<int,string>
-     */
-    public function ngrams(array $tokens, int $n = 2): array
+    /** @return array<int,string> */
+    public static function keywords(string $text): array
     {
-        $count = count($tokens);
-
-        if ($n < 2 || $count < $n) {
-            return $tokens;
-        }
-
-        $grams = [];
-        for ($i = 0; $i <= $count - $n; $i++) {
-            $grams[] = implode(' ', array_slice($tokens, $i, $n));
-        }
-
-        return $grams;
+        return self::tokensForSearch($text);
     }
 
-    /**
-     * @param  array<int,string>  $tokens
-     * @return array<int,string>
-     */
-    public function allNgrams(array $tokens, int $max = 3): array
+    public static function isNumeric(string $token): bool
     {
-        $grams = $tokens;
-
-        for ($n = 2; $n <= $max; $n++) {
-            $grams = array_merge($grams, $this->ngrams($tokens, $n));
-        }
-
-        return array_values(array_unique($grams));
+        return (bool) preg_match('/^\d+$/', $token);
     }
 
-    public function stemmer(): Stemmer
+    public static function lower(string $text): string
     {
-        return $this->stemmer;
+        return function_exists('mb_strtolower') ? mb_strtolower($text, 'UTF-8') : strtolower($text);
     }
 }

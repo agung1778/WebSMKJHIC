@@ -204,21 +204,25 @@ class AIEngine
 
             $ctx = $this->context->build($evaluated);
 
-            // 7. Answer
+            // 7. Answer (RAG synthesis with Gemini LLM or local fallback)
+            $history = $this->memory->getHistory($sessionId, 6);
             $answer = $this->answer->generate(
                 $question,
                 $intent,
                 $ctx['context'],
                 $ctx['sources'],
                 $topConfidence,
-                $topScore
+                $topScore,
+                $history
             );
+            $engineType = method_exists($this->answer, 'engineUsed') ? $this->answer->engineUsed() : 'ai-engine';
 
             // 8. Response
             $duration = (microtime(true) - $start) * 1000;
 
             $meta = [
                 'session_id' => $sessionId,
+                'engine' => $engineType,
                 'expanded_terms' => $expanded,
                 'entities' => $entities,
                 'evaluated_count' => count($evaluated),
@@ -319,7 +323,7 @@ class AIEngine
         $tokens = [];
 
         foreach ($categories as $category) {
-            foreach (\App\AI\NLP\Normalizer::normalize(str_replace('_', ' ', (string) $category)) as $token) {
+            foreach (\App\AI\NLP\Tokenizer::tokensForSearch(str_replace('_', ' ', (string) $category)) as $token) {
                 if (! in_array($token, $tokens, true)) {
                     $tokens[] = $token;
                 }

@@ -645,35 +645,29 @@
                 ];
             @endphp
 
+            @php
+                $hasBothLeaders = $leaders->where('school', 'Amaliah 1')->isNotEmpty()
+                    && $leaders->where('school', 'Amaliah 2')->isNotEmpty();
+            @endphp
             <section class="bg-[#282829] py-16 sm:py-20 overflow-hidden fade-in-section">
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8"
                     x-data="{
                         activeTab: 'amaliah1',
-                        isPaused: false,
+                        autoRotate: {{ $hasBothLeaders ? 'true' : 'false' }},
                         timer: null,
                         init() {
-                            this.startTimer();
-                        },
-                        startTimer() {
-                            this.stopTimer();
-                            this.timer = setInterval(() => {
-                                if (!this.isPaused) {
-                                    this.activeTab = (this.activeTab === 'amaliah1') ? 'amaliah2' : 'amaliah1';
-                                }
-                            }, 5000);
-                        },
-                        stopTimer() {
-                            if (this.timer) clearInterval(this.timer);
+                            if (this.autoRotate) {
+                                this.timer = setInterval(() => { if (autoRotate) activeTab = activeTab === 'amaliah1' ? 'amaliah2' : 'amaliah1' }, 5000);
+                            }
                         },
                         setTab(tab) {
                             this.activeTab = tab;
-                            this.startTimer();
                         }
                     }"
-                    @mouseenter="isPaused = true"
-                    @mouseleave="isPaused = false"
-                    @touchstart.passive="isPaused = true"
-                    @touchend.passive="setTimeout(() => isPaused = false, 3000)">
+                    @mouseenter="autoRotate = false"
+                    @mouseleave="autoRotate = true"
+                    @touchstart.passive="autoRotate = false"
+                    @touchend.passive="setTimeout(() => autoRotate = true, 3000)">
 
                     {{-- Bagian Header: Judul dan Tombol Tab (Sesuai Gambar Asli) --}}
                     <div class="text-center mb-6 sm:mb-12">

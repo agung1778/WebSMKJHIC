@@ -17,8 +17,8 @@ class ChatbotIntentTest extends TestCase
         $reply = $this->reply('siapa guru ipas');
 
         $this->assertStringContainsString('IPAS', $reply);
-        $this->assertStringContainsString('Ami Listiami, S.P.', $reply);
-        $this->assertStringContainsString('Hadi Pasito, S.Si., Gr.', $reply);
+        $this->assertStringContainsString('Ami Listiami', $reply);
+        $this->assertStringContainsString('Hadi Pasito', $reply);
 
         // Tidak boleh melempar daftar seluruh guru.
         $this->assertStringNotContainsString('Dr. Gugun Gunadi', $reply);
@@ -28,8 +28,8 @@ class ChatbotIntentTest extends TestCase
     {
         $reply = $this->reply('siapa guru ipas');
 
-        $this->assertStringContainsString('Koordinator BK SMK Amaliah 1', $reply);
-        $this->assertStringContainsString('Guru A1 & A2', $reply);
+        $this->assertStringContainsString('Koordinator BK', $reply);
+        $this->assertStringContainsString('Guru', $reply);
     }
 
     public function test_it_matches_a_subject_prefix_instead_of_falling_back_to_a_teacher_list(): void

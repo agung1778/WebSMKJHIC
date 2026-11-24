@@ -347,7 +347,7 @@ class ChatbotService
         $exc = Extracurricular::orderBy('id', 'asc')->get();
 
         if ($exc->isEmpty()) {
-            return "Eskul di SMK Amaliah cukup beragam — ada **Pramuka**, **Paskibra**, "
+            return "Ekstrakurikuler (Eskul) di SMK Amaliah cukup beragam — ada **Pramuka**, **Paskibra**, "
                 . "organisasi keagamaan, olahraga, seni, dan lainnya.\n\n"
                 . "Tanyakan nama ekskul untuk detail, misalnya \"ekskul pramuka\". 😊";
         }
@@ -758,7 +758,11 @@ class ChatbotService
     protected function headmasterAnswer(string $q): ?string
     {
         $teachers = Teacher::query()
-            ->where('position', 'like', '%kepala smk%')
+            ->where(function ($query) {
+                $query->where('position', 'like', '%kepala%smk%')
+                    ->orWhere('position', 'like', '%kepala sekolah%');
+            })
+            ->where('position', 'not like', '%wakil%')
             ->orderBy('id', 'asc')
             ->get();
 
@@ -766,9 +770,9 @@ class ChatbotService
             return null;
         }
 
-        // Fokus ke tim kepala smk (bukan kepala kompetensi/TU).
+        // Fokus ke tim kepala smk (bukan kepala kompetensi/TU/wakil).
         $headmasters = $teachers
-            ->filter(fn (Teacher $t) => preg_match('/kepala smk/i', (string) $t->position))
+            ->filter(fn (Teacher $t) => preg_match('/kepala (sekolah|smk)/i', (string) $t->position) && ! preg_match('/wakil|kompetensi|tata usaha|tu\b/i', (string) $t->position))
             ->values();
 
         if ($headmasters->isEmpty()) {
@@ -788,7 +792,7 @@ class ChatbotService
         }
 
         $lines = $headmasters->take(5)->map(fn (Teacher $t) => '• **' . $t->name . '** — ' . $t->position)->implode("\n");
-        return "Berikut kepala sekolah SMK Amaliah:\n\n{$lines}";
+        return "Berikut Kepala SMK Amaliah:\n\n{$lines}";
     }
 
     /**

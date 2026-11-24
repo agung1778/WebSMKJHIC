@@ -27,6 +27,16 @@ return [
     */
     'name' => env('AI_NAME', 'Tanya Amaliah'),
     'school' => env('AI_SCHOOL', 'SMK Amaliah 1 & 2 Ciawi'),
+    'identity' => [
+        'name'      => env('AI_SCHOOL', 'SMK Amaliah 1 & 2 Ciawi'),
+        'address'   => 'Jl. Raya Jl. Tol Jagorawi No.1, Ciawi, Kec. Ciawi, Kabupaten Bogor, Jawa Barat 16720',
+        'phone'     => '0856-1922-827 / 0856-4901-1449',
+        'whatsapp'  => '6285649011449',
+        'email'     => 'smkamaliahciawi@gmail.com',
+        'website'   => '/',
+        'instagram' => '@smkamaliah',
+        'youtube'   => 'SMK Amaliah Ciawi',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -171,6 +181,22 @@ return [
             'paths'    => [base_path('ai_documents')],
             'formats'  => ['txt', 'md', 'json', 'csv'],
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | LLM Integration (Google Gemini API / Free Tier)
+    |--------------------------------------------------------------------------
+    */
+    'llm' => [
+        'enabled'      => filter_var(env('AI_LLM_ENABLED', true), FILTER_VALIDATE_BOOLEAN),
+        'driver'       => env('AI_LLM_DRIVER', 'gemini'),
+        'api_key'      => env('GEMINI_API_KEY', ''),
+        'model'        => env('GEMINI_MODEL', 'gemini-1.5-flash'),
+        'timeout'      => (int) env('GEMINI_TIMEOUT', 8),
+        'temperature'  => (float) env('GEMINI_TEMPERATURE', 0.4),
+        'max_tokens'   => (int) env('GEMINI_MAX_TOKENS', 800),
+        'system_prompt' => env('AI_SYSTEM_PROMPT', null),
     ],
 
     /*

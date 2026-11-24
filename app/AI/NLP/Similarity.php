@@ -2,66 +2,49 @@
 
 namespace App\AI\NLP;
 
+use Illuminate\Support\Facades\DB;
+
 /**
- * Fuzzy matching & similarity metrics — implementasi sendiri, tanpa API.
- *
- *  - levenshteinDistance()  : edit distance untuk typo correction
- *  - similarity()           : 1 - distance/maxLen
- *  - jaccard()              : token overlap (diberi bobot IDF dari pemanggil)
- *  - cosine()               : cosine similarity atas vektor fitur
- *  - ngramSimilarity()      : kesamaan karakter bigram/trigram (akurat untuk nama)
- *  - diceCoefficient()      : 2*intersection/(a+b)
+ * Metrik kemiripan tanpa dependensi eksternal:
+ * Levenshtein, cosine, token overlap (Jaccard), dan Dice n-gram.
  */
 class Similarity
 {
-    /**
-     * Levenshtein distance (versi hemat memori: 2 baris).
-     */
     public static function levenshtein(string $a, string $b): int
     {
-        $a = mb_strtolower($a);
-        $b = mb_strtolower($b);
+        $aLen = mb_strlen($a);
+        $bLen = mb_strlen($b);
 
-        if ($a === $b) {
-            return 0;
-        }
-        if ($a === '' || $b === '') {
-            return max(mb_strlen($a), mb_strlen($b));
+        if ($aLen === 0) {
+            return $bLen;
         }
 
-        if (mb_strlen($a) < mb_strlen($b)) {
-            [$a, $b] = [$b, $a];
-        }
-        if (mb_strlen($b) === 1) {
-            return mb_strlen($a);
+        if ($bLen === 0) {
+            return $aLen;
         }
 
-        $previous = range(0, mb_strlen($b));
+        $prev = range(0, $bLen);
 
-        $aChars = preg_split('//u', $a, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-        $bChars = preg_split('//u', $b, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-        $bLen   = count($bChars);
+        for ($i = 1; $i <= $aLen; $i++) {
+            $cur = [$i];
 
-        foreach ($aChars as $i => $charA) {
-            $current = [$i + 1];
-
-            foreach ($bChars as $j => $charB) {
-                $insert = $current[$j] + 1;
-                $delete = $previous[$j + 1] + 1;
-                $replace = $previous[$j] + ($charA === $charB ? 0 : 1);
-                $current[$j + 1] = min($insert, $delete, $replace);
+            for ($j = 1; $j <= $bLen; $j++) {
+                $cost = mb_substr($a, $i - 1, 1) === mb_substr($b, $j - 1, 1) ? 0 : 1;
+                $cur[$j] = min(
+                    $prev[$j] + 1,
+                    $cur[$j - 1] + 1,
+                    $prev[$j - 1] + $cost
+                );
             }
 
-            $previous = $current;
+            $prev = $cur;
         }
 
-        return $previous[$bLen];
+        return (int) $prev[$bLen];
     }
 
-    /**
-     * Similarity 0..1 berbasis edit distance.
-     */
-    public static function similarity(string $a, string $b): float
+    /** Skor kemiripan 0..1. */
+    public static function ratio(string $a, string $b): float
     {
         $max = max(mb_strlen($a), mb_strlen($b));
 
@@ -69,17 +52,51 @@ class Similarity
             return 1.0;
         }
 
-        return 1.0 - (self::levenshtein($a, $b) / $max);
+        return max(0.0, 1.0 - (self::levenshtein($a, $b) / $max));
     }
 
     /**
-     * Token overlap (Jaccard). Berguna untuk menakar كمatic keyword query
-     * muncul di sebuah dokumen.
+     * Cosine similarity dua vektor sparse (token => bobot).
+     *
+     * @param  array<string,int|float>  $a
+     * @param  array<string,int|float>  $b
+     */
+    public static function cosine(array $a, array $b): float
+    {
+        if ($a === [] || $b === []) {
+            return 0.0;
+        }
+
+        $dot = 0.0;
+        $magA = 0.0;
+        $magB = 0.0;
+
+        foreach ($a as $token => $weight) {
+            $magA += $weight ** 2;
+
+            if (isset($b[$token])) {
+                $dot += $weight * $b[$token];
+            }
+        }
+
+        foreach ($b as $weight) {
+            $magB += $weight ** 2;
+        }
+
+        if ($magA <= 0.0 || $magB <= 0.0) {
+            return 0.0;
+        }
+
+        return $dot / (sqrt($magA) * sqrt($magB));
+    }
+
+    /**
+     * Token overlap (Jaccard).
      *
      * @param  array<int,string>  $a
      * @param  array<int,string>  $b
      */
-    public static function jaccard(array $a, array $b): float
+    public static function overlap(array $a, array $b): float
     {
         $setA = array_unique($a);
         $setB = array_unique($b);
@@ -88,99 +105,131 @@ class Similarity
             return 0.0;
         }
 
-        $inter = count(array_intersect($setA, $setB));
         $union = count(array_unique(array_merge($setA, $setB)));
 
-        return $union === 0 ? 0.0 : $inter / $union;
-    }
-
-    /**
-     * Dice coefficient — sedikit lebih longgar dari Jaccard untuk frasa pendek.
-     *
-     * @param  array<int,string>  $a
-     * @param  array<int,string>  $b
-     */
-    public static function dice(array $a, array $b): float
-    {
-        $setA = array_unique($a);
-        $setB = array_unique($b);
-
-        if ($setA === [] || $setB === []) {
+        if ($union === 0) {
             return 0.0;
         }
 
-        $inter = count(array_intersect($setA, $setB));
-
-        return (2 * $inter) / (count($setA) + count($setB));
+        return count(array_intersect($setA, $setB)) / $union;
     }
 
     /**
-     * @param  array<string,float>  $vectorA
-     * @param  array<string,float>  $vectorB
+     * Dice coefficient atas n-gram karakter, toleran terhadap typo ringan.
      */
-    public static function cosine(array $vectorA, array $vectorB): float
+    public static function ngramSimilarity(string $a, string $b, int $n = 3): float
     {
-        $dot = 0.0;
-        $normA = 0.0;
-        $normB = 0.0;
+        $gramsA = self::ngrams($a, $n);
+        $gramsB = self::ngrams($b, $n);
 
-        foreach ($vectorA as $k => $v) {
-            $dot += $v * ($vectorB[$k] ?? 0.0);
-        }
-        foreach ($vectorA as $v) {
-            $normA += $v * $v;
-        }
-        foreach ($vectorB as $v) {
-            $normB += $v * $v;
-        }
-
-        if ($normA == 0.0 || $normB == 0.0) {
+        if ($gramsA === [] || $gramsB === []) {
             return 0.0;
         }
-
-        return $dot / (sqrt($normA) * sqrt($normB));
-    }
-
-    /**
-     * Kesamaan karakter bigram (bagus untuk nama orang / Stores).
-     */
-    public static function bigramSimilarity(string $a, string $b): float
-    {
-        $a = mb_strtolower($a);
-        $b = mb_strtolower($b);
-
-        if ($a === '' || $b === '') {
-            return 0.0;
-        }
-        if ($a === $b) {
-            return 1.0;
-        }
-
-        $gramsA = self::charNgrams($a, 2);
-        $gramsB = self::charNgrams($b, 2);
 
         $inter = count(array_intersect($gramsA, $gramsB));
-        $total = count($gramsA) + count($gramsB);
 
-        return $total === 0 ? 0.0 : (2 * $inter) / $total;
+        return (2 * $inter) / (count($gramsA) + count($gramsB));
     }
 
-    /**
-     * @return array<int,string>
-     */
-    private static function charNgrams(string $s, int $n): array
+    /** @return array<int,string> */
+    protected static function ngrams(string $text, int $n): array
     {
-        $len = mb_strlen($s);
+        $text = trim(preg_replace('/\s+/u', ' ', $text) ?? $text);
+        $len = mb_strlen($text);
 
         if ($len < $n) {
-            return [$s];
+            return $text === '' ? [] : [$text];
         }
 
         $grams = [];
+
         for ($i = 0; $i <= $len - $n; $i++) {
-            $grams[] = mb_substr($s, $i, $n);
+            $grams[] = mb_substr($text, $i, $n);
         }
 
-        return $grams;
+        return array_values(array_unique($grams));
+    }
+
+    /**
+     * Koreksi typo satu kata terhadap kamus lokal.
+     *
+     * Skor digabungkan dari Levenshtein ratio dan Dice n-gram, karena
+     * lebih toleran terhadap huruf yang hilang/tertukar (mis.
+     * "extracurricularnya" vs "ekstrakurikuler").
+     *
+     * @param  array<int,string>  $dictionary
+     */
+    public static function correctTypo(string $word, array $dictionary): ?string
+    {
+        $word = Tokenizer::lower($word);
+
+        if (mb_strlen($word) <= 3 || Tokenizer::isNumeric($word) || $dictionary === []) {
+            return null;
+        }
+
+        $best = null;
+        $bestScore = 0.0;
+        $wordLen = mb_strlen($word);
+
+        foreach ($dictionary as $candidate) {
+            if (! is_string($candidate) || $candidate === '' || $candidate === $word) {
+                continue;
+            }
+
+            // Toleransi panjang grows bersama panjang kata.
+            if (abs(mb_strlen($candidate) - $wordLen) > 4) {
+                continue;
+            }
+
+            $ratio = self::ratio($word, $candidate);
+            $dice = self::ngramSimilarity($word, $candidate, 3);
+            $score = max($ratio, $dice * 0.92);
+
+            if ($score > $bestScore) {
+                $bestScore = $score;
+                $best = $candidate;
+            }
+        }
+
+        return $bestScore >= self::typoThreshold(mb_strlen($word)) ? $best : null;
+    }
+
+    /**
+     * Ambang toleransi typo accordingi panjang kata.
+     *
+     * Kata panjang lebih rawan salah ketik sehingga toleransinya longgar
+     * (mis. "exracurikuler" vs "ekstrakurikuler" hanya 0.73). Kata pendek
+     * tetap memakai ambang konservatif agar tidak salah mengoreksi.
+     */
+    protected static function typoThreshold(int $length): float
+    {
+        if ($length >= 9) {
+            return 0.72;
+        }
+
+        if ($length >= 6) {
+            return 0.76;
+        }
+
+        return 0.82;
+    }
+
+    /**
+     * Kamus kata dari knowledge index (tabel ai_keywords.token).
+     * Menghindari kebutuhan kamus eksternal.
+     *
+     * @return array<int,string>
+     */
+    public static function dictionaryFromKnowledge(): array
+    {
+        try {
+            return DB::table('ai_keywords')
+                ->where('is_stopword', false)
+                ->pluck('token')
+                ->all();
+        } catch (\Throwable) {
+            // Index belum dibangun / tabel belum ada.
+            return [];
+        }
     }
 }

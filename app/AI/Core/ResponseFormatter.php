@@ -26,12 +26,13 @@ class ResponseFormatter
     ): array {
         $response = [
             'success' => $success,
-            'answered' => $sources !== [],
+            'answered' => $sources !== [] || ($meta['engine'] ?? '') === 'gemini',
             'answer' => $answer,
             'intent' => $intent,
             'confidence' => (float) round($confidence, 4),
             'top_score' => (float) round($topScore, 4),
             'sources' => $sources,
+            'engine' => $meta['engine'] ?? 'ai-engine',
             'disclaimer' => AIConfig::disclaimer(),
         ];
 
@@ -59,6 +60,7 @@ class ResponseFormatter
             'confidence' => 0.0,
             'top_score' => 0.0,
             'sources' => [],
+            'engine' => 'direct',
             'disclaimer' => AIConfig::disclaimer(),
         ];
     }
@@ -76,6 +78,7 @@ class ResponseFormatter
             'confidence' => 0.0,
             'top_score' => 0.0,
             'sources' => [],
+            'engine' => 'error',
             'disclaimer' => AIConfig::disclaimer(),
         ];
     }

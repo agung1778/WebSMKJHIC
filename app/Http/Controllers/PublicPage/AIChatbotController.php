@@ -86,10 +86,10 @@ class AIChatbotController extends Controller
             return [
                 'reply'      => $response['answer'],
                 'answered'   => true,
-                'intent'     => $response['intent'],
-                'confidence' => $response['confidence'],
+                'intent'     => $response['intent'] ?? 'general',
+                'confidence' => $response['confidence'] ?? 0.0,
                 'sources'    => array_slice($response['sources'] ?? [], 0, 3),
-                'engine'     => 'ai-engine',
+                'engine'     => $response['engine'] ?? ($response['meta']['engine'] ?? 'ai-engine'),
             ];
         }
 
@@ -97,17 +97,24 @@ class AIChatbotController extends Controller
             $legacy = $this->chatbot->ask($question);
 
             if (($legacy['answered'] ?? false) === true) {
-                return $legacy + ['engine' => 'legacy'];
+                return [
+                    'reply'      => $legacy['reply'] ?? ($legacy['answer'] ?? ''),
+                    'answered'   => true,
+                    'intent'     => $legacy['intent'] ?? 'general',
+                    'confidence' => $legacy['confidence'] ?? 0.5,
+                    'sources'    => array_slice($legacy['sources'] ?? [], 0, 3),
+                    'engine'     => 'legacy',
+                ];
             }
         }
 
         return [
-            'reply'      => $response['answer'],
+            'reply'      => $response['answer'] ?? 'Maaf, saya tidak menemukan informasi yang sesuai.',
             'answered'   => false,
-            'intent'     => $response['intent'],
-            'confidence' => $response['confidence'],
+            'intent'     => $response['intent'] ?? 'general',
+            'confidence' => $response['confidence'] ?? 0.0,
             'sources'    => [],
-            'engine'     => 'ai-engine',
+            'engine'     => $response['engine'] ?? ($response['meta']['engine'] ?? 'ai-engine'),
         ];
     }
 }

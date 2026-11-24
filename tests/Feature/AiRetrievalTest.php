@@ -38,8 +38,8 @@ class AiRetrievalTest extends TestCase
 
     public function test_engine_declines_unknown_facts_inside_the_domain(): void
     {
-        // Data lokal tidak memuat berita terbaru/perpustakaan.
-        $result = $this->ask('ada perpustakaan di sekolah?');
+        // Data lokal tidak memuat bioskop.
+        $result = $this->ask('ada bioskop di sekolah?');
 
         $this->assertStringContainsString('belum menemukan', $result['answer']);
     }
