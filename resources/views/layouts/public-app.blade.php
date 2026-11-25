@@ -159,6 +159,21 @@
         .public-back-to-top { background: #237c2b; border: 1px solid #fff; box-shadow: none; }
         .public-back-to-top:hover { background: #196322; }
         .public-back-to-top:focus-visible { outline: 3px solid #63cd00; outline-offset: 3px; }
+        .navbar-spacer {
+            height: 72px;
+            width: 100%;
+            pointer-events: none;
+        }
+        @media (min-width: 640px) {
+            .navbar-spacer {
+                height: 80px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .navbar-spacer {
+                height: 135px;
+            }
+        }
         @media (max-width: 1023px) {
             .public-brand { flex: 1 1 0; }
         }
@@ -472,7 +487,7 @@
         </header>
 
         {{-- Spacer agar konten tidak tertutup fixed header --}}
-        <div class="h-[68px] sm:h-[76px] lg:h-[135px] w-full pointer-events-none" aria-hidden="true"></div>
+        <div class="navbar-spacer" aria-hidden="true"></div>
 
         {{-- MODAL PENCARIAN --}}
         <div x-show="searchModalOpen" x-cloak x-transition:enter="transition ease-out duration-300"
@@ -516,7 +531,7 @@
             {{-- TOMBOL KEMBALI KE ATAS (POSISI BAWAH KIRI AGAR TIDAK MENGHALANGI KONTEN TENGAH MAUPUN FLOATING TOOLS KANAN) --}}
             <div x-data="{ shown: false }"
                 x-init="window.addEventListener('scroll', () => { shown = window.scrollY > 300 })"
-                class="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40" x-show="shown" x-cloak x-transition>
+                class="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-40" x-show="shown" x-cloak x-transition>
                 <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Kembali ke atas"
                     class="public-back-to-top w-10 h-10 sm:w-11 sm:h-11 rounded-full text-white flex items-center justify-center transition-all shadow-md hover:scale-105">
                     <i class="fas fa-arrow-up text-sm sm:text-base"></i>
@@ -935,8 +950,7 @@
                         <div class="ft-contact">
                             <div class="ft-contact__item">
                                 <span class="ft-contact__icon"><i class="fas fa-map-marker-alt"></i></span>
-                                <span>Jl. Raya Jl. Tol Jagorawi No.1, Ciawi, Kec. Ciawi, Kabupaten Bogor, Jawa Barat
-                                    16720</span>
+                                <span>Jl. Tol Jagorawi No.1, Ciawi, Kec. Ciawi, Kabupaten Bogor, Jawa Barat 16720</span>
                             </div>
                             <div class="ft-contact__item">
                                 <span class="ft-contact__icon"><i class="fas fa-envelope"></i></span>

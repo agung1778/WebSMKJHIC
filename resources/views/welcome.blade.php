@@ -25,21 +25,46 @@
             }
         }
 
-        .hero-clip-path {
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 2rem), calc(100% - 2rem) 100%, 0 100%);
-            will-change: transform;
-        }
-
-        @media (min-width: 768px) {
-            .hero-clip-path {
-                clip-path: polygon(0 0, 100% 0, 100% calc(100% - 3.5rem), calc(100% - 3.5rem) 100%, 0 100%);
-            }
-        }
-
         /* Aturan ini akan aktif jika lebar layar 768px atau kurang */
         @media (max-width: 768px) {
             .custom-none {
                 display: none;
+            }
+        }
+
+        /* Hero Floating News Card & Watch Video Button */
+        .hero-floating-card-wrapper {
+            position: absolute;
+            bottom: 20px;
+            left: 16px;
+            z-index: 20;
+            width: calc(100% - 32px);
+            max-width: 440px;
+        }
+        @media (min-width: 640px) {
+            .hero-floating-card-wrapper {
+                bottom: 32px;
+                left: 32px;
+                width: 380px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .hero-floating-card-wrapper {
+                bottom: 44px;
+                left: 44px;
+                width: 440px;
+            }
+        }
+        .hero-watch-video-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 20;
+        }
+        @media (min-width: 640px) {
+            .hero-watch-video-btn {
+                top: 24px;
+                right: 24px;
             }
         }
 
@@ -136,7 +161,7 @@
                 <div x-data="{
                         showVideo: false,
                         activeSlide: 1,
-                        totalSlides: 3,
+                        totalSlides: {{ $bannerSlides->count() }},
                         activeNews: 1,
                         totalNews: {{ $latestNews->count() > 0 ? $latestNews->count() : 1 }}
                     }"
@@ -151,84 +176,79 @@
                     class="relative">
 
                     {{-- Main Hero Container --}}
-                    <div class="relative hero-banner-wrapper overflow-hidden hero-clip-path rounded-2xl sm:rounded-3xl bg-[#282829] shadow-2xl" style="min-height: 380px;">
+                    <div class="relative hero-banner-wrapper overflow-hidden rounded-2xl sm:rounded-3xl bg-[#282829] shadow-2xl" style="min-height: 380px;">
 
                         {{-- Background Images (Slider with Fallback) --}}
                         <div x-show="!showVideo" class="w-full h-full relative" style="min-height: 380px;">
-                            {{-- Slide 1 --}}
-                            <div x-show="activeSlide === 1"
-                                x-transition:enter="transition ease-out duration-700" x-transition:enter-start="opacity-0 scale-105"
-                                x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-500"
-                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                                class="absolute inset-0">
-                                <img src="{{ asset('assets/image/DroneView.jpg') }}"
-                                    alt="Kampus SMK Amaliah 1 & 2 Ciawi"
-                                    class="w-full h-full object-cover"
-                                    width="1600" height="900"
-                                    fetchpriority="high" loading="eager">
-                            </div>
-
-                            {{-- Slide 2 --}}
-                            <div x-show="activeSlide === 2"
-                                x-transition:enter="transition ease-out duration-700" x-transition:enter-start="opacity-0 scale-105"
-                                x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-500"
-                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                                class="absolute inset-0" style="display: none;">
-                                <img src="{{ asset('assets/image/Classmeet.JPG') }}"
-                                    alt="Aktivitas & Kreativitas Siswa"
-                                    class="w-full h-full object-cover"
-                                    width="1600" height="900"
-                                    loading="lazy">
-                            </div>
-
-                            {{-- Slide 3 --}}
-                            <div x-show="activeSlide === 3"
-                                x-transition:enter="transition ease-out duration-700" x-transition:enter-start="opacity-0 scale-105"
-                                x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-500"
-                                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                                class="absolute inset-0" style="display: none;">
-                                <img src="{{ asset('assets/image/17Agustus.JPG') }}"
-                                    alt="Semangat Prestasi SMK Amaliah"
-                                    class="w-full h-full object-cover"
-                                    width="1600" height="900"
-                                    loading="lazy">
-                            </div>
-
-                            {{-- Dark Overlay Gradients for Perfect Readability --}}
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30 pointer-events-none"></div>
-                            <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent pointer-events-none"></div>
-
-                            {{-- Hero Content: Title, Tagline, Action Buttons --}}
-                            <div class="absolute inset-0 flex flex-col justify-end sm:justify-center p-4 sm:p-10 lg:p-16 max-w-2xl text-white z-10">
-                                <span class="inline-flex items-center gap-2 w-fit text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-[#d9ffb3] bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 mb-2 sm:mb-3 shadow-sm">
-                                    <span class="w-2 h-2 rounded-full bg-[#63cd00] animate-pulse"></span>
-                                    Tauhid Is Our Fundament
-                                </span>
-
-                                <h1 class="text-xl sm:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight text-white drop-shadow-md">
-                                    SMK Amaliah 1 &amp; 2 Ciawi
-                                </h1>
-
-                                <p class="mt-2 sm:mt-4 text-xs sm:text-base text-gray-200 line-clamp-2 sm:line-clamp-none leading-relaxed drop-shadow">
-                                    Membina generasi berakhlak mulia, berkarakter tauhid, unggul secara kompetensi vokasi, dan siap bersaing di dunia industri global.
-                                </p>
-
-                                <div class="mt-3.5 sm:mt-6 flex flex-wrap items-center gap-2 sm:gap-3">
-                                    <a href="https://ppdb.smkamaliah.sch.id/login"
-                                        class="inline-flex items-center gap-2 bg-[#63cd00] hover:bg-[#52ad00] text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-300 shadow-lg shadow-[#63cd00]/30 hover:scale-105">
-                                        <span>Info SPMB</span>
-                                        <i class="fas fa-arrow-right text-xs"></i>
-                                    </a>
-                                    <a href="{{ route('public.majors.index') }}"
-                                        class="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-xs sm:text-sm font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-300 border border-white/30 hover:border-white/50">
-                                        <span>Program Keahlian</span>
-                                    </a>
+                            @foreach($bannerSlides as $loop => $slide)
+                                <div x-show="activeSlide === {{ $loop->iteration }}"
+                                    x-transition:enter="transition ease-out duration-700" x-transition:enter-start="opacity-0 scale-105"
+                                    x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-500"
+                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                                    class="absolute inset-0"
+                                    @if(!$loop->first) style="display: none;" @endif>
+                                    @if(!empty($slide->is_local_asset))
+                                        <img src="{{ asset($slide->path) }}"
+                                            alt="{{ $slide->description ?? 'SMK Amaliah 1 & 2' }}"
+                                            class="w-full h-full object-cover"
+                                            width="1600" height="900"
+                                            @if($loop->first) fetchpriority="high" loading="eager" @else loading="lazy" @endif>
+                                    @else
+                                        <img src="{{ img_url($slide->path, 1600, 900) }}"
+                                            alt="{{ $slide->description ?? $slide->filename }}"
+                                            class="w-full h-full object-cover"
+                                            width="1600" height="900"
+                                            @if($loop->first) fetchpriority="high" loading="eager" @else loading="lazy" @endif>
+                                    @endif
                                 </div>
-                            </div>
+                            @endforeach
+
+                            {{-- Floating News Card (Sesuai Desain Asli di Screenshot) --}}
+                            @if(isset($latestNews) && $latestNews->isNotEmpty())
+                                <div class="hero-floating-card-wrapper"
+                                    x-show="!showVideo">
+
+                                    <div class="relative w-full rounded-2xl bg-white/95 backdrop-blur-md shadow-2xl border border-white/60 min-h-[220px] sm:min-h-[200px] overflow-hidden">
+                                        @foreach($latestNews as $loop => $news)
+                                            <div x-show="activeNews === {{ $loop->iteration }}"
+                                                x-transition:enter="transition-opacity ease-out duration-300"
+                                                x-transition:enter-start="opacity-0"
+                                                x-transition:enter-end="opacity-100"
+                                                class="absolute inset-0 bg-white/95 backdrop-blur-md rounded-2xl p-5 sm:p-6 flex flex-col justify-between"
+                                                @if(!$loop->first) style="display: none;" @endif>
+
+                                                <div>
+                                                    <h2 class="text-base sm:text-lg lg:text-xl font-bold text-gray-900 leading-snug line-clamp-2">
+                                                        {{ $news->title }}
+                                                    </h2>
+
+                                                    @if(!empty(trim(strip_tags($news->description))) && trim(strip_tags($news->description)) !== '-')
+                                                        <p class="text-xs sm:text-sm mt-2 text-gray-600 line-clamp-2 leading-relaxed">
+                                                            {{ strip_tags($news->description) }}
+                                                        </p>
+                                                    @endif
+                                                </div>
+
+                                                <div class="mt-3 flex items-center justify-between pt-2 border-t border-gray-100">
+                                                    <p class="text-[11px] sm:text-xs font-medium text-gray-500">
+                                                        {{ \Carbon\Carbon::parse($news->date_published)->translatedFormat('d F Y') }}
+                                                    </p>
+
+                                                    <a href="{{ route('public.news.show', $news) }}"
+                                                        class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-white bg-[#282829] hover:bg-black px-4 py-2 rounded-full transition-all duration-300 group shadow-md hover:scale-105">
+                                                        <span>Selengkapnya</span>
+                                                        <i class="fas fa-arrow-right text-xs transition-transform duration-300 group-hover:translate-x-1"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
 
                             {{-- Tombol "Watch Video" di Pojok Kanan Atas --}}
                             <button @click="showVideo = true"
-                                class="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center gap-1.5 sm:gap-2 bg-black/60 backdrop-blur-md text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full hover:bg-black/80 transition-all duration-300 text-xs sm:text-sm shadow-lg border border-white/10"
+                                class="hero-watch-video-btn flex items-center gap-1.5 sm:gap-2 bg-black/60 backdrop-blur-md text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full hover:bg-black/80 transition-all duration-300 text-xs sm:text-sm shadow-lg border border-white/10 cursor-pointer"
                                 aria-label="Tonton video profil">
                                 <svg xmlns="https://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 text-[#63cd00]" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
@@ -249,7 +269,7 @@
 
                             {{-- Tombol "Close" untuk Video --}}
                             <button @click="showVideo = false" aria-label="Tutup video"
-                                class="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-black/70 backdrop-blur-md text-white rounded-full hover:bg-black transition-all duration-300 shadow-lg border border-white/20">
+                                class="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-black/70 backdrop-blur-md text-white rounded-full hover:bg-black transition-all duration-300 shadow-lg border border-white/20 cursor-pointer">
                                 <svg xmlns="https://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -374,8 +394,8 @@
                             'assets/image/Classmeet.JPG',
                             'assets/image/DroneView.jpg',
                             'assets/image/17Agustus.JPG',
-                            'assets/image/kepsek1.webp',
-                            'assets/image/kepsek2.webp',
+                            'assets/image/Classmeet.JPG',
+                            'assets/image/DroneView.jpg',
                         ];
                     @endphp
                     <div class="grid grid-cols-3 grid-rows-3 gap-2 sm:gap-4 h-56 sm:h-80 lg:h-96">
@@ -435,13 +455,13 @@
                                 </div>
                                 <div class="text-white min-w-0">
                                     <p class="text-xl sm:text-3xl lg:text-4xl font-bold whitespace-nowrap count-up"
-                                        data-target-value="{{ $stat['number'] }}">0</p>
+                                        data-target-value="{{ $stat['number'] }}">{{ $stat['number'] }}</p>
                                     <p class="text-[11px] sm:text-sm text-gray-300 leading-tight">{{ $stat['label'] }}</p>
                                 </div>
                             </div>
-                            @if($idx === 0)
+                            @if(!$loop->last)
                                 {{-- PEMISAH DESKTOP --}}
-                                <div class="hidden lg:block w-px h-16 bg-gray-600"></div>
+                                <div class="hidden lg:block w-px h-14 bg-white/20"></div>
                             @endif
                         @endforeach
 
@@ -472,6 +492,8 @@
                             console.warn("Invalid number for count-up:", finalString, el);
                             return;
                         }
+
+                        el.textContent = '0' + suffix;
 
                         let startTime = null;
 
@@ -577,9 +599,13 @@
                                 {{-- Loop data dari controller (DUPLIKASI 1) --}}
                                 @forelse ($partners as $partner)
                                     <div class="text-center">
-                                        <div class="bg-white h-16 sm:h-24 w-full rounded-lg mb-2 sm:mb-3 flex items-center justify-center p-2.5 sm:p-4 border border-dashed border-gray-300 shadow-xs">
-                                            <img src="{{ img_url($partner->logo, 160, 90) }}" alt="Logo {{ $partner->name }}" loading="lazy" width="160" height="90"
-                                                class="max-h-full max-w-full object-contain">
+                                        <div class="bg-white h-16 sm:h-24 w-full rounded-xl mb-2 sm:mb-3 flex items-center justify-center p-2.5 sm:p-3 border border-gray-200 shadow-sm hover:border-[#63cd00] transition-colors">
+                                            @if (!empty($partner->logo))
+                                                <img src="{{ img_url($partner->logo, 160, 90) }}" alt="Logo {{ $partner->name }}" loading="lazy" width="160" height="90"
+                                                    class="max-h-full max-w-full object-contain">
+                                            @else
+                                                <span class="text-[10px] sm:text-xs font-bold text-gray-700 line-clamp-2 uppercase tracking-tight text-center px-1">{{ $partner->name }}</span>
+                                            @endif
                                         </div>
                                     </div>
                                 @empty
@@ -591,9 +617,13 @@
                                 {{-- Loop data dari controller (DUPLIKASI 2 - Untuk Efek Mulus) --}}
                                 @forelse ($partners as $partner)
                                     <div class="text-center">
-                                        <div class="bg-white h-16 sm:h-24 w-full rounded-lg mb-2 sm:mb-3 flex items-center justify-center p-2.5 sm:p-4 border border-dashed border-gray-300 shadow-xs">
-                                            <img src="{{ img_url($partner->logo, 160, 90) }}" alt="Logo {{ $partner->name }}" loading="lazy" width="160" height="90"
-                                                class="max-h-full max-w-full object-contain">
+                                        <div class="bg-white h-16 sm:h-24 w-full rounded-xl mb-2 sm:mb-3 flex items-center justify-center p-2.5 sm:p-3 border border-gray-200 shadow-sm hover:border-[#63cd00] transition-colors">
+                                            @if (!empty($partner->logo))
+                                                <img src="{{ img_url($partner->logo, 160, 90) }}" alt="Logo {{ $partner->name }}" loading="lazy" width="160" height="90"
+                                                    class="max-h-full max-w-full object-contain">
+                                            @else
+                                                <span class="text-[10px] sm:text-xs font-bold text-gray-700 line-clamp-2 uppercase tracking-tight text-center px-1">{{ $partner->name }}</span>
+                                            @endif
                                         </div>
                                     </div>
                                 @empty
@@ -657,11 +687,19 @@
                         timer: null,
                         init() {
                             if (this.autoRotate) {
-                                this.timer = setInterval(() => { if (autoRotate) activeTab = activeTab === 'amaliah1' ? 'amaliah2' : 'amaliah1' }, 5000);
+                                this.timer = setInterval(() => {
+                                    if (this.autoRotate) {
+                                        this.activeTab = this.activeTab === 'amaliah1' ? 'amaliah2' : 'amaliah1';
+                                    }
+                                }, 5000);
                             }
                         },
                         setTab(tab) {
                             this.activeTab = tab;
+                            if (this.timer) {
+                                clearInterval(this.timer);
+                                this.timer = null;
+                            }
                         }
                     }"
                     @mouseenter="autoRotate = false"
@@ -677,20 +715,14 @@
                         <div class="flex justify-center items-center space-x-2 mt-5 sm:mt-8">
                             <button type="button"
                                 @click="setTab('amaliah1')"
-                                :class="{
-                                    'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah1',
-                                    'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah1'
-                                }"
+                                :class="activeTab === 'amaliah1' ? 'bg-[#63cd00] text-white shadow-lg' : 'bg-white text-[#282829] hover:bg-gray-200'"
                                 class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer"
                                 aria-label="SMK Amaliah 1">
                                 SMK Amaliah 1
                             </button>
                             <button type="button"
                                 @click="setTab('amaliah2')"
-                                :class="{
-                                    'bg-[#63cd00] text-white shadow-lg': activeTab === 'amaliah2',
-                                    'bg-white text-[#282829] hover:bg-gray-200': activeTab !== 'amaliah2'
-                                }"
+                                :class="activeTab === 'amaliah2' ? 'bg-[#63cd00] text-white shadow-lg' : 'bg-white text-[#282829] hover:bg-gray-200'"
                                 class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer"
                                 aria-label="SMK Amaliah 2">
                                 SMK Amaliah 2
@@ -833,26 +865,24 @@
                             {{-- Gambar Grid Jurusan Dinamis --}}
                             <div class="flex flex-col space-y-3">
                                 {{-- Gambar 1 --}}
-                                @if (isset($majorGridImages[0]) && $majorGridImages[0]->path)
-                                    <img src="{{ img_url($majorGridImages[0]->path, 900, 375) }}" loading="lazy" width="900" height="375"
-                                        alt="{{ $majorGridImages[0]->description ?? 'Gambar Grid Jurusan 1' }}"
-                                        class="h-32 sm:h-36 w-full rounded-xl object-cover border border-white/10 shadow-sm">
-                                @else
-                                    <div class="bg-gray-700 h-32 sm:h-36 w-full rounded-xl flex items-center justify-center border border-white/10">
-                                        <i class="fas fa-image text-3xl text-gray-500"></i>
-                                    </div>
-                                @endif
+                                @php
+                                    $leftImg1 = (isset($majorGridImages[0]) && $majorGridImages[0]->path)
+                                        ? img_url($majorGridImages[0]->path, 900, 375)
+                                        : asset('assets/image/Classmeet.JPG');
+                                @endphp
+                                <img src="{{ $leftImg1 }}" loading="lazy" width="900" height="375"
+                                    alt="{{ $majorGridImages[0]->description ?? 'Aktivitas Jurusan SMK Amaliah' }}"
+                                    class="h-32 sm:h-36 w-full rounded-xl object-cover border border-white/10 shadow-sm">
 
                                 {{-- Gambar 2 --}}
-                                @if (isset($majorGridImages[1]) && $majorGridImages[1]->path)
-                                    <img src="{{ img_url($majorGridImages[1]->path, 900, 375) }}" loading="lazy" width="900" height="375"
-                                        alt="{{ $majorGridImages[1]->description ?? 'Gambar Grid Jurusan 2' }}"
-                                        class="h-32 sm:h-36 w-full rounded-xl object-cover border border-white/10 shadow-sm">
-                                @else
-                                    <div class="bg-gray-700 h-32 sm:h-36 w-full rounded-xl flex items-center justify-center border border-white/10">
-                                        <i class="fas fa-image text-3xl text-gray-500"></i>
-                                    </div>
-                                @endif
+                                @php
+                                    $leftImg2 = (isset($majorGridImages[1]) && $majorGridImages[1]->path)
+                                        ? img_url($majorGridImages[1]->path, 900, 375)
+                                        : asset('assets/image/17Agustus.JPG');
+                                @endphp
+                                <img src="{{ $leftImg2 }}" loading="lazy" width="900" height="375"
+                                    alt="{{ $majorGridImages[1]->description ?? 'Prestasi Jurusan SMK Amaliah' }}"
+                                    class="h-32 sm:h-36 w-full rounded-xl object-cover border border-white/10 shadow-sm">
                             </div>
                             {{-- Tombol Navigasi Statis --}}
                             <div class="mt-4 flex items-center space-x-2.5">
@@ -1320,13 +1350,9 @@
                                         <div class="ig-empty">Belum ada postingan Instagram.</div>
                                     @endforelse
                                                                 </div>
-                                <div class="sm:hidden text-center mt-2.5">
-                                    <a href="{{ config('services.instagram.profile_url') }}" target="_blank" rel="noopener"
-                                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3.5 py-1.5 rounded-full transition shadow-xs">
-                                        <i class="fab fa-instagram text-[#63cd00]"></i>
-                                        <span>Buka Instagram</span>
-                                    </a>
-                                </div>
+                                <a class="tiktok-profile-link" href="{{ config('services.instagram.profile_url') }}" target="_blank" rel="noopener">
+                                    Lihat semua postingan di Instagram <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </a>
                             </div>
                         </div>
 
@@ -1422,35 +1448,20 @@
                         min-width: 0;
                     }
 
-                    .ig-card {
-                        width: 100%;
-                        max-width: 935px;
-                        background: #fff;
-                        border: 1px solid #dbdbdb;
-                        border-radius: 4px;
-                        overflow: hidden;
-                    }
-
-                    .ig-head {
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        padding: 14px 16px;
-                        border-bottom: 1px solid #dbdbdb;
-                    }
-
+                    .ig-card,
                     .tiktok-card {
+                        width: 100%;
+                        height: 100%;
                         display: flex;
                         flex-direction: column;
-                        gap: 0;
-                        width: 100%;
-                        min-width: 0;
-                        overflow: hidden;
-                        border: 1px solid #dbdbdb;
-                        border-radius: 4px;
+                        justify-content: space-between;
                         background: #fff;
+                        border: 1px solid #dbdbdb;
+                        border-radius: 8px;
+                        overflow: hidden;
                     }
 
+                    .ig-head,
                     .tiktok-head {
                         display: flex;
                         align-items: center;
