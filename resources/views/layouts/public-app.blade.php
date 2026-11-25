@@ -247,14 +247,14 @@
             <div class="border-b border-gray-200">
                 <div class="public-header-row max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
 
-                    {{-- Grup 1: Logo & Nama (Kiri) --}}
-                    <div class="public-brand">
-                        <img src="{{ asset('assets/logo/amaliah.webp') }}" alt="Logo SMK Amaliah" class="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
+                    {{-- Grup 1: Logo & Nama (Kiri) - Tautan ke Beranda --}}
+                    <a href="{{ route('home') }}" class="public-brand group cursor-pointer no-underline transition-opacity duration-200 hover:opacity-95" aria-label="Beranda SMK AMALIAH 1&2 CIAWI">
+                        <img src="{{ asset('assets/logo/amaliah.webp') }}" alt="Logo SMK Amaliah" class="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 transition-transform duration-200 group-hover:scale-105">
                         <div class="public-brand-text flex flex-col min-w-0">
-                            <span class="text-gray-900 font-times text-sm sm:text-base font-bold leading-tight truncate">SMK AMALIAH 1&2 CIAWI</span>
+                            <span class="text-gray-900 font-times text-sm sm:text-base font-bold leading-tight truncate group-hover:text-[#63cd00] transition-colors">SMK AMALIAH 1&2 CIAWI</span>
                             <span class="text-[10px] sm:text-xs font-times text-gray-600 truncate"><i>Tauhid Is Our Fundament</i></span>
                         </div>
-                    </div>
+                    </a>
 
                     <div class="public-header-tools hidden lg:flex items-center">
 
