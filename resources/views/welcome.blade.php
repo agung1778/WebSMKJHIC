@@ -35,24 +35,26 @@
         /* Hero Floating News Card & Watch Video Button */
         .hero-floating-card-wrapper {
             position: absolute;
-            bottom: 20px;
-            left: 16px;
+            bottom: 14px;
+            left: 14px;
             z-index: 20;
-            width: calc(100% - 32px);
-            max-width: 440px;
+            width: calc(100% - 28px);
+            max-width: 310px;
         }
         @media (min-width: 640px) {
             .hero-floating-card-wrapper {
-                bottom: 32px;
-                left: 32px;
-                width: 380px;
+                bottom: 24px;
+                left: 24px;
+                width: 340px;
+                max-width: 340px;
             }
         }
         @media (min-width: 1024px) {
             .hero-floating-card-wrapper {
-                bottom: 44px;
-                left: 44px;
-                width: 440px;
+                bottom: 32px;
+                left: 32px;
+                width: 380px;
+                max-width: 380px;
             }
         }
         .hero-watch-video-btn {
@@ -209,36 +211,36 @@
                                 <div class="hero-floating-card-wrapper"
                                     x-show="!showVideo">
 
-                                    <div class="relative w-full rounded-2xl bg-white/95 backdrop-blur-md shadow-2xl border border-white/60 min-h-[220px] sm:min-h-[200px] overflow-hidden">
+                                    <div class="relative w-full rounded-xl sm:rounded-2xl bg-white/95 backdrop-blur-md shadow-xl border border-white/60 min-h-[105px] sm:min-h-[145px] lg:min-h-[160px] overflow-hidden">
                                         @foreach($latestNews as $loop => $news)
                                             <div x-show="activeNews === {{ $loop->iteration }}"
                                                 x-transition:enter="transition-opacity ease-out duration-300"
                                                 x-transition:enter-start="opacity-0"
                                                 x-transition:enter-end="opacity-100"
-                                                class="absolute inset-0 bg-white/95 backdrop-blur-md rounded-2xl p-5 sm:p-6 flex flex-col justify-between"
+                                                class="absolute inset-0 bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 flex flex-col justify-between"
                                                 @if(!$loop->first) style="display: none;" @endif>
 
                                                 <div>
-                                                    <h2 class="text-base sm:text-lg lg:text-xl font-bold text-gray-900 leading-snug line-clamp-2">
+                                                    <h2 class="text-xs sm:text-sm lg:text-base font-bold text-gray-900 leading-snug line-clamp-2">
                                                         {{ $news->title }}
                                                     </h2>
 
                                                     @if(!empty(trim(strip_tags($news->description))) && trim(strip_tags($news->description)) !== '-')
-                                                        <p class="text-xs sm:text-sm mt-2 text-gray-600 line-clamp-2 leading-relaxed">
+                                                        <p class="hidden sm:block text-xs mt-1 text-gray-600 line-clamp-1 lg:line-clamp-2 leading-relaxed">
                                                             {{ strip_tags($news->description) }}
                                                         </p>
                                                     @endif
                                                 </div>
 
-                                                <div class="mt-3 flex items-center justify-between pt-2 border-t border-gray-100">
-                                                    <p class="text-[11px] sm:text-xs font-medium text-gray-500">
+                                                <div class="mt-2 flex items-center justify-between pt-1.5 border-t border-gray-100">
+                                                    <p class="text-[10px] sm:text-xs font-medium text-gray-500">
                                                         {{ \Carbon\Carbon::parse($news->date_published)->translatedFormat('d F Y') }}
                                                     </p>
 
                                                     <a href="{{ route('public.news.show', $news) }}"
-                                                        class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-white bg-[#282829] hover:bg-black px-4 py-2 rounded-full transition-all duration-300 group shadow-md hover:scale-105">
+                                                        class="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-white bg-[#282829] hover:bg-black px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full transition-all duration-300 group shadow-md hover:scale-105">
                                                         <span>Selengkapnya</span>
-                                                        <i class="fas fa-arrow-right text-xs transition-transform duration-300 group-hover:translate-x-1"></i>
+                                                        <i class="fas fa-arrow-right text-[10px] transition-transform duration-300 group-hover:translate-x-1"></i>
                                                     </a>
                                                 </div>
                                             </div>
