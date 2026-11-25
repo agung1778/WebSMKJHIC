@@ -71,21 +71,22 @@
         /* Major Competency Section Styles */
         .major-card {
             flex-shrink: 0;
-            width: 220px;
-            margin-right: 4px;
+            width: 270px;
+            margin-right: 16px;
             background-color: #1e1e1f;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 1rem;
-            padding: 0.875rem;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 8px -1px rgba(0, 0, 0, 0.35);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4);
         }
         @media (min-width: 640px) {
             .major-card {
                 width: 250px;
                 padding: 1rem;
+                margin-right: 0;
             }
         }
         .major-card:hover {
@@ -691,21 +692,29 @@
                                     if (this.autoRotate) {
                                         this.activeTab = this.activeTab === 'amaliah1' ? 'amaliah2' : 'amaliah1';
                                     }
-                                }, 5000);
+                                }, 6000);
                             }
                         },
                         setTab(tab) {
+                            if (this.activeTab === tab) return;
                             this.activeTab = tab;
                             if (this.timer) {
                                 clearInterval(this.timer);
                                 this.timer = null;
+                            }
+                            if (this.autoRotate) {
+                                this.timer = setInterval(() => {
+                                    if (this.autoRotate) {
+                                        this.activeTab = this.activeTab === 'amaliah1' ? 'amaliah2' : 'amaliah1';
+                                    }
+                                }, 6000);
                             }
                         }
                     }"
                     @mouseenter="autoRotate = false"
                     @mouseleave="autoRotate = true"
                     @touchstart.passive="autoRotate = false"
-                    @touchend.passive="setTimeout(() => autoRotate = true, 3000)">
+                    @touchend.passive="setTimeout(() => autoRotate = true, 4000)">
 
                     {{-- Bagian Header: Judul dan Tombol Tab (Sesuai Gambar Asli) --}}
                     <div class="text-center mb-6 sm:mb-12">
@@ -731,23 +740,24 @@
                     </div>
 
                     {{-- Konten: Fluid Stacking Grid dengan Tata Letak Responsif --}}
-                    <div class="relative grid grid-cols-1 grid-rows-1 items-center mt-8 sm:mt-12 lg:mt-16 min-h-[460px] sm:min-h-[380px] lg:min-h-[320px]">
+                    <div class="relative grid grid-cols-1 grid-rows-1 items-center mt-6 sm:mt-10 lg:mt-16 min-h-[520px] sm:min-h-[420px] lg:min-h-[340px]">
                         @foreach ($profiles as $profile)
                             <div x-show="activeTab === '{{ $profile['tab'] }}'"
                                 x-transition:enter="transition ease-out duration-500"
-                                x-transition:enter-start="opacity-0 transform translate-x-4"
-                                x-transition:enter-end="opacity-100 transform translate-x-0"
+                                x-transition:enter-start="opacity-0 translate-y-4"
+                                x-transition:enter-end="opacity-100 translate-y-0"
                                 x-transition:leave="transition ease-in duration-300"
-                                x-transition:leave-start="opacity-100 transform translate-x-0"
-                                x-transition:leave-end="opacity-0 transform -translate-x-4"
-                                class="col-start-1 row-start-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 -translate-y-4"
+                                class="col-start-1 row-start-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center"
+                                @if(!$loop->first) style="display: none;" @endif>
 
                                 {{-- FOTO: Pada Mobile Tampil di Bagian Atas Nama (order-1), Pada Desktop di Kolom Kanan (lg:order-2) --}}
                                 <div class="order-1 lg:order-2 flex justify-center items-center">
-                                    <div class="w-44 h-44 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-full shadow-2xl overflow-hidden flex items-center justify-center bg-transparent">
+                                    <div class="w-44 h-44 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-full shadow-2xl overflow-hidden flex items-center justify-center bg-transparent transition-transform duration-700 ease-out hover:scale-105">
                                         <img src="{{ $profile['image'] }}"
                                             alt="{{ $profile['name'] }}"
-                                            class="w-full h-full object-cover rounded-full"
+                                            class="w-full h-full object-cover rounded-full transition-opacity duration-700"
                                             loading="lazy">
                                     </div>
                                 </div>
@@ -801,7 +811,7 @@
                                 if (!this.isPaused) {
                                     this.scrollSlider('next');
                                 }
-                            }, 3500);
+                            }, 4500);
                         },
                         stopAutoScroll() {
                             if (this.timer) {
@@ -819,22 +829,47 @@
                             const slider = this.$refs.slider;
                             if (!slider) return;
                             const firstItem = slider.querySelector('.slider-item');
-                            const step = firstItem ? firstItem.offsetWidth + 24 : 250;
+                            const step = firstItem ? firstItem.offsetWidth + 16 : 280;
                             const maxScrollLeft = slider.scrollWidth - slider.clientWidth;
 
+                            let target;
                             if (direction === 'next') {
-                                if (slider.scrollLeft >= maxScrollLeft - 10) {
-                                    slider.scrollTo({ left: 0, behavior: 'smooth' });
+                                if (slider.scrollLeft >= maxScrollLeft - 20) {
+                                    target = 0;
                                 } else {
-                                    slider.scrollBy({ left: step, behavior: 'smooth' });
+                                    target = Math.min(slider.scrollLeft + step, maxScrollLeft);
                                 }
                             } else {
-                                if (slider.scrollLeft <= 10) {
-                                    slider.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
+                                if (slider.scrollLeft <= 20) {
+                                    target = maxScrollLeft;
                                 } else {
-                                    slider.scrollBy({ left: -step, behavior: 'smooth' });
+                                    target = Math.max(slider.scrollLeft - step, 0);
                                 }
                             }
+                            this.smoothScrollTo(slider, target, 600);
+                        },
+                        smoothScrollTo(element, target, duration = 600) {
+                            element.style.scrollSnapType = 'none';
+                            element.style.scrollBehavior = 'auto';
+
+                            const start = element.scrollLeft;
+                            const change = target - start;
+                            const startTime = performance.now();
+
+                            const animate = (currentTime) => {
+                                const elapsed = currentTime - startTime;
+                                const progress = Math.min(elapsed / duration, 1);
+                                const ease = progress < 0.5 
+                                    ? 4 * progress * progress * progress 
+                                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                                element.scrollLeft = start + change * ease;
+                                if (progress < 1) {
+                                    requestAnimationFrame(animate);
+                                } else {
+                                    element.style.scrollSnapType = 'x proximity';
+                                }
+                            };
+                            requestAnimationFrame(animate);
                         }
                     }"
                     @mouseenter="pause()"
@@ -905,7 +940,7 @@
 
                         {{-- KOLOM 2: KONTEN SLIDER (BISA DI-SCROLL & AUTO SCROLL) --}}
                         <div x-ref="slider"
-                            class="lg:col-span-3 flex gap-5 sm:gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide py-2 pb-6 -mx-4 pl-4 pr-8 sm:mx-0 sm:px-0 sm:pr-2">
+                            class="lg:col-span-3 flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-proximity scrollbar-hide py-2 pb-6 px-1 pr-10 sm:px-0 sm:pr-2">
 
                             @foreach ($majors as $major)
                                 <div class="major-card slider-item group snap-start">
@@ -948,7 +983,7 @@
                                 </div>
                             @endforeach
                             {{-- Spacer Margin Kanan untuk Mobile & Desktop agar kartu terakhir tidak menempel ke border --}}
-                            <div class="flex-shrink-0 w-6 sm:w-8 pointer-events-none" aria-hidden="true"></div>
+                            <div class="flex-shrink-0 w-12 sm:w-8 pointer-events-none" aria-hidden="true"></div>
                         </div>
 
                         {{-- Tombol Navigasi (Hanya tampil di mobile) --}}
