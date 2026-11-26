@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('instagram:sync')->everyThirtyMinutes()->withoutOverlapping();
+        $schedule->command('instagram:sync')->everySixHours()->withoutOverlapping();
+        $schedule->command('tiktok:sync')->everySixHours()->withoutOverlapping();
     }
 
     /**

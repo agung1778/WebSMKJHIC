@@ -1707,6 +1707,13 @@
                                     <a class="ig-follow" href="{{ config('services.instagram.profile_url') }}" target="_blank" rel="noopener">Follow</a>
                                 </div>
 
+                                @php
+                                    $igFallbackCovers = [
+                                        'assets/image/DroneView.jpg',
+                                        'assets/image/Classmeet.JPG',
+                                        'assets/image/17Agustus.JPG',
+                                    ];
+                                @endphp
                                 <div class="ig-grid">
                                     @forelse ($instaPosts as $post)
                                         <a href="{{ $post->post_url ?: '#' }}" target="{{ $post->post_url ? '_blank' : '_self' }}"
@@ -1720,9 +1727,29 @@
                                             @endif
                                         </a>
                                     @empty
-                                        <div class="ig-empty">Belum ada postingan Instagram.</div>
+                                        @forelse (config('services.instagram.post_urls', []) as $igPostUrl)
+                                            @php
+                                                $igGridImage = $gridImages[$loop->index] ?? null;
+                                                $igCover = $igGridImage && $igGridImage->path
+                                                    ? $igGridImage->path
+                                                    : $igFallbackCovers[$loop->index % count($igFallbackCovers)];
+                                            @endphp
+                                            <a class="ig-item" href="{{ $igPostUrl }}" target="_blank" rel="noopener"
+                                                aria-label="Lihat postingan Instagram {{ $loop->iteration }}">
+                                                <img src="{{ img_url($igCover, 420, 420) }}" alt="" loading="lazy" width="420" height="420">
+                                                <span class="ig-stats">
+                                                    <span class="ig-stat"><i class="fa-regular fa-heart"></i></span>
+                                                    <span class="ig-stat"><i class="fa-regular fa-comment"></i></span>
+                                                </span>
+                                            </a>
+                                        @empty
+                                            <div class="ig-empty">
+                                                Belum ada postingan Instagram.
+                                                <a href="{{ config('services.instagram.profile_url') }}" target="_blank" rel="noopener">Lihat profil Instagram</a>
+                                            </div>
+                                        @endforelse
                                     @endforelse
-                                                                </div>
+                                </div>
                                 <a class="tiktok-profile-link" href="{{ config('services.instagram.profile_url') }}" target="_blank" rel="noopener">
                                     Lihat semua postingan di Instagram <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                 </a>
@@ -2140,6 +2167,12 @@
                         padding: 48px 16px;
                         color: #8e8e8e;
                         font-size: 14px;
+                    }
+
+                    .ig-empty a {
+                        color: #cc2366;
+                        font-weight: 600;
+                        text-decoration: underline;
                     }
 
                     @media (max-width: 480px) {

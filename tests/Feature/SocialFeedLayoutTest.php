@@ -22,5 +22,7 @@ class SocialFeedLayoutTest extends TestCase
         $this->assertStringNotContainsString('https://www.tiktok.com/embed.js', $template);
         $this->assertStringContainsString('TIKTOK_VIDEO_IDS', file_get_contents(base_path('config/services.php')));
         $this->assertStringContainsString("{{ '@' . config('services.tiktok.username') }}", $template);
+        $this->assertStringContainsString("config('services.instagram.post_urls', [])", $template);
+        $this->assertStringContainsString('INSTAGRAM_POST_URLS', file_get_contents(base_path('config/services.php')));
     }
 }

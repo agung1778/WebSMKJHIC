@@ -14,6 +14,12 @@ class SyncInstagramFeed extends Command
 
     public function handle(InstagramFeedSyncService $sync): int
     {
+        if (!$sync->isConfigured()) {
+            $this->warn('Instagram Graph API belum dikonfigurasi. Sinkronisasi dilewati.');
+
+            return self::SUCCESS;
+        }
+
         try {
             $count = $sync->sync();
         } catch (Throwable $exception) {

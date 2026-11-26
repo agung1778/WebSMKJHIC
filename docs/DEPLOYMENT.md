@@ -87,19 +87,48 @@ Tes menggunakan repository Git lokal, domain tiruan, dan PHP tiruan di folder se
 
 ## Feed Instagram dan TikTok
 
-Feed Instagram dapat disinkronkan melalui Instagram Graph API. Hubungkan akun Instagram Professional ke Facebook Page dan siapkan aplikasi Meta dengan akses baca media. Isi `INSTAGRAM_BUSINESS_ACCOUNT_ID`, `INSTAGRAM_ACCESS_TOKEN`, serta versi API yang masih didukung di `.env` server; jangan masukkan token ke Git. TikTok ditampilkan sebagai kartu profil dan grid preview tiga tile bergaya Instagram; gambar preview memakai aset lokal sekolah, dan tiap tile membuka video publik terkait agar tidak bergantung pada embed TikTok yang dapat terkena rate limit. Atur ID video melalui `TIKTOK_VIDEO_IDS` (pisahkan dengan koma), serta profil melalui `TIKTOK_USERNAME` dan `TIKTOK_PROFILE_URL`.
+Kedua feed memakai pola yang sama: sinkron otomatis lewat API resmi, token disimpan lokal dan di-refresh otomatis, input manual tetap tersedia, kuota maksimal 9 postingan, serta fallback grid di homepage bila belum ada data.
+
+### Instagram
+
+Feed Instagram disinkronkan melalui **Instagram Graph API**. Prasyarat: akun Instagram Professional/Business yang terhubung ke Facebook Page, aplikasi Meta dengan scope `instagram_basic` dan `pages_show_list`, serta redirect URI terdaftar (mis. `https://smkamaliah.sch.id/`). Isi `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET`, dan `INSTAGRAM_REDIRECT_URI` di `.env` server, lalu jalankan sekali:
+
+```bash
+php artisan instagram:authorize
+```
+
+Perintah ini mencetak URL otorisasi; buka di browser sebagai pemilik akun, lalu tempel nilai parameter `code` dari URL hasil redirect. Command menukar kode menjadi short-lived token, lalu long-lived token (~60 hari), dan mencari `instagram_business_account` dari Page yang terhubung. Token beserta account ID tersimpan di `storage/app/private/instagram-oauth.json` (di luar Git) dan di-refresh otomatis via `ig_refresh_token` sebelum kedaluwarsa, sehingga tidak perlu mengganti token manual tiap 60 hari. Pendekatan manual juga didukung: isi `INSTAGRAM_BUSINESS_ACCOUNT_ID` dan `INSTAGRAM_ACCESS_TOKEN` langsung di `.env`. Foto diunduh ke `storage/app/public/uploads/instagram/synced/` karena URL media bersifat sementara; pastikan symlink `storage/uploads` di docroot sudah berjalan.
+
+Di menu **Website → Feed Instagram**, admin cukup menempel link postingan (`/p/`, `/reel/`, `/tv/`): foto dan caption diambil otomatis dari metadata halaman. Unggah foto manual tetap bisa dipakai bila pengambilan otomatis gagal (misalnya postingan dengan pembatasan login). Postingan hasil sinkronisasi tidak menghapus postingan input manual.
+
+Tanpa kredensial API, homepage tetap menampilkan grid fallback bergaya Instagram. Atur link publik melalui `INSTAGRAM_POST_URLS` (pisahkan dengan koma); gambar preview memakai aset lokal sekolah, dan tiap tile membuka postingan publik tersebut. Profil diatur lewat `INSTAGRAM_PROFILE_URL`.
+
+### TikTok
+
+TikTok dapat disinkronkan otomatis melalui **Display API v2** (`POST /v2/video/list/`, scope `video.list`). Prasyarat: aplikasi TikTok Developer telah disetujui untuk Login Kit + Display API dengan scope `user.info.basic` dan `video.list`, dengan redirect URI terdaftar (mis. `https://smkamaliah.sch.id/`). Isi `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, dan `TIKTOK_REDIRECT_URI` di `.env` server, lalu jalankan sekali:
+
+```bash
+php artisan tiktok:authorize
+```
+
+Perintah ini mencetak URL otorisasi; buka di browser sebagai pemilik akun `@smkamaliah`, lalu tempel nilai parameter `code` dari URL hasil redirect. Token akan tersimpan di `storage/app/private/tiktok-oauth.json` (di luar Git) dan di-refresh otomatis saat sudah kedaluwarsa, sehingga access token yang umurnya ~24 jam tidak perlu diisi manual tiap hari. Pendekatan manual juga didukung: isi `TIKTOK_ACCESS_TOKEN`, `TIKTOK_REFRESH_TOKEN`, dan `TIKTOK_OPEN_ID` (opsional) langsung di `.env`. Cover video diunduh ke `storage/app/public/uploads/tiktok/synced/` karena URL cover TikTok hanya berlaku ~6 jam; pastikan symlink `storage/uploads` di docroot sudah berjalan.
+
+Tanpa kredensial API, TikTok tetap ditampilkan sebagai kartu profil dan grid preview tiga tile bergaya Instagram; gambar preview memakai aset lokal sekolah, dan tiap tile membuka video publik terkait agar tidak bergantung pada embed TikTok yang dapat terkena rate limit. Atur ID video melalui `TIKTOK_VIDEO_IDS` (pisahkan dengan koma), serta profil melalui `TIKTOK_USERNAME` dan `TIKTOK_PROFILE_URL`. Video yang diinput manual dari menu Feed TikTok tidak dihapus oleh sinkronisasi otomatis.
+
+### Deploy & penjadwalan
 
 Setelah deploy kode, jalankan migration dan uji koneksi:
 
 ```bash
 php artisan migrate --force
 php artisan instagram:sync
+php artisan tiktok:sync
 ```
 
-Sinkronisasi otomatis berjalan setiap 30 menit jika scheduler Laravel dipanggil oleh cron hosting:
+Sinkronisasi otomatis berjalan setiap 6 jam untuk kedua feed jika scheduler Laravel dipanggil oleh cron hosting:
 
 ```cron
 * * * * * cd /path/ke/project && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-Tanpa konfigurasi token Instagram, halaman tetap dapat menampilkan postingan yang diunggah manual dari menu Feed Instagram. Tautan video TikTok membuka postingan publik di TikTok.
+Tanpa konfigurasi token Instagram maupun TikTok, command `*:sync` akan dilewati dengan aman dan halaman tetap menampilkan postingan manual/fallback. Tautan postingan Instagram dan video TikTok membuka halaman publik masing-masing.

@@ -13,7 +13,7 @@
             icon="fa-brands fa-tiktok"
             kicker="Website"
             title="Feed TikTok"
-            subtitle="Kelola postingan video TikTok yang ditampilkan di homepage website sekolah. Unggah foto cover dan tempel tautan video TikTok. Maksimal 9 postingan — postingan lama akan otomatis digantikan dan dihapus permanen jika kuota penuh." />
+            subtitle="Kelola video TikTok yang tampil di homepage. Cukup tempel link video — cover akan diambil otomatis. Maksimal 9 postingan aktif; data terlama otomatis diganti saat kuota penuh." />
 
         @if (session('error'))
             <div class="p-4 rounded-xl text-sm font-medium border bg-red-50 text-red-700 border-red-200">
@@ -38,16 +38,17 @@
                 <form action="{{ route('admin.tiktok-posts.store') }}" method="POST" enctype="multipart/form-data" class="p-4 sm:p-5 space-y-4">
                     @csrf
                     <div>
-                        <label class="app-label">Cover Thumbnail Video <span class="req">*</span></label>
-                        <x-admin-components::dropzone name="image_file" :required="true" accept="image/*" hint="Klik untuk memilih foto cover video." />
-                    </div>
-                    <div>
-                        <label class="app-label" for="caption">Judul / Caption <span class="optional">(opsional)</span></label>
-                        <textarea name="caption" id="caption" rows="2" class="app-textarea" placeholder="Tulis judul atau caption video TikTok...">{{ old('caption') }}</textarea>
-                    </div>
-                    <div>
-                        <label class="app-label" for="video_url">Link Video TikTok <span class="optional">(opsional)</span></label>
+                        <label class="app-label" for="video_url">Link Video TikTok <span class="req">*</span></label>
                         <x-admin-components::field name="video_url" placeholder="https://www.tiktok.com/@smk.amaliah/video/..." icon="fa-brands fa-tiktok" :value="old('video_url')" />
+                        <p class="text-[11px] mt-1.5" style="color:var(--text-3)">Tempel link video — cover akan diambil otomatis dari TikTok.</p>
+                    </div>
+                    <div>
+                        <label class="app-label" for="caption">Judul / Caption <span class="optional">(opsional, otomatis dari TikTok)</span></label>
+                        <textarea name="caption" id="caption" rows="2" class="app-textarea" placeholder="Kosongkan untuk memakai caption dari TikTok...">{{ old('caption') }}</textarea>
+                    </div>
+                    <div>
+                        <label class="app-label">Cover Thumbnail <span class="optional">(opsional, otomatis dari link)</span></label>
+                        <x-admin-components::dropzone name="image_file" :required="false" accept="image/*" hint="Biarkan kosong untuk mengambil cover otomatis dari link video." />
                     </div>
                     <div>
                         <label class="app-label" for="video_id">ID Video TikTok <span class="optional">(opsional, otomatis jika link diisi)</span></label>
