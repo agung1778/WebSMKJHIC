@@ -719,6 +719,11 @@
             <section class="bg-[#282829] py-16 sm:py-20 overflow-hidden fade-in-section">
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8"
                     x-data="{
+                        tabs: [
+                            @foreach(array_keys($schoolTabs) as $tabKey)
+                                '{{ $tabKey }}',
+                            @endforeach
+                        ],
                         activeTab: 'amaliah_both',
                         activeLeaderIndex: {
                             @foreach($schoolTabs as $tabKey => $tabData)
@@ -737,8 +742,8 @@
                         startTimer() {
                             this.stopTimer();
                             this.timer = setInterval(() => {
-                                this.nextLeader();
-                            }, 7000);
+                                this.next();
+                            }, 6000);
                         },
                         stopTimer() {
                             if (this.timer) {
@@ -749,25 +754,56 @@
                         setTab(tab) {
                             if (this.activeTab === tab) return;
                             this.activeTab = tab;
+                            this.activeLeaderIndex[tab] = 0;
                             this.startTimer();
                         },
                         setLeader(tab, idx) {
                             this.activeLeaderIndex[tab] = idx;
                             this.startTimer();
                         },
-                        nextLeader() {
+                        next() {
                             const tab = this.activeTab;
-                            const total = this.counts[tab] || 1;
-                            if (total > 1) {
-                                this.activeLeaderIndex[tab] = (this.activeLeaderIndex[tab] + 1) % total;
+                            const count = this.counts[tab] || 1;
+                            const currentIdx = this.activeLeaderIndex[tab] || 0;
+
+                            // Jika di kategori saat ini masih ada kartu berikutnya
+                            if (currentIdx + 1 < count) {
+                                this.activeLeaderIndex[tab] = currentIdx + 1;
+                            } else {
+                                // Jika kartu di kategori ini sudah selesai, pindah ke kategori berikutnya
+                                const currentTabIndex = this.tabs.indexOf(tab);
+                                const nextTabIndex = (currentTabIndex + 1) % this.tabs.length;
+                                const nextTab = this.tabs[nextTabIndex];
+
+                                this.activeTab = nextTab;
+                                this.activeLeaderIndex[nextTab] = 0;
                             }
                         },
-                        prevLeader() {
+                        prev() {
                             const tab = this.activeTab;
-                            const total = this.counts[tab] || 1;
-                            if (total > 1) {
-                                this.activeLeaderIndex[tab] = (this.activeLeaderIndex[tab] - 1 + total) % total;
+                            const currentIdx = this.activeLeaderIndex[tab] || 0;
+
+                            // Jika bukan kartu pertama di kategori ini
+                            if (currentIdx > 0) {
+                                this.activeLeaderIndex[tab] = currentIdx - 1;
+                            } else {
+                                // Mundur ke kategori sebelumnya dan pilih kartu terakhirnya
+                                const currentTabIndex = this.tabs.indexOf(tab);
+                                const prevTabIndex = (currentTabIndex - 1 + this.tabs.length) % this.tabs.length;
+                                const prevTab = this.tabs[prevTabIndex];
+                                const prevCount = this.counts[prevTab] || 1;
+
+                                this.activeTab = prevTab;
+                                this.activeLeaderIndex[prevTab] = Math.max(0, prevCount - 1);
                             }
+                        },
+                        nextLeader() {
+                            this.next();
+                            this.startTimer();
+                        },
+                        prevLeader() {
+                            this.prev();
+                            this.startTimer();
                         }
                     }"
                     @mouseenter="stopTimer()"
@@ -798,17 +834,21 @@
                         </div>
                     </div>
 
-                    {{-- Konten: Fluid Showcase Pemimpin per Tab --}}
-                    @foreach ($schoolTabs as $tabKey => $tabData)
-                        <div x-show="activeTab === '{{ $tabKey }}'"
-                            x-transition:enter="transition ease-out duration-400"
-                            x-transition:enter-start="opacity-0"
-                            x-transition:enter-end="opacity-100"
-                            @if(!$loop->first) style="display: none;" @endif>
+                    {{-- Konten: Fluid Showcase Pemimpin per Tab (Stacked grid agar transisi halus tanpa loncatan layout) --}}
+                    <div class="relative grid grid-cols-1 grid-rows-1 items-start min-h-[560px] sm:min-h-[500px] lg:min-h-[420px]">
+                        @foreach ($schoolTabs as $tabKey => $tabData)
+                            <div x-show="activeTab === '{{ $tabKey }}'"
+                                x-transition:enter="transition ease-out duration-500 transform"
+                                x-transition:enter-start="opacity-0 translate-x-6"
+                                x-transition:enter-end="opacity-100 translate-x-0"
+                                x-transition:leave="transition ease-in duration-300 transform"
+                                x-transition:leave-start="opacity-100 translate-x-0"
+                                x-transition:leave-end="opacity-0 -translate-x-6"
+                                class="col-start-1 row-start-1 w-full"
+                                @if(!$loop->first) style="display: none;" @endif>
 
-                            {{-- Jika ada lebih dari 1 pemimpin di kategori ini, tampilkan selector / switcher pimpinan --}}
-                            @if($tabData['leaders']->count() > 1)
-                                <div class="flex items-center justify-center gap-2 mb-6 sm:mb-8 flex-wrap">
+                                {{-- Selector / Switcher Pimpinan (Tampil seragam di semua kategori agar tinggi tetap fix tanpa lompat) --}}
+                                <div class="flex items-center justify-center gap-2 mb-6 sm:mb-8 min-h-[38px] flex-wrap">
                                     <button type="button" @click="prevLeader()" aria-label="Pemimpin sebelumnya"
                                         class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-[#63cd00] text-white hover:text-black flex items-center justify-center text-xs transition-colors cursor-pointer mr-1">
                                         <i class="fa-solid fa-chevron-left text-[10px] sm:text-xs"></i>
@@ -838,91 +878,129 @@
                                         <i class="fa-solid fa-chevron-right text-[10px] sm:text-xs"></i>
                                     </button>
                                 </div>
-                            @endif
 
-                            {{-- Konten Showcase Pemimpin --}}
-                            <div class="relative grid grid-cols-1 grid-rows-1 items-center min-h-[460px] sm:min-h-[400px] lg:min-h-[340px]">
-                                @foreach($tabData['leaders'] as $idx => $lead)
-                                    @php
-                                        $leadImgSrc = $leaderImg($lead, $idx === 0 ? ($tabKey === 'amaliah1' ? 'assets/image/kepsek1.webp' : 'assets/image/kepsek2.webp') : null);
-                                        $leadInitial = strtoupper(substr(trim($lead->name), 0, 1));
-                                    @endphp
-                                    <div x-show="activeLeaderIndex['{{ $tabKey }}'] === {{ $idx }}"
-                                        x-transition:enter="transition ease-out duration-400"
-                                        x-transition:enter-start="opacity-0 translate-y-3"
-                                        x-transition:enter-end="opacity-100 translate-y-0"
-                                        x-transition:leave="transition ease-in duration-200"
-                                        x-transition:leave-start="opacity-100 translate-y-0"
-                                        x-transition:leave-end="opacity-0 -translate-y-3"
-                                        class="col-start-1 row-start-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center"
-                                        @if(!$loop->first) style="display: none;" @endif>
+                                {{-- Konten Showcase Pemimpin --}}
+                                <div class="relative grid grid-cols-1 grid-rows-1 items-center min-h-[460px] sm:min-h-[400px] lg:min-h-[340px]">
+                                    @foreach($tabData['leaders'] as $idx => $lead)
+                                        @php
+                                            $leadImgSrc = $leaderImg($lead, $idx === 0 ? ($tabKey === 'amaliah1' ? 'assets/image/kepsek1.webp' : 'assets/image/kepsek2.webp') : null);
+                                            $leadInitial = strtoupper(substr(trim($lead->name), 0, 1));
+                                        @endphp
+                                        <div x-show="activeLeaderIndex['{{ $tabKey }}'] === {{ $idx }}"
+                                            x-transition:enter="transition ease-out duration-500 transform"
+                                            x-transition:enter-start="opacity-0 translate-x-6"
+                                            x-transition:enter-end="opacity-100 translate-x-0"
+                                            x-transition:leave="transition ease-in duration-300 transform"
+                                            x-transition:leave-start="opacity-100 translate-x-0"
+                                            x-transition:leave-end="opacity-0 -translate-x-6"
+                                            class="col-start-1 row-start-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center"
+                                            @if(!$loop->first) style="display: none;" @endif>
 
-                                        {{-- FOTO: Pada Mobile di Atas (order-1), Pada Desktop di Kanan (lg:order-2) --}}
-                                        <div class="order-1 lg:order-2 flex justify-center items-center">
-                                            <div class="w-44 h-44 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-full shadow-2xl overflow-hidden flex items-center justify-center bg-transparent transition-transform duration-700 ease-out hover:scale-105 border-4 border-white/10">
-                                                @if($leadImgSrc)
-                                                    <img src="{{ $leadImgSrc }}"
-                                                        alt="{{ $lead->name }}"
-                                                        class="w-full h-full object-cover rounded-full"
-                                                        loading="lazy">
-                                                @else
-                                                    <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#2d6600] to-[#63cd00] flex items-center justify-center text-white text-5xl sm:text-7xl font-extrabold shadow-inner select-none">
-                                                        {{ $leadInitial }}
-                                                    </div>
-                                                @endif
+                                            {{-- FOTO: Pada Mobile di Atas (order-1), Pada Desktop di Kanan (lg:order-2) --}}
+                                            <div class="order-1 lg:order-2 flex justify-center items-center">
+                                                <div class="w-44 h-44 sm:w-60 sm:h-60 lg:w-72 lg:h-72 rounded-full shadow-2xl overflow-hidden flex items-center justify-center bg-transparent transition-transform duration-700 ease-out hover:scale-105 border-4 border-white/10 flex-shrink-0">
+                                                    @if($leadImgSrc)
+                                                        <img src="{{ $leadImgSrc }}"
+                                                            alt="{{ $lead->name }}"
+                                                            class="w-full h-full object-cover rounded-full"
+                                                            loading="lazy">
+                                                    @else
+                                                        <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#2d6600] to-[#63cd00] flex items-center justify-center text-white text-5xl sm:text-7xl font-extrabold shadow-inner select-none">
+                                                            {{ $leadInitial }}
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </div>
+
+                                            {{-- TEKS: Pada Mobile di Bawah (order-2), Pada Desktop di Kiri (lg:order-1) --}}
+                                            <div class="order-2 lg:order-1 text-center lg:text-left flex flex-col justify-center">
+                                                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#63cd00]/15 text-[#63cd00] border border-[#63cd00]/30 mb-2.5 w-fit mx-auto lg:mx-0">
+                                                    <i class="fa-solid fa-school text-[10px]"></i> {{ $tabData['label'] }}
+                                                </div>
+                                                <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-normal line-clamp-1">
+                                                    {{ $lead->name }}
+                                                </h3>
+                                                <p class="text-sm sm:text-base text-[#63cd00] mt-1 mb-2 font-semibold line-clamp-1">
+                                                    {{ $lead->position }}
+                                                </p>
+                                                {{-- Kotak Kutipan dengan min-height fix agar tidak memicu naik turun layout --}}
+                                                <div class="min-h-[76px] sm:min-h-[84px] lg:min-h-[96px] flex items-center justify-center lg:justify-start my-1 sm:my-2">
+                                                    @if (!empty($lead->quote))
+                                                        <blockquote class="text-xs sm:text-base text-gray-300 italic max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
+                                                            "{!! nl2br(e(trim($lead->quote, ' "“”'))) !!}"
+                                                        </blockquote>
+                                                    @endif
+                                                </div>
+                                                <div class="flex items-center space-x-3 mt-3 sm:mt-4 justify-center lg:justify-start">
+                                                    @if(!empty($lead->facebook_url))
+                                                        <a href="{{ $lead->facebook_url }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+                                                            class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-[#63cd00] hover:text-black text-white transition-all">
+                                                            <i class="fab fa-facebook-f text-sm"></i>
+                                                        </a>
+                                                    @endif
+                                                    @if(!empty($lead->instagram_url))
+                                                        <a href="{{ $lead->instagram_url }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+                                                            class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-[#63cd00] hover:text-black text-white transition-all">
+                                                            <i class="fab fa-instagram text-sm"></i>
+                                                        </a>
+                                                    @endif
+                                                    @if(!empty($lead->linkedin_url))
+                                                        <a href="{{ $lead->linkedin_url }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+                                                            class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-[#63cd00] hover:text-black text-white transition-all">
+                                                            <i class="fab fa-linkedin-in text-sm"></i>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+
                                         </div>
+                                    @endforeach
+                                </div>
 
-                                        {{-- TEKS: Pada Mobile di Bawah (order-2), Pada Desktop di Kiri (lg:order-1) --}}
-                                        <div class="order-2 lg:order-1 text-center lg:text-left">
-                                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#63cd00]/15 text-[#63cd00] border border-[#63cd00]/30 mb-2.5">
-                                                <i class="fa-solid fa-school text-[10px]"></i> {{ $tabData['label'] }}
-                                            </div>
-                                            <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-normal">
-                                                {{ $lead->name }}
-                                            </h3>
-                                            <p class="text-sm sm:text-base text-[#63cd00] mt-1 mb-3 sm:mb-4 font-semibold">
-                                                {{ $lead->position }}
-                                            </p>
-                                            @if (!empty($lead->quote))
-                                                <blockquote class="text-xs sm:text-base text-gray-300 italic max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
-                                                    "{!! nl2br(e(trim($lead->quote, ' "“”'))) !!}"
-                                                </blockquote>
-                                            @endif
-                                            <div class="flex items-center space-x-3 mt-5 sm:mt-6 justify-center lg:justify-start">
-                                                @if(!empty($lead->facebook_url))
-                                                    <a href="{{ $lead->facebook_url }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
-                                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-[#63cd00] hover:text-black text-white transition-all">
-                                                        <i class="fab fa-facebook-f text-sm"></i>
-                                                    </a>
-                                                @endif
-                                                @if(!empty($lead->instagram_url))
-                                                    <a href="{{ $lead->instagram_url }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
-                                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-[#63cd00] hover:text-black text-white transition-all">
-                                                        <i class="fab fa-instagram text-sm"></i>
-                                                    </a>
-                                                @endif
-                                                @if(!empty($lead->linkedin_url))
-                                                    <a href="{{ $lead->linkedin_url }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
-                                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-[#63cd00] hover:text-black text-white transition-all">
-                                                        <i class="fab fa-linkedin-in text-sm"></i>
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                @endforeach
                             </div>
-
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
+                    </div>
 
                 </div>
             </section>
 
+            @php
+                $majorsA1 = $majors->where('tag', 'SMK Amaliah 1')->values();
+                $majorsA2 = $majors->where('tag', 'SMK Amaliah 2')->values();
+                $majorTabs = [
+                    'all' => [
+                        'label' => 'SMK Amaliah 1 & 2',
+                        'sublabel' => 'Semua Jurusan',
+                        'majors' => $majors,
+                    ],
+                    'amaliah1' => [
+                        'label' => 'SMK Amaliah 1',
+                        'sublabel' => 'IT & Kreatif',
+                        'majors' => $majorsA1,
+                    ],
+                    'amaliah2' => [
+                        'label' => 'SMK Amaliah 2',
+                        'sublabel' => 'Bisnis & Pariwisata',
+                        'majors' => $majorsA2,
+                    ],
+                ];
+            @endphp
+
             <section class="py-6 sm:py-10 lg:py-14 fade-in-section overflow-hidden" style="background-color: {{ $amaliahDark }};">
                 <div x-data="{
+                        tabs: ['all', 'amaliah1', 'amaliah2'],
+                        activeTab: 'all',
+                        counts: {
+                            'all': {{ $majors->count() }},
+                            'amaliah1': {{ $majorsA1->count() }},
+                            'amaliah2': {{ $majorsA2->count() }}
+                        },
+                        categoryLabels: {
+                            'all': 'SMK Amaliah 1 & 2',
+                            'amaliah1': 'SMK Amaliah 1',
+                            'amaliah2': 'SMK Amaliah 2'
+                        },
                         timer: null,
                         isPaused: false,
                         init() {
@@ -934,7 +1012,7 @@
                                 if (!this.isPaused) {
                                     this.scrollSlider('next');
                                 }
-                            }, 4500);
+                            }, 3800);
                         },
                         stopAutoScroll() {
                             if (this.timer) {
@@ -948,30 +1026,109 @@
                         resume() {
                             this.isPaused = false;
                         },
-                        scrollSlider(direction) {
-                            const slider = this.$refs.slider;
-                            if (!slider) return;
-                            const firstItem = slider.querySelector('.slider-item');
-                            const step = firstItem ? firstItem.offsetWidth + 16 : 280;
-                            const maxScrollLeft = slider.scrollWidth - slider.clientWidth;
-
-                            let target;
-                            if (direction === 'next') {
-                                if (slider.scrollLeft >= maxScrollLeft - 20) {
-                                    target = 0;
-                                } else {
-                                    target = Math.min(slider.scrollLeft + step, maxScrollLeft);
+                        setTab(tab) {
+                            if (this.activeTab === tab) return;
+                            this.activeTab = tab;
+                            this.$nextTick(() => {
+                                const slider = this.getActiveSlider();
+                                if (slider) {
+                                    slider.style.scrollSnapType = 'none';
+                                    slider.scrollLeft = 0;
+                                    requestAnimationFrame(() => {
+                                        slider.style.scrollSnapType = 'x proximity';
+                                    });
                                 }
-                            } else {
-                                if (slider.scrollLeft <= 20) {
-                                    target = maxScrollLeft;
-                                } else {
-                                    target = Math.max(slider.scrollLeft - step, 0);
-                                }
-                            }
-                            this.smoothScrollTo(slider, target, 600);
+                            });
+                            this.isPaused = false;
+                            this.startAutoScroll();
                         },
-                        smoothScrollTo(element, target, duration = 600) {
+                        getActiveSlider() {
+                            return this.$refs['slider_' + this.activeTab];
+                        },
+                        getLoopWidth(slider, originalCount) {
+                            const items = slider.querySelectorAll('.slider-item');
+                            if (!items.length || !originalCount || items.length <= originalCount) {
+                                return slider.scrollWidth / 2;
+                            }
+                            const firstClone = items[originalCount];
+                            if (firstClone && items[0]) {
+                                return firstClone.offsetLeft - items[0].offsetLeft;
+                            }
+                            return slider.scrollWidth / 2;
+                        },
+                        nextTab() {
+                            const curIdx = this.tabs.indexOf(this.activeTab);
+                            const nextIdx = (curIdx + 1) % this.tabs.length;
+                            this.setTab(this.tabs[nextIdx]);
+                        },
+                        prevTab() {
+                            const curIdx = this.tabs.indexOf(this.activeTab);
+                            const prevIdx = (curIdx - 1 + this.tabs.length) % this.tabs.length;
+                            const prevTabName = this.tabs[prevIdx];
+                            this.activeTab = prevTabName;
+                            this.$nextTick(() => {
+                                const slider = this.getActiveSlider();
+                                if (slider) {
+                                    const originalCount = this.counts[prevTabName] || 1;
+                                    const loopWidth = this.getLoopWidth(slider, originalCount);
+                                    slider.style.scrollSnapType = 'none';
+                                    slider.scrollLeft = loopWidth;
+                                    requestAnimationFrame(() => {
+                                        slider.style.scrollSnapType = 'x proximity';
+                                    });
+                                }
+                            });
+                            this.isPaused = false;
+                            this.startAutoScroll();
+                        },
+                        scrollSlider(direction) {
+                            const slider = this.getActiveSlider();
+                            if (!slider) return;
+
+                            const originalCount = this.counts[this.activeTab] || 1;
+                            const loopWidth = this.getLoopWidth(slider, originalCount);
+                            if (!loopWidth || loopWidth <= 0) return;
+
+                            const items = slider.querySelectorAll('.slider-item');
+                            const step = items[0] ? (items[0].offsetWidth + (window.innerWidth >= 640 ? 24 : 16)) : 294;
+
+                            // Normalisasi sebelum scroll jika posisi sudah melebihi 1 siklus asli
+                            if (slider.scrollLeft >= loopWidth) {
+                                slider.style.scrollSnapType = 'none';
+                                slider.scrollLeft -= loopWidth;
+                            }
+
+                            if (direction === 'next') {
+                                const target = slider.scrollLeft + step;
+                                this.smoothScrollTo(slider, target, 500, () => {
+                                    // Begitu kartu clone pertama selesai masuk view, kurangi loopWidth secara senyap
+                                    if (slider.scrollLeft >= loopWidth) {
+                                        slider.style.scrollSnapType = 'none';
+                                        slider.scrollLeft -= loopWidth;
+                                        requestAnimationFrame(() => {
+                                            slider.style.scrollSnapType = 'x proximity';
+                                        });
+                                    }
+                                });
+                            } else {
+                                if (slider.scrollLeft < step) {
+                                    slider.style.scrollSnapType = 'none';
+                                    slider.scrollLeft += loopWidth;
+                                }
+                                const target = Math.max(0, slider.scrollLeft - step);
+                                this.smoothScrollTo(slider, target, 500, () => {
+                                    if (slider.scrollLeft >= loopWidth) {
+                                        slider.style.scrollSnapType = 'none';
+                                        slider.scrollLeft -= loopWidth;
+                                        requestAnimationFrame(() => {
+                                            slider.style.scrollSnapType = 'x proximity';
+                                        });
+                                    }
+                                });
+                            }
+                            this.startAutoScroll();
+                        },
+                        smoothScrollTo(element, target, duration = 500, onComplete = null) {
                             element.style.scrollSnapType = 'none';
                             element.style.scrollBehavior = 'auto';
 
@@ -990,15 +1147,12 @@
                                     requestAnimationFrame(animate);
                                 } else {
                                     element.style.scrollSnapType = 'x proximity';
+                                    if (onComplete) onComplete();
                                 }
                             };
                             requestAnimationFrame(animate);
                         }
                     }"
-                    @mouseenter="pause()"
-                    @mouseleave="resume()"
-                    @touchstart.passive="pause()"
-                    @touchend.passive="setTimeout(() => resume(), 2500)"
                     class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative">
 
                     {{-- Dekorasi Titik --}}
@@ -1013,6 +1167,22 @@
                         <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-white">Major Competency</h2>
                         <p class="mt-1 text-xs sm:text-sm text-gray-400">Program Keahlian Di SMK Amaliah 1 & 2</p>
                         <div class="w-16 sm:w-20 h-px bg-gray-600 mx-auto mt-2.5 sm:mt-3"></div>
+
+                        {{-- Tombol Tab Kategori Jurusan --}}
+                        <div class="flex justify-center items-center flex-wrap gap-2 mt-5 sm:mt-7">
+                            @foreach($majorTabs as $tabKey => $tabData)
+                                <button type="button"
+                                    @click="setTab('{{ $tabKey }}')"
+                                    :class="activeTab === '{{ $tabKey }}' ? 'bg-[#63cd00] text-black font-bold shadow-lg shadow-[#63cd00]/25' : 'bg-white/10 text-white hover:bg-white/20'"
+                                    class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer flex items-center gap-2">
+                                    <span>{{ $tabData['label'] }}</span>
+                                    <span class="text-[10px] px-1.5 py-0.2 rounded-full font-bold"
+                                        :class="activeTab === '{{ $tabKey }}' ? 'bg-black/20 text-black' : 'bg-white/20 text-white'">
+                                        {{ $tabData['majors']->count() }}
+                                    </span>
+                                </button>
+                            @endforeach
+                        </div>
                     </div>
 
                     {{-- Layout Grid Utama (Statis Kiri, Scroll Kanan) --}}
@@ -1022,6 +1192,12 @@
                         <div class="lg:col-span-1 hidden lg:flex flex-col justify-between">
                             {{-- Gambar Grid Jurusan Dinamis --}}
                             <div class="flex flex-col space-y-3">
+                                {{-- Badge Kategori Aktif --}}
+                                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#63cd00]/15 text-[#63cd00] border border-[#63cd00]/30 w-fit">
+                                    <i class="fa-solid fa-graduation-cap text-[10px]"></i>
+                                    <span x-text="categoryLabels[activeTab]"></span>
+                                </div>
+
                                 {{-- Gambar 1 --}}
                                 @php
                                     $leftImg1 = (isset($majorGridImages[0]) && $majorGridImages[0]->path)
@@ -1030,7 +1206,7 @@
                                 @endphp
                                 <img src="{{ $leftImg1 }}" loading="lazy" width="900" height="375"
                                     alt="{{ $majorGridImages[0]->description ?? 'Aktivitas Jurusan SMK Amaliah' }}"
-                                    class="h-32 sm:h-36 w-full rounded-xl object-cover border border-white/10 shadow-sm">
+                                    class="h-28 sm:h-32 w-full rounded-xl object-cover border border-white/10 shadow-sm">
 
                                 {{-- Gambar 2 --}}
                                 @php
@@ -1040,7 +1216,7 @@
                                 @endphp
                                 <img src="{{ $leftImg2 }}" loading="lazy" width="900" height="375"
                                     alt="{{ $majorGridImages[1]->description ?? 'Prestasi Jurusan SMK Amaliah' }}"
-                                    class="h-32 sm:h-36 w-full rounded-xl object-cover border border-white/10 shadow-sm">
+                                    class="h-28 sm:h-32 w-full rounded-xl object-cover border border-white/10 shadow-sm">
                             </div>
                             {{-- Tombol Navigasi Statis --}}
                             <div class="mt-4 flex items-center space-x-2.5">
@@ -1061,52 +1237,78 @@
                             use Illuminate\Support\Str;
                         @endphp
 
-                        {{-- KOLOM 2: KONTEN SLIDER (BISA DI-SCROLL & AUTO SCROLL) --}}
-                        <div x-ref="slider"
-                            class="lg:col-span-3 flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-proximity scrollbar-hide py-2 pb-6 px-1 pr-10 sm:px-0 sm:pr-2">
+                        {{-- KOLOM 2: KONTEN SLIDER PER KATEGORI (BERPENGALAN DAN ROTASI OTOMATIS) --}}
+                        <div @mouseenter="pause()"
+                            @mouseleave="resume()"
+                            @touchstart.passive="pause()"
+                            @touchend.passive="setTimeout(() => resume(), 3000)"
+                            class="lg:col-span-3 relative grid grid-cols-1 grid-rows-1 items-start min-h-[340px]">
+                            @foreach ($majorTabs as $tabKey => $tabData)
+                                <div x-show="activeTab === '{{ $tabKey }}'"
+                                    x-transition:enter="transition ease-out duration-500 transform"
+                                    x-transition:enter-start="opacity-0 translate-y-3"
+                                    x-transition:enter-end="opacity-100 translate-y-0"
+                                    x-transition:leave="transition ease-in duration-300 transform"
+                                    x-transition:leave-start="opacity-100 translate-y-0"
+                                    x-transition:leave-end="opacity-0 -translate-y-3"
+                                    class="col-start-1 row-start-1 w-full"
+                                    @if(!$loop->first) style="display: none;" @endif>
 
-                            @foreach ($majors as $major)
-                                <div class="major-card slider-item group snap-start">
+                                    <div x-ref="slider_{{ $tabKey }}"
+                                        class="flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-proximity scrollbar-hide py-2 pb-6 px-1 pr-10 sm:px-0 sm:pr-2">
 
-                                    @php
-                                        $majorDefaultImages = [
-                                            'assets/image/Classmeet.JPG',
-                                            'assets/image/DroneView.jpg',
-                                            'assets/image/17Agustus.JPG',
-                                        ];
-                                        $majorImg = $major->image ? img_url($major->image, 700, 375) : asset($majorDefaultImages[$loop->index % count($majorDefaultImages)]);
-                                    @endphp
-                                    <div class="major-card-img-wrapper">
-                                        <img src="{{ $majorImg }}" alt="Gambar Jurusan {{ $major->name }}" loading="lazy" width="700" height="375"
-                                            class="major-card-img">
-                                        @if($major->tag)
-                                            <span class="absolute top-2 right-2 bg-black/70 backdrop-blur-md text-[9px] font-semibold text-[#63cd00] px-2 py-0.5 rounded-full border border-white/10">
-                                                {{ $major->tag }}
-                                            </span>
-                                        @endif
+                                        @php
+                                            $count = $tabData['majors']->count();
+                                            $multiplier = $count > 0 ? ($count <= 4 ? 4 : ($count <= 6 ? 3 : 2)) : 1;
+                                            $loopedMajors = collect();
+                                            for ($i = 0; $i < $multiplier; $i++) {
+                                                $loopedMajors = $loopedMajors->concat($tabData['majors']);
+                                            }
+                                        @endphp
+
+                                        @foreach ($loopedMajors as $major)
+                                            <div class="major-card slider-item group snap-start">
+
+                                                @php
+                                                    $majorDefaultImages = [
+                                                        'assets/image/Classmeet.JPG',
+                                                        'assets/image/DroneView.jpg',
+                                                        'assets/image/17Agustus.JPG',
+                                                    ];
+                                                    $majorImg = $major->image ? img_url($major->image, 700, 375) : asset($majorDefaultImages[$loop->index % count($majorDefaultImages)]);
+                                                @endphp
+                                                <div class="major-card-img-wrapper">
+                                                    <img src="{{ $majorImg }}" alt="Gambar Jurusan {{ $major->name }}" loading="lazy" width="700" height="375"
+                                                        class="major-card-img">
+                                                    @if($major->tag)
+                                                        <span class="absolute top-2 right-2 bg-black/70 backdrop-blur-md text-[9px] font-semibold text-[#63cd00] px-2 py-0.5 rounded-full border border-white/10">
+                                                            {{ $major->tag }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+
+                                                <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-[#63cd00] transition-colors line-clamp-1">
+                                                    {{ $major->name }}
+                                                </h3>
+
+                                                <p class="text-[11px] sm:text-xs text-gray-300/80 leading-relaxed mt-1 flex-grow line-clamp-2">
+                                                    {{ Str::limit(strip_tags($major->description), 85) }}
+                                                </p>
+
+                                                <a href="{{ route('public.majors.show', $major) }}"
+                                                    class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between group/btn text-[11px] sm:text-xs">
+                                                    <span class="font-semibold text-white group-hover:text-[#63cd00] transition-colors">
+                                                        Selengkapnya
+                                                    </span>
+                                                    <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/10 group-hover:bg-[#63cd00] flex items-center justify-center transition-all duration-300 text-white group-hover:text-black">
+                                                        <i class="fas fa-arrow-right text-[10px] transition-transform duration-300 group-hover/btn:-rotate-45"></i>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        @endforeach
                                     </div>
-
-                                    <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-[#63cd00] transition-colors line-clamp-1">
-                                        {{ $major->name }}
-                                    </h3>
-
-                                    <p class="text-[11px] sm:text-xs text-gray-300/80 leading-relaxed mt-1 flex-grow line-clamp-2">
-                                        {{ Str::limit(strip_tags($major->description), 85) }}
-                                    </p>
-
-                                    <a href="{{ route('public.majors.show', $major) }}"
-                                        class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between group/btn text-[11px] sm:text-xs">
-                                        <span class="font-semibold text-white group-hover:text-[#63cd00] transition-colors">
-                                            Selengkapnya
-                                        </span>
-                                        <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/10 group-hover:bg-[#63cd00] flex items-center justify-center transition-all duration-300 text-white group-hover:text-black">
-                                            <i class="fas fa-arrow-right text-[10px] transition-transform duration-300 group-hover/btn:-rotate-45"></i>
-                                        </div>
-                                    </a>
                                 </div>
                             @endforeach
-                            {{-- Spacer Margin Kanan untuk Mobile & Desktop agar kartu terakhir tidak menempel ke border --}}
-                            <div class="flex-shrink-0 w-12 sm:w-8 pointer-events-none" aria-hidden="true"></div>
                         </div>
 
                         {{-- Tombol Navigasi (Hanya tampil di mobile) --}}
