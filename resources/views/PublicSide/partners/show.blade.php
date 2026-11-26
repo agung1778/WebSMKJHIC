@@ -41,33 +41,39 @@
             @endif
 
             <div class="absolute inset-0"
-                style="background: linear-gradient(100deg, rgba(40,40,41,.87) 0%, rgba(40,40,41,.55) 45%, rgba(40,40,41,.18) 100%)"></div>
+                style="background: linear-gradient(100deg, rgba(20,20,22,0.92) 0%, rgba(20,20,22,0.78) 50%, rgba(20,20,22,0.55) 100%)"></div>
 
             <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
                 <span
-                    class="inline-flex items-center gap-2 w-fit text-[11px] lg:text-xs font-semibold tracking-widest uppercase text-[#d9ffb3] bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 mb-4">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
+                    class="inline-flex items-center gap-2 w-fit text-[11px] sm:text-xs font-bold tracking-wider uppercase text-white bg-black/60 backdrop-blur border border-white/20 rounded-full px-3.5 sm:px-4 py-1 sm:py-1.5 mb-2.5 sm:mb-4 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-[#63cd00] shadow-sm shadow-[#63cd00]/80"></span>
                     Detail Mitra — Industry Partners
                 </span>
-                <h1 class="text-white text-3xl lg:text-5xl font-bold leading-tight">{{ $partner->name }}</h1>
-                <p class="mt-4 max-w-2xl text-white/85 text-base lg:text-lg leading-relaxed">
+                <h1 class="text-white text-2xl sm:text-3xl lg:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-sm">{{ $partner->name }}</h1>
+                <p class="mt-2.5 sm:mt-4 max-w-2xl text-gray-100 text-sm sm:text-base lg:text-lg leading-relaxed font-normal">
                     @if($partner->sector)
-                        <span class="inline-flex items-center gap-2"><i class="fas fa-briefcase"></i> {{ $partner->sector }}</span>
+                        <span class="inline-flex items-center gap-1.5 font-medium"><i class="fas fa-briefcase text-xs text-[#63cd00]"></i> {{ $partner->sector }}</span>
                     @endif
                     @if($partner->city)
-                        <span class="inline-flex items-center gap-2 ml-4"><i class="fas fa-map-marker-alt"></i> {{ $partner->city }}</span>
+                        <span class="inline-flex items-center gap-1.5 ml-3 sm:ml-4 font-medium"><i class="fas fa-map-marker-alt text-xs text-[#63cd00]"></i> {{ $partner->city }}</span>
                     @endif
                 </p>
 
-                <div class="mt-8 flex flex-wrap items-center gap-3">
+                <div class="mt-5 sm:mt-8 flex flex-wrap items-center gap-2.5 sm:gap-3">
                     <a href="{{ route('public.partners.index') }}"
-                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#1c1c1d] font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-md">
                         <i class="fas fa-arrow-left"></i> Semua Mitra
                     </a>
+                    @if($partner->hasValidLogo())
+                        <a href="{{ route('public.partners.download-logo', $partner) }}"
+                            class="inline-flex items-center gap-2 bg-white/15 backdrop-blur border border-white/25 text-white font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-[#63cd00] hover:text-[#1c1c1d] hover:border-[#63cd00] hover:-translate-y-0.5 transition-all duration-300 shadow-md">
+                            <i class="fas fa-download"></i> Unduh Logo Perusahaan
+                        </a>
+                    @endif
                     @if($partner->company_contact)
                         <a href="https://wa.me/6285649011449?text={{ rawurlencode('Halo, saya ingin bertanya perihal kerja sama dengan ' . $partner->name . '.') }}"
                             target="_blank" rel="noopener noreferrer"
-                            class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                            class="inline-flex items-center gap-2 bg-white/15 backdrop-blur border border-white/25 text-white font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-white hover:text-[#1c1c1d] hover:-translate-y-0.5 transition-all duration-300 shadow-md">
                             <i class="fas fa-comments"></i> Konsultasi Kerja Sama
                         </a>
                     @endif
@@ -77,24 +83,24 @@
 
         {{-- Breadcrumb --}}
         <div style="background-color:#2D2D2D;">
-            <div class="max-w-screen-xl h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-                <nav aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
+            <div class="max-w-screen-xl min-h-12 py-2 mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto scrollbar-hide">
+                <nav aria-label="Breadcrumb" class="min-w-0">
+                    <ol class="inline-flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm whitespace-nowrap">
                         <li class="flex items-center">
                             <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
                                 Home
                             </a>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-chevron-right text-white/40 text-xs"></i>
+                        <li class="flex items-center gap-1.5 sm:gap-2.5">
+                            <i class="fas fa-chevron-right text-white/40 text-[10px]"></i>
                             <a href="{{ route('public.partners.index') }}"
-                                class="inline-flex items-center ml-0 md:ml-3 font-medium text-gray-300 hover:text-white transition-colors">
+                                class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
                                 Industry Partners
                             </a>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-chevron-right text-white/40 text-xs"></i>
-                            <span class="inline-flex items-center ml-0 md:ml-3 font-medium text-[#63cd00] truncate max-w-xs">{{ $partner->name }}</span>
+                        <li class="flex items-center gap-1.5 sm:gap-2.5">
+                            <i class="fas fa-chevron-right text-white/40 text-[10px]"></i>
+                            <span class="inline-flex items-center font-medium text-[#63cd00] truncate max-w-xs">{{ $partner->name }}</span>
                         </li>
                     </ol>
                 </nav>
@@ -103,7 +109,7 @@
     </section>
 
     {{-- ============================ KONTEN DETAIL ============================ --}}
-    <section class="bg-gray-50 py-16 sm:py-24">
+    <section class="bg-gray-50 py-10 sm:py-16 lg:py-24">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div class="lg:grid lg:grid-cols-3 lg:gap-x-12">
@@ -114,16 +120,25 @@
 
                         {{-- Header: Logo + Nama + Badge --}}
                         <div class="flex flex-col sm:flex-row sm:items-center gap-6">
-                            <div
-                                class="flex-shrink-0 mx-auto sm:mx-0 h-32 w-32 bg-gray-50 rounded-2xl border border-gray-200 flex items-center justify-center p-4 shadow-sm">
-                                @if($partner->logo)
-                                    <img src="{{ img_url($partner->logo, 160, 90) }}" width="160" height="90" loading="lazy" alt="Logo {{ $partner->name }}"
-                                        class="max-h-full w-auto object-contain">
-                                @else
-                                    <div class="flex flex-col items-center justify-center text-slate-400">
-                                        <i class="fas fa-building text-4xl"></i>
-                                        <span class="text-[10px] font-bold uppercase tracking-wider mt-1">Logo</span>
-                                    </div>
+                            <div class="flex-shrink-0 mx-auto sm:mx-0 flex flex-col items-center">
+                                <div
+                                    class="h-32 w-32 bg-gray-50 rounded-2xl border border-gray-200 flex items-center justify-center p-4 shadow-sm">
+                                    @if($partner->logo)
+                                        <img src="{{ img_url($partner->logo, 160, 90) }}" width="160" height="90" loading="lazy" alt="Logo {{ $partner->name }}"
+                                            class="max-h-full w-auto object-contain">
+                                    @else
+                                        <div class="flex flex-col items-center justify-center text-slate-400">
+                                            <i class="fas fa-building text-4xl"></i>
+                                            <span class="text-[10px] font-bold uppercase tracking-wider mt-1">Logo</span>
+                                        </div>
+                                    @endif
+                                </div>
+                                @if($partner->hasValidLogo())
+                                    <a href="{{ route('public.partners.download-logo', $partner) }}"
+                                        class="mt-2.5 inline-flex items-center gap-1.5 text-xs font-semibold text-[#2e7000] hover:text-[#235800] bg-[#eefde2] hover:bg-[#dff9ce] border border-[#d2f3be] px-3 py-1 rounded-full transition-all"
+                                        title="Unduh format {{ strtoupper($partner->logo_extension) }} ({{ $partner->formatted_logo_size }})">
+                                        <i class="fas fa-download text-[11px]"></i> Unduh Logo ({{ strtoupper($partner->logo_extension) }})
+                                    </a>
                                 @endif
                             </div>
                             <div class="text-center sm:text-left flex-1">
@@ -132,18 +147,18 @@
                                 </h2>
                                 <div class="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
                                     @if($partner->sector)
-                                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#3E9B00] bg-[#63cd00]/10 border border-[#63cd00]/30 px-3 py-1.5 rounded-full">
-                                            <i class="fas fa-briefcase"></i> {{ $partner->sector }}
+                                        <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full">
+                                            <i class="fas fa-briefcase text-[#2e7000]"></i> {{ $partner->sector }}
                                         </span>
                                     @endif
                                     @if($partner->city)
-                                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-full">
-                                            <i class="fas fa-map-marker-alt" style="color: {{ $amaliahGreen }};"></i> {{ $partner->city }}
+                                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-700 bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-full">
+                                            <i class="fas fa-map-marker-alt text-[#2e7000]"></i> {{ $partner->city }}
                                         </span>
                                     @endif
                                     @if($partner->partnership_date)
-                                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-full">
-                                            <i class="fas fa-calendar-alt" style="color: {{ $amaliahGreen }};"></i> Sejak {{ \Carbon\Carbon::parse($partner->partnership_date)->translatedFormat('M Y') }}
+                                        <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-700 bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-full">
+                                            <i class="fas fa-calendar-alt text-[#2e7000]"></i> Sejak {{ \Carbon\Carbon::parse($partner->partnership_date)->translatedFormat('M Y') }}
                                         </span>
                                     @endif
                                 </div>
@@ -154,9 +169,9 @@
 
                         {{-- Tentang Mitra --}}
                         <div>
-                            <h3 class="text-xl font-bold text-[#282829] mb-4">Tentang Mitra</h3>
-                            <div class="text-gray-600 leading-relaxed">
-                                {!! nl2br(e($partner->description ?? '')) ?: '<p class="text-gray-400 italic">Belum ada deskripsi dari mitra ini.</p>' !!}
+                            <h3 class="text-xl font-bold text-[#1c1c1d] mb-4">Tentang Mitra</h3>
+                            <div class="text-gray-700 leading-relaxed text-base">
+                                {!! nl2br(e($partner->description ?? '')) ?: '<p class="text-gray-500 italic">Belum ada deskripsi dari mitra ini.</p>' !!}
                             </div>
                         </div>
 
@@ -167,45 +182,45 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
                                 @if($partner->city)
                                     <div class="flex items-start gap-3">
-                                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[#63cd00]/10 text-[#63cd00] flex items-center justify-center">
+                                        <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-[#eefde2] text-[#2e7000] flex items-center justify-center">
                                             <i class="fas fa-map-marker-alt"></i>
                                         </div>
                                         <div>
-                                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Lokasi</p>
-                                            <p class="font-semibold text-[#282829] mt-0.5">{{ $partner->city }}</p>
+                                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Lokasi</p>
+                                            <p class="font-bold text-[#1c1c1d] mt-0.5">{{ $partner->city }}</p>
                                         </div>
                                     </div>
                                 @endif
                                 @if($partner->sector)
                                     <div class="flex items-start gap-3">
-                                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[#63cd00]/10 text-[#63cd00] flex items-center justify-center">
+                                        <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-[#eefde2] text-[#2e7000] flex items-center justify-center">
                                             <i class="fas fa-briefcase"></i>
                                         </div>
                                         <div>
-                                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Sektor Usaha</p>
-                                            <p class="font-semibold text-[#282829] mt-0.5">{{ $partner->sector }}</p>
+                                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Sektor Usaha</p>
+                                            <p class="font-bold text-[#1c1c1d] mt-0.5">{{ $partner->sector }}</p>
                                         </div>
                                     </div>
                                 @endif
                                 @if($partner->company_contact)
                                     <div class="flex items-start gap-3">
-                                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[#63cd00]/10 text-[#63cd00] flex items-center justify-center">
+                                        <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-[#eefde2] text-[#2e7000] flex items-center justify-center">
                                             <i class="fas fa-phone-alt"></i>
                                         </div>
                                         <div>
-                                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Kontak</p>
-                                            <p class="font-semibold text-[#282829] mt-0.5 break-all">{{ $partner->company_contact }}</p>
+                                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Kontak</p>
+                                            <p class="font-bold text-[#1c1c1d] mt-0.5 break-all">{{ $partner->company_contact }}</p>
                                         </div>
                                     </div>
                                 @endif
                                 @if($partner->partnership_date)
                                     <div class="flex items-start gap-3">
-                                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-[#63cd00]/10 text-[#63cd00] flex items-center justify-center">
+                                        <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-[#eefde2] text-[#2e7000] flex items-center justify-center">
                                             <i class="fas fa-calendar-alt"></i>
                                         </div>
                                         <div>
-                                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Bergabung Sejak</p>
-                                            <p class="font-semibold text-[#282829] mt-0.5">{{ \Carbon\Carbon::parse($partner->partnership_date)->translatedFormat('d F Y') }}</p>
+                                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Bergabung Sejak</p>
+                                            <p class="font-bold text-[#1c1c1d] mt-0.5">{{ \Carbon\Carbon::parse($partner->partnership_date)->translatedFormat('d F Y') }}</p>
                                         </div>
                                     </div>
                                 @endif
@@ -218,8 +233,8 @@
                 {{-- SIDEBAR: MITRA LAINNYA --}}
                 <div class="lg:col-span-1 mt-10 lg:mt-0">
                     <div class="fade-in-section bg-white border border-gray-200 rounded-2xl p-6 shadow-lg lg:sticky lg:top-24">
-                        <h3 class="text-lg font-bold text-[#282829] mb-5 border-b border-gray-200 pb-3 flex items-center gap-2">
-                            <i class="fas fa-handshake" style="color: {{ $amaliahGreen }};"></i> Mitra Industri Lainnya
+                        <h3 class="text-lg font-bold text-[#1c1c1d] mb-5 border-b border-gray-200 pb-3 flex items-center gap-2">
+                            <i class="fas fa-handshake text-[#2e7000]"></i> Mitra Industri Lainnya
                         </h3>
 
                         <div class="space-y-3">
@@ -236,20 +251,40 @@
                                         @endif
                                     </div>
                                     <div class="overflow-hidden">
-                                        <p class="font-bold text-[#282829] group-hover:text-[#63cd00] transition-colors leading-tight truncate">
+                                        <p class="font-bold text-[#1c1c1d] group-hover:text-[#2e7000] transition-colors leading-tight truncate">
                                             {{ $suggestedPartner->name }}
                                         </p>
-                                        <p class="text-xs text-gray-500 mt-0.5 truncate">
+                                        <p class="text-xs text-gray-600 font-medium mt-0.5 truncate">
                                             @if($suggestedPartner->sector){{ $suggestedPartner->sector }}@endif
                                             @if($suggestedPartner->sector && $suggestedPartner->city) · @endif
                                             @if($suggestedPartner->city){{ $suggestedPartner->city }}@endif
                                         </p>
                                     </div>
-                                    <i class="fas fa-chevron-right ml-auto text-gray-300 group-hover:text-[#63cd00] transition-colors text-xs flex-shrink-0"></i>
+                                    <i class="fas fa-chevron-right ml-auto text-gray-300 group-hover:text-[#2e7000] transition-colors text-xs flex-shrink-0"></i>
                                 </a>
                             @empty
                                 <p class="text-gray-500 text-sm">Tidak ada mitra lain untuk ditampilkan.</p>
                             @endforelse
+                        </div>
+
+                        {{-- Akses Cepat ke Pusat Unduhan --}}
+                        <div class="mt-6 pt-5 border-t border-gray-100">
+                            <div class="p-3.5 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-8 h-8 rounded-lg bg-[#eefde2] text-[#2e7000] flex items-center justify-center flex-shrink-0 text-sm">
+                                        <i class="fa-solid fa-cloud-arrow-down"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-[#1c1c1d] text-xs truncate">Pusat Unduhan</p>
+                                        <p class="text-[11px] text-gray-500 truncate">Logo sekolah & mitra industri</p>
+                                    </div>
+                                </div>
+                                <a href="{{ route('public.downloads.index', ['kategori' => 'company_logo']) }}"
+                                    class="flex-shrink-0 inline-flex items-center gap-1 text-xs font-bold text-[#2e7000] hover:text-[#235800] hover:underline"
+                                    title="Buka Pusat Unduhan kategori Logo Perusahaan">
+                                    Lihat <i class="fas fa-arrow-right text-[10px]"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

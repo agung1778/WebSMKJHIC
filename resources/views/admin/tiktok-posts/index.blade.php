@@ -13,7 +13,7 @@
             icon="fa-brands fa-tiktok"
             kicker="Website"
             title="Feed TikTok"
-            subtitle="Kelola postingan video TikTok yang ditampilkan di homepage website sekolah. Unggah foto cover dan tempel tautan video TikTok. Maksimal 18 postingan." />
+            subtitle="Kelola postingan video TikTok yang ditampilkan di homepage website sekolah. Unggah foto cover dan tempel tautan video TikTok. Maksimal 9 postingan — postingan lama akan otomatis digantikan dan dihapus permanen jika kuota penuh." />
 
         @if (session('error'))
             <div class="p-4 rounded-xl text-sm font-medium border bg-red-50 text-red-700 border-red-200">
@@ -21,12 +21,11 @@
             </div>
         @endif
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 stat-grid-2">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4 stat-grid-2">
             <x-admin-components::stat-card label="Total Video TikTok" :value="$posts->count()" icon="fa-brands fa-tiktok" tone="brand" />
             <x-admin-components::stat-card label="Aktif di Website" :value="$activeCount" icon="fa-solid fa-circle-check" tone="green" />
-            <div class="col-span-2 sm:col-span-1">
-                <x-admin-components::stat-card label="Tersembunyi" :value="$posts->where('is_active', false)->count()" icon="fa-solid fa-eye-slash" tone="amber" />
-            </div>
+            <x-admin-components::stat-card label="Tersembunyi" :value="$posts->where('is_active', false)->count()" icon="fa-solid fa-eye-slash" tone="amber" />
+            <x-admin-components::stat-card label="Kuota" :value="$posts->count() . ' / 9'" icon="fa-solid fa-gauge-high" tone="blue" />
         </div>
 
         <div class="admin-media-layout grid gap-6">
@@ -83,7 +82,7 @@
                             <thead>
                                 <tr>
                                     <th data-col="cover" class="w-14">Cover</th>
-                                    <th>Judul &amp; Link</th>
+                                    <th>Judul & Link</th>
                                     <th>Status</th>
                                     <th class="hide-mob" data-col="ditambahkan">Ditambahkan</th>
                                     <th class="text-right has-3-actions" data-col="aksi">Aksi</th>

@@ -26,7 +26,7 @@
                     <label for="admin-download-major" class="font-medium text-gray-700 dark:text-gray-300 text-xs sm:text-sm whitespace-nowrap">Filter Jurusan PKL:</label>
                 </div>
                 <select name="jurusan" id="admin-download-major" class="app-select !py-1.5 !px-3 !text-sm w-full sm:w-auto" onchange="this.form.submit()">
-                    <option value="">Semua Berkas &amp; Jurusan</option>
+                    <option value="">Semua Berkas & Jurusan</option>
                     <option value="umum" @selected($majorFilter === 'umum')>Umum / Semua Jurusan</option>
                     @foreach($majors as $major)
                         <option value="{{ $major->id }}" @selected($majorFilter === (string) $major->id)>{{ $major->name }}</option>

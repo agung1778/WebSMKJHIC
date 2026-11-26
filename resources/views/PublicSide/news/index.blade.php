@@ -31,28 +31,28 @@
             @endif
 
             <div class="absolute inset-0"
-                style="background: linear-gradient(100deg, rgba(40,40,41,.88) 0%, rgba(40,40,41,.55) 45%, rgba(40,40,41,.15) 100%)"></div>
+                style="background: linear-gradient(100deg, rgba(20,20,22,0.92) 0%, rgba(20,20,22,0.78) 50%, rgba(20,20,22,0.55) 100%)"></div>
 
             <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
                 <span
-                    class="inline-flex items-center gap-2 w-fit text-[11px] lg:text-xs font-semibold tracking-widest uppercase text-[#d9ffb3] bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 mb-4">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
-                    Media &amp; Informasi
+                    class="inline-flex items-center gap-2 w-fit text-[11px] sm:text-xs font-bold tracking-wider uppercase text-white bg-black/60 backdrop-blur border border-white/20 rounded-full px-3.5 sm:px-4 py-1 sm:py-1.5 mb-2.5 sm:mb-4 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-[#63cd00] shadow-sm shadow-[#63cd00]/80"></span>
+                    Media & Informasi
                 </span>
-                <h1 class="text-white text-3xl lg:text-5xl font-bold leading-tight">Berita &amp; Informasi Terbaru</h1>
-                <p class="mt-4 max-w-2xl text-white/85 text-base lg:text-lg leading-relaxed">
+                <h1 class="text-white text-2xl sm:text-3xl lg:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-sm">Berita & Informasi Terbaru</h1>
+                <p class="mt-2.5 sm:mt-4 max-w-2xl text-gray-100 text-sm sm:text-base lg:text-lg leading-relaxed font-normal">
                     Ikuti {{ $total }} berita seputar kegiatan, prestasi, dan pengumuman resmi dari
-                    SMK Amaliah 1 &amp; 2 Ciawi-Bogor.
+                    SMK Amaliah 1 & 2 Ciawi-Bogor.
                 </p>
 
-                <div class="mt-8 flex flex-wrap items-center gap-3">
+                <div class="mt-5 sm:mt-8 flex flex-wrap items-center gap-2.5 sm:gap-3">
                     <a href="#daftarBerita"
-                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#1c1c1d] font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-md">
                         <i class="fa-solid fa-newspaper"></i> Lihat Berita
                     </a>
                     <a href="{{ route('public.achievement.index') }}"
-                        class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
-                        <i class="fa-solid fa-trophy"></i> Prestasi Siswa
+                        class="inline-flex items-center gap-2 bg-white text-[#1c1c1d] font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-300 shadow-md">
+                        <i class="fa-solid fa-trophy text-[#eab308]"></i> Prestasi Siswa
                     </a>
                 </div>
             </div>
@@ -60,17 +60,17 @@
 
         {{-- Breadcrumb --}}
         <div style="background-color:#2D2D2D;">
-            <div class="max-w-screen-xl h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-                <nav aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
+            <div class="max-w-screen-xl min-h-12 py-2 mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto scrollbar-hide">
+                <nav aria-label="Breadcrumb" class="min-w-0">
+                    <ol class="inline-flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm whitespace-nowrap">
                         <li class="flex items-center">
                             <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
                                 Home
                             </a>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
-                            <span class="inline-flex items-center ml-2 md:ml-3 font-medium text-[#63cd00]">Berita</span>
+                        <li class="flex items-center gap-1.5 sm:gap-2.5">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-[10px]"></i>
+                            <span class="inline-flex items-center font-medium text-[#63cd00]">Berita</span>
                         </li>
                     </ol>
                 </nav>
@@ -79,17 +79,17 @@
     </section>
 
     {{-- ============================ DAFTAR BERITA ============================ --}}
-    <section id="daftarBerita" class="bg-white py-16 sm:py-20">
+    <section id="daftarBerita" class="bg-white py-10 sm:py-16 lg:py-20">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Judul --}}
             <div class="max-w-2xl">
-                <span class="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#63cd00] mb-3">
-                    <span class="w-6 h-0.5 rounded-full bg-[#63cd00]"></span>
+                <span class="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#2e7000] mb-2 sm:mb-3">
+                    <span class="w-6 h-0.5 rounded-full bg-[#2e7000]"></span>
                     Kabar Sekolah
                 </span>
-                <h2 class="text-3xl lg:text-4xl font-extrabold text-[#282829] tracking-tight">Berita Terbaru</h2>
-                <p class="mt-3 text-gray-600 text-lg">Jelajahi kegiatan dan informasi terkini dari lingkungan SMK Amaliah.</p>
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1c1c1d] tracking-tight">Berita Terbaru</h2>
+                <p class="mt-2 sm:mt-3 text-gray-700 text-sm sm:text-base lg:text-lg">Jelajahi kegiatan dan informasi terkini dari lingkungan SMK Amaliah.</p>
             </div>
 
             {{-- Berita unggulan (paling baru, hanya di halaman 1) --}}
@@ -108,18 +108,18 @@
                             </span>
                         </div>
 
-                        <div class="p-6 lg:p-10 flex flex-col justify-center">
-                            <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mb-4">
-                                <span class="nw-meta"><i class="fa-regular fa-calendar"></i> {{ \Carbon\Carbon::parse($featured->date_published)->format('d F Y') }}</span>
-                                <span class="nw-meta"><i class="fa-solid fa-user-pen"></i> {{ $featured->publisher }}</span>
+                        <div class="p-5 sm:p-6 lg:p-10 flex flex-col justify-center">
+                            <div class="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-1 sm:gap-y-2 mb-3 sm:mb-4">
+                                <span class="nw-meta text-xs sm:text-sm"><i class="fa-regular fa-calendar"></i> {{ \Carbon\Carbon::parse($featured->date_published)->format('d F Y') }}</span>
+                                <span class="nw-meta text-xs sm:text-sm"><i class="fa-solid fa-user-pen"></i> {{ $featured->publisher }}</span>
                             </div>
-                            <h3 class="text-2xl lg:text-3xl font-extrabold text-[#282829] leading-tight group-hover:text-[#63cd00] transition-colors duration-200">
+                            <h3 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#1c1c1d] leading-tight group-hover:text-[#2e7000] transition-colors duration-200">
                                 {{ $featured->title }}
                             </h3>
-                            <p class="mt-4 text-gray-600 leading-relaxed line-clamp-3">
+                            <p class="mt-2.5 sm:mt-4 text-gray-700 text-xs sm:text-sm lg:text-base leading-relaxed line-clamp-3">
                                 {{ \Illuminate\Support\Str::limit(strip_tags($featured->description), 220) }}
                             </p>
-                            <div class="mt-6 inline-flex items-center gap-2 text-[#63cd00] font-bold text-sm">
+                            <div class="mt-4 sm:mt-6 inline-flex items-center gap-2 text-[#2e7000] font-bold text-xs sm:text-sm">
                                 Baca Selengkapnya
                                 <i class="fa-solid fa-arrow-right transition-transform duration-200 group-hover:translate-x-1"></i>
                             </div>
@@ -148,10 +148,10 @@
 
                         <div class="p-5 flex flex-col flex-1">
                             <p class="nw-meta mb-2"><i class="fa-solid fa-user-pen"></i> {{ $item->publisher }}</p>
-                            <h3 class="text-lg font-bold text-[#282829] leading-snug line-clamp-2 group-hover:text-[#63cd00] transition-colors duration-200">
+                            <h3 class="text-lg font-bold text-[#1c1c1d] leading-snug line-clamp-2 group-hover:text-[#2e7000] transition-colors duration-200">
                                 {{ $item->title }}
                             </h3>
-                            <p class="text-gray-500 text-sm leading-relaxed line-clamp-3 mt-2 flex-grow">
+                            <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mt-2 flex-grow">
                                 {{ strip_tags($item->description) }}
                             </p>
                             <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">

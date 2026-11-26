@@ -54,7 +54,7 @@ class TiktokPostController extends Controller
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        $this->trimToLimit();
+        $this->trimToLimit(9);
 
         return redirect()
             ->route('admin.tiktok-posts.index')
@@ -62,9 +62,9 @@ class TiktokPostController extends Controller
     }
 
     /**
-     * Batasi jumlah data maksimal. Data lama otomatis dihapus jika melebihi.
+     * Batasi jumlah data maksimal 9. Data lama otomatis dihapus permanen jika melebihi kuota.
      */
-    protected function trimToLimit(int $limit = 18): void
+    protected function trimToLimit(int $limit = 9): void
     {
         $oldestFirst = TiktokPost::orderBy('created_at')->orderBy('id')->get();
 
@@ -72,7 +72,9 @@ class TiktokPostController extends Controller
             $oldestFirst
                 ->take($oldestFirst->count() - $limit)
                 ->each(function (TiktokPost $post) {
-                    Storage::disk('public')->delete($post->path);
+                    if ($post->path && Storage::disk('public')->exists($post->path)) {
+                        Storage::disk('public')->delete($post->path);
+                    }
                     $post->delete();
                 });
         }

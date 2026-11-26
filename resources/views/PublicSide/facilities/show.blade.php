@@ -14,34 +14,36 @@
 @section('content')
 
     {{-- ============================ HERO ============================ --}}
-    <section class="relative bg-[#282829]">
-        <div class="relative h-[340px] lg:h-[440px] overflow-hidden">
+    <section class="relative bg-[#1f1f20]">
+        <div class="relative min-h-[300px] sm:min-h-[360px] lg:h-[420px] overflow-hidden flex flex-col justify-end">
             @if ($facility->image)
                 <img src="{{ img_url($facility->image, 1600, 900) }}" width="1600" height="900" alt="{{ $facility->name }}"
-                    class="w-full h-full object-cover">
+                    class="absolute inset-0 w-full h-full object-cover">
             @else
                 <div class="fc-thumb-fallback fc-thumb-fallback--big"><i class="fa-solid fa-building"></i></div>
             @endif
 
             <div class="absolute inset-0"
-                style="background: linear-gradient(180deg, rgba(40,40,41,.35) 0%, rgba(40,40,41,.78) 100%)"></div>
+                style="background: linear-gradient(100deg, rgba(20,20,22,0.94) 0%, rgba(20,20,22,0.82) 48%, rgba(20,20,22,0.55) 100%)"></div>
 
-            <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-10">
-                <span class="fc-chip fc-chip--green w-fit mb-4"><i class="fa-solid fa-building"></i> Fasilitas</span>
-                <h1 class="text-white text-3xl lg:text-5xl font-extrabold leading-tight max-w-4xl">
+            <div class="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 flex flex-col justify-end w-full">
+                <span class="fc-chip fc-chip--green w-fit mb-3"><i class="fa-solid fa-building"></i> Fasilitas</span>
+                <h1 class="text-white text-2xl sm:text-4xl lg:text-5xl font-extrabold leading-tight max-w-4xl tracking-tight">
                     {{ $facility->name }}
                 </h1>
-                <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/85">
-                    <span class="fc-chip absolute top-3 left-3 z-10" style="position: static;">
+                <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-white/90">
+                    <span class="fc-chip" style="position: static;">
                         <i class="fa-solid fa-tag"></i>
                         {{ $facility->type }}
                     </span>
+                    @if ($facility->publisher)
+                        <span class="inline-flex items-center gap-2">
+                            <i class="fa-solid fa-user-pen text-[#00875a]"></i>
+                            {{ $facility->publisher }}
+                        </span>
+                    @endif
                     <span class="inline-flex items-center gap-2">
-                        <i class="fa-solid fa-user-pen"></i>
-                        {{ $facility->publisher }}
-                    </span>
-                    <span class="inline-flex items-center gap-2">
-                        <i class="fa-regular fa-clock"></i>
+                        <i class="fa-regular fa-clock text-[#00875a]"></i>
                         {{ $readMinutes }} menit baca
                     </span>
                 </div>
@@ -49,25 +51,25 @@
         </div>
 
         {{-- Breadcrumb --}}
-        <div style="background-color:#2D2D2D;">
-            <div class="max-w-screen-xl min-h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-3">
-                <nav aria-label="Breadcrumb">
-                    <ol class="flex items-center space-x-2 md:space-x-3 text-sm">
-                        <li class="inline-flex items-center flex-shrink-0">
+        <div style="background-color:#1c1c1d; border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);">
+            <div class="max-w-screen-xl min-h-12 py-2.5 mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto scrollbar-hide">
+                <nav aria-label="Breadcrumb" class="min-w-0">
+                    <ol class="inline-flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm whitespace-nowrap">
+                        <li class="flex items-center">
                             <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
-                                Home
+                                <i class="fa-solid fa-house text-xs mr-1.5 opacity-70"></i> Home
                             </a>
                         </li>
-                        <li class="inline-flex items-center flex-shrink-0">
-                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
+                        <li class="flex items-center">
+                            <i class="fa-solid fa-chevron-right text-white/30 text-xs"></i>
                             <a href="{{ route('public.facilities.index') }}"
-                                class="inline-flex items-center ml-2 md:ml-3 font-medium text-gray-300 hover:text-white transition-colors">
+                                class="inline-flex items-center ml-1.5 sm:ml-2.5 font-medium text-gray-300 hover:text-white transition-colors">
                                 Fasilitas
                             </a>
                         </li>
-                        <li class="inline-flex items-center min-w-0">
-                            <i class="fa-solid fa-chevron-right text-white/40 text-xs flex-shrink-0"></i>
-                            <span class="ml-2 md:ml-3 font-medium text-[#63cd00] truncate max-w-[40vw] sm:max-w-[55vw]" title="{{ $facility->name }}">
+                        <li class="flex items-center min-w-0">
+                            <i class="fa-solid fa-chevron-right text-white/30 text-xs flex-shrink-0"></i>
+                            <span class="ml-1.5 sm:ml-2.5 font-medium text-[#00875a] truncate max-w-[40vw] sm:max-w-[55vw]" title="{{ $facility->name }}">
                                 {{ $facility->name }}
                             </span>
                         </li>
@@ -80,12 +82,12 @@
     {{-- ============================ KONTEN ============================ --}}
     <section class="bg-white">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-            <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12 gap-y-10">
+            <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12 gap-y-10 items-start">
 
                 {{-- Kolom kiri (2/3): artikel --}}
                 <div class="lg:col-span-2 min-w-0">
                     <a href="{{ route('public.facilities.index') }}"
-                        class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#63cd00] transition-colors duration-200 mb-6">
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#00875a] transition-colors duration-200 mb-6">
                         <i class="fa-solid fa-arrow-left text-xs"></i>
                         Kembali ke Daftar Fasilitas
                     </a>
@@ -94,10 +96,10 @@
                     @if ($facility->image)
                         <figure class="mb-8">
                             <img src="{{ img_url($facility->image, 900, 520) }}" width="900" height="520" alt="{{ $facility->name }}"
-                                class="w-full rounded-2xl shadow-md object-cover">
+                                class="w-full h-auto aspect-video rounded-2xl shadow-md object-cover">
                             @if ($facility->publisher)
                                 <figcaption class="mt-2 text-sm text-gray-500">
-                                    <i class="fa-solid fa-camera mr-1 text-[#63cd00]"></i>
+                                    <i class="fa-solid fa-camera mr-1 text-[#00875a]"></i>
                                     Dokumentasi {{ $facility->publisher }}
                                 </figcaption>
                             @endif
@@ -116,7 +118,7 @@
                     </article>
 
                     {{-- Bagikan --}}
-                    <footer class="mt-8 bg-[#282829] rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
+                    <footer class="mt-8 bg-[#1f1f20] rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
                         <div>
                             <p class="font-bold text-white">Bagikan fasilitas ini</p>
                             <p class="text-sm text-white/60 mt-0.5">Bantu sebarkan informasi ke teman & keluarga.</p>
@@ -138,7 +140,7 @@
                                 <i class="fa-brands fa-whatsapp"></i>
                             </a>
                             <a href="{{ url()->current() }}" onclick="navigator.clipboard?.writeText(this.href); alert('Tautan disalin!'); return false;"
-                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#63cd00] hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-200"
+                                class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-[#00875a] hover:text-white hover:-translate-y-0.5 transition-all duration-200"
                                 aria-label="Salin tautan">
                                 <i class="fa-solid fa-link"></i>
                             </a>
@@ -148,7 +150,7 @@
 
                 {{-- Kolom kanan (1/3): sidebar --}}
                 <aside class="lg:col-span-1">
-                    <div class="lg:sticky lg:top-8 space-y-6">
+                    <div class="lg:sticky lg:top-[160px] space-y-6">
 
                         {{-- Info fasilitas --}}
                         <div class="fc-side">
@@ -193,7 +195,7 @@
                                             @endif
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 hover:text-[#63cd00] transition-colors duration-200">
+                                            <p class="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 hover:text-[#00875a] transition-colors duration-200">
                                                 {{ $item->name }}
                                             </p>
                                             <span class="fc-chip fc-chip--green mt-1.5 inline-flex">
@@ -209,7 +211,7 @@
 
                             <div class="p-4 pt-0">
                                 <a href="{{ route('public.facilities.index') }}"
-                                    class="w-full block text-center py-3 rounded-xl text-sm font-semibold text-white transition-colors duration-200 hover:opacity-90 bg-[#282829]">
+                                    class="w-full block text-center py-3 rounded-xl text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#00875a] bg-[#1c1c1d]">
                                     Lihat Semua Fasilitas
                                 </a>
                             </div>

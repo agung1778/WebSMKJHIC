@@ -22,11 +22,14 @@
             </x-slot:actions>
         </x-admin-components::page-header>
 
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4 stat-grid-2">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-5 stat-grid-2">
             <x-admin-components::stat-card label="Total Pemimpin" :value="$leaders->count()" icon="fa-solid fa-user-tie" tone="brand" />
             <x-admin-components::stat-card label="Aktif di Website" :value="$activeCount" icon="fa-solid fa-circle-check" tone="green" />
             <x-admin-components::stat-card label="Amaliah 1" :value="$leaders->where('school','Amaliah 1')->count()" icon="fa-solid fa-school" tone="blue" />
             <x-admin-components::stat-card label="Amaliah 2" :value="$leaders->where('school','Amaliah 2')->count()" icon="fa-solid fa-school" tone="amber" />
+            <div class="col-span-2 sm:col-span-1">
+                <x-admin-components::stat-card label="Amaliah 1 & 2" :value="$leaders->where('school','Amaliah 1 & 2')->count()" icon="fa-solid fa-school-circle-check" tone="dark" />
+            </div>
         </div>
 
         <x-admin-components::table

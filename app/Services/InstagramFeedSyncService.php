@@ -11,7 +11,7 @@ use RuntimeException;
 
 class InstagramFeedSyncService
 {
-    private const MEDIA_LIMIT = 15;
+    private const MEDIA_LIMIT = 9;
     private const MAX_IMAGE_BYTES = 10485760;
 
     public function sync(): int

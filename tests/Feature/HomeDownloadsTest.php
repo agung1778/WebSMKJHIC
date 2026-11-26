@@ -29,8 +29,9 @@ class HomeDownloadsTest extends TestCase
     {
         $template = file_get_contents(resource_path('views/welcome.blade.php'));
 
-        $this->assertStringContainsString('setInterval(() => { if (autoRotate) activeTab = activeTab ===', $template);
-        $this->assertStringContainsString('@mouseenter="autoRotate = false"', $template);
-        $this->assertStringContainsString('@mouseleave="autoRotate = true"', $template);
+        $this->assertStringContainsString('startTimer()', $template);
+        $this->assertStringContainsString('stopTimer()', $template);
+        $this->assertStringContainsString('@mouseenter="stopTimer()"', $template);
+        $this->assertStringContainsString('@mouseleave="startTimer()"', $template);
     }
 }

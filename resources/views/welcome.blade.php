@@ -35,26 +35,35 @@
         /* Hero Floating News Card & Watch Video Button */
         .hero-floating-card-wrapper {
             position: absolute;
-            bottom: 14px;
-            left: 14px;
+            bottom: 12px;
+            left: 12px;
             z-index: 20;
-            width: calc(100% - 28px);
-            max-width: 310px;
+            width: calc(100% - 24px);
+            max-width: 275px;
+        }
+        .hero-floating-card {
+            height: 88px;
         }
         @media (min-width: 640px) {
             .hero-floating-card-wrapper {
-                bottom: 24px;
-                left: 24px;
-                width: 340px;
-                max-width: 340px;
+                bottom: 20px;
+                left: 20px;
+                width: 320px;
+                max-width: 320px;
+            }
+            .hero-floating-card {
+                height: 125px;
             }
         }
         @media (min-width: 1024px) {
             .hero-floating-card-wrapper {
-                bottom: 32px;
-                left: 32px;
-                width: 380px;
-                max-width: 380px;
+                bottom: 28px;
+                left: 28px;
+                width: 360px;
+                max-width: 360px;
+            }
+            .hero-floating-card {
+                height: 140px;
             }
         }
         .hero-watch-video-btn {
@@ -211,17 +220,17 @@
                                 <div class="hero-floating-card-wrapper"
                                     x-show="!showVideo">
 
-                                    <div class="relative w-full rounded-xl sm:rounded-2xl bg-white/95 backdrop-blur-md shadow-xl border border-white/60 min-h-[105px] sm:min-h-[145px] lg:min-h-[160px] overflow-hidden">
+                                    <div class="hero-floating-card relative w-full rounded-xl sm:rounded-2xl bg-white/95 backdrop-blur-md shadow-lg border border-white/70 overflow-hidden">
                                         @foreach($latestNews as $loop => $news)
                                             <div x-show="activeNews === {{ $loop->iteration }}"
                                                 x-transition:enter="transition-opacity ease-out duration-300"
                                                 x-transition:enter-start="opacity-0"
                                                 x-transition:enter-end="opacity-100"
-                                                class="absolute inset-0 bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 flex flex-col justify-between"
+                                                class="absolute inset-0 bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-2.5 sm:p-4 lg:p-5 flex flex-col justify-between"
                                                 @if(!$loop->first) style="display: none;" @endif>
 
                                                 <div>
-                                                    <h2 class="text-xs sm:text-sm lg:text-base font-bold text-gray-900 leading-snug line-clamp-2">
+                                                    <h2 class="text-[11px] sm:text-sm lg:text-base font-bold text-gray-900 leading-snug line-clamp-2">
                                                         {{ $news->title }}
                                                     </h2>
 
@@ -232,15 +241,15 @@
                                                     @endif
                                                 </div>
 
-                                                <div class="mt-2 flex items-center justify-between pt-1.5 border-t border-gray-100">
-                                                    <p class="text-[10px] sm:text-xs font-medium text-gray-500">
+                                                <div class="mt-1.5 sm:mt-2 flex items-center justify-between pt-1 sm:pt-1.5 border-t border-gray-100">
+                                                    <p class="text-[9px] sm:text-xs font-medium text-gray-500">
                                                         {{ \Carbon\Carbon::parse($news->date_published)->translatedFormat('d F Y') }}
                                                     </p>
 
                                                     <a href="{{ route('public.news.show', $news) }}"
-                                                        class="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-white bg-[#282829] hover:bg-black px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full transition-all duration-300 group shadow-md hover:scale-105">
+                                                        class="inline-flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-semibold text-white bg-[#282829] hover:bg-black px-2 py-0.5 sm:px-3.5 sm:py-1.5 rounded-full transition-all duration-300 group shadow-sm hover:scale-105">
                                                         <span>Selengkapnya</span>
-                                                        <i class="fas fa-arrow-right text-[10px] transition-transform duration-300 group-hover:translate-x-1"></i>
+                                                        <i class="fas fa-arrow-right text-[9px] transition-transform duration-300 group-hover:translate-x-1"></i>
                                                     </a>
                                                 </div>
                                             </div>
@@ -293,7 +302,7 @@
                                 'icon' => 'fa-file-lines',
                                 'title' => 'SPMB Online',
                                 'desc' => 'Daftar secara mudah melalui sistem online kami.',
-                                'link' => 'https://ppdb.smkamaliah.sch.id/login',
+                                'link' => 'https://ppdb.smkamaliah.sch.id',
                                 'button_text' => 'Daftar',
                             ],
                             [
@@ -326,7 +335,7 @@
                     {{-- Loop untuk menampilkan setiap kartu fitur --}}
                     @foreach ($fitur as $item)
                         <a href="{{ $item['link'] }}"
-                            class="group bg-white p-3 sm:p-5 rounded-xl sm:rounded-2xl flex flex-col items-start border-2 border-transparent hover:border-[#63cd00] transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            class="group bg-white p-3 sm:p-5 rounded-xl sm:rounded-2xl flex flex-col items-start border-2 border-transparent hover:border-[#63cd00] transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 h-full">
 
                             {{-- Bagian Ikon --}}
                             <div class="p-2 sm:p-3 rounded-lg sm:rounded-xl mb-2 sm:mb-3 transition-transform duration-300 group-hover:scale-105" style="background-color: {{ $amaliahGreen }};">
@@ -335,7 +344,7 @@
 
                             {{-- Bagian Teks --}}
                             <h2 class="text-xs sm:text-base font-bold mb-1 line-clamp-1" style="color: {{ $amaliahDark }};">{{ $item['title'] }}</h2>
-                            <p class="text-[10px] sm:text-xs text-gray-500 mb-2 sm:mb-3 flex-grow line-clamp-2 leading-relaxed">{{ $item['desc'] }}</p>
+                            <p class="text-[10.5px] sm:text-xs text-gray-500 mb-2 sm:mb-3 flex-grow line-clamp-3 sm:line-clamp-2 leading-relaxed">{{ $item['desc'] }}</p>
 
                             {{-- Tombol Link dengan teks dinamis --}}
                             <div class="text-[11px] sm:text-xs font-semibold flex items-center justify-between w-full mt-auto pt-1 border-t border-gray-100" style="color: {{ $amaliahGreen }};">
@@ -362,7 +371,7 @@
             <section class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 sm:mb-20 fade-in-section">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                     {{-- Kolom Kiri: Teks dan Tombol --}}
-                    <div class="text-gray-600">
+                    <div class="text-gray-600 text-center lg:text-left">
                         <p class="text-sm sm:text-base leading-relaxed">
                             SMK Amaliah 1 & 2 merupakan bentuk sekolah kejuruan yang dibawah naungan Yayasan Pusat Studi
                             Pengembangan Islam Amaliyah Indonesia (YPSPIAI) dengan mengutamakan kualitas, Profesionalitas
@@ -370,7 +379,7 @@
                         </p>
 
                         {{-- Wadah untuk Tombol --}}
-                        <div class="flex flex-row flex-wrap sm:flex-nowrap items-center gap-3 mt-6 sm:mt-8">
+                        <div class="flex flex-row flex-wrap sm:flex-nowrap items-center justify-center lg:justify-start gap-3 mt-6 sm:mt-8">
                             <a href="https://ppdb.smkamaliah.sch.id/"
                                 class="group inline-flex items-center justify-between text-white pl-4 sm:pl-6 pr-2 py-1.5 sm:py-2 rounded-lg font-semibold shadow-md transition-all duration-300 hover:shadow-lg hover:opacity-90 text-xs sm:text-sm"
                                 style="background-color: {{ $amaliahGreen }};">
@@ -397,11 +406,11 @@
                             'assets/image/Classmeet.JPG',
                             'assets/image/DroneView.jpg',
                             'assets/image/17Agustus.JPG',
-                            'assets/image/Classmeet.JPG',
-                            'assets/image/DroneView.jpg',
+                            'assets/image/Brosur.jpeg',
+                            'assets/image/Stackup.png',
                         ];
                     @endphp
-                    <div class="grid grid-cols-3 grid-rows-3 gap-2 sm:gap-4 h-56 sm:h-80 lg:h-96">
+                    <div class="grid grid-cols-3 grid-rows-3 gap-2 sm:gap-4 h-72 sm:h-80 lg:h-96">
 
                         {{-- Gambar 1 (Slot Paling Kiri, Tinggi) --}}
                         @php $img1 = isset($gridImages[0]) && $gridImages[0]->path ? img_url($gridImages[0]->path, 900, 900) : asset($fallbackGrid[0]); @endphp
@@ -449,17 +458,17 @@
             <section class="py-8 sm:py-12 lg:py-16 fade-in-section stats-counter-section"
                 style="background-color: {{ $amaliahDark }};">
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="grid grid-cols-2 lg:flex lg:flex-row items-center justify-center lg:justify-around gap-4 sm:gap-6 lg:gap-12">
+                    <div class="grid grid-cols-2 lg:flex lg:flex-row items-center justify-center lg:justify-around gap-3 sm:gap-6 lg:gap-12">
 
                         @foreach ($stats as $idx => $stat)
-                            <div class="flex items-center gap-2.5 sm:gap-4 justify-start">
-                                <div class="bg-gray-200/90 flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-xl sm:rounded-2xl flex-shrink-0 shadow-sm">
-                                    <i class="fas {{ $stat['icon'] }} text-lg sm:text-2xl lg:text-3xl" style="color: {{ $amaliahDark }};"></i>
+                            <div class="flex items-center gap-2 sm:gap-4 justify-start">
+                                <div class="bg-gray-200/90 flex items-center justify-center h-11 w-11 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-xl sm:rounded-2xl flex-shrink-0 shadow-sm">
+                                    <i class="fas {{ $stat['icon'] }} text-base sm:text-2xl lg:text-3xl" style="color: {{ $amaliahDark }};"></i>
                                 </div>
                                 <div class="text-white min-w-0">
-                                    <p class="text-xl sm:text-3xl lg:text-4xl font-bold whitespace-nowrap count-up"
+                                    <p class="text-lg sm:text-3xl lg:text-4xl font-bold whitespace-nowrap count-up"
                                         data-target-value="{{ $stat['number'] }}">{{ $stat['number'] }}</p>
-                                    <p class="text-[11px] sm:text-sm text-gray-300 leading-tight">{{ $stat['label'] }}</p>
+                                    <p class="text-[10px] sm:text-xs lg:text-sm text-gray-300 leading-tight whitespace-nowrap">{{ $stat['label'] }}</p>
                                 </div>
                             </div>
                             @if(!$loop->last)
@@ -569,45 +578,47 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
                         {{-- Kolom Kiri: Teks & Tombol --}}
-                        <div class="text-left">
+                        <div class="text-center lg:text-left">
                             <h2 class="text-2xl sm:text-4xl md:text-5xl font-bold" style="color: {{ $amaliahDark }};">
-                                Here Is Our<br>Industry Partner
+                                Here Is Our<br class="hidden sm:inline"> Industry Partner
                             </h2>
 
-                            <div class="flex items-center gap-x-2 mt-3 sm:mt-4">
+                            <div class="flex items-center justify-center lg:justify-start gap-x-2 mt-3 sm:mt-4">
                                 <div class="w-16 sm:w-20 h-1 sm:h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
                                 <div class="w-3 sm:w-4 h-1 sm:h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
                                 <div class="w-3 sm:w-4 h-1 sm:h-1.5 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
                             </div>
 
-                            <p class="mt-4 sm:mt-6 text-sm sm:text-base text-gray-600 leading-relaxed">
+                            <p class="mt-4 sm:mt-6 text-sm sm:text-base text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
                                 We cooperate with industry leaders to provide students with real-world experience through
                                 internships, industrial visits, training, and career opportunities after graduation.
                             </p>
 
-                            <a href="{{ route('public.partners.index') }}"
-                                class="group mt-6 sm:mt-8 inline-flex items-center text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold shadow-md group/button transition-opacity duration-300 hover:opacity-90 text-sm sm:text-base"
-                                style="background-color: {{ $amaliahGreen }};">
-                                <span class="mr-3 sm:mr-4">Selengkapnya</span>
-                                <div class="bg-white rounded-full p-1.5 sm:p-2 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1">
-                                    <i class="fas fa-arrow-right text-xs sm:text-base" style="color: {{ $amaliahGreen }};"></i>
-                                </div>
-                            </a>
+                            <div class="flex justify-center lg:justify-start">
+                                <a href="{{ route('public.partners.index') }}"
+                                    class="group mt-6 sm:mt-8 inline-flex items-center text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold shadow-md group/button transition-opacity duration-300 hover:opacity-90 text-sm sm:text-base"
+                                    style="background-color: {{ $amaliahGreen }};">
+                                    <span class="mr-3 sm:mr-4">Selengkapnya</span>
+                                    <div class="bg-white rounded-full p-1.5 sm:p-2 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-1">
+                                        <i class="fas fa-arrow-right text-xs sm:text-base" style="color: {{ $amaliahGreen }};"></i>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
 
                         {{-- Kolom Kanan: Grid Logo Mitra dengan Animasi Scroll --}}
                         <div class="group relative h-64 sm:h-80 lg:h-[28rem] overflow-hidden">
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-x-4 sm:gap-x-8 gap-y-4 sm:gap-y-8 animate-scroll-vertical group-hover:[animation-play-state:paused]">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-x-3 sm:gap-x-6 gap-y-3 sm:gap-y-6 animate-scroll-vertical group-hover:[animation-play-state:paused]">
 
                                 {{-- Loop data dari controller (DUPLIKASI 1) --}}
                                 @forelse ($partners as $partner)
                                     <div class="text-center">
-                                        <div class="bg-white h-16 sm:h-24 w-full rounded-xl mb-2 sm:mb-3 flex items-center justify-center p-2.5 sm:p-3 border border-gray-200 shadow-sm hover:border-[#63cd00] transition-colors">
+                                        <div class="bg-white h-20 sm:h-24 w-full rounded-xl mb-1.5 sm:mb-3 flex items-center justify-center p-2 sm:p-3 border border-gray-200 shadow-sm hover:border-[#63cd00] transition-colors">
                                             @if (!empty($partner->logo))
                                                 <img src="{{ img_url($partner->logo, 160, 90) }}" alt="Logo {{ $partner->name }}" loading="lazy" width="160" height="90"
                                                     class="max-h-full max-w-full object-contain">
                                             @else
-                                                <span class="text-[10px] sm:text-xs font-bold text-gray-700 line-clamp-2 uppercase tracking-tight text-center px-1">{{ $partner->name }}</span>
+                                                <span class="text-[10px] sm:text-xs font-bold text-gray-700 line-clamp-2 uppercase tracking-tight text-center px-1 leading-snug">{{ $partner->name }}</span>
                                             @endif
                                         </div>
                                     </div>
@@ -620,12 +631,12 @@
                                 {{-- Loop data dari controller (DUPLIKASI 2 - Untuk Efek Mulus) --}}
                                 @forelse ($partners as $partner)
                                     <div class="text-center">
-                                        <div class="bg-white h-16 sm:h-24 w-full rounded-xl mb-2 sm:mb-3 flex items-center justify-center p-2.5 sm:p-3 border border-gray-200 shadow-sm hover:border-[#63cd00] transition-colors">
+                                        <div class="bg-white h-20 sm:h-24 w-full rounded-xl mb-1.5 sm:mb-3 flex items-center justify-center p-2 sm:p-3 border border-gray-200 shadow-sm hover:border-[#63cd00] transition-colors">
                                             @if (!empty($partner->logo))
                                                 <img src="{{ img_url($partner->logo, 160, 90) }}" alt="Logo {{ $partner->name }}" loading="lazy" width="160" height="90"
                                                     class="max-h-full max-w-full object-contain">
                                             @else
-                                                <span class="text-[10px] sm:text-xs font-bold text-gray-700 line-clamp-2 uppercase tracking-tight text-center px-1">{{ $partner->name }}</span>
+                                                <span class="text-[10px] sm:text-xs font-bold text-gray-700 line-clamp-2 uppercase tracking-tight text-center px-1 leading-snug">{{ $partner->name }}</span>
                                             @endif
                                         </div>
                                     </div>
@@ -633,169 +644,279 @@
                                 @endforelse
                             </div>
                             {{-- Efek fade di bagian bawah --}}
-                            <div class="absolute bottom-0 left-0 w-full h-16 sm:h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+                            <div class="absolute bottom-0 left-0 w-full h-10 sm:h-20 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
                         </div>
 
                     </div>
                 </div>
             </section>
 
-            {{-- ============================ PIMPINAN SEKOLAH (PERSIS SEPERTI GAMBAR DENGAN RESPONSIF & FLUID ANIMATION) ============================ --}}
+            {{-- ============================ PIMPINAN SEKOLAH (DINAMIS DENGAN DUKUNGAN BANYAK PIMPINAN & SEMUA KATEGORI) ============================ --}}
             @php
-                $leaderImg = function ($leader, $fallback) {
+                $leaderImg = function ($leader, $fallback = null) {
                     if ($leader && $leader->image) {
                         return str_starts_with($leader->image, 'uploads/')
                             ? asset('storage/' . $leader->image)
                             : (str_starts_with($leader->image, 'http') ? $leader->image : asset($leader->image));
                     }
-                    return asset($fallback);
+                    return $fallback ? asset($fallback) : null;
                 };
 
-                $leader1 = $leaders->where('school', 'Amaliah 1')->first();
-                $leader2 = $leaders->where('school', 'Amaliah 2')->first();
+                $leadersA1 = $leaders->where('school', 'Amaliah 1')->values();
+                $leadersA2 = $leaders->where('school', 'Amaliah 2')->values();
+                $leadersBoth = $leaders->where('school', 'Amaliah 1 & 2')->values();
 
-                $profiles = [
-                    [
-                        'tab' => 'amaliah1',
-                        'name' => $leader1->name ?? 'Isma Tri Pamungkas, S.Pd., Gr',
-                        'position' => $leader1->position ?? 'Kepala Sekolah SMK Amaliah 1',
-                        'quote' => !empty($leader1->quote) ? $leader1->quote : 'Pendidikan vokasi sejati bukan hanya tentang mencetak tangan yang terampil dan otak yang cerdas, melainkan juga menempa hati yang berakhlak mulia serta berpegang teguh pada nilai-nilai tauhid',
-                        'image' => $leaderImg($leader1, 'assets/image/kepsek1.webp'),
-                        'facebook' => $leader1->facebook_url ?: 'https://www.facebook.com/',
-                        'instagram' => $leader1->instagram_url ?: 'https://www.instagram.com/',
-                        'linkedin' => $leader1->linkedin_url ?: 'https://id.linkedin.com/',
+                // Fallback default jika database masih kosong
+                if ($leadersA1->isEmpty()) {
+                    $leadersA1 = collect([
+                        (object)[
+                            'id' => 'fallback-a1',
+                            'school' => 'Amaliah 1',
+                            'name' => 'Isma Tri Pamungkas, S.Pd., Gr',
+                            'position' => 'Kepala Sekolah SMK Amaliah 1',
+                            'quote' => 'Pendidikan vokasi sejati bukan hanya tentang mencetak tangan yang terampil dan otak yang cerdas, melainkan juga menempa hati yang berakhlak mulia serta berpegang teguh pada nilai-nilai tauhid.',
+                            'image' => 'assets/image/kepsek1.webp',
+                            'facebook_url' => 'https://www.facebook.com/',
+                            'instagram_url' => 'https://www.instagram.com/',
+                            'linkedin_url' => 'https://id.linkedin.com/',
+                        ]
+                    ]);
+                }
+                if ($leadersA2->isEmpty()) {
+                    $leadersA2 = collect([
+                        (object)[
+                            'id' => 'fallback-a2',
+                            'school' => 'Amaliah 2',
+                            'name' => 'Dr. Gugun Gunadi, S.Pd.I., M.Pd.',
+                            'position' => 'Kepala Sekolah SMK Amaliah 2',
+                            'quote' => 'Sekolah adalah rumah untuk tumbuh — di sini kami membimbing peserta didik tidak hanya menguasai kompetensi kerja, tetapi juga membentuk akhlak dan sikap profesional.',
+                            'image' => 'assets/image/kepsek2.webp',
+                            'facebook_url' => 'https://www.facebook.com/',
+                            'instagram_url' => 'https://www.instagram.com/',
+                            'linkedin_url' => 'https://id.linkedin.com/',
+                        ]
+                    ]);
+                }
+
+                $leadersBothList = $leadersBoth->isNotEmpty() ? $leadersBoth : $leadersA1->concat($leadersA2);
+
+                $schoolTabs = [
+                    'amaliah_both' => [
+                        'label' => 'SMK Amaliah 1 & 2',
+                        'leaders' => $leadersBothList,
                     ],
-                    [
-                        'tab' => 'amaliah2',
-                        'name' => $leader2->name ?? 'Dr. Gugun Gunadi, S.Pd.I., M.Pd.',
-                        'position' => $leader2->position ?? 'Kepala Sekolah SMK Amaliah 2',
-                        'quote' => !empty($leader2->quote) ? $leader2->quote : 'Sekolah adalah rumah untuk tumbuh — di sini kami membimbing peserta didik tidak hanya menguasai kompetensi kerja, tetapi juga membentuk akhlak dan sikap profesional.',
-                        'image' => $leaderImg($leader2, 'assets/image/kepsek2.webp'),
-                        'facebook' => $leader2->facebook_url ?: 'https://www.facebook.com/',
-                        'instagram' => $leader2->instagram_url ?: 'https://www.instagram.com/',
-                        'linkedin' => $leader2->linkedin_url ?: 'https://id.linkedin.com/',
+                    'amaliah1' => [
+                        'label' => 'SMK Amaliah 1',
+                        'leaders' => $leadersA1,
+                    ],
+                    'amaliah2' => [
+                        'label' => 'SMK Amaliah 2',
+                        'leaders' => $leadersA2,
                     ],
                 ];
             @endphp
 
-            @php
-                $hasBothLeaders = $leaders->where('school', 'Amaliah 1')->isNotEmpty()
-                    && $leaders->where('school', 'Amaliah 2')->isNotEmpty();
-            @endphp
             <section class="bg-[#282829] py-16 sm:py-20 overflow-hidden fade-in-section">
                 <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8"
                     x-data="{
-                        activeTab: 'amaliah1',
-                        autoRotate: {{ $hasBothLeaders ? 'true' : 'false' }},
+                        activeTab: 'amaliah_both',
+                        activeLeaderIndex: {
+                            @foreach($schoolTabs as $tabKey => $tabData)
+                                '{{ $tabKey }}': 0,
+                            @endforeach
+                        },
+                        counts: {
+                            @foreach($schoolTabs as $tabKey => $tabData)
+                                '{{ $tabKey }}': {{ $tabData['leaders']->count() }},
+                            @endforeach
+                        },
                         timer: null,
                         init() {
-                            if (this.autoRotate) {
-                                this.timer = setInterval(() => {
-                                    if (this.autoRotate) {
-                                        this.activeTab = this.activeTab === 'amaliah1' ? 'amaliah2' : 'amaliah1';
-                                    }
-                                }, 6000);
+                            this.startTimer();
+                        },
+                        startTimer() {
+                            this.stopTimer();
+                            this.timer = setInterval(() => {
+                                this.nextLeader();
+                            }, 7000);
+                        },
+                        stopTimer() {
+                            if (this.timer) {
+                                clearInterval(this.timer);
+                                this.timer = null;
                             }
                         },
                         setTab(tab) {
                             if (this.activeTab === tab) return;
                             this.activeTab = tab;
-                            if (this.timer) {
-                                clearInterval(this.timer);
-                                this.timer = null;
+                            this.startTimer();
+                        },
+                        setLeader(tab, idx) {
+                            this.activeLeaderIndex[tab] = idx;
+                            this.startTimer();
+                        },
+                        nextLeader() {
+                            const tab = this.activeTab;
+                            const total = this.counts[tab] || 1;
+                            if (total > 1) {
+                                this.activeLeaderIndex[tab] = (this.activeLeaderIndex[tab] + 1) % total;
                             }
-                            if (this.autoRotate) {
-                                this.timer = setInterval(() => {
-                                    if (this.autoRotate) {
-                                        this.activeTab = this.activeTab === 'amaliah1' ? 'amaliah2' : 'amaliah1';
-                                    }
-                                }, 6000);
+                        },
+                        prevLeader() {
+                            const tab = this.activeTab;
+                            const total = this.counts[tab] || 1;
+                            if (total > 1) {
+                                this.activeLeaderIndex[tab] = (this.activeLeaderIndex[tab] - 1 + total) % total;
                             }
                         }
                     }"
-                    @mouseenter="autoRotate = false"
-                    @mouseleave="autoRotate = true"
-                    @touchstart.passive="autoRotate = false"
-                    @touchend.passive="setTimeout(() => autoRotate = true, 4000)">
+                    @mouseenter="stopTimer()"
+                    @mouseleave="startTimer()"
+                    @touchstart.passive="stopTimer()"
+                    @touchend.passive="setTimeout(() => startTimer(), 5000)">
 
-                    {{-- Bagian Header: Judul dan Tombol Tab (Sesuai Gambar Asli) --}}
-                    <div class="text-center mb-6 sm:mb-12">
+                    {{-- Bagian Header: Judul dan Tombol Tab --}}
+                    <div class="text-center mb-6 sm:mb-10">
                         <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
                             Get To Know Our School Leaders
                         </h2>
-                        <div class="flex justify-center items-center space-x-2 mt-5 sm:mt-8">
-                            <button type="button"
-                                @click="setTab('amaliah1')"
-                                :class="activeTab === 'amaliah1' ? 'bg-[#63cd00] text-white shadow-lg' : 'bg-white text-[#282829] hover:bg-gray-200'"
-                                class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer"
-                                aria-label="SMK Amaliah 1">
-                                SMK Amaliah 1
-                            </button>
-                            <button type="button"
-                                @click="setTab('amaliah2')"
-                                :class="activeTab === 'amaliah2' ? 'bg-[#63cd00] text-white shadow-lg' : 'bg-white text-[#282829] hover:bg-gray-200'"
-                                class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer"
-                                aria-label="SMK Amaliah 2">
-                                SMK Amaliah 2
-                            </button>
+                        <div class="flex justify-center items-center flex-wrap gap-2 mt-5 sm:mt-8">
+                            @foreach($schoolTabs as $tabKey => $tabData)
+                                <button type="button"
+                                    @click="setTab('{{ $tabKey }}')"
+                                    :class="activeTab === '{{ $tabKey }}' ? 'bg-[#63cd00] text-black font-bold shadow-lg shadow-[#63cd00]/25' : 'bg-white/10 text-white hover:bg-white/20'"
+                                    class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer flex items-center gap-2">
+                                    <span>{{ $tabData['label'] }}</span>
+                                    @if($tabData['leaders']->count() > 1)
+                                        <span class="text-[10px] px-1.5 py-0.2 rounded-full font-bold"
+                                            :class="activeTab === '{{ $tabKey }}' ? 'bg-black/20 text-black' : 'bg-white/20 text-white'">
+                                            {{ $tabData['leaders']->count() }}
+                                        </span>
+                                    @endif
+                                </button>
+                            @endforeach
                         </div>
                     </div>
 
-                    {{-- Konten: Fluid Stacking Grid dengan Tata Letak Responsif --}}
-                    <div class="relative grid grid-cols-1 grid-rows-1 items-center mt-6 sm:mt-10 lg:mt-16 min-h-[520px] sm:min-h-[420px] lg:min-h-[340px]">
-                        @foreach ($profiles as $profile)
-                            <div x-show="activeTab === '{{ $profile['tab'] }}'"
-                                x-transition:enter="transition ease-out duration-500"
-                                x-transition:enter-start="opacity-0 translate-y-4"
-                                x-transition:enter-end="opacity-100 translate-y-0"
-                                x-transition:leave="transition ease-in duration-300"
-                                x-transition:leave-start="opacity-100 translate-y-0"
-                                x-transition:leave-end="opacity-0 -translate-y-4"
-                                class="col-start-1 row-start-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center"
-                                @if(!$loop->first) style="display: none;" @endif>
+                    {{-- Konten: Fluid Showcase Pemimpin per Tab --}}
+                    @foreach ($schoolTabs as $tabKey => $tabData)
+                        <div x-show="activeTab === '{{ $tabKey }}'"
+                            x-transition:enter="transition ease-out duration-400"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            @if(!$loop->first) style="display: none;" @endif>
 
-                                {{-- FOTO: Pada Mobile Tampil di Bagian Atas Nama (order-1), Pada Desktop di Kolom Kanan (lg:order-2) --}}
-                                <div class="order-1 lg:order-2 flex justify-center items-center">
-                                    <div class="w-44 h-44 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-full shadow-2xl overflow-hidden flex items-center justify-center bg-transparent transition-transform duration-700 ease-out hover:scale-105">
-                                        <img src="{{ $profile['image'] }}"
-                                            alt="{{ $profile['name'] }}"
-                                            class="w-full h-full object-cover rounded-full transition-opacity duration-700"
-                                            loading="lazy">
-                                    </div>
+                            {{-- Jika ada lebih dari 1 pemimpin di kategori ini, tampilkan selector / switcher pimpinan --}}
+                            @if($tabData['leaders']->count() > 1)
+                                <div class="flex items-center justify-center gap-2 mb-6 sm:mb-8 flex-wrap">
+                                    <button type="button" @click="prevLeader()" aria-label="Pemimpin sebelumnya"
+                                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-[#63cd00] text-white hover:text-black flex items-center justify-center text-xs transition-colors cursor-pointer mr-1">
+                                        <i class="fa-solid fa-chevron-left text-[10px] sm:text-xs"></i>
+                                    </button>
+
+                                    @foreach($tabData['leaders'] as $idx => $lead)
+                                        @php
+                                            $leadThumb = $leaderImg($lead, $idx === 0 ? ($tabKey === 'amaliah1' ? 'assets/image/kepsek1.webp' : 'assets/image/kepsek2.webp') : null);
+                                            $leadInitial = strtoupper(substr(trim($lead->name), 0, 1));
+                                        @endphp
+                                        <button type="button" @click="setLeader('{{ $tabKey }}', {{ $idx }})"
+                                            :class="activeLeaderIndex['{{ $tabKey }}'] === {{ $idx }} ? 'bg-[#63cd00]/20 border-[#63cd00] text-white ring-1 ring-[#63cd00]/50' : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'"
+                                            class="px-3 py-1.5 rounded-full border text-[11px] sm:text-xs font-medium flex items-center gap-2 transition-all cursor-pointer">
+                                            <span class="w-5 h-5 rounded-full overflow-hidden bg-[#63cd00] text-black font-bold flex items-center justify-center text-[10px] flex-shrink-0">
+                                                @if($leadThumb)
+                                                    <img src="{{ $leadThumb }}" alt="{{ $lead->name }}" class="w-full h-full object-cover">
+                                                @else
+                                                    {{ $leadInitial }}
+                                                @endif
+                                            </span>
+                                            <span class="truncate max-w-[130px] sm:max-w-[200px]">{{ $lead->name }}</span>
+                                        </button>
+                                    @endforeach
+
+                                    <button type="button" @click="nextLeader()" aria-label="Pemimpin berikutnya"
+                                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-[#63cd00] text-white hover:text-black flex items-center justify-center text-xs transition-colors cursor-pointer ml-1">
+                                        <i class="fa-solid fa-chevron-right text-[10px] sm:text-xs"></i>
+                                    </button>
                                 </div>
+                            @endif
 
-                                {{-- TEKS: Pada Mobile di Bawah Foto (order-2, text-center), Pada Desktop di Kolom Kiri (lg:order-1, lg:text-left) --}}
-                                <div class="order-2 lg:order-1 text-center lg:text-left">
-                                    <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-normal">
-                                        {{ $profile['name'] }}
-                                    </h3>
-                                    <p class="text-sm sm:text-base text-[#63cd00] mt-1 mb-3 sm:mb-4 font-semibold">
-                                        {{ $profile['position'] }}
-                                    </p>
-                                    @if (!empty($profile['quote']))
-                                        <blockquote class="text-xs sm:text-base text-gray-300 italic max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
-                                            "{!! nl2br(e(trim($profile['quote'], ' "“”'))) !!}"
-                                        </blockquote>
-                                    @endif
-                                    <div class="flex items-center space-x-3 mt-5 sm:mt-6 justify-center lg:justify-start">
-                                        <a href="{{ $profile['facebook'] }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
-                                            class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors">
-                                            <i class="fab fa-facebook-f text-sm"></i>
-                                        </a>
-                                        <a href="{{ $profile['instagram'] }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
-                                            class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors">
-                                            <i class="fab fa-instagram text-sm"></i>
-                                        </a>
-                                        <a href="{{ $profile['linkedin'] }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
-                                            class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-gray-600 text-white transition-colors">
-                                            <i class="fab fa-linkedin-in text-sm"></i>
-                                        </a>
+                            {{-- Konten Showcase Pemimpin --}}
+                            <div class="relative grid grid-cols-1 grid-rows-1 items-center min-h-[460px] sm:min-h-[400px] lg:min-h-[340px]">
+                                @foreach($tabData['leaders'] as $idx => $lead)
+                                    @php
+                                        $leadImgSrc = $leaderImg($lead, $idx === 0 ? ($tabKey === 'amaliah1' ? 'assets/image/kepsek1.webp' : 'assets/image/kepsek2.webp') : null);
+                                        $leadInitial = strtoupper(substr(trim($lead->name), 0, 1));
+                                    @endphp
+                                    <div x-show="activeLeaderIndex['{{ $tabKey }}'] === {{ $idx }}"
+                                        x-transition:enter="transition ease-out duration-400"
+                                        x-transition:enter-start="opacity-0 translate-y-3"
+                                        x-transition:enter-end="opacity-100 translate-y-0"
+                                        x-transition:leave="transition ease-in duration-200"
+                                        x-transition:leave-start="opacity-100 translate-y-0"
+                                        x-transition:leave-end="opacity-0 -translate-y-3"
+                                        class="col-start-1 row-start-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center"
+                                        @if(!$loop->first) style="display: none;" @endif>
+
+                                        {{-- FOTO: Pada Mobile di Atas (order-1), Pada Desktop di Kanan (lg:order-2) --}}
+                                        <div class="order-1 lg:order-2 flex justify-center items-center">
+                                            <div class="w-44 h-44 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-full shadow-2xl overflow-hidden flex items-center justify-center bg-transparent transition-transform duration-700 ease-out hover:scale-105 border-4 border-white/10">
+                                                @if($leadImgSrc)
+                                                    <img src="{{ $leadImgSrc }}"
+                                                        alt="{{ $lead->name }}"
+                                                        class="w-full h-full object-cover rounded-full"
+                                                        loading="lazy">
+                                                @else
+                                                    <div class="w-full h-full rounded-full bg-gradient-to-tr from-[#2d6600] to-[#63cd00] flex items-center justify-center text-white text-5xl sm:text-7xl font-extrabold shadow-inner select-none">
+                                                        {{ $leadInitial }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        {{-- TEKS: Pada Mobile di Bawah (order-2), Pada Desktop di Kiri (lg:order-1) --}}
+                                        <div class="order-2 lg:order-1 text-center lg:text-left">
+                                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#63cd00]/15 text-[#63cd00] border border-[#63cd00]/30 mb-2.5">
+                                                <i class="fa-solid fa-school text-[10px]"></i> {{ $tabData['label'] }}
+                                            </div>
+                                            <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-normal">
+                                                {{ $lead->name }}
+                                            </h3>
+                                            <p class="text-sm sm:text-base text-[#63cd00] mt-1 mb-3 sm:mb-4 font-semibold">
+                                                {{ $lead->position }}
+                                            </p>
+                                            @if (!empty($lead->quote))
+                                                <blockquote class="text-xs sm:text-base text-gray-300 italic max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
+                                                    "{!! nl2br(e(trim($lead->quote, ' "“”'))) !!}"
+                                                </blockquote>
+                                            @endif
+                                            <div class="flex items-center space-x-3 mt-5 sm:mt-6 justify-center lg:justify-start">
+                                                @if(!empty($lead->facebook_url))
+                                                    <a href="{{ $lead->facebook_url }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+                                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-[#63cd00] hover:text-black text-white transition-all">
+                                                        <i class="fab fa-facebook-f text-sm"></i>
+                                                    </a>
+                                                @endif
+                                                @if(!empty($lead->instagram_url))
+                                                    <a href="{{ $lead->instagram_url }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+                                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-[#63cd00] hover:text-black text-white transition-all">
+                                                        <i class="fab fa-instagram text-sm"></i>
+                                                    </a>
+                                                @endif
+                                                @if(!empty($lead->linkedin_url))
+                                                    <a href="{{ $lead->linkedin_url }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+                                                        class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-700 hover:bg-[#63cd00] hover:text-black text-white transition-all">
+                                                        <i class="fab fa-linkedin-in text-sm"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </div>
+
                                     </div>
-                                </div>
-
+                                @endforeach
                             </div>
-                        @endforeach
-                    </div>
+
+                        </div>
+                    @endforeach
 
                 </div>
             </section>
@@ -890,7 +1011,7 @@
                     {{-- Header Section --}}
                     <div class="text-center">
                         <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-white">Major Competency</h2>
-                        <p class="mt-1 text-xs sm:text-sm text-gray-400">Program Keahlian Di SMK Amaliah 1 &amp; 2</p>
+                        <p class="mt-1 text-xs sm:text-sm text-gray-400">Program Keahlian Di SMK Amaliah 1 & 2</p>
                         <div class="w-16 sm:w-20 h-px bg-gray-600 mx-auto mt-2.5 sm:mt-3"></div>
                     </div>
 
@@ -1039,7 +1160,7 @@
                                         class="w-24 h-24 sm:w-full sm:h-48 object-cover flex-shrink-0">
 
                                     <div class="p-3 sm:p-5 flex flex-col justify-between flex-grow min-w-0">
-                                        <p class="text-gray-800 font-semibold text-xs sm:text-base leading-snug line-clamp-2 sm:line-clamp-3">
+                                        <p class="text-gray-800 font-semibold text-xs sm:text-base leading-snug line-clamp-3">
                                             {{ $newsItem->title }}
                                         </p>
                                         <p class="mt-2 text-[10px] sm:text-xs text-gray-400">
@@ -1085,7 +1206,7 @@
                     <div class="mt-6 sm:mt-10 max-w-4xl mx-auto">
                         <div class="relative w-full rounded-xl sm:rounded-2xl overflow-hidden shadow-xl" style="padding-top: 56.25%;">
                             <iframe class="absolute top-0 left-0 w-full h-full border-0"
-                                src="https://www.youtube-nocookie.com/embed/STOhZZmY6Co?si=34QAmdyIwXbAXs-7&amp;controls=0"
+                                src="https://www.youtube-nocookie.com/embed/STOhZZmY6Co?si=34QAmdyIwXbAXs-7&controls=0"
                                 loading="lazy" title="YouTube video player" frameborder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
@@ -1186,7 +1307,7 @@
                     </div>
 
                     {{-- Tombol Selengkapnya --}}
-                    <div class="text-right mt-4 sm:mt-6">
+                    <div class="text-center sm:text-right mt-5 sm:mt-6">
                         <a href="{{ route('public.facilities.index') }}" class="inline-flex items-center group text-xs sm:text-sm">
                             <span class="font-semibold text-white mr-2 sm:mr-3">Selengkapnya</span>
                             <div class="bg-gray-200 rounded-full p-1.5 sm:p-2 group-hover:bg-gray-300 transition-transform duration-300 group-hover:translate-x-1">
@@ -1279,14 +1400,15 @@
                         @touchstart.passive="handleTouchStart($event)"
                         @touchend.passive="handleTouchEnd($event)">
 
-                        <div x-cloak class="relative h-[250px] sm:h-[280px]">
+                        <div x-cloak class="relative h-[270px] sm:h-[280px]">
                             @forelse ($testimonials as $i => $t)
                                 <div x-show="index === {{ $i }}"
                                     x-transition:enter="transition ease-out duration-300"
-                                    x-transition:enter-start="opacity-0 translate-y-3"
+                                    x-transition:enter-start="opacity-0 translate-y-2"
                                     x-transition:enter-end="opacity-100 translate-y-0"
-                                    class="bg-white border border-gray-200 rounded-xl sm:rounded-2xl shadow-sm px-6 py-5 sm:px-12 sm:py-7 text-center h-[250px] sm:h-[280px] flex flex-col justify-between select-none">
-                                    <div class="ts-quote text-[#63cd00] text-2xl sm:text-3xl flex-shrink-0"><i class="fas fa-quote-left"></i></div>
+                                    class="absolute inset-0 bg-white border border-gray-200 rounded-xl sm:rounded-2xl shadow-sm px-5 py-4 sm:px-12 sm:py-7 text-center h-full flex flex-col justify-between select-none"
+                                    @if(!$loop->first) style="display: none;" @endif>
+                                    <div class="ts-quote text-[#63cd00] text-xl sm:text-3xl flex-shrink-0"><i class="fas fa-quote-left"></i></div>
                                     <div class="flex-1 flex items-center justify-center my-auto px-1 sm:px-4">
                                         <p class="text-gray-700 text-xs sm:text-base leading-relaxed italic line-clamp-4">"{{ $t->description }}"</p>
                                     </div>
@@ -1300,40 +1422,52 @@
                                         @endif
                                         <div class="text-left min-w-0">
                                             <p class="font-bold text-gray-900 text-xs sm:text-base leading-tight truncate">{{ $t->name }}</p>
-                                            <p class="text-[10px] sm:text-xs truncate" style="color: {{ $amaliahGreen }};">
+                                            <p class="text-[10.5px] sm:text-xs truncate" style="color: {{ $amaliahGreen }};">
                                                 Alumni {{ $t->major->name ?? 'N/A' }} · {{ $t->alumni_year }}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             @empty
-                                <div class="bg-white border border-gray-200 rounded-xl sm:rounded-2xl shadow-sm p-6 text-center text-gray-400 text-xs sm:text-sm h-[250px] sm:h-[280px] flex items-center justify-center">
+                                <div class="bg-white border border-gray-200 rounded-xl sm:rounded-2xl shadow-sm p-6 text-center text-gray-400 text-xs sm:text-sm h-full flex items-center justify-center">
                                     Belum ada testimoni.
                                 </div>
                             @endforelse
 
-                            {{-- Tombol Panah Kiri / Kanan --}}
+                            {{-- Tombol Panah Kiri / Kanan Melayang (Khusus Desktop) --}}
                             @if ($testimonials->count() > 1)
                                 <button type="button" @click="prev()" aria-label="Testimoni Sebelumnya"
-                                    class="absolute -left-2 sm:-left-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white border border-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-50 shadow-md transition z-10 text-xs sm:text-base">
+                                    class="hidden sm:flex absolute -left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white border border-gray-200 text-gray-700 items-center justify-center hover:bg-gray-50 shadow-md transition z-10 text-base">
                                     <i class="fas fa-chevron-left"></i>
                                 </button>
                                 <button type="button" @click="next()" aria-label="Testimoni Selanjutnya"
-                                    class="absolute -right-2 sm:-right-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white border border-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-50 shadow-md transition z-10 text-xs sm:text-base">
+                                    class="hidden sm:flex absolute -right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white border border-gray-200 text-gray-700 items-center justify-center hover:bg-gray-50 shadow-md transition z-10 text-base">
                                     <i class="fas fa-chevron-right"></i>
                                 </button>
                             @endif
                         </div>
 
-                        {{-- Indikator Titik --}}
+                        {{-- Kontrol Navigasi Mobile & Indikator Titik --}}
                         @if ($testimonials->count() > 1)
-                            <div class="flex items-center justify-center gap-1.5 sm:gap-2 mt-4 sm:mt-6">
-                                @foreach ($testimonials as $i => $t)
-                                    <button type="button" @click="go({{ $i }})"
-                                        :class="index === {{ $i }} ? 'w-5 sm:w-6 bg-[#63cd00]' : 'w-2 bg-gray-300 hover:bg-gray-400'"
-                                        class="h-1.5 sm:h-2 rounded-full transition-all duration-300"
-                                        aria-label="Pilih testimoni {{ $i + 1 }}"></button>
-                                @endforeach
+                            <div class="flex items-center justify-center gap-3 mt-4 sm:mt-6">
+                                <button type="button" @click="prev()" aria-label="Testimoni Sebelumnya"
+                                    class="sm:hidden w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-700 flex items-center justify-center shadow-xs hover:bg-gray-50 transition text-xs">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+
+                                <div class="flex items-center gap-1.5 sm:gap-2">
+                                    @foreach ($testimonials as $i => $t)
+                                        <button type="button" @click="go({{ $i }})"
+                                            :class="index === {{ $i }} ? 'w-5 sm:w-6 bg-[#63cd00]' : 'w-2 bg-gray-300 hover:bg-gray-400'"
+                                            class="h-1.5 sm:h-2 rounded-full transition-all duration-300"
+                                            aria-label="Pilih testimoni {{ $i + 1 }}"></button>
+                                    @endforeach
+                                </div>
+
+                                <button type="button" @click="next()" aria-label="Testimoni Selanjutnya"
+                                    class="sm:hidden w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-700 flex items-center justify-center shadow-xs hover:bg-gray-50 transition text-xs">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
                             </div>
                         @endif
                     </div>
@@ -1366,7 +1500,7 @@
                                     </a>
                                     <div class="ig-user">
                                         <span class="ig-username">@smkamaliah</span>
-                                        <span class="ig-sub">SMK Amaliah 1 &amp; 2 · Ciawi-Bogor</span>
+                                        <span class="ig-sub">SMK Amaliah 1 & 2 · Ciawi-Bogor</span>
                                     </div>
                                     <a class="ig-follow" href="{{ config('services.instagram.profile_url') }}" target="_blank" rel="noopener">Follow</a>
                                 </div>
@@ -1411,9 +1545,9 @@
                                     </a>
                                     <div class="tiktok-account">
                                         <strong>{{ '@' . config('services.tiktok.username') }}</strong>
-                                        <span>SMK Amaliah 1 &amp; 2 · Ciawi-Bogor</span>
+                                        <span>SMK Amaliah 1 & 2 · Ciawi-Bogor</span>
                                     </div>
-                                    <a class="tiktok-follow" href="{{ config('services.tiktok.profile_url') }}" target="_blank" rel="noopener">TikTok</a>
+                                    <a class="tiktok-follow" href="{{ config('services.tiktok.profile_url') }}" target="_blank" rel="noopener">Follow</a>
                                 </div>
                                 @php
                                     $tiktokFallbackCovers = [
@@ -1613,14 +1747,20 @@
 
                     @media (max-width: 640px) {
                         .tiktok-play {
+                            top: 40%;
                             width: 26px;
                             height: 26px;
                             font-size: 9px;
                         }
 
                         .tiktok-video-label {
-                            padding: 12px 4px 4px;
-                            font-size: 10px;
+                            padding: 14px 4px 5px;
+                            font-size: 9.5px;
+                            line-height: 1.25;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            overflow: hidden;
                         }
                     }
 
@@ -1629,10 +1769,12 @@
                         right: 0;
                         bottom: 0;
                         left: 0;
-                        padding: 18px 8px 7px;
-                        background: linear-gradient(transparent, rgba(0, 0, 0, .72));
+                        padding: 20px 8px 8px;
+                        background: linear-gradient(transparent, rgba(0, 0, 0, .85));
+                        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
                         color: #fff;
                         font-size: 11px;
+                        font-weight: 500;
                     }
 
                     .tiktok-video-link:focus-visible,
@@ -1730,10 +1872,10 @@
 
                     
                     @media (max-width: 640px) {
-                        .ig-item:nth-child(n+7) {
+                        .ig-item:nth-child(n+10) {
                             display: none !important;
                         }
-                        .tiktok-video-link:nth-child(n+7) {
+                        .tiktok-video-link:nth-child(n+10) {
                             display: none !important;
                         }
                     }

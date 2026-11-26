@@ -47,29 +47,29 @@
             </div>
         @endif
 
-        {{-- Overlay gradasi agar teks terbaca --}}
+        {{-- Overlay gradasi kontras tinggi agar teks selalu terbaca tajam --}}
         <div class="absolute inset-0"
-            style="background: linear-gradient(100deg, rgba(40,40,41,.86) 0%, rgba(40,40,41,.55) 45%, rgba(40,40,41,.15) 100%)"></div>
+            style="background: linear-gradient(100deg, rgba(20,20,22,0.92) 0%, rgba(20,20,22,0.78) 50%, rgba(20,20,22,0.55) 100%)"></div>
 
         {{-- Konten hero --}}
         <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
             <span
-                class="inline-flex items-center gap-2 w-fit text-[11px] lg:text-xs font-semibold tracking-widest uppercase text-[#d9ffb3] bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 mb-4">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
-                SMK Amaliah 1 &amp; 2 — Ciawi · Bogor
+                class="inline-flex items-center gap-2 w-fit text-[11px] sm:text-xs font-bold tracking-wider uppercase text-white bg-black/60 backdrop-blur border border-white/20 rounded-full px-3.5 sm:px-4 py-1 sm:py-1.5 mb-2.5 sm:mb-4 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-[#63cd00] shadow-sm shadow-[#63cd00]/80"></span>
+                SMK Amaliah 1 & 2 — Ciawi · Bogor
             </span>
-            <h1 class="text-white text-3xl lg:text-5xl font-bold leading-tight">{{ $title }}</h1>
-            <p class="mt-4 max-w-2xl text-white/85 text-base lg:text-lg leading-relaxed">{{ $lead }}</p>
+            <h1 class="text-white text-2xl sm:text-3xl lg:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-sm">{{ $title }}</h1>
+            <p class="mt-2.5 sm:mt-4 max-w-2xl text-gray-100 text-sm sm:text-base lg:text-lg leading-relaxed font-normal">{{ $lead }}</p>
 
             @if($showCta)
-                <div class="mt-8 flex flex-wrap items-center gap-3">
+                <div class="mt-5 sm:mt-8 flex flex-wrap items-center gap-2.5 sm:gap-3">
                     <a href="#jelajahi"
-                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#1c1c1d] font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-md">
                         <i class="fa-solid fa-compass"></i> Jelajahi Tentang Kami
                     </a>
                     <a href="https://ppdb.smkamaliah.sch.id/login" target="_blank" rel="noopener noreferrer"
-                        class="inline-flex items-center gap-2 bg-white text-[#282829] font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
-                        <i class="fa-solid fa-rocket"></i> Info SPMB
+                        class="inline-flex items-center gap-2 bg-white text-[#1c1c1d] font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-300 shadow-md">
+                        <i class="fa-solid fa-rocket text-[#449e00]"></i> Info SPMB
                     </a>
                 </div>
             @endif
@@ -80,19 +80,19 @@
     <div style="background-color:#2D2D2D;">
         <div class="max-w-screen-xl min-h-12 py-2 mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto scrollbar-hide">
             <nav aria-label="Breadcrumb" class="min-w-0">
-                <ol class="inline-flex items-center space-x-2 md:space-x-3 text-xs sm:text-sm whitespace-nowrap">
+                <ol class="inline-flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm whitespace-nowrap">
                     @foreach($crumbs as $i => $crumb)
-                        <li @if($i > 0) class="flex items-center" @endif>
+                        <li class="flex items-center gap-1.5 sm:gap-2.5">
                             @if($i > 0)
-                                <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
+                                <i class="fa-solid fa-chevron-right text-white/40 text-[10px]"></i>
                             @endif
                             @if(!$loop->last)
                                 <a href="{{ $crumb['url'] }}"
-                                    class="inline-flex items-center ml-0 {{ $i > 0 ? 'md:ml-3' : '' }} font-medium text-gray-300 hover:text-white transition-colors">
+                                    class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
                                     {{ $crumb['label'] }}
                                 </a>
                             @else
-                                <span class="inline-flex items-center ml-0 {{ $i > 0 ? 'md:ml-3' : '' }} font-medium text-[#63cd00]">
+                                <span class="inline-flex items-center font-medium text-[#63cd00]">
                                     {{ $current }}
                                 </span>
                             @endif

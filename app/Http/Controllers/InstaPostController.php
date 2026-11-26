@@ -43,7 +43,7 @@ class InstaPostController extends Controller
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        $this->trimToLimit();
+        $this->trimToLimit(9);
 
         return redirect()
             ->route('admin.insta-posts.index')
@@ -51,9 +51,9 @@ class InstaPostController extends Controller
     }
 
     /**
-     * Batasi jumlah data maksimal 16. Data lama otomatis dihapus jika melebihi.
+     * Batasi jumlah data maksimal 9. Data lama otomatis dihapus permanen jika melebihi kuota.
      */
-    protected function trimToLimit(int $limit = 15): void
+    protected function trimToLimit(int $limit = 9): void
     {
         $oldestFirst = InstaPost::orderBy('created_at')->orderBy('id')->get();
 
@@ -61,7 +61,9 @@ class InstaPostController extends Controller
             $oldestFirst
                 ->take($oldestFirst->count() - $limit)
                 ->each(function (InstaPost $post) {
-                    Storage::disk('public')->delete($post->path);
+                    if ($post->path && Storage::disk('public')->exists($post->path)) {
+                        Storage::disk('public')->delete($post->path);
+                    }
                     $post->delete();
                 });
         }

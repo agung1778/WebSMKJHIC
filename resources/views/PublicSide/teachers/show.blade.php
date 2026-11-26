@@ -30,29 +30,25 @@
 
         {{-- Breadcrumb --}}
         <div class="breadcrumb-bar">
-            <div class="page-shell ts-crumb">
-                <nav class="flex" aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-lg">
+            <div class="page-shell ts-crumb overflow-x-auto scrollbar-hide py-2">
+                <nav class="flex min-w-0" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm whitespace-nowrap">
                         <li class="inline-flex items-center">
                             <a href="/"
                                 class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
                                 {{ __('Beranda') }}
                             </a>
                         </li>
-                        <li>
-                            <div class="flex items-center">
-                                <i class="fas fa-chevron-right text-white text-xs"></i>
-                                <a href="{{ route('public.teachers.index') }}"
-                                    class="ml-2 font-medium text-gray-300 hover:text-white md:ml-3 transition-colors">
-                                    {{ __('Guru & Staf') }}
-                                </a>
-                            </div>
+                        <li class="flex items-center gap-1.5 sm:gap-2.5">
+                            <i class="fas fa-chevron-right text-white/40 text-[10px]"></i>
+                            <a href="{{ route('public.teachers.index') }}"
+                                class="font-medium text-gray-300 hover:text-white transition-colors">
+                                {{ __('Guru & Staf') }}
+                            </a>
                         </li>
-                        <li aria-current="page">
-                            <div class="flex items-center">
-                                <i class="fas fa-chevron-right text-white text-xs"></i>
-                                <span class="ml-2 font-medium md:ml-3 crumb-current">{{ $teacher->name }}</span>
-                            </div>
+                        <li class="flex items-center gap-1.5 sm:gap-2.5" aria-current="page">
+                            <i class="fas fa-chevron-right text-white/40 text-[10px]"></i>
+                            <span class="font-medium crumb-current truncate max-w-xs">{{ $teacher->name }}</span>
                         </li>
                     </ol>
                 </nav>
@@ -115,15 +111,15 @@
                     </h1>
 
                     @if (!empty($teacher->position))
-                        <p class="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[#3f8600] bg-[#eefde2] border border-[#63cd00]/25 rounded-full px-4 py-1.5">
+                        <p class="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#1f5c00] bg-emerald-50 border border-emerald-200 rounded-full px-4 py-1.5 shadow-xs">
                             <i class="fas fa-chalkboard-teacher text-xs"></i>
                             {{ $teacher->position }}
                         </p>
                     @endif
 
                     @if (!empty($teacher->subject))
-                        <p class="mt-6 text-base sm:text-lg text-gray-600 leading-relaxed max-w-prose">
-                            Mengampu mata pelajaran <strong class="text-gray-900">{{ $teacher->subject }}</strong> di
+                        <p class="mt-6 text-base sm:text-lg text-gray-700 leading-relaxed max-w-prose">
+                            Mengampu mata pelajaran <strong class="text-gray-900 font-bold">{{ $teacher->subject }}</strong> di
                             {{ $teacher->school ?: 'SMK Amaliah' }}, berikut adalah profil tenaga pendidik yang aktif
                             mendampingi proses belajar mengajar di sekolah kami.
                         </p>
@@ -135,8 +131,8 @@
                             <div class="ts-info-card">
                                 <div class="ts-info-card__icon"><i class="fas fa-user"></i></div>
                                 <div class="min-w-0">
-                                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">{{ __('Nama Lengkap') }}</p>
-                                    <p class="text-sm font-semibold text-gray-800 break-words">{{ $teacher->name }}</p>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{{ __('Nama Lengkap') }}</p>
+                                    <p class="text-sm font-bold text-gray-900 break-words">{{ $teacher->name }}</p>
                                 </div>
                             </div>
                         @endif
@@ -145,8 +141,8 @@
                             <div class="ts-info-card">
                                 <div class="ts-info-card__icon"><i class="fas fa-briefcase"></i></div>
                                 <div class="min-w-0">
-                                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">{{ __('Jabatan') }}</p>
-                                    <p class="text-sm font-semibold text-gray-800 break-words">{{ $teacher->position }}</p>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{{ __('Jabatan') }}</p>
+                                    <p class="text-sm font-bold text-gray-900 break-words">{{ $teacher->position }}</p>
                                 </div>
                             </div>
                         @endif
@@ -155,8 +151,8 @@
                             <div class="ts-info-card">
                                 <div class="ts-info-card__icon"><i class="fas fa-book-open"></i></div>
                                 <div class="min-w-0">
-                                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">{{ __('Mata Pelajaran') }}</p>
-                                    <p class="text-sm font-semibold text-gray-800 break-words">{{ $teacher->subject }}</p>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{{ __('Mata Pelajaran') }}</p>
+                                    <p class="text-sm font-bold text-gray-900 break-words">{{ $teacher->subject }}</p>
                                 </div>
                             </div>
                         @endif
@@ -165,8 +161,8 @@
                             <div class="ts-info-card {{ $isStaff ? '--staff' : '' }}">
                                 <div class="ts-info-card__icon"><i class="fas {{ $isStaff ? 'fa-users-gear' : 'fa-school' }}"></i></div>
                                 <div class="min-w-0">
-                                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">{{ __('Sekolah') }}</p>
-                                    <p class="text-sm font-semibold text-gray-800 break-words">{{ $schoolBadge }}</p>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{{ __('Sekolah') }}</p>
+                                    <p class="text-sm font-bold text-gray-900 break-words">{{ $schoolBadge }}</p>
                                 </div>
                             </div>
                         @endif
@@ -175,8 +171,8 @@
                             <div class="ts-info-card">
                                 <div class="ts-info-card__icon"><i class="fas fa-tags"></i></div>
                                 <div class="min-w-0">
-                                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">{{ __('Kategori') }}</p>
-                                    <p class="text-sm font-semibold text-gray-800 break-words">{{ $teacher->category }}</p>
+                                    <p class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{{ __('Kategori') }}</p>
+                                    <p class="text-sm font-bold text-gray-900 break-words">{{ $teacher->category }}</p>
                                 </div>
                             </div>
                         @endif
@@ -184,13 +180,12 @@
 
                     <div class="mt-8 flex flex-wrap items-center gap-3">
                         <a href="{{ route('public.teachers.index') }}"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 hover:shadow-lg"
-                            style="background-color: #63cd00; box-shadow: 0 6px 16px -6px rgba(99,205,0,.5);">
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#1c1c1d] hover:bg-[#63cd00] hover:text-[#1c1c1d] transition-all duration-200 shadow-sm">
                             <i class="fas fa-arrow-left text-xs"></i>
                             {{ __('Kembali ke Daftar Guru') }}
                         </a>
                         <a href="#guruLainnya"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-[#282829] bg-gray-100 border border-gray-200 transition-all duration-200 hover:bg-gray-200">
+                            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-[#282829] bg-gray-100 border border-gray-200 transition-all duration-200 hover:bg-gray-200">
                             {{ __('Guru & Staf Lainnya') }}
                             <i class="fas fa-arrow-down text-xs"></i>
                         </a>

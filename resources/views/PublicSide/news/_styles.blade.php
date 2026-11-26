@@ -22,9 +22,9 @@
     /* Metadatum: tanggal / penulis / waktu baca */
     .nw-meta {
         display: inline-flex; align-items: center; gap: 0.5rem;
-        font-size: 0.8rem; font-weight: 500; color: var(--nw-muted);
+        font-size: 0.8rem; font-weight: 600; color: #4b5563;
     }
-    .nw-meta i { color: var(--nw-accent); width: 0.9rem; text-align: center; }
+    .nw-meta i { color: #2e7000; width: 0.9rem; text-align: center; }
 
     /* Kartu berita — seragam & responsif */
     .nw-card {
@@ -36,13 +36,13 @@
     .nw-card:hover, .nw-card:focus-visible {
         transform: translateY(-4px);
         box-shadow: 0 18px 34px -14px rgba(16, 24, 40, 0.16);
-        border-color: var(--nw-accent);
+        border-color: #2e7000;
     }
-    .nw-card:focus-visible { outline: 2px solid var(--nw-accent); outline-offset: 2px; }
+    .nw-card:focus-visible { outline: 2px solid #2e7000; outline-offset: 2px; }
     .nw-card__thumb { position: relative; width: 100%; aspect-ratio: 16 / 9; flex-shrink: 0; overflow: hidden; background: linear-gradient(145deg, #282829, #1f2937); }
     .nw-card__thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.45s ease; }
     .nw-card:hover .nw-card__thumb img { transform: scale(1.05); }
-    .nw-card__hint { color: var(--nw-accent); font-weight: 700; font-size: 0.82rem; transition: gap 0.2s ease; }
+    .nw-card__hint { color: #2e7000; font-weight: 700; font-size: 0.82rem; transition: gap 0.2s ease; }
 
     /* Fallback gambar (berita tanpa foto) */
     .nw-thumb-fallback {

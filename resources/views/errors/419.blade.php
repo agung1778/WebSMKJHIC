@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sesi Diperbarui · SMK Amaliah 1 &amp; 2</title>
+    <title>Sesi Diperbarui · SMK Amaliah 1 & 2</title>
     <link rel="icon" type="image/webp" href="{{ asset('assets/logo/am.webp') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -75,7 +75,7 @@
         </div>
 
         <div class="mt-8 pt-6 border-t border-gray-100 text-xs text-gray-400">
-            &copy; {{ date('Y') }} SMK Amaliah 1 &amp; 2 Ciawi. Hak Cipta Dilindungi.
+            &copy; {{ date('Y') }} SMK Amaliah 1 & 2 Ciawi. Hak Cipta Dilindungi.
         </div>
     </div>
 

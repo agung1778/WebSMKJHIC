@@ -21,16 +21,16 @@
     };
 
     $filterGroups = [
+        ['key' => 'merged', 'label' => 'SMK Amaliah 1 & 2', 'icon' => 'fa-school-circle-check'],
         ['key' => 'a1',     'label' => 'SMK Amaliah 1',    'icon' => 'fa-school'],
         ['key' => 'a2',     'label' => 'SMK Amaliah 2',    'icon' => 'fa-school'],
-        ['key' => 'merged', 'label' => 'SMK Amaliah 1 & 2', 'icon' => 'fa-school-circle-check'],
         ['key' => 'staff',  'label' => 'Staff',             'icon' => 'fa-users-gear'],
     ];
 
     $statCards = [
+        ['key' => 'merged', 'label' => 'Guru 1 & 2 (Gabungan)', 'icon' => 'fa-school-circle-check', 'fg' => '#b45309', 'bg' => '#fef3c7'],
         ['key' => 'a1',     'label' => 'Guru SMK Amaliah 1',    'icon' => 'fa-school',              'fg' => '#3f8600', 'bg' => '#eefde2'],
         ['key' => 'a2',     'label' => 'Guru SMK Amaliah 2',    'icon' => 'fa-school-flag',         'fg' => '#1d4ed8', 'bg' => '#e0e7ff'],
-        ['key' => 'merged', 'label' => 'Guru 1 & 2 (Gabungan)', 'icon' => 'fa-school-circle-check', 'fg' => '#b45309', 'bg' => '#fef3c7'],
         ['key' => 'staff',  'label' => 'Staf / Kependidikan',   'icon' => 'fa-users-gear',          'fg' => '#282829', 'bg' => '#f1f5f9'],
     ];
 @endphp
@@ -54,28 +54,28 @@
             @endif
 
             <div class="absolute inset-0"
-                style="background: linear-gradient(100deg, rgba(40,40,41,.88) 0%, rgba(40,40,41,.55) 45%, rgba(40,40,41,.15) 100%)"></div>
+                style="background: linear-gradient(100deg, rgba(20,20,22,0.92) 0%, rgba(20,20,22,0.78) 50%, rgba(20,20,22,0.55) 100%)"></div>
 
             <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
                 <span
-                    class="inline-flex items-center gap-2 w-fit text-[11px] lg:text-xs font-semibold tracking-widest uppercase text-[#d9ffb3] bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 mb-4">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
-                    Tenaga Pendidik &amp; Kependidikan
+                    class="inline-flex items-center gap-2 w-fit text-[11px] sm:text-xs font-bold tracking-wider uppercase text-white bg-black/60 backdrop-blur border border-white/20 rounded-full px-3.5 sm:px-4 py-1 sm:py-1.5 mb-2.5 sm:mb-4 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-[#63cd00] shadow-sm shadow-[#63cd00]/80"></span>
+                    Tenaga Pendidik & Kependidikan
                 </span>
-                <h1 class="text-white text-3xl lg:text-5xl font-bold leading-tight">Guru &amp; Staf SMK Amaliah</h1>
-                <p class="mt-4 max-w-2xl text-white/85 text-base lg:text-lg leading-relaxed">
+                <h1 class="text-white text-2xl sm:text-3xl lg:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-sm">Guru & Staf SMK Amaliah</h1>
+                <p class="mt-2.5 sm:mt-4 max-w-2xl text-gray-100 text-sm sm:text-base lg:text-lg leading-relaxed font-normal">
                     Kenali {{ $total }} tenaga pendidik dan kependidikan yang berdedikasi, siap membimbing dan
                     mendampingi setiap siswa di SMK Amaliah 1 dan SMK Amaliah 2 Ciawi-Bogor.
                 </p>
 
-                <div class="mt-8 flex flex-wrap items-center gap-3">
+                <div class="mt-5 sm:mt-8 flex flex-wrap items-center gap-2.5 sm:gap-3">
                     <a href="#daftarGuru"
-                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
-                        <i class="fa-solid fa-user-tie"></i> Lihat Daftar Guru &amp; Staf
+                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#1c1c1d] font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-md">
+                        <i class="fa-solid fa-user-tie"></i> Lihat Daftar Guru & Staf
                     </a>
                     <a href="{{ route('public.about.index') }}"
-                        class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
-                        <i class="fa-solid fa-building-columns"></i> Profil Sekolah
+                        class="inline-flex items-center gap-2 bg-white text-[#1c1c1d] font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-300 shadow-md">
+                        <i class="fa-solid fa-building-columns text-[#449e00]"></i> Profil Sekolah
                     </a>
                 </div>
             </div>
@@ -83,17 +83,17 @@
 
         {{-- Breadcrumb --}}
         <div style="background-color:#2D2D2D;">
-            <div class="max-w-screen-xl h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-                <nav aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
+            <div class="max-w-screen-xl min-h-12 py-2 mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto scrollbar-hide">
+                <nav aria-label="Breadcrumb" class="min-w-0">
+                    <ol class="inline-flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm whitespace-nowrap">
                         <li class="flex items-center">
                             <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
                                 Home
                             </a>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
-                            <span class="inline-flex items-center ml-2 md:ml-3 font-medium text-[#63cd00]">Guru &amp; Staf</span>
+                        <li class="flex items-center gap-1.5 sm:gap-2.5">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-[10px]"></i>
+                            <span class="inline-flex items-center font-medium text-[#63cd00]">Guru & Staf</span>
                         </li>
                     </ol>
                 </nav>
@@ -103,19 +103,19 @@
 
     {{-- ============================ STATISTIK KATEGORI ============================ --}}
     <section class="bg-gray-50">
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                 @foreach($statCards as $card)
                     <div
-                        class="group flex items-center gap-4 bg-white border border-gray-200 rounded-2xl px-5 py-4 shadow-sm hover:-translate-y-1 hover:shadow-lg hover:border-[#63cd00] transition-all duration-300">
+                        class="group flex items-center gap-3 sm:gap-4 bg-white border border-gray-200 rounded-2xl p-3.5 sm:p-5 shadow-sm hover:-translate-y-1 hover:shadow-lg hover:border-[#63cd00] transition-all duration-300">
                         <div
-                            class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-lg transition-transform duration-300 group-hover:scale-110"
+                            class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-base sm:text-lg transition-transform duration-300 group-hover:scale-110"
                             style="background:{{ $card['bg'] }};color:{{ $card['fg'] }}">
                             <i class="fa-solid {{ $card['icon'] }}"></i>
                         </div>
                         <div class="min-w-0">
-                            <p class="text-2xl font-extrabold text-[#282829] leading-none">{{ $counts[$card['key']] ?? 0 }}</p>
-                            <p class="mt-1 text-xs font-semibold text-gray-500 truncate">{{ $card['label'] }}</p>
+                            <p class="text-xl sm:text-2xl font-extrabold text-[#282829] leading-none">{{ $counts[$card['key']] ?? 0 }}</p>
+                            <p class="mt-1 text-[11px] sm:text-xs font-semibold text-gray-700 line-clamp-2 min-h-[2.5em] leading-snug">{{ $card['label'] }}</p>
                         </div>
                     </div>
                 @endforeach
@@ -124,7 +124,7 @@
     </section>
 
     {{-- ============================ DAFTAR GURU & STAF ============================ --}}
-    <section id="daftarGuru" class="bg-white py-16 sm:py-20">
+    <section id="daftarGuru" class="bg-white py-10 sm:py-16 lg:py-20">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Judul --}}
@@ -136,8 +136,20 @@
                 </p>
             </div>
 
+            {{-- Search Bar --}}
+            <div class="mt-8 mb-4 max-w-md">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </span>
+                    <input type="text" id="teacherSearchInput"
+                        placeholder="Cari nama guru atau mata pelajaran..."
+                        class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-full focus:bg-white focus:outline-none focus:border-[#63cd00] focus:ring-2 focus:ring-[#63cd00]/20 shadow-xs transition-all">
+                </div>
+            </div>
+
             {{-- Filter kategori murni CSS (radio + label, tanpa JavaScript) --}}
-            <div class="fw mt-8">
+            <div class="fw mt-4">
                 <input type="radio" name="fw" id="fw-all" class="fw-input" checked>
                 <input type="radio" name="fw" id="fw-a1" class="fw-input">
                 <input type="radio" name="fw" id="fw-a2" class="fw-input">
@@ -155,6 +167,15 @@
                             <span class="opacity-70 ml-1">({{ $counts[$group['key']] ?? 0 }})</span>
                         </label>
                     @endforeach
+                </div>
+
+                {{-- Pesan jika pencarian tidak ditemukan --}}
+                <div id="noTeacherSearchMessage" class="hidden empty-state mt-8">
+                    <div class="w-14 h-14 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[#63cd00] text-xl">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <p class="font-semibold text-gray-700">Guru atau staf tidak ditemukan.</p>
+                    <p class="text-sm text-gray-500">Coba gunakan kata kunci pencarian yang lain.</p>
                 </div>
 
                 {{-- Pesan saat total kosong --}}
@@ -184,7 +205,10 @@
                 <div class="fw-grid teachers-grid mt-8">
                     @forelse ($teachers as $teacher)
                         @php $g = $groupOf($teacher); @endphp
-                        <div class="fw-card" data-g="all {{ $g }}">
+                        <div class="fw-card" data-g="all {{ $g }}"
+                            data-name="{{ strtolower($teacher->name) }}"
+                            data-subject="{{ strtolower($teacher->subject ?? '') }}"
+                            data-position="{{ strtolower($teacher->position ?? '') }}">
                             @include('PublicSide.teachers.card', ['teacher' => $teacher])
                         </div>
                     @empty
@@ -193,6 +217,59 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var searchInput = document.getElementById('teacherSearchInput');
+            var cards = Array.from(document.querySelectorAll('.fw-card'));
+            var noResult = document.getElementById('noTeacherSearchMessage');
+            var radios = Array.from(document.querySelectorAll('.fw-input'));
+
+            function getActiveCategory() {
+                var checked = document.querySelector('.fw-input:checked');
+                if (!checked) return 'all';
+                return checked.id.replace('fw-', '');
+            }
+
+            function filter() {
+                var q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+                var activeCat = getActiveCategory();
+                var matched = 0;
+
+                cards.forEach(function (card) {
+                    var groups = (card.dataset.g || '').split(' ');
+                    var matchCat = activeCat === 'all' || groups.indexOf(activeCat) !== -1;
+                    var matchQuery = !q ||
+                        (card.dataset.name || '').indexOf(q) !== -1 ||
+                        (card.dataset.subject || '').indexOf(q) !== -1 ||
+                        (card.dataset.position || '').indexOf(q) !== -1;
+
+                    var isVisible = matchCat && matchQuery;
+                    if (isVisible) matched++;
+
+                    if (q) {
+                        card.style.display = isVisible ? 'flex' : 'none';
+                    } else {
+                        card.style.display = '';
+                    }
+                });
+
+                if (noResult) {
+                    // Hanya tampilkan pesan pencarian jika user memang sedang mengetik pencarian dan tidak ada hasil
+                    noResult.classList.toggle('hidden', !q || matched > 0);
+                }
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', filter);
+            }
+
+            radios.forEach(function (radio) {
+                radio.addEventListener('change', filter);
+            });
+        });
+    </script>
     </section>
 
 @endsection

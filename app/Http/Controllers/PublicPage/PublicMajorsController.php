@@ -30,10 +30,10 @@ class PublicMajorsController extends Controller
      */
     public function show(Major $major)
     {
-        // Ambil semua jurusan LAIN, dengan eager loading (jika diperlukan untuk sidebar card)
+        // Ambil semua jurusan LAIN secara acak agar pengunjung bisa langsung eksplorasi jurusan lain
         $otherMajors = Major::where('id', '!=', $major->id)
-            ->with('testimonials') // Contoh eager loading untuk sidebar
-            ->latest()
+            ->with('testimonials')
+            ->inRandomOrder()
             ->get();
 
         // Kirim data jurusan yang sedang dilihat DAN daftar jurusan lain ke view

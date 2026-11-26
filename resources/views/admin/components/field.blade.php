@@ -19,7 +19,7 @@
 @php
     $fieldId = $id ?? 'field-' . str_replace(['[', ']', '.'], ['-', '', '_'], (string) $name);
     $val = old($name, $value !== null ? $value : '');
-    $hasError = $errors->has($name);
+    $hasError = isset($errors) && $errors instanceof \Illuminate\Support\ViewErrorBag ? $errors->has($name) : false;
 @endphp
 
 <div class="field {{ $class }}">
@@ -36,7 +36,15 @@
                 <option value="">— Pilih —</option>
             @endif
             @foreach($options as $optValue => $optLabel)
-                <option value="{{ $optValue }}" @selected((string) $val === (string) $optValue)>{{ $optLabel }}</option>
+                @if(is_array($optLabel))
+                    <optgroup label="{{ $optValue }}">
+                        @foreach($optLabel as $subValue => $subLabel)
+                            <option value="{{ $subValue }}" @selected((string) $val === (string) $subValue)>{{ $subLabel }}</option>
+                        @endforeach
+                    </optgroup>
+                @else
+                    <option value="{{ $optValue }}" @selected((string) $val === (string) $optValue)>{{ $optLabel }}</option>
+                @endif
             @endforeach
         </select>
 

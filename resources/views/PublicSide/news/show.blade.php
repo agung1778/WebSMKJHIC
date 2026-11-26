@@ -23,24 +23,24 @@
             @endif
 
             <div class="absolute inset-0"
-                style="background: linear-gradient(180deg, rgba(40,40,41,.35) 0%, rgba(40,40,41,.78) 100%)"></div>
+                style="background: linear-gradient(180deg, rgba(20,20,22,0.45) 0%, rgba(20,20,22,0.9) 100%)"></div>
 
-            <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-10">
-                <span class="nw-chip w-fit mb-4"><i class="fa-solid fa-newspaper"></i> Berita Sekolah</span>
-                <h1 class="text-white text-3xl lg:text-5xl font-extrabold leading-tight max-w-4xl">
+            <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-6 sm:pb-10">
+                <span class="nw-chip w-fit mb-2.5 sm:mb-4 text-[11px] sm:text-xs font-bold bg-[#63cd00] text-[#1c1c1d] shadow-sm"><i class="fa-solid fa-newspaper"></i> Berita Sekolah</span>
+                <h1 class="text-white text-2xl sm:text-3xl lg:text-5xl font-extrabold leading-tight max-w-4xl tracking-tight drop-shadow-sm">
                     {{ $news->title }}
                 </h1>
-                <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/85">
-                    <span class="inline-flex items-center gap-2">
-                        <i class="fa-regular fa-calendar"></i>
+                <div class="mt-3 sm:mt-5 flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-1.5 sm:gap-y-2 text-xs sm:text-sm text-gray-100 font-medium">
+                    <span class="inline-flex items-center gap-1.5">
+                        <i class="fa-regular fa-calendar text-[#63cd00]"></i>
                         {{ $published->format('d F Y') }}
                     </span>
-                    <span class="inline-flex items-center gap-2">
-                        <i class="fa-solid fa-user-pen"></i>
+                    <span class="inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-pen text-[#63cd00]"></i>
                         {{ $news->publisher }}
                     </span>
-                    <span class="inline-flex items-center gap-2">
-                        <i class="fa-regular fa-clock"></i>
+                    <span class="inline-flex items-center gap-1.5">
+                        <i class="fa-regular fa-clock text-[#63cd00]"></i>
                         {{ $readMinutes }} menit baca
                     </span>
                 </div>
@@ -49,24 +49,24 @@
 
         {{-- Breadcrumb --}}
         <div style="background-color:#2D2D2D;">
-            <div class="max-w-screen-xl min-h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-3">
-                <nav aria-label="Breadcrumb">
-                    <ol class="flex items-center space-x-2 md:space-x-3 text-sm">
+            <div class="max-w-screen-xl min-h-12 mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-2 overflow-x-auto scrollbar-hide">
+                <nav aria-label="Breadcrumb" class="min-w-0">
+                    <ol class="flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm whitespace-nowrap">
                         <li class="inline-flex items-center flex-shrink-0">
                             <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
                                 Home
                             </a>
                         </li>
-                        <li class="inline-flex items-center flex-shrink-0">
-                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
+                        <li class="inline-flex items-center flex-shrink-0 gap-1.5 sm:gap-2.5">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-[10px]"></i>
                             <a href="{{ route('public.news.index') }}"
-                                class="inline-flex items-center ml-2 md:ml-3 font-medium text-gray-300 hover:text-white transition-colors">
+                                class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
                                 Berita
                             </a>
                         </li>
-                        <li class="inline-flex items-center min-w-0">
-                            <i class="fa-solid fa-chevron-right text-white/40 text-xs flex-shrink-0"></i>
-                            <span class="ml-2 md:ml-3 font-medium text-[#63cd00] truncate max-w-[40vw] sm:max-w-[55vw]" title="{{ $news->title }}">
+                        <li class="inline-flex items-center min-w-0 gap-1.5 sm:gap-2.5">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-[10px] flex-shrink-0"></i>
+                            <span class="font-medium text-[#63cd00] truncate max-w-[50vw] sm:max-w-xs" title="{{ $news->title }}">
                                 {{ $news->title }}
                             </span>
                         </li>
@@ -84,7 +84,7 @@
                 {{-- Kolom kiri (2/3): artikel --}}
                 <div class="lg:col-span-2 min-w-0">
                     <a href="{{ route('public.news.index') }}"
-                        class="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-[#63cd00] transition-colors duration-200 mb-6">
+                        class="inline-flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-[#2e7000] transition-colors duration-200 mb-6">
                         <i class="fa-solid fa-arrow-left text-xs"></i>
                         Kembali ke Daftar Berita
                     </a>
@@ -98,7 +98,7 @@
                     <footer class="mt-8 bg-[#282829] rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
                         <div>
                             <p class="font-bold text-white">Bagikan artikel ini</p>
-                            <p class="text-sm text-white/60 mt-0.5">Bantu sebarkan informasi untuk teman &amp; keluarga.</p>
+                            <p class="text-sm text-gray-300 mt-0.5">Bantu sebarkan informasi untuk teman & keluarga.</p>
                         </div>
                         <div class="flex items-center gap-3">
                             <a href="https://www.facebook.com/sharer/sharer.php?u={{ url()->current() }}" target="_blank" rel="noopener noreferrer"
@@ -131,33 +131,33 @@
 
                         {{-- Info artikel --}}
                         <div class="nw-side">
-                            <h3 class="nw-side__head"><i class="fa-solid fa-circle-info"></i> Info Artikel</h3>
+                            <h3 class="nw-side__head"><i class="fa-solid fa-circle-info text-[#2e7000]"></i> Info Artikel</h3>
                             <div class="nw-side__body space-y-4 text-sm">
                                 <div class="flex items-center gap-3">
-                                    <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-[#63cd00] border border-gray-200">
+                                    <span class="w-9 h-9 rounded-lg bg-[#eefde2] flex items-center justify-center text-[#2e7000] border border-emerald-200">
                                         <i class="fa-regular fa-calendar"></i>
                                     </span>
                                     <div>
-                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Tanggal Terbit</p>
-                                        <p class="font-semibold text-gray-800">{{ $published->format('d F Y') }}</p>
+                                        <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Tanggal Terbit</p>
+                                        <p class="font-bold text-gray-900">{{ $published->format('d F Y') }}</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-[#63cd00] border border-gray-200">
+                                    <span class="w-9 h-9 rounded-lg bg-[#eefde2] flex items-center justify-center text-[#2e7000] border border-emerald-200">
                                         <i class="fa-solid fa-user-pen"></i>
                                     </span>
                                     <div class="min-w-0">
-                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Penulis</p>
-                                        <p class="font-semibold text-gray-800 truncate">{{ $news->publisher }}</p>
+                                        <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Penulis</p>
+                                        <p class="font-bold text-gray-900 truncate">{{ $news->publisher }}</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-[#63cd00] border border-gray-200">
+                                    <span class="w-9 h-9 rounded-lg bg-[#eefde2] flex items-center justify-center text-[#2e7000] border border-emerald-200">
                                         <i class="fa-regular fa-clock"></i>
                                     </span>
                                     <div>
-                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Waktu Baca</p>
-                                        <p class="font-semibold text-gray-800">{{ $readMinutes }} menit</p>
+                                        <p class="text-xs font-bold uppercase tracking-wider text-gray-500">Waktu Baca</p>
+                                        <p class="font-bold text-gray-900">{{ $readMinutes }} menit</p>
                                     </div>
                                 </div>
                             </div>
@@ -165,7 +165,7 @@
 
                         {{-- Berita lainnya --}}
                         <div class="nw-side">
-                            <h3 class="nw-side__head"><i class="fa-solid fa-newspaper"></i> Berita Lainnya</h3>
+                            <h3 class="nw-side__head"><i class="fa-solid fa-newspaper text-[#2e7000]"></i> Berita Lainnya</h3>
                             <div class="nw-side__body">
                                 @php $suggested = $randomNews ?? collect([]); @endphp
                                 @forelse ($suggested->take(4) as $item)
@@ -179,7 +179,7 @@
                                             @endif
                                         </div>
                                         <div class="min-w-0">
-                                            <p class="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 hover:text-[#63cd00] transition-colors duration-200">
+                                            <p class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 hover:text-[#2e7000] transition-colors duration-200">
                                                 {{ $item->title }}
                                             </p>
                                             <span class="nw-meta mt-1.5 inline-flex">

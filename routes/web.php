@@ -88,6 +88,7 @@ Route::get('/news/{news}', [PublicNewsController::class, 'show'])->name('public.
 
 Route::get('/partners', [PublicPartnersController::class, 'index'])->name('public.partners.index');
 Route::get('/partners/{partner}', [PublicPartnersController::class, 'show'])->name('public.partners.show');
+Route::get('/partners/{partner}/download-logo', [PublicPartnersController::class, 'downloadLogo'])->name('public.partners.download-logo');
 
 Route::get('/facilities', [PublicFacilityController::class, 'index'])->name('public.facilities.index');
 Route::get('/facilities/{facility}', [PublicFacilityController::class, 'show'])->name('public.facilities.show');
@@ -208,7 +209,9 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
         // Rute untuk Fasilitas 
         Route::resource('programs', SchoolProgramController::class);
 
-        // Rute untuk Guru
+        // Rute untuk Guru & Staf (termasuk impor massal)
+        Route::get('/teachers/import/template', [TeacherController::class, 'downloadTemplate'])->name('teachers.template');
+        Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
         Route::resource('teachers', TeacherController::class);
 
         Route::post('/teachers/{teacher}/upload-photo', [App\Http\Controllers\TeacherController::class, 'uploadPhoto'])->name('teachers.uploadPhoto');

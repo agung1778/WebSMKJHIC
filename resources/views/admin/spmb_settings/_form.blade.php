@@ -5,7 +5,7 @@
 
 <div class="space-y-6">
     <div class="form-section space-y-5">
-        <h4 class="form-section-title"><i class="fa-solid fa-pen-nib" style="color:var(--brand)"></i> Konten Teks &amp; Status</h4>
+        <h4 class="form-section-title"><i class="fa-solid fa-pen-nib" style="color:var(--brand)"></i> Konten Teks & Status</h4>
         <div class="form-grid-2">
             <div>
                 <x-admin-components::field name="status" label="Status Pendaftaran" :required="true" type="select"
@@ -42,7 +42,7 @@
     </div>
 
     <div class="form-section space-y-5">
-        <h4 class="form-section-title"><i class="fa-solid fa-images" style="color:var(--brand)"></i> Media &amp; Brosur</h4>
+        <h4 class="form-section-title"><i class="fa-solid fa-images" style="color:var(--brand)"></i> Media & Brosur</h4>
         <p class="field-hint">*Kosongkan file jika tidak ingin mengubah gambar/file yang sudah ada.</p>
         <div class="form-grid-2">
             <div class="media-box">

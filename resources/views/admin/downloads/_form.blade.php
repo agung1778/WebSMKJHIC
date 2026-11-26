@@ -55,7 +55,7 @@
         </section>
     </div>
     <section class="form-section space-y-5">
-        <h2 class="form-section-title"><i class="fa-solid fa-eye" aria-hidden="true"></i> Publikasi &amp; Pratinjau</h2>
+        <h2 class="form-section-title"><i class="fa-solid fa-eye" aria-hidden="true"></i> Publikasi & Pratinjau</h2>
         <input type="hidden" name="is_active" value="0">
         <label class="flex items-start gap-3" for="logo-is-active">
             <input type="checkbox" id="logo-is-active" name="is_active" value="1" @checked((bool) old('is_active', $item?->is_active ?? true))>

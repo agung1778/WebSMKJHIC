@@ -12,7 +12,7 @@
             <div class="form-grid-2">
                 <div>
                     <x-admin-components::field name="school" label="Sekolah" :required="true" type="select"
-                        :options="['Amaliah 1' => 'Amaliah 1', 'Amaliah 2' => 'Amaliah 2', 'Amaliah 1 & 2' => 'Amaliah 1 & 2']" :value="$item->school ?? null" />
+                        :options="['Amaliah 1 & 2' => 'SMK Amaliah 1 & 2 (Gabungan)', 'Amaliah 1' => 'SMK Amaliah 1', 'Amaliah 2' => 'SMK Amaliah 2']" :value="$item->school ?? 'Amaliah 1 & 2'" />
                 </div>
                 <div>
                     <x-admin-components::field name="name" label="Nama Lengkap" :required="true" :value="$item->name ?? null"
@@ -55,8 +55,8 @@
     <div class="space-y-4 h-fit">
         <div class="form-section space-y-4">
             <h4 class="form-section-title"><i class="fa-solid fa-image" style="color:var(--brand)"></i> Foto</h4>
-            <x-admin-components::dropzone name="image" label="Foto Pemimpin" :required="!$item" :current="$imgCurrent"
-                hint="Rasio 1:1 (bulat). Maks. 5MB." />
+            <x-admin-components::dropzone name="image" label="Foto Pemimpin" :required="false" :current="$imgCurrent"
+                hint="Rasio 1:1 (bulat). Maks. 5MB. Opsional: jika dikosongkan, inisial nama otomatis digunakan." />
             @if ($item && !$imgCurrent && $item->image)
                 <p class="text-sm" style="color:var(--text-3)">Gambar saat ini: <a href="{{ asset($item->image) }}" target="_blank" rel="noopener">{{ $item->image }}</a></p>
             @endif

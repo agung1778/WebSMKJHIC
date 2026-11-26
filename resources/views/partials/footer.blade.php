@@ -54,7 +54,7 @@
             <div>
                 <h4 class="font-semibold text-white tracking-wider uppercase">{{ __('Informasi') }}</h4>
                 <ul class="mt-4 space-y-3 text-sm">
-                    <li><a href="https://ppdb.smkamaliah.sch.id/login"
+                    <li><a href="https://ppdb.smkamaliah.sch.id"
                             class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">{{ __('Info SPMB') }}</a></li>
                     <li><a href="{{ route('public.facilities.index') }}"
                             class="text-gray-400 hover:text-white hover:translate-x-1 block transition-all duration-300">{{ __('Fasilitas') }}</a>

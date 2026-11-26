@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>@yield('title', 'Dashboard') · SMK Amaliah 1 &amp; 2</title>
+    <title>@yield('title', 'Dashboard') · SMK Amaliah 1 & 2</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -164,7 +164,7 @@
                 </div>
                 <div class="brand-text">
                     <div class="brand-name">SMK AMALIAH</div>
-                    <div class="brand-tag">Admin Panel · 1 &amp; 2</div>
+                    <div class="brand-tag">Admin Panel · 1 & 2</div>
                 </div>
                 <button type="button" class="sidebar-close-btn show-mob" data-sidebar-mobile-close aria-label="Tutup Menu">
                     <i class="fa-solid fa-xmark" aria-hidden="true"></i>
@@ -250,7 +250,7 @@
                 </button>
 
                 <div class="topbar-title">
-                    <div class="admin-panel-name"><span class="hide-mob">Admin Panel </span>SMK Amaliah 1 &amp; 2</div>
+                    <div class="admin-panel-name"><span class="hide-mob">Admin Panel </span>SMK Amaliah 1 & 2</div>
                     <div class="admin-panel-caption hide-mob">Sistem Manajemen Website Sekolah</div>
                     <nav class="topbar-crumb" aria-label="Breadcrumb">
                         <span><a href="{{ route('admin.dashboard') }}">Beranda</a></span>

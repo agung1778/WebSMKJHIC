@@ -19,7 +19,7 @@
         {{-- Avatar inisial sebagai lapisan bawah (tampil saat foto kosong/gagal dimuat) --}}
         <div class="teacher-card__avatar">{{ $teacherInitial }}</div>
 
-        @if ($teacher->photo)
+        @if ($teacher->photo && !str_contains($teacher->photo, 'default-user'))
             <img src="{{ img_url($teacher->photo, 400, 400) }}" width="400" height="400"
                 alt="{{ __('Foto') }} {{ $teacher->name }}" loading="lazy"
                 class="teacher-card__img" onerror="this.remove()">
@@ -27,23 +27,23 @@
     </div>
 
     {{-- Konten kartu --}}
-    <div class="p-5 flex flex-col flex-1">
-        <span class="inline-flex items-start text-xs font-semibold text-[#63cd00] mb-2 uppercase tracking-wider">
+    <div class="p-4 sm:p-5 flex flex-col flex-1">
+        <span class="inline-flex items-start text-xs font-bold text-[#2e7000] mb-2 uppercase tracking-wider min-h-[2.4em] leading-snug">
             {{ $teacher->position }}
         </span>
 
-        <h3 class="text-base font-bold text-gray-900 mb-1.5 leading-tight line-clamp-2">
+        <h3 class="text-base font-bold text-[#1c1c1d] mb-1.5 leading-tight line-clamp-2 min-h-[2.7em] flex items-center">
             {{ $teacher->name }}
         </h3>
 
-        <p class="text-gray-500 text-sm flex-grow line-clamp-2 leading-relaxed">
+        <p class="text-gray-600 text-sm line-clamp-2 leading-relaxed min-h-[2.6em] mb-2">
             {{ $teacher->subject ?: $teacher->position }}
         </p>
 
-        {{-- Footer kartu: selalu tampil agar bagian bawah semua card sejajar --}}
-        <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between gap-2">
-            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 min-w-0">
-                <i class="fas fa-school text-gray-400 text-xs flex-shrink-0"></i>
+        {{-- Footer kartu: selalu tampil di paling bawah agar semua card sejajar --}}
+        <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between gap-2">
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-600 min-w-0">
+                <i class="fas fa-school text-[#2e7000] text-xs flex-shrink-0"></i>
                 <span class="truncate">{{ $teacher->school ?: '—' }}</span>
             </span>
             <span class="teacher-card__hint flex-shrink-0">

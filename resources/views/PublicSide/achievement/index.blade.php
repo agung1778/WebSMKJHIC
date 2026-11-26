@@ -11,8 +11,8 @@
     $categories = $stats['categories'] ?? collect([]);
     $total = $stats['total'] ?? $achievements->total();
     $yearLabel = ($stats['yearMin'] ?? null) !== null
-        ? ($stats['yearMin'] === $stats['yearMax'] ? (string) $stats['yearMin'] : $stats['yearMin'] . ' – ' . $stats['yearMax'])
-        : 'Sedang berjalan';
+        ? ($stats['yearMin'] === $stats['yearMax'] ? (string) $stats['yearMin'] : $stats['yearMin'] . '–' . $stats['yearMax'])
+        : date('Y');
     $hasGallery = $total > 0;
 @endphp
 
@@ -22,8 +22,8 @@
         @foreach ($categories as $category)
             @php $slug = \Illuminate\Support\Str::slug($category); @endphp
             #acr-{{ $slug }}:checked ~ .ac-tabs label[for="acr-{{ $slug }}"] {
-                background: var(--ac-green); color: #ffffff;
-                box-shadow: 0 4px 12px -2px rgba(99, 205, 0, 0.45);
+                background: #1c1c1d; color: #ffffff; border-color: #1c1c1d;
+                box-shadow: 0 4px 12px -2px rgba(28, 28, 29, 0.35);
             }
             #acr-{{ $slug }}:checked ~ .ac-tabs label[for="acr-{{ $slug }}"] .ac-count { background: rgba(255, 255, 255, 0.25); color: #ffffff; }
             #acr-{{ $slug }}:checked ~ .ac-grid .ac-card[data-g~="{{ $slug }}"] { display: flex; }
@@ -35,43 +35,43 @@
 @section('content')
 
     {{-- ============================ HERO ============================ --}}
-    <section class="relative bg-[#282829]">
-        <div class="relative h-[320px] lg:h-[420px] overflow-hidden">
+    <section class="relative bg-[#1f1f20]">
+        <div class="relative min-h-[300px] sm:min-h-[360px] lg:h-[420px] overflow-hidden flex flex-col justify-center">
             @if ($heroImage)
                 <img src="{{ img_url($heroImage->path, 1600, 900) }}" width="1600" height="900"
                     alt="{{ $heroImage->description ?? $heroImage->filename }}"
-                    class="w-full h-full object-cover">
+                    class="absolute inset-0 w-full h-full object-cover">
             @else
                 <div class="absolute inset-0">
-                    <div class="absolute -top-24 -right-16 w-96 h-96 rounded-full opacity-25"
-                        style="background: radial-gradient(circle, #63cd00 0%, transparent 70%)"></div>
+                    <div class="absolute -top-24 -right-16 w-96 h-96 rounded-full opacity-20"
+                        style="background: radial-gradient(circle, #00875a 0%, transparent 70%)"></div>
                     <div class="absolute bottom-0 left-0 w-full h-2/3"
-                        style="background: radial-gradient(ellipse at bottom left, rgba(99,205,0,.18) 0%, transparent 60%)"></div>
+                        style="background: radial-gradient(ellipse at bottom left, rgba(0,135,90,.22) 0%, transparent 60%)"></div>
                 </div>
             @endif
 
             <div class="absolute inset-0"
-                style="background: linear-gradient(100deg, rgba(40,40,41,.88) 0%, rgba(40,40,41,.55) 45%, rgba(40,40,41,.15) 100%)"></div>
+                style="background: linear-gradient(100deg, rgba(20,20,22,0.94) 0%, rgba(20,20,22,0.82) 48%, rgba(20,20,22,0.55) 100%)"></div>
 
-            <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+            <div class="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex flex-col justify-center w-full">
                 <span
-                    class="inline-flex items-center gap-2 w-fit text-[11px] lg:text-xs font-semibold tracking-widest uppercase text-[#d9ffb3] bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 mb-4">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
+                    class="inline-flex items-center gap-2 w-fit text-xs font-semibold tracking-wider uppercase text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3.5 py-1 mb-3 sm:mb-4 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-[#00875a]"></span>
                     Galeri Prestasi
                 </span>
-                <h1 class="text-white text-3xl lg:text-5xl font-bold leading-tight">Prestasi &amp; Pencapaian Siswa</h1>
-                <p class="mt-4 max-w-2xl text-white/85 text-base lg:text-lg leading-relaxed">
+                <h1 class="text-white text-2xl sm:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight">Prestasi &amp; Pencapaian Siswa</h1>
+                <p class="mt-2.5 sm:mt-4 max-w-2xl text-white/90 text-sm sm:text-base lg:text-lg leading-relaxed">
                     {{ $total }} pencapaian membanggakan para siswa SMK Amaliah 1 &amp; 2 di berbagai kompetisi —
                     dari tingkat kabupaten hingga nasional.
                 </p>
 
-                <div class="mt-8 flex flex-wrap items-center gap-3">
+                <div class="mt-5 sm:mt-8 flex flex-wrap items-center gap-2.5 sm:gap-3">
                     <a href="#daftarPrestasi"
-                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        class="inline-flex items-center gap-2 bg-[#00875a] text-white font-semibold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-[#00704a] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
                         <i class="fa-solid fa-trophy"></i> Lihat Prestasi
                     </a>
                     <a href="#tentangPrestasi"
-                        class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-white hover:text-[#1f1f20] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
                         <i class="fa-solid fa-book-open"></i> Tentang Prestasi
                     </a>
                 </div>
@@ -79,18 +79,18 @@
         </div>
 
         {{-- Breadcrumb --}}
-        <div style="background-color:#2D2D2D;">
-            <div class="max-w-screen-xl min-h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center py-3">
-                <nav aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
+        <div style="background-color:#1c1c1d; border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);">
+            <div class="max-w-screen-xl min-h-12 py-2.5 mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto scrollbar-hide">
+                <nav aria-label="Breadcrumb" class="min-w-0">
+                    <ol class="inline-flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm whitespace-nowrap">
                         <li class="flex items-center">
                             <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
-                                Home
+                                <i class="fa-solid fa-house text-xs mr-1.5 opacity-70"></i> Home
                             </a>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
-                            <span class="inline-flex items-center ml-2 md:ml-3 font-medium text-[#63cd00]">Prestasi</span>
+                        <li class="flex items-center gap-1.5 sm:gap-2.5">
+                            <i class="fa-solid fa-chevron-right text-white/30 text-[10px]"></i>
+                            <span class="inline-flex items-center font-medium text-[#00875a]">Prestasi</span>
                         </li>
                     </ol>
                 </nav>
@@ -98,45 +98,48 @@
         </div>
     </section>
 
-    {{-- ============================ STATISTIK ============================ --}}
-    <section class="bg-white">
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 -mt-8 relative z-20">
-                <div class="bg-[#282829] rounded-2xl p-5 lg:p-6 shadow-xl flex items-center gap-4">
-                    <span class="w-11 h-11 lg:w-12 lg:h-12 rounded-xl bg-[#63cd00]/15 flex items-center justify-center text-[#63cd00] text-lg lg:text-xl flex-shrink-0">
-                        <i class="fa-solid fa-trophy"></i>
-                    </span>
-                    <div class="min-w-0">
-                        <p class="text-2xl lg:text-3xl font-extrabold text-white leading-none">{{ $total }}</p>
-                        <p class="text-xs lg:text-sm text-white/60 mt-1 truncate">Total Prestasi</p>
+    {{-- ============================ STATISTIK (SESUAI GAMBAR 1) ============================ --}}
+    <section class="bg-white border-b border-gray-100">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                <div class="group bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 text-center shadow-xs hover:border-[#00875a] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                    <div class="mx-auto w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#e6f4ea] border border-[#00875a]/30 flex items-center justify-center shadow-xs group-hover:bg-[#00875a] group-hover:border-[#00875a] transition-colors duration-300">
+                        <i class="fa-solid fa-trophy text-[#00875a] group-hover:text-white transition-colors duration-300 text-base sm:text-lg"></i>
                     </div>
+                    <div class="mt-2.5 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-[#1c1c1d] tracking-tight">
+                        {{ $total }}
+                    </div>
+                    <div class="mt-1 text-xs sm:text-sm font-semibold text-gray-700 leading-snug">Total Prestasi</div>
                 </div>
-                <div class="bg-[#282829] rounded-2xl p-5 lg:p-6 shadow-xl flex items-center gap-4">
-                    <span class="w-11 h-11 lg:w-12 lg:h-12 rounded-xl bg-[#63cd00]/15 flex items-center justify-center text-[#63cd00] text-lg lg:text-xl flex-shrink-0">
-                        <i class="fa-solid fa-layer-group"></i>
-                    </span>
-                    <div class="min-w-0">
-                        <p class="text-2xl lg:text-3xl font-extrabold text-white leading-none">{{ $stats['categoriesCount'] ?? 0 }}</p>
-                        <p class="text-xs lg:text-sm text-white/60 mt-1 truncate">Kategori Raihan</p>
+
+                <div class="group bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 text-center shadow-xs hover:border-[#00875a] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                    <div class="mx-auto w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#e6f4ea] border border-[#00875a]/30 flex items-center justify-center shadow-xs group-hover:bg-[#00875a] group-hover:border-[#00875a] transition-colors duration-300">
+                        <i class="fa-solid fa-layer-group text-[#00875a] group-hover:text-white transition-colors duration-300 text-base sm:text-lg"></i>
                     </div>
+                    <div class="mt-2.5 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-[#1c1c1d] tracking-tight">
+                        {{ $stats['categoriesCount'] ?? 0 }}
+                    </div>
+                    <div class="mt-1 text-xs sm:text-sm font-semibold text-gray-700 leading-snug">Kategori Raihan</div>
                 </div>
-                <div class="bg-[#282829] rounded-2xl p-5 lg:p-6 shadow-xl flex items-center gap-4">
-                    <span class="w-11 h-11 lg:w-12 lg:h-12 rounded-xl bg-[#63cd00]/15 flex items-center justify-center text-[#63cd00] text-lg lg:text-xl flex-shrink-0">
-                        <i class="fa-solid fa-ranking-star"></i>
-                    </span>
-                    <div class="min-w-0">
-                        <p class="text-2xl lg:text-3xl font-extrabold text-white leading-none">{{ $stats['levelsCount'] ?? 0 }}</p>
-                        <p class="text-xs lg:text-sm text-white/60 mt-1 truncate">Tingkat Kompetisi</p>
+
+                <div class="group bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 text-center shadow-xs hover:border-[#00875a] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                    <div class="mx-auto w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#e6f4ea] border border-[#00875a]/30 flex items-center justify-center shadow-xs group-hover:bg-[#00875a] group-hover:border-[#00875a] transition-colors duration-300">
+                        <i class="fa-solid fa-ranking-star text-[#00875a] group-hover:text-white transition-colors duration-300 text-base sm:text-lg"></i>
                     </div>
+                    <div class="mt-2.5 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-[#1c1c1d] tracking-tight">
+                        {{ $stats['levelsCount'] ?? 0 }}
+                    </div>
+                    <div class="mt-1 text-xs sm:text-sm font-semibold text-gray-700 leading-snug">Tingkat Kompetisi</div>
                 </div>
-                <div class="bg-[#282829] rounded-2xl p-5 lg:p-6 shadow-xl flex items-center gap-4">
-                    <span class="w-11 h-11 lg:w-12 lg:h-12 rounded-xl bg-[#63cd00]/15 flex items-center justify-center text-[#63cd00] text-lg lg:text-xl flex-shrink-0">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </span>
-                    <div class="min-w-0">
-                        <p class="text-2xl lg:text-3xl font-extrabold text-white leading-none truncate">{{ $yearLabel }}</p>
-                        <p class="text-xs lg:text-sm text-white/60 mt-1 truncate">Tahun Aktif</p>
+
+                <div class="group bg-white border border-gray-200 rounded-2xl p-4 sm:p-5 text-center shadow-xs hover:border-[#00875a] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                    <div class="mx-auto w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#e6f4ea] border border-[#00875a]/30 flex items-center justify-center shadow-xs group-hover:bg-[#00875a] group-hover:border-[#00875a] transition-colors duration-300">
+                        <i class="fa-solid fa-calendar-check text-[#00875a] group-hover:text-white transition-colors duration-300 text-base sm:text-lg"></i>
                     </div>
+                    <div class="mt-2.5 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-[#1c1c1d] tracking-tight">
+                        {{ $yearLabel }}
+                    </div>
+                    <div class="mt-1 text-xs sm:text-sm font-semibold text-gray-700 leading-snug">Tahun Aktif</div>
                 </div>
             </div>
         </div>
@@ -267,7 +270,7 @@
                 <div class="lg:col-span-1">
                     <span class="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#63cd00] mb-3">
                         <span class="w-6 h-0.5 rounded-full bg-[#63cd00]"></span>
-                        Sejarah &amp; Semangat
+                        Sejarah & Semangat
                     </span>
                     <h2 class="text-3xl lg:text-4xl font-extrabold text-[#282829] tracking-tight">Berprestasi, Berkarakter, Bermartabat</h2>
                     <p class="mt-3 text-gray-600 text-lg leading-relaxed">

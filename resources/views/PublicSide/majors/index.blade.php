@@ -44,28 +44,28 @@
             @endif
 
             <div class="absolute inset-0"
-                style="background: linear-gradient(100deg, rgba(40,40,41,.87) 0%, rgba(40,40,41,.55) 45%, rgba(40,40,41,.18) 100%)"></div>
+                style="background: linear-gradient(100deg, rgba(20,20,22,0.92) 0%, rgba(20,20,22,0.78) 50%, rgba(20,20,22,0.55) 100%)"></div>
 
             <div class="relative z-10 h-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
                 <span
-                    class="inline-flex items-center gap-2 w-fit text-[11px] lg:text-xs font-semibold tracking-widest uppercase text-[#d9ffb3] bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 mb-4">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
-                    Program Keahlian — SMK Amaliah 1 &amp; 2
+                    class="inline-flex items-center gap-2 w-fit text-[11px] sm:text-xs font-bold tracking-wider uppercase text-white bg-black/60 backdrop-blur border border-white/20 rounded-full px-3.5 sm:px-4 py-1 sm:py-1.5 mb-2.5 sm:mb-4 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-[#63cd00] shadow-sm shadow-[#63cd00]/80"></span>
+                    Program Keahlian — SMK Amaliah 1 & 2
                 </span>
-                <h1 class="text-white text-3xl lg:text-5xl font-bold leading-tight">Major Competency</h1>
-                <p class="mt-4 max-w-2xl text-white/85 text-base lg:text-lg leading-relaxed">
-                    {{ $totalMajors }} program keahlian unggulan yang dirancang link &amp; match dengan kebutuhan dunia
+                <h1 class="text-white text-2xl sm:text-3xl lg:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-sm">Major Competency</h1>
+                <p class="mt-2.5 sm:mt-4 max-w-2xl text-gray-100 text-sm sm:text-base lg:text-lg leading-relaxed font-normal">
+                    {{ $totalMajors }} program keahlian unggulan yang dirancang link & match dengan kebutuhan dunia
                     industri, tersebar di {{ $amaliah1Count }} program SMK Amaliah 1 dan {{ $amaliah2Count }} program SMK
                     Amaliah 2.
                 </p>
 
-                <div class="mt-8 flex flex-wrap items-center gap-3">
+                <div class="mt-5 sm:mt-8 flex flex-wrap items-center gap-2.5 sm:gap-3">
                     <a href="#daftarJurusan"
-                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#282829] font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        class="inline-flex items-center gap-2 bg-[#63cd00] text-[#1c1c1d] font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-[#59E300] hover:-translate-y-0.5 transition-all duration-300 shadow-md">
                         <i class="fa-solid fa-sitemap"></i> Lihat Jurusan
                     </a>
                     <a href="https://ppdb.smkamaliah.sch.id/login" target="_blank" rel="noopener noreferrer"
-                        class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 text-white font-semibold text-sm lg:text-base px-6 py-3 rounded-full hover:bg-white hover:text-[#282829] hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-black/20">
+                        class="inline-flex items-center gap-2 bg-white/15 backdrop-blur border border-white/25 text-white font-bold text-xs sm:text-sm lg:text-base px-5 sm:px-6 py-2.5 sm:py-3 rounded-full hover:bg-white hover:text-[#1c1c1d] hover:-translate-y-0.5 transition-all duration-300 shadow-md">
                         <i class="fa-solid fa-rocket"></i> Info SPMB
                     </a>
                 </div>
@@ -74,17 +74,17 @@
 
         {{-- Breadcrumb --}}
         <div style="background-color:#2D2D2D;">
-            <div class="max-w-screen-xl h-14 mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-                <nav aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-2 md:space-x-3 text-sm">
+            <div class="max-w-screen-xl min-h-12 py-2 mx-auto px-4 sm:px-6 lg:px-8 flex items-center overflow-x-auto scrollbar-hide">
+                <nav aria-label="Breadcrumb" class="min-w-0">
+                    <ol class="inline-flex items-center gap-1.5 sm:gap-2.5 text-xs sm:text-sm whitespace-nowrap">
                         <li class="flex items-center">
                             <a href="/" class="inline-flex items-center font-medium text-gray-300 hover:text-white transition-colors">
                                 Home
                             </a>
                         </li>
-                        <li class="flex items-center">
-                            <i class="fa-solid fa-chevron-right text-white/40 text-xs"></i>
-                            <span class="inline-flex items-center ml-0 md:ml-3 font-medium text-[#63cd00]">Major Competency</span>
+                        <li class="flex items-center gap-1.5 sm:gap-2.5">
+                            <i class="fa-solid fa-chevron-right text-white/40 text-[10px]"></i>
+                            <span class="inline-flex items-center font-medium text-[#63cd00]">Major Competency</span>
                         </li>
                     </ol>
                 </nav>
@@ -94,26 +94,26 @@
 
     {{-- ============================ FOKUS SEKOLAH ============================ --}}
     <section class="bg-white">
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 @php
                     $schoolFocus = [
-                        ['tag' => 'SMK Amaliah 1', 'icon' => 'fa-code', 'title' => 'SMK Amaliah 1 (IT & Kreatif)', 'text' => 'Berfokus pada dunia IT (Teknologi Informasi): pemrograman, jaringan, dan multimedia. (PPLG, TJKT, ANIMASI, DKV)', 'count' => $amaliah1Count],
-                        ['tag' => 'SMK Amaliah 2', 'icon' => 'fa-briefcase', 'title' => 'SMK Amaliah 2 (Bisnis & Pariwisata)', 'text' => 'Berfokus pada manajemen bisnis, pemasaran digital, dan pariwisata untuk sektor jasa dan industri kreatif. (MP, AKL, LPS, BR, DPB)', 'count' => $amaliah2Count],
+                        ['tag' => 'SMK Amaliah 1', 'icon' => 'fa-code', 'title' => 'SMK Amaliah 1 (IT & Kreatif)', 'text' => 'Berfokus pada dunia IT (Teknologi Informasi): pemrograman, jaringan, dan multimedia (PPLG, TJKT, ANIMASI, DKV).', 'count' => $amaliah1Count],
+                        ['tag' => 'SMK Amaliah 2', 'icon' => 'fa-briefcase', 'title' => 'SMK Amaliah 2 (Bisnis & Pariwisata)', 'text' => 'Berfokus pada manajemen bisnis, pemasaran digital, dan pariwisata untuk sektor jasa dan industri kreatif (MP, AKL, LPS, BR, DPB).', 'count' => $amaliah2Count],
                     ];
                 @endphp
                 @foreach($schoolFocus as $f)
                     <div
-                        class="fade-in-section group relative overflow-hidden bg-gray-50 border border-gray-200 rounded-2xl p-7 hover:border-[#63cd00] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        class="fade-in-section group relative overflow-hidden bg-white border border-gray-200 rounded-2xl p-5 sm:p-7 shadow-xs hover:border-[#63cd00] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-start gap-4">
                             <div
-                                class="flex-shrink-0 w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-[#63cd00] group-hover:border-[#63cd00] transition-colors duration-300">
-                                <i class="fa-solid {{ $f['icon'] }} text-lg text-[#63cd00] group-hover:text-white transition-colors duration-300"></i>
+                                class="flex-shrink-0 w-12 h-12 rounded-xl bg-[#eefde2] border border-emerald-200 flex items-center justify-center shadow-xs group-hover:bg-[#63cd00] group-hover:border-[#63cd00] transition-colors duration-300">
+                                <i class="fa-solid {{ $f['icon'] }} text-lg text-[#2e7000] group-hover:text-[#1c1c1d] transition-colors duration-300"></i>
                             </div>
                             <div>
-                                <h3 class="text-lg font-bold text-[#282829] leading-tight">{{ $f['title'] }}</h3>
-                                <p class="mt-2 text-sm text-gray-500 leading-relaxed">{{ $f['text'] }}</p>
-                                <p class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-[#63cd00]">
+                                <h3 class="text-base sm:text-lg font-bold text-[#1c1c1d] leading-tight">{{ $f['title'] }}</h3>
+                                <p class="mt-2 text-sm text-gray-700 leading-relaxed font-normal">{{ $f['text'] }}</p>
+                                <p class="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-[#2e7000]">
                                     <i class="fa-solid fa-layer-group"></i> {{ $f['count'] }} Program Keahlian
                                 </p>
                             </div>
@@ -125,46 +125,50 @@
     </section>
 
     {{-- ============================ DAFTAR JURUSAN ============================ --}}
-    <section id="daftarJurusan" class="bg-gray-50 py-16 sm:py-24">
+    <section id="daftarJurusan" class="bg-gray-50 py-12 sm:py-20 lg:py-24">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div class="text-center max-w-3xl mx-auto">
-                <h2 class="text-3xl lg:text-4xl font-extrabold text-[#2D2D2D] tracking-tight">Program Keahlian</h2>
-                <p class="mt-4 text-lg text-slate-600">Pilih program keahlian sesuai minat dan bakat Anda.</p>
+                <span class="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#2e7000] mb-2">
+                    <span class="w-6 h-0.5 rounded-full bg-[#2e7000]"></span>
+                    Pilihan Masa Depan
+                </span>
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1c1c1d] tracking-tight">Program Keahlian</h2>
+                <p class="mt-3 text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed font-normal">Pilih program keahlian sesuai minat, bakat, dan rencana karier Anda.</p>
                 <div class="flex items-center justify-center gap-x-2 mx-auto mt-4">
-                    <div class="w-20 h-1 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
-                    <div class="w-8 h-1 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
-                    <div class="w-4 h-1 rounded-full" style="background-color: {{ $amaliahGreen }};"></div>
+                    <div class="w-16 h-1 rounded-full bg-[#63cd00]"></div>
+                    <div class="w-6 h-1 rounded-full bg-[#63cd00]/60"></div>
+                    <div class="w-3 h-1 rounded-full bg-[#63cd00]/30"></div>
                 </div>
             </div>
 
             {{-- Tabs Nav --}}
-            <div x-data="{ activeTab: 'all' }">
-                <div class="flex flex-wrap justify-center items-center gap-2 mt-10">
+            <div x-data="{ activeTab: 'all' }" class="mt-8 sm:mt-12">
+                <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                     <button @click="activeTab = 'all'" :class="{
-                                'bg-[#63cd00] text-white shadow-lg': activeTab === 'all',
-                                'bg-white text-[#282829] hover:bg-gray-200 border border-gray-300': activeTab !== 'all'
+                                'bg-[#1c1c1d] text-white shadow-md font-bold': activeTab === 'all',
+                                'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 font-semibold': activeTab !== 'all'
                             }"
-                        class="px-6 py-2.5 text-sm font-semibold rounded-full transition-all duration-300">
+                        class="px-5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm rounded-full transition-all duration-200">
                         Semua ({{ $totalMajors }})
                     </button>
                     <button @click="activeTab = 'SMK Amaliah 1'" :class="{
-                                'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 1',
-                                'bg-white text-[#282829] hover:bg-gray-200 border border-gray-300': activeTab !== 'SMK Amaliah 1'
+                                'bg-[#1c1c1d] text-white shadow-md font-bold': activeTab === 'SMK Amaliah 1',
+                                'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 font-semibold': activeTab !== 'SMK Amaliah 1'
                             }"
-                        class="px-6 py-2.5 text-sm font-semibold rounded-full transition-all duration-300">
+                        class="px-5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm rounded-full transition-all duration-200">
                         SMK Amaliah 1 ({{ $amaliah1Count }})
                     </button>
                     <button @click="activeTab = 'SMK Amaliah 2'" :class="{
-                                'bg-[#63cd00] text-white shadow-lg': activeTab === 'SMK Amaliah 2',
-                                'bg-white text-[#282829] hover:bg-gray-200 border border-gray-300': activeTab !== 'SMK Amaliah 2'
+                                'bg-[#1c1c1d] text-white shadow-md font-bold': activeTab === 'SMK Amaliah 2',
+                                'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 font-semibold': activeTab !== 'SMK Amaliah 2'
                             }"
-                        class="px-6 py-2.5 text-sm font-semibold rounded-full transition-all duration-300">
+                        class="px-5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm rounded-full transition-all duration-200">
                         SMK Amaliah 2 ({{ $amaliah2Count }})
                     </button>
                 </div>
 
-                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="mt-8 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                     @forelse($majors as $major)
                         @php
                             $advantages = $major->advantage ? array_filter(explode("\n", $major->advantage)) : [];
@@ -177,54 +181,55 @@
                             x-transition:leave="transition ease-in duration-200"
                             x-transition:leave-start="opacity-100 transform scale-100"
                             x-transition:leave-end="opacity-0 transform scale-95"
-                            class="fade-in-section bg-white rounded-2xl shadow-md transition-all duration-300 group overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1">
+                            class="fade-in-section bg-white rounded-2xl border border-gray-200/90 shadow-sm transition-all duration-300 group overflow-hidden flex flex-col hover:shadow-xl hover:border-[#63cd00] hover:-translate-y-1">
 
                             {{-- Gambar Utama --}}
-                            <a href="{{ route('public.majors.show', $major) }}" class="block h-52 lg:h-60 relative overflow-hidden">
+                            <a href="{{ route('public.majors.show', $major) }}" class="block h-48 sm:h-56 lg:h-60 relative overflow-hidden bg-gray-100">
                                 @if($major->image)
                                     <img src="{{ img_url($major->image, 900, 520) }}" width="900" height="520" loading="lazy" alt="Gambar {{ $major->name }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]">
                                 @else
-                                    <div class="w-full h-full bg-gray-300"></div>
+                                    <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                                        <i class="fa-solid fa-graduation-cap text-3xl"></i>
+                                    </div>
                                 @endif
                                 <span
-                                    class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-[#282829]/85 backdrop-blur text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full">
+                                    class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-black/80 backdrop-blur border border-white/20 text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm">
                                     {{ $major->tag ?? 'Program Keahlian' }}
                                 </span>
                             </a>
 
-                            <div class="p-6 flex flex-col relative flex-grow">
+                            <div class="p-5 sm:p-6 flex flex-col relative flex-grow">
                                 {{-- Logo --}}
-                                <div class="absolute -top-12 left-6 bg-white p-2.5 rounded-2xl shadow-xl border border-gray-100">
+                                <div class="absolute -top-10 sm:-top-12 left-5 sm:left-6 bg-white p-2 sm:p-2.5 rounded-2xl shadow-lg border border-gray-100">
                                     @if($major->logo)
                                         <img src="{{ img_url($major->logo, 160, 90) }}" width="160" height="90" loading="lazy" alt="Logo {{ $major->abbreviation ?? $major->name }}"
-                                            class="h-14 w-14 object-contain">
+                                            class="h-12 w-12 sm:h-14 sm:w-14 object-contain">
                                     @else
-                                        <div class="h-14 w-14 bg-gray-200 rounded-xl flex items-center justify-center text-gray-400">
+                                        <div class="h-12 w-12 sm:h-14 sm:w-14 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400">
                                             <i class="fa-solid fa-building"></i>
                                         </div>
                                     @endif
                                 </div>
 
                                 {{-- Header --}}
-                                <div class="pt-8 flex items-center gap-3">
+                                <div class="pt-6 sm:pt-8 flex items-center gap-3">
                                     <div>
-                                        <h3 class="text-xl font-bold leading-tight" style="color: {{ $amaliahDark }};">
+                                        <h3 class="text-xl font-extrabold text-[#1c1c1d] leading-tight">
                                             {{ $major->abbreviation ?? $major->name }}
                                         </h3>
-                                        <p class="text-sm text-gray-500 mt-0.5">{{ $major->name }}</p>
+                                        <p class="text-sm font-semibold text-gray-700 mt-1 leading-snug">{{ $major->name }}</p>
                                     </div>
                                 </div>
 
                                 {{-- Keunggulan --}}
                                 <div class="mt-4 flex-grow border-t border-gray-100 pt-4">
-                                    <h4 class="font-medium text-gray-700 text-sm">Skills Unggulan</h4>
-                                    <ul class="mt-2 text-sm text-gray-600 leading-relaxed space-y-2">
+                                    <h4 class="font-bold text-[#1c1c1d] text-sm">Skills Unggulan</h4>
+                                    <ul class="mt-2.5 text-sm text-gray-700 leading-relaxed space-y-2">
                                         @forelse($limitedAdvantages as $advantage)
                                             <li class="flex items-start">
-                                                <i class="fa-solid fa-check-circle text-xs mt-1 mr-2 flex-shrink-0"
-                                                    style="color: {{ $amaliahGreen }};"></i>
-                                                <span>{{ trim($advantage) }}</span>
+                                                <i class="fa-solid fa-circle-check text-xs mt-1 mr-2 flex-shrink-0 text-[#2e7000]"></i>
+                                                <span class="font-medium">{{ trim($advantage) }}</span>
                                             </li>
                                         @empty
                                             <li class="text-gray-400 italic">Keunggulan belum diinput.</li>
@@ -235,7 +240,7 @@
                                 {{-- Footer --}}
                                 <div class="mt-6 flex items-center gap-4">
                                     <a href="{{ route('public.majors.show', $major) }}"
-                                        class="inline-flex items-center gap-2 justify-center bg-[#282829] hover:bg-[#63cd00] text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-colors duration-300 w-full">
+                                        class="inline-flex items-center gap-2 justify-center bg-[#1c1c1d] hover:bg-[#63cd00] hover:text-[#1c1c1d] text-white text-sm font-bold px-6 py-2.5 rounded-full transition-all duration-300 w-full shadow-xs">
                                         Selengkapnya <i class="fa-solid fa-arrow-right text-xs"></i>
                                     </a>
                                 </div>
@@ -243,7 +248,7 @@
                         </div>
                     @empty
                         <div class="md:col-span-2 text-center py-12">
-                            <p class="text-gray-500">Belum ada jurusan yang ditambahkan.</p>
+                            <p class="text-gray-500 font-medium">Belum ada jurusan yang ditambahkan.</p>
                         </div>
                     @endforelse
                 </div>

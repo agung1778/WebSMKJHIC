@@ -45,7 +45,7 @@
             <div class="hero-msg">
                 <div class="hero-hi"><i class="fa-solid fa-sun" aria-hidden="true"></i> {{ $hi }}, {{ $userName }}</div>
                 <div class="hero-heading">
-                    <h2 class="hero-title">Content Management System <span>SMK Amaliah 1 &amp; 2</span></h2>
+                    <h2 class="hero-title">Content Management System <span>SMK Amaliah 1 & 2</span></h2>
                     <div class="hero-sub">Kelola informasi sekolah, konten, dan publikasi secara terpadu dalam satu sistem yang terintegrasi.</div>
                 </div>
             </div>

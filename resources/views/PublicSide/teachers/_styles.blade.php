@@ -30,7 +30,7 @@
     @media (max-width: 480px) { .ts-hero { height: 180px; } }
 
     /* Breadcrumb */
-    .breadcrumb-bar { background: #2D2D2D; min-height: 64px; display: flex; align-items: center; }
+    .breadcrumb-bar { background: #2D2D2D; min-height: 48px; display: flex; align-items: center; }
     .ts-crumb a { color: #9ca3af; }
     .ts-crumb a:hover { color: #ffffff; }
     .ts-crumb .crumb-current { color: var(--ts-green); font-weight: 600; }
@@ -39,10 +39,10 @@
     /* Judul bagian */
     .section-eyebrow {
         display: inline-flex; align-items: center; gap: 0.5rem;
-        font-size: 0.75rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-        color: var(--ts-green); margin-bottom: 0.75rem;
+        font-size: 0.75rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
+        color: #2e7000; margin-bottom: 0.75rem;
     }
-    .section-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--ts-green); border-radius: 9999px; }
+    .section-eyebrow::before { content: ''; width: 24px; height: 2px; background: #2e7000; border-radius: 9999px; }
 
     .section-title { font-size: 1.5rem; font-weight: 800; line-height: 1.15; color: var(--ts-ink); letter-spacing: -0.01em; }
     @media (min-width: 640px) { .section-title { font-size: 1.875rem; } }
@@ -77,51 +77,66 @@
         pointer-events: none; margin: 0; padding: 0;
     }
     .fw-tabs {
-        display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+        display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
         padding: 0.375rem; background: var(--ts-bg-soft);
         border: 1px solid var(--ts-border); border-radius: 9999px; max-width: 100%;
+        width: fit-content;
     }
     .fw-btn {
         display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
-        padding: 0.5rem 1rem; border-radius: 9999px;
+        padding: 0.5rem 1rem; border-radius: 9999px; min-height: 40px;
         font-size: 0.82rem; font-weight: 600; line-height: 1.2; white-space: nowrap;
         background: transparent; color: #4b5563; cursor: pointer;
         transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
     }
     .fw-btn:hover { background: #e5e7eb; color: var(--ts-ink); }
     @media (max-width: 599px) {
-        .fw-tabs { display: flex; flex-wrap: wrap; border-radius: 1rem; }
-        .fw-btn { flex: 1 1 calc(50% - 0.5rem); padding: 0.55rem 0.5rem; }
+        .fw-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            border-radius: 1rem;
+            padding: 0.35rem;
+            gap: 0.4rem;
+            width: 100%;
+        }
+        .fw-btn {
+            flex: 1 1 calc(50% - 0.4rem);
+            min-height: 42px;
+            white-space: normal;
+            text-align: center;
+            padding: 0.5rem 0.6rem;
+            font-size: 0.78rem;
+        }
     }
 
     /* Kartu & pesan kosong disembunyikan secara default, baru tampil sesuai radio terpilih */
-    .fw-card { display: none; min-width: 0; }
-    .fw-card > .teacher-card { flex: 1 1 auto; min-width: 0; }
-    .fw-empty { display: none; }
+    .fw-card { display: none; min-width: 0; height: 100%; }
+    .fw-card > .teacher-card { flex: 1 1 auto; min-width: 0; height: 100%; width: 100%; }
+    .fw-empty { display: none !important; }
 
-    /* Tombol aktif (hijau) */
+    /* Tombol aktif (dark pill dengan kontras tinggi) */
     #fw-all:checked ~ .fw-tabs label[for="fw-all"],
     #fw-a1:checked ~ .fw-tabs label[for="fw-a1"],
     #fw-a2:checked ~ .fw-tabs label[for="fw-a2"],
     #fw-merged:checked ~ .fw-tabs label[for="fw-merged"],
     #fw-staff:checked ~ .fw-tabs label[for="fw-staff"] {
-        background: var(--ts-green); color: #ffffff;
-        box-shadow: 0 4px 12px -2px rgba(99, 205, 0, 0.45);
+        background: #1c1c1d; color: #ffffff;
+        box-shadow: 0 4px 12px -2px rgba(28, 28, 29, 0.35);
     }
 
     /* Menampilkan kartu sesuai kategori terpilih */
-    #fw-all:checked ~ .fw-grid .fw-card { display: flex; }
-    #fw-a1:checked ~ .fw-grid .fw-card[data-g~="a1"] { display: flex; }
-    #fw-a2:checked ~ .fw-grid .fw-card[data-g~="a2"] { display: flex; }
-    #fw-merged:checked ~ .fw-grid .fw-card[data-g~="merged"] { display: flex; }
-    #fw-staff:checked ~ .fw-grid .fw-card[data-g~="staff"] { display: flex; }
+    #fw-all:checked ~ .fw-grid .fw-card { display: flex; flex-direction: column; }
+    #fw-a1:checked ~ .fw-grid .fw-card[data-g~="a1"] { display: flex; flex-direction: column; }
+    #fw-a2:checked ~ .fw-grid .fw-card[data-g~="a2"] { display: flex; flex-direction: column; }
+    #fw-merged:checked ~ .fw-grid .fw-card[data-g~="merged"] { display: flex; flex-direction: column; }
+    #fw-staff:checked ~ .fw-grid .fw-card[data-g~="staff"] { display: flex; flex-direction: column; }
 
     /* Pesan untuk kategori yang (masih) kosong */
     #fw-a1:checked ~ .fw-empty--a1,
     #fw-a2:checked ~ .fw-empty--a2,
     #fw-merged:checked ~ .fw-empty--merged,
     #fw-staff:checked ~ .fw-empty--staff,
-    #fw-all:checked ~ .fw-empty--all { display: flex; }
+    #fw-all:checked ~ .fw-empty--all { display: flex !important; }
 
     /* Grid kartu guru — tinggi baris seragam (semua kartu sama besar) */
     .teachers-grid { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); grid-auto-rows: 1fr; align-items: stretch; gap: 1.25rem; }
@@ -170,12 +185,12 @@
 
     .teacher-card__hint {
         display: inline-flex; align-items: center; gap: 0.4rem;
-        color: var(--ts-green); font-weight: 700; font-size: 0.78rem;
+        color: #2e7000; font-weight: 700; font-size: 0.78rem;
         transition: gap 0.2s ease; white-space: nowrap;
     }
     .teacher-card:hover .teacher-card__hint { gap: 0.65rem; }
 
-    .text-theme-green { color: var(--ts-green); }
+    .text-theme-green { color: #2e7000; }
 
     /* Chip (label) overlay di sudut foto kartu */
     .ts-chip {
@@ -183,10 +198,12 @@
         display: inline-flex; align-items: center; gap: 0.4rem;
         padding: 0.35rem 0.7rem; border-radius: 9999px;
         font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; line-height: 1.2;
-        color: #ffffff; background: rgba(40, 40, 41, 0.82);
+        color: #ffffff; background: rgba(20, 20, 22, 0.88);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     }
-    .ts-chip--green { color: #ffffff; background: rgba(99, 205, 0, 0.92); }
+    .ts-chip--green { color: #ffffff; background: rgba(20, 20, 22, 0.92); border-color: rgba(99, 205, 0, 0.5); }
+    .ts-chip--green i { color: #63cd00; }
 
     /* Kartu info detail guru di halaman show */
     .ts-info-card {
@@ -207,6 +224,10 @@
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         text-align: center; gap: 0.75rem; padding: 3.5rem 1.5rem;
         border: 1.5px dashed #d1d5db; border-radius: 1rem; background: var(--ts-bg-soft);
+    }
+    .empty-state.hidden,
+    .empty-state[hidden] {
+        display: none !important;
     }
 
     /* Detail guru */

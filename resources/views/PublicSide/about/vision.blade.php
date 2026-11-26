@@ -11,38 +11,38 @@
     ])
 
     {{-- ===================== VISI ===================== --}}
-    <section class="bg-white py-16 lg:py-24">
+    <section class="bg-white py-10 sm:py-16 lg:py-24">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="max-w-3xl mx-auto text-center fade-in-section">
                 <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">Visi</span>
-                <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829]">Visi SMK Amaliah 1 & 2</h2>
+                <h2 class="mt-2.5 sm:mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold text-[#282829]">Visi SMK Amaliah 1 & 2</h2>
             </div>
 
-            <div class="mt-10 max-w-3xl mx-auto fade-in-section relative bg-[#282829] rounded-3xl p-8 lg:p-12 text-center overflow-hidden shadow-2xl">
-                <div class="absolute top-0 right-0 w-60 h-60 rounded-full opacity-20"
+            <div class="mt-6 sm:mt-10 max-w-3xl mx-auto fade-in-section relative bg-[#282829] rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-12 text-center overflow-hidden shadow-2xl">
+                <div class="absolute top-0 right-0 w-44 sm:w-60 h-44 sm:h-60 rounded-full opacity-20"
                     style="background: radial-gradient(circle, #63cd00 0%, transparent 70%)"></div>
-                <i class="fa-solid fa-quote-left text-4xl text-[#63cd00]"></i>
-                <p class="mt-6 text-2xl lg:text-3xl text-white font-medium leading-relaxed">
+                <i class="fa-solid fa-quote-left text-2xl sm:text-4xl text-[#63cd00]"></i>
+                <p class="mt-4 sm:mt-6 text-lg sm:text-2xl lg:text-3xl text-white font-medium leading-relaxed">
                     "Menjadi Sekolah Menengah Kejuruan Berkualitas Yang Menyatu Dalam Tauhid"
                 </p>
-                <div class="mt-8 inline-flex items-center gap-2 text-sm text-gray-300">
+                <div class="mt-5 sm:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm text-gray-300">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#63cd00]"></span>
-                    Visi SMK Amaliah 1 &amp; 2 Ciawi
+                    Visi SMK Amaliah 1 & 2 Ciawi
                 </div>
             </div>
         </div>
     </section>
 
     {{-- ===================== MISI ===================== --}}
-    <section class="bg-gray-50 py-16 lg:py-24">
+    <section class="bg-gray-50 py-10 sm:py-16 lg:py-24">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto fade-in-section">
                 <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">Misi</span>
-                <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829]">Langkah Mewujudkan Visi</h2>
-                <p class="mt-4 text-gray-600 text-base lg:text-lg">Komitmen kami dalam proses pendidikan sehari-hari.</p>
+                <h2 class="mt-2.5 sm:mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold text-[#282829]">Langkah Mewujudkan Visi</h2>
+                <p class="mt-3 sm:mt-4 text-gray-600 text-sm sm:text-base lg:text-lg">Komitmen kami dalam proses pendidikan sehari-hari.</p>
             </div>
 
-            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="mt-8 sm:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 @php
                     $missions = [
                         ['icon' => 'fa-hands-holding-circle', 'title' => 'Integrasi Nilai Tauhid', 'desc' => 'Mengintegrasikan nilai-nilai Tauhid pada setiap mata pelajaran untuk membentuk karakter yang kuat.'],
@@ -54,14 +54,14 @@
                     ];
                 @endphp
                 @foreach($missions as $i => $m)
-                    <div class="fade-in-section flex gap-4 bg-white border border-gray-200 rounded-2xl p-6 hover:border-[#63cd00] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                        <div class="w-11 h-11 rounded-xl bg-[#eafad7] flex items-center justify-center flex-shrink-0">
-                            <i class="fa-solid {{ $m['icon'] }} text-lg text-[#3f9b00]"></i>
+                    <div class="fade-in-section flex gap-3.5 sm:gap-4 bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 hover:border-[#63cd00] hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#eafad7] flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid {{ $m['icon'] }} text-base sm:text-lg text-[#3f9b00]"></i>
                         </div>
-                        <div>
-                            <div class="text-xs font-bold text-[#63cd00]">Misi {{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</div>
-                            <h3 class="mt-1 font-bold text-[#282829] text-base">{{ $m['title'] }}</h3>
-                            <p class="mt-1.5 text-sm text-gray-600 leading-relaxed">{{ $m['desc'] }}</p>
+                        <div class="min-w-0">
+                            <div class="text-[11px] sm:text-xs font-bold text-[#63cd00]">Misi {{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</div>
+                            <h3 class="mt-0.5 sm:mt-1 font-bold text-[#282829] text-sm sm:text-base">{{ $m['title'] }}</h3>
+                            <p class="mt-1 sm:mt-1.5 text-xs sm:text-sm text-gray-600 leading-relaxed">{{ $m['desc'] }}</p>
                         </div>
                     </div>
                 @endforeach
@@ -71,15 +71,15 @@
 
     {{-- ===================== DETAIL (konten dinamis) ===================== --}}
     @if(isset($visionContent) && $visionContent && trim(strip_tags($visionContent->content)) !== '')
-        <section class="bg-white py-16 lg:py-24">
+        <section class="bg-white py-10 sm:py-16 lg:py-24">
             <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-10">
                     <div class="fade-in-section lg:col-span-1">
                         <span class="inline-block text-xs font-bold tracking-widest text-[#63cd00] uppercase">Detail</span>
-                        <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-[#282829]">Lebih Jauh Tentang Visi & Misi</h2>
-                        <div class="mt-4 w-20 h-1.5 rounded-full bg-[#63cd00]"></div>
+                        <h2 class="mt-2.5 sm:mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold text-[#282829]">Lebih Jauh Tentang Visi & Misi</h2>
+                        <div class="mt-3 sm:mt-4 w-16 sm:w-20 h-1.5 rounded-full bg-[#63cd00]"></div>
                     </div>
-                    <div class="lg:col-span-2 fade-in-section text-base lg:text-lg text-gray-600 leading-relaxed">
+                    <div class="lg:col-span-2 fade-in-section text-sm sm:text-base lg:text-lg text-gray-600 leading-relaxed">
                         {!! \App\Support\HtmlSanitizer::clean($visionContent->content) !!}
                     </div>
                 </div>

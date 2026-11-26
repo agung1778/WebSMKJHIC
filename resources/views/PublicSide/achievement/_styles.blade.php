@@ -10,15 +10,20 @@
         --ac-dark: #282829;
     }
 
-    /* Chip label hijau */
+    /* Chip label */
     .ac-chip {
         display: inline-flex; align-items: center; gap: 0.4rem;
-        padding: 0.35rem 0.7rem; border-radius: 9999px;
-        font-size: 0.68rem; font-weight: 700; letter-spacing: 0.03em; line-height: 1.2;
-        color: #ffffff; background: rgba(40, 40, 41, 0.85);
-        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+        padding: 0.35rem 0.75rem; border-radius: 9999px;
+        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em; line-height: 1.2;
+        color: #ffffff; background: rgba(20, 20, 22, 0.88);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
     }
-    .ac-chip--green { color: #ffffff; background: rgba(99, 205, 0, 0.92); box-shadow: 0 2px 8px -2px rgba(99, 205, 0, 0.5); }
+    .ac-chip--green {
+        color: #ffffff; background: #00875a;
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 2px 8px -2px rgba(0, 135, 90, 0.5);
+    }
 
     /* Metadatum */
     .ac-meta {
@@ -74,15 +79,15 @@
         pointer-events: none; margin: 0; padding: 0;
     }
     .ac-tabs {
-        display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
-        padding: 0.375rem; background: var(--ac-bg-soft);
+        display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem;
+        padding: 0.4rem; background: #f3f4f6;
         border: 1px solid var(--ac-border); border-radius: 9999px; max-width: 100%;
     }
     .ac-tab {
         display: inline-flex; align-items: center; gap: 0.4rem; flex: 0 0 auto;
         padding: 0.5rem 1rem; border-radius: 9999px;
-        font-size: 0.82rem; font-weight: 600; line-height: 1.2; white-space: nowrap;
-        background: transparent; color: #4b5563; cursor: pointer;
+        font-size: 0.82rem; font-weight: 700; line-height: 1.2; white-space: nowrap;
+        background: #ffffff; color: #4b5563; border: 1px solid #e5e7eb; cursor: pointer;
         transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
     }
     .ac-tab .ac-count {
@@ -90,10 +95,10 @@
         min-width: 1.35rem; height: 1.35rem; padding: 0 0.35rem; border-radius: 9999px;
         font-size: 0.68rem; font-weight: 700; color: #4b5563; background: #e5e7eb;
     }
-    .ac-tab:hover { background: #e5e7eb; color: var(--ac-ink); }
-    @media (max-width: 599px) {
-        .ac-tabs { display: flex; flex-wrap: wrap; border-radius: 1rem; }
-        .ac-tab { flex: 1 1 calc(50% - 0.5rem); padding: 0.55rem 0.5rem; justify-content: center; }
+    .ac-tab:hover { background: #f9fafb; color: var(--ac-ink); border-color: #d1d5db; }
+    @media (max-width: 639px) {
+        .ac-tabs { border-radius: 1.25rem; justify-content: center; gap: 0.35rem; padding: 0.35rem; }
+        .ac-tab { flex: 0 0 auto; padding: 0.45rem 0.8rem; font-size: 0.78rem; }
     }
 
     /* Kartu disembunyikan default (bukan dipilih), grid menatanya */
@@ -113,8 +118,8 @@
     #acr-all:checked ~ .ac-tabs label[for="acr-all"],
     #acr-all:checked ~ .ac-empty--all { display: flex; }
     #acr-all:checked ~ .ac-tabs label[for="acr-all"] {
-        background: var(--ac-green); color: #ffffff;
-        box-shadow: 0 4px 12px -2px rgba(99, 205, 0, 0.45);
+        background: #1c1c1d; color: #ffffff; border-color: #1c1c1d;
+        box-shadow: 0 4px 12px -2px rgba(28, 28, 29, 0.35);
     }
     #acr-all:checked ~ .ac-tabs label[for="acr-all"] .ac-count { background: rgba(255, 255, 255, 0.25); color: #ffffff; }
 

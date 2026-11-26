@@ -31,7 +31,7 @@
         <h4 class="form-section-title"><i class="fa-solid fa-circle-check" style="color:var(--brand)"></i> Informasi</h4>
         <ul class="text-[13px] leading-relaxed space-y-2" style="color:var(--text-2)">
             <li><i class="fa-solid fa-check text-[var(--green)] mr-2"></i>Penerbit diisi otomatis atas nama Anda.</li>
-            <li><i class="fa-solid fa-check text-[var(--green)] mr-2"></i>Tulisan tampil pada halaman home &amp; tulisan.</li>
+            <li><i class="fa-solid fa-check text-[var(--green)] mr-2"></i>Tulisan tampil pada halaman home & tulisan.</li>
             <li><i class="fa-solid fa-check text-[var(--green)] mr-2"></i>Tanggal terbit mengontrol urutan tampil.</li>
         </ul>
     </div>

@@ -48,4 +48,25 @@ class PublicPartnersController extends Controller
             'partnersImages' => $partnersImages,
         ]);
     }
+
+    /**
+     * Unduh logo perusahaan mitra industri dalam kualitas asli.
+     */
+    public function downloadLogo(Partner $partner): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    {
+        $fullPath = $partner->getLogoFullPath();
+        abort_unless($fullPath && is_file($fullPath), 404, 'Logo perusahaan tidak ditemukan atau belum diunggah.');
+
+        $ext = pathinfo($fullPath, PATHINFO_EXTENSION) ?: 'png';
+        $slug = \Illuminate\Support\Str::slug($partner->name) ?: 'perusahaan';
+        $downloadName = 'Logo-' . $slug . '.' . $ext;
+
+        $mime = @mime_content_type($fullPath) ?: 'application/octet-stream';
+
+        return response()->download($fullPath, $downloadName, [
+            'Content-Type' => $mime,
+            'X-Content-Type-Options' => 'nosniff',
+            'Cache-Control' => 'private, no-store',
+        ]);
+    }
 }

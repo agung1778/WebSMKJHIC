@@ -41,7 +41,7 @@
         <div class="form-section">
             <h4 class="form-section-title"><i class="fa-solid fa-circle-check" style="color:var(--brand)"></i> Ringkasan</h4>
             <ul class="text-[13px] leading-relaxed space-y-2" style="color:var(--text-2)">
-                <li><i class="fa-solid fa-check text-[var(--green)] mr-2"></i>Berita tampil pada halaman beranda &amp; daftar berita.</li>
+                <li><i class="fa-solid fa-check text-[var(--green)] mr-2"></i>Berita tampil pada halaman beranda & daftar berita.</li>
                 <li><i class="fa-solid fa-check text-[var(--green)] mr-2"></i>Tanggal terbit mengontrol urutan tampil.</li>
                 <li><i class="fa-solid fa-check text-[var(--green)] mr-2"></i>Gambar sampul wajib diunggah untuk berita baru.</li>
             </ul>

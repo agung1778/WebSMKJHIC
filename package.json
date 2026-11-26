@@ -3,7 +3,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build && node -e \"const fs = require('fs'); const m = JSON.parse(fs.readFileSync('public/build/manifest.json')); fs.copyFileSync('public/build/' + m['resources/css/app.css'].file, 'public/css/app.css'); fs.copyFileSync('public/build/' + m['resources/js/app.js'].file, 'public/js/app.js');\""
     },
     "devDependencies": {
         "@tailwindcss/aspect-ratio": "^0.4.2",

@@ -44,9 +44,9 @@ class HomeController extends Controller
 
         $facilitiesCount = Facility::count();
 
-        $instaPosts = InstaPost::where('is_active', true)->latest()->take(15)->get();
+        $instaPosts = InstaPost::where('is_active', true)->latest()->take(9)->get();
 
-        $tiktokPosts = TiktokPost::where('is_active', true)->latest()->take(18)->get();
+        $tiktokPosts = TiktokPost::where('is_active', true)->latest()->take(9)->get();
 
         $leaders = SchoolLeader::where('is_active', true)
             ->orderBy('order_column')

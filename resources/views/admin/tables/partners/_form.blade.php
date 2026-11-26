@@ -18,7 +18,7 @@
                 <div>
                     <x-admin-components::field name="sector" label="Sektor / Bidang" type="select"
                         :options="$sectorOptions" :value="$item->sector ?? null"
-                        hint="Pilih jenis usaha mitra, mis. Jasa Hiburan &amp; Wisata." icon="fa-solid fa-industry" />
+                        hint="Pilih jenis usaha mitra, mis. Jasa Hiburan & Wisata." icon="fa-solid fa-industry" />
                 </div>
                 <div>
                     <x-admin-components::field name="city" label="Kota" :value="$item->city ?? null"

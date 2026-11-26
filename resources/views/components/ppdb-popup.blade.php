@@ -435,7 +435,7 @@
                         data-popup-preview="logo">
                     <div>
                         <div class="ppdb-popup-kicker">PPDB {{ $ppdbYear }}</div>
-                        <div class="ppdb-popup-title">SMK Amaliah 1 &amp; 2 Ciawi</div>
+                        <div class="ppdb-popup-title">SMK Amaliah 1 & 2 Ciawi</div>
                     </div>
                 </div>
 
@@ -574,7 +574,7 @@
                             alt="Logo" width="46" height="46" class="ppdb-popup-logo">
                         <div>
                             <div class="ppdb-popup-kicker">PPDB {{ $ppdbYear }}</div>
-                            <div class="ppdb-popup-title">SMK Amaliah 1 &amp; 2 Ciawi</div>
+                            <div class="ppdb-popup-title">SMK Amaliah 1 & 2 Ciawi</div>
                         </div>
                     </div>
 

@@ -113,7 +113,7 @@
                     </div>
 
                     <div class="form-section p-6 space-y-5">
-                        <h4 class="form-section-title"><i class="fa-solid fa-sliders" style="color:var(--brand)"></i> Hak Akses &amp; Status</h4>
+                        <h4 class="form-section-title"><i class="fa-solid fa-sliders" style="color:var(--brand)"></i> Hak Akses & Status</h4>
                         <div class="form-grid-2">
                             <div>
                                 <label class="app-label" for="role">Role <span class="req">*</span></label>

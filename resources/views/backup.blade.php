@@ -804,7 +804,7 @@
                                                                                               yang menciptakan rasio aspek 16:9 yang responsif.
                                                                                             -->
                             <iframe class="absolute top-0 left-0 w-full h-full rounded-xl shadow-2xl"
-                                src="https://www.youtube-nocookie.com/embed/STOhZZmY6Co?si=34QAmdyIwXbAXs-7&amp;controls=0"
+                                src="https://www.youtube-nocookie.com/embed/STOhZZmY6Co?si=34QAmdyIwXbAXs-7&controls=0"
                                 loading="lazy" title="YouTube video player" frameborder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
@@ -828,7 +828,7 @@
                     {{-- Header Section --}}
                     <div class="text-center">
                         <h2 class="text-3xl md:text-4xl font-bold text-white">Fasilitas</h2>
-                        <p class="mt-2 text-gray-400">Kenali Fasilitas SMK Amaliah 1 &amp; 2</p>
+                        <p class="mt-2 text-gray-400">Kenali Fasilitas SMK Amaliah 1 & 2</p>
                         <div class="w-24 h-px bg-gray-600 mx-auto mt-4"></div>
                     </div>
 

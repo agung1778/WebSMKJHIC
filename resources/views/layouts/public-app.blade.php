@@ -48,7 +48,7 @@
 
     <style>
         html, body {
-            overflow-x: hidden;
+            overflow-x: clip;
             max-width: 100vw;
         }
 
@@ -144,10 +144,14 @@
             transform: translateY(0);
         }
 
-        .public-header-row { flex-wrap: wrap; gap: 12px 20px; }
-        .public-brand { display: flex; align-items: center; gap: 12px; flex: 1 1 220px; min-width: 0; }
+        .public-header-row { flex-wrap: wrap; gap: 8px 16px; }
+        .public-brand { display: flex; align-items: center; gap: 8px; flex: 0 1 auto; min-width: 0; }
+        @media (min-width: 640px) {
+            .public-header-row { gap: 12px 20px; }
+            .public-brand { gap: 12px; }
+        }
         .public-brand img { flex-shrink: 0; }
-        .public-brand-text { min-width: 0; overflow-wrap: anywhere; }
+        .public-brand-text { min-width: 0; }
         .public-header-tools { flex-wrap: wrap; justify-content: flex-end; gap: 12px 20px; min-width: 0; }
         .public-quick-links { flex-wrap: wrap; gap: 12px 20px; }
         .public-main-nav { flex-wrap: wrap; gap: 4px clamp(16px, 3vw, 48px); min-height: 48px; padding-block: 4px; }
@@ -240,19 +244,19 @@
     @endphp
 
     {{-- WRAPPER UNTUK MODAL SEARCH --}}
-    <div x-data="{ searchModalOpen: false }" @keydown.escape.window="searchModalOpen = false">
+    <div class="relative z-[999]" x-data="{ searchModalOpen: false }" @keydown.escape.window="searchModalOpen = false">
 
-        <header x-data="{ mobileMenuOpen: false }" class="fixed top-0 inset-x-0 z-50 bg-white shadow-md">
+        <header x-data="{ mobileMenuOpen: false }" class="fixed top-0 inset-x-0 bg-white shadow-md" style="z-index: 99999 !important; transform: translate3d(0,0,0); -webkit-transform: translate3d(0,0,0);">
             {{-- TOP BAR --}}
             <div class="border-b border-gray-200">
                 <div class="public-header-row max-w-screen-xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
 
                     {{-- Grup 1: Logo & Nama (Kiri) - Tautan ke Beranda --}}
                     <a href="{{ route('home') }}" class="public-brand group cursor-pointer no-underline transition-opacity duration-200 hover:opacity-95" aria-label="Beranda SMK AMALIAH 1&2 CIAWI">
-                        <img src="{{ asset('assets/logo/amaliah.webp') }}" alt="Logo SMK Amaliah" class="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 transition-transform duration-200 group-hover:scale-105">
+                        <img src="{{ asset('assets/logo/amaliah.webp') }}" alt="Logo SMK Amaliah" class="h-9 w-9 sm:h-12 sm:w-12 flex-shrink-0 transition-transform duration-200 group-hover:scale-105">
                         <div class="public-brand-text flex flex-col min-w-0">
-                            <span class="text-gray-900 font-times text-sm sm:text-base font-bold leading-tight truncate group-hover:text-[#63cd00] transition-colors">SMK AMALIAH 1&2 CIAWI</span>
-                            <span class="text-[10px] sm:text-xs font-times text-gray-600 truncate"><i>Tauhid Is Our Fundament</i></span>
+                            <span class="text-gray-900 font-times text-[13px] xs:text-sm sm:text-base font-bold leading-tight whitespace-nowrap group-hover:text-[#63cd00] transition-colors">SMK AMALIAH 1&2 CIAWI</span>
+                            <span class="text-[9.5px] xs:text-[10px] sm:text-xs font-times text-gray-600 whitespace-nowrap"><i>Tauhid Is Our Fundament</i></span>
                         </div>
                     </a>
 
@@ -267,7 +271,7 @@
 
                         {{-- Grup 3: Tautan Cepat --}}
                         <div class="public-quick-links flex items-center text-sm text-gray-700">
-                            <a href="https://ppdb.smkamaliah.sch.id/login"
+                            <a href="https://ppdb.smkamaliah.sch.id"
                                 class="hover:text-[#63cd00] transition-colors whitespace-nowrap ">Info SPMB</a>
                             <a href="https://www.instagram.com/bkksmkamaliah/"
                                 class="hover:text-[#63cd00] transition-colors whitespace-nowrap">Info BKK</a>
@@ -337,10 +341,6 @@
                                 Programs</a>
                             <a href="{{ route('public.extracurricular.index') }}"
                                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Extracurricular</a>
-                            <a href="" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">AM
-                                Exam</a>
-                            <a href="https://lms.smkamaliah.sch.id/"
-                                class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">E-Learning</a>
                             <a href="https://elib.smkamaliah.sch.id/"
                                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">E-Library</a>
                             <a href="https://yourdisc710.itch.io/amaliah-tour"
@@ -434,10 +434,6 @@
                                 Programs</a>
                             <a href="{{ route('public.extracurricular.index') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Extracurriculars</a>
-                            <a href="" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">AM
-                                Exam</a>
-                            <a href="https://lms.smkamaliah.sch.id/"
-                                class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">E-Learning</a>
                             <a href="https://elib.smkamaliah.sch.id/"
                                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">E-Library</a>
                             <a href="https://yourdisc710.itch.io/amaliah-tour"
@@ -468,7 +464,7 @@
 
 
                     <hr class="my-2">
-                    <a href="https://ppdb.smkamaliah.sch.id/login"
+                    <a href="https://ppdb.smkamaliah.sch.id"
                         class="block px-4 py-3 text-gray-700 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Info
                         PPDB</a>
                     <a href="https://www.instagram.com/bkksmkamaliah/"
@@ -516,7 +512,8 @@
                 </form>
             </div>
         </div>
-        <main>
+    </div>
+    <main>
             @php
                 // Definisikan variabel warna dan nomor WhatsApp Anda
                 $amaliahGreen = '#63cd00';
@@ -577,6 +574,12 @@
                 padding-right: 1rem;
                 position: relative;
                 z-index: 1;
+            }
+
+            @media (min-width: 1024px) {
+                .ft-container {
+                    padding-right: 5.5rem;
+                }
             }
 
             .ft-top {
@@ -783,8 +786,18 @@
                 align-items: center;
                 gap: 0.6rem;
                 padding-top: 1rem;
-                padding-bottom: 1rem;
+                padding-bottom: 7rem;
                 text-align: center;
+            }
+
+            @media (min-width: 768px) {
+                .ft-bottom__inner {
+                    flex-direction: row;
+                    justify-content: space-between;
+                    padding-bottom: 1.25rem;
+                    padding-right: 6.5rem;
+                    text-align: left;
+                }
             }
 
             .ft-copy {
@@ -883,7 +896,7 @@
                         <a href="/" class="ft-brand__logo">
                             <img src="{{ asset('assets/logo/amaliah_white.webp') }}" alt="Logo SMK Amaliah">
                             <span>
-                                <span class="ft-brand__name">SMK Amaliah 1 &amp; 2</span>
+                                <span class="ft-brand__name">SMK Amaliah 1 & 2</span>
                                 <span class="ft-brand__loc">CIAWI - BOGOR</span>
                             </span>
                         </a>
@@ -933,7 +946,7 @@
                         <ul class="ft-links">
                             <li><a href="{{ route('public.downloads.index') }}" class="ft-link"><i
                                         class="fas fa-download" aria-hidden="true"></i>Pusat Unduhan</a></li>
-                            <li><a href="https://ppdb.smkamaliah.sch.id/login" target="_blank" rel="noopener"
+                            <li><a href="https://ppdb.smkamaliah.sch.id" target="_blank" rel="noopener"
                                     class="ft-link"><i class="fas fa-chevron-right"></i>Info PPDB</a></li>
                             <li><a href="{{ route('public.facilities.index') }}" class="ft-link"><i
                                         class="fas fa-chevron-right"></i>Fasilitas</a></li>
@@ -960,7 +973,7 @@
                                 <span class="ft-contact__icon"><i class="fas fa-phone-alt"></i></span>
                                 <span class="ft-contact__nums">
                                     <a href="https://wa.me/628561922827" target="_blank" rel="noopener">0856-1922-827</a>
-                                    <span class="text-gray-500 hidden sm:inline">&bull;</span>
+                                    <span class="text-gray-500">&bull;</span>
                                     <a href="https://wa.me/6285649011449" target="_blank" rel="noopener">0856-4901-1449</a>
                                 </span>
                             </div>
@@ -972,12 +985,11 @@
 
             <div class="ft-bottom">
                 <div class="ft-container ft-bottom__inner">
-                    <p class="ft-copy">&copy; {{ date('Y') }} <strong>Tim IT SMK Amaliah</strong>. All Rights Reserved.
-                    </p>
-                    <div class="ft-legal">
+                    <p class="ft-copy">&copy; {{ date('Y') }} <strong>Tim IT SMK Amaliah</strong>. All Rights Reserved.</p>
+                    <div class="ft-legal md:mr-20">
                         <a href="{{ route('public.legal.privacy') }}">Kebijakan Privasi</a>
                         <span class="ft-legal__dot">&bull;</span>
-                        <a href="{{ route('public.legal.terms') }}">Syarat &amp; Ketentuan</a>
+                        <a href="{{ route('public.legal.terms') }}">Syarat & Ketentuan</a>
                     </div>
                 </div>
             </div>

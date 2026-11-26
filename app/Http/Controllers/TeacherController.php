@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class TeacherController extends Controller
@@ -60,21 +61,19 @@ class TeacherController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'photo' => 'image|mimes:jpeg,png,jpg,gif|max:5048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5048',
             'position' => 'required|string|max:255',
-            'subject' => 'required|string|max:255',
-            'school' => 'required|in:Amaliah 1,Amaliah 2, Amaliah 1 & 2',
-            'category' => 'required|in:Produktif,Normatif,Adaptif,Umum,Struktural',
+            'subject' => 'nullable|string|max:255',
+            'school' => 'required|in:Amaliah 1,Amaliah 2,Amaliah 1 & 2,Staff',
+            'category' => 'nullable|string|max:100',
         ], [
-            'name.required' => 'Nama guru harus diisi.',
-            'photo.required' => 'Foto guru harus diunggah.',
-            'photo.image' => 'File harus berupa gambar.',
-            'photo.mimes' => 'Format gambar yang diizinkan adalah jpeg, png, jpg, atau gif.',
-            'photo.max' => 'Ukuran gambar tidak boleh lebih dari 5MB.',
+            'name.required' => 'Nama guru / staf harus diisi.',
             'position.required' => 'Jabatan harus diisi.',
-            'subject.required' => 'Mata pelajaran harus diisi.',
-            'school.required' => 'Sekolah mengajar harus dipilih.',
-            'category.required' => 'Kategori pelajaran harus dipilih.',
+            'school.required' => 'Unit sekolah / staf harus dipilih.',
+            'school.in' => 'Pilihan unit sekolah tidak valid.',
+            'photo.image' => 'File harus berupa gambar.',
+            'photo.mimes' => 'Format gambar yang diizinkan adalah jpeg, png, jpg, gif, webp.',
+            'photo.max' => 'Ukuran gambar tidak boleh lebih dari 5MB.',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -84,7 +83,7 @@ class TeacherController extends Controller
 
         Teacher::create($validatedData);
 
-        return redirect()->route('admin.teachers.index')->with('success', 'Data guru berhasil ditambahkan!');
+        return redirect()->route('admin.teachers.index')->with('success', 'Data guru / staf berhasil ditambahkan!');
     }
 
     /**
@@ -110,24 +109,23 @@ class TeacherController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5048',
             'position' => 'required|string|max:255',
-            'subject' => 'required|string|max:255',
-            'school' => 'required|in:Amaliah 1,Amaliah 2, Amaliah 1 & 2',
-            'category' => 'required|in:Produktif,Normatif,Adaptif,Umum,Struktural',
+            'subject' => 'nullable|string|max:255',
+            'school' => 'required|in:Amaliah 1,Amaliah 2,Amaliah 1 & 2,Staff',
+            'category' => 'nullable|string|max:100',
         ], [
-            'name.required' => 'Nama guru harus diisi.',
-            'photo.image' => 'File harus berupa gambar.',
-            'photo.mimes' => 'Format gambar yang diizinkan adalah jpeg, png, jpg, atau gif.',
-            'photo.max' => 'Ukuran gambar tidak boleh lebih dari 5MB.',
+            'name.required' => 'Nama guru / staf harus diisi.',
             'position.required' => 'Jabatan harus diisi.',
-            'subject.required' => 'Mata pelajaran harus diisi.',
-            'school.required' => 'Sekolah mengajar harus dipilih.',
-            'category.required' => 'Kategori pelajaran harus dipilih.',
+            'school.required' => 'Unit sekolah / staf harus dipilih.',
+            'school.in' => 'Pilihan unit sekolah tidak valid.',
+            'photo.image' => 'File harus berupa gambar.',
+            'photo.mimes' => 'Format gambar yang diizinkan adalah jpeg, png, jpg, gif, webp.',
+            'photo.max' => 'Ukuran gambar tidak boleh lebih dari 5MB.',
         ]);
 
         if ($request->hasFile('photo')) {
-            if ($teacher->photo) {
+            if ($teacher->photo && !str_contains($teacher->photo, 'default-user')) {
                 Storage::disk('public')->delete($teacher->photo);
             }
             $photoPath = $request->file('photo')->store('teacher_photos', 'public');
@@ -136,7 +134,7 @@ class TeacherController extends Controller
 
         $teacher->update($validatedData);
 
-        return redirect()->route('admin.teachers.index')->with('success', 'Data guru berhasil diperbarui!');
+        return redirect()->route('admin.teachers.index')->with('success', 'Data guru / staf berhasil diperbarui!');
     }
 
     /**
@@ -144,12 +142,456 @@ class TeacherController extends Controller
      */
     public function destroy(Teacher $teacher)
     {
-        if ($teacher->photo) {
+        if ($teacher->photo && !str_contains($teacher->photo, 'default-user')) {
             Storage::disk('public')->delete($teacher->photo);
         }
 
         $teacher->delete();
 
-        return redirect()->route('admin.teachers.index')->with('success', 'Data guru berhasil dihapus!');
+        return redirect()->route('admin.teachers.index')->with('success', 'Data guru / staf berhasil dihapus!');
+    }
+
+    /**
+     * Unduh template CSV/Excel untuk impor data guru & staf.
+     */
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Nama Lengkap',
+            'Unit / Sekolah',
+            'Jabatan',
+            'Mata Pelajaran',
+            'Kategori',
+            'Foto (Opsional)'
+        ];
+
+        $samples = [
+            [
+                'Isma Tri Pamungkas, S.Pd., Gr',
+                'Amaliah 1',
+                'Kepala Sekolah',
+                'Pendidikan Agama Islam',
+                'Struktural',
+                ''
+            ],
+            [
+                'Dr. Gugun Gunadi, S.Pd.I., M.Pd.',
+                'Amaliah 2',
+                'Kepala Sekolah',
+                'Bahasa Indonesia',
+                'Struktural',
+                ''
+            ],
+            [
+                'Tisna Sudrajat, S.Kom., Gr., ACA.',
+                'Amaliah 1 & 2',
+                'Guru Kejuruan RPL',
+                'Pemrograman Web & Perangkat Bergerak',
+                'Produktif',
+                ''
+            ],
+            [
+                'Drs. H. Mulyadi, M.M.',
+                'Amaliah 1',
+                'Guru Normatif',
+                'Pendidikan Pancasila & Kewarganegaraan',
+                'Normatif',
+                ''
+            ],
+            [
+                'Rina Marlina, S.Pd.',
+                'Amaliah 2',
+                'Guru Adaptif',
+                'Matematika Terapan',
+                'Adaptif',
+                ''
+            ],
+            [
+                'Ahmad Fauzi, S.AP.',
+                'Staff',
+                'Kepala Tata Usaha',
+                '',
+                'Administrasi / TU',
+                ''
+            ],
+            [
+                'Rudi Hermawan, A.Md.',
+                'Staff',
+                'Teknisi & Maintenance Jaringan',
+                '',
+                'Teknisi',
+                ''
+            ],
+            [
+                'Siti Nurhaliza, S.I.Pust.',
+                'Staff',
+                'Pengelola Perpustakaan',
+                '',
+                'Perpustakaan',
+                ''
+            ],
+            [
+                'Bambang Subagyo',
+                'Staff',
+                'Petugas Keamanan / Satpam',
+                '',
+                'Keamanan',
+                ''
+            ],
+        ];
+
+        $handle = fopen('php://temp', 'w');
+        fputs($handle, "\xEF\xBB\xBF"); // BOM UTF-8 untuk Excel
+
+        fputcsv($handle, $headers);
+        foreach ($samples as $row) {
+            fputcsv($handle, $row);
+        }
+
+        rewind($handle);
+        $csv = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="template_import_guru_dan_staf.csv"',
+        ]);
+    }
+
+    /**
+     * Impor massal data guru dan staf dari file CSV atau Excel (.xlsx).
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|max:10240',
+        ], [
+            'file.required' => 'Pilih file CSV atau Excel yang akan diimpor.',
+            'file.max' => 'Ukuran file tidak boleh lebih dari 10MB.',
+        ]);
+
+        $file = $request->file('file');
+        $ext = strtolower($file->getClientOriginalExtension());
+        $updateExisting = $request->boolean('update_existing', false);
+
+        if (!in_array($ext, ['csv', 'txt', 'xlsx', 'xls'])) {
+            return redirect()->back()->with('error', 'Format file tidak didukung. Harap unggah file .csv atau .xlsx.');
+        }
+
+        $rows = [];
+
+        if ($ext === 'xlsx' || $ext === 'xls') {
+            $rows = $this->parseXlsxFile($file->getPathname());
+        } else {
+            $rows = $this->parseCsvFile($file->getPathname());
+        }
+
+        if (empty($rows)) {
+            return redirect()->back()->with('error', 'File impor kosong atau format data tidak dapat dibaca.');
+        }
+
+        $headerRow = array_shift($rows);
+        $colMap = $this->mapImportHeaders($headerRow);
+
+        if (!isset($colMap['name'])) {
+            return redirect()->back()->with('error', 'Kolom "Nama" atau "Nama Lengkap" tidak ditemukan pada baris judul file.');
+        }
+
+        $successCount = 0;
+        $updatedCount = 0;
+        $skippedCount = 0;
+
+        DB::beginTransaction();
+        try {
+            foreach ($rows as $index => $row) {
+                $name = trim($row[$colMap['name']] ?? '');
+
+                if ($name === '') {
+                    continue;
+                }
+
+                $rawSchool = isset($colMap['school']) ? trim($row[$colMap['school']] ?? '') : '';
+                $rawCategory = isset($colMap['category']) ? trim($row[$colMap['category']] ?? '') : '';
+                $position = isset($colMap['position']) ? trim($row[$colMap['position']] ?? '') : '';
+                $subject = isset($colMap['subject']) ? trim($row[$colMap['subject']] ?? '') : null;
+                $photo = isset($colMap['photo']) ? trim($row[$colMap['photo']] ?? '') : null;
+
+                $school = $this->normalizeSchool($rawSchool, $rawCategory, $position);
+                $category = $this->normalizeCategory($rawCategory, $school, $position, $subject);
+
+                if ($position === '') {
+                    $position = ($school === 'Staff') ? 'Staf Kependidikan' : 'Guru';
+                }
+
+                $existing = Teacher::where('name', $name)->first();
+
+                if ($existing) {
+                    if ($updateExisting) {
+                        $updateData = [
+                            'school' => $school,
+                            'position' => $position,
+                            'subject' => $subject,
+                            'category' => $category,
+                        ];
+                        if (!empty($photo)) {
+                            $updateData['photo'] = $photo;
+                        }
+                        $existing->update($updateData);
+                        $updatedCount++;
+                    } else {
+                        $skippedCount++;
+                    }
+                } else {
+                    Teacher::create([
+                        'name' => $name,
+                        'school' => $school,
+                        'position' => $position,
+                        'subject' => $subject,
+                        'category' => $category,
+                        'photo' => !empty($photo) ? $photo : null,
+                    ]);
+                    $successCount++;
+                }
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal memproses data impor: ' . $e->getMessage());
+        }
+
+        $msg = "Proses impor selesai: {$successCount} data baru berhasil ditambahkan";
+        if ($updatedCount > 0) {
+            $msg .= ", {$updatedCount} data diperbarui";
+        }
+        if ($skippedCount > 0) {
+            $msg .= ", {$skippedCount} data dilewati (sudah terdaftar)";
+        }
+        $msg .= ".";
+
+        return redirect()->route('admin.teachers.index')->with('success', $msg);
+    }
+
+    /**
+     * Baca baris-baris dari file CSV dengan auto-detect delimiter (, atau ;) dan stream parser.
+     */
+    protected function parseCsvFile(string $path): array
+    {
+        $content = file_get_contents($path);
+        if ($content === false || trim($content) === '') {
+            return [];
+        }
+
+        if (str_starts_with($content, "\xEF\xBB\xBF")) {
+            $content = substr($content, 3);
+        }
+
+        $firstLine = strtok($content, "\r\n");
+        $commaCount = substr_count($firstLine, ',');
+        $semiCount = substr_count($firstLine, ';');
+        $tabCount = substr_count($firstLine, "\t");
+
+        $delimiter = ',';
+        if ($semiCount > $commaCount && $semiCount > $tabCount) {
+            $delimiter = ';';
+        } elseif ($tabCount > $commaCount && $tabCount > $semiCount) {
+            $delimiter = "\t";
+        }
+
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, $content);
+        rewind($stream);
+
+        $rows = [];
+        while (($row = fgetcsv($stream, 0, $delimiter)) !== false) {
+            if (!empty(array_filter($row, fn($v) => trim((string)$v) !== ''))) {
+                $rows[] = $row;
+            }
+        }
+        fclose($stream);
+
+        return $rows;
+    }
+
+    /**
+     * Baca baris-baris dari file .xlsx menggunakan native ZipArchive & SimpleXML.
+     */
+    protected function parseXlsxFile(string $path): array
+    {
+        if (!class_exists('ZipArchive')) {
+            return $this->parseCsvFile($path);
+        }
+
+        $zip = new \ZipArchive();
+        if ($zip->open($path) !== true) {
+            return [];
+        }
+
+        $sharedStrings = [];
+        $sharedStringsXml = $zip->getFromName('xl/sharedStrings.xml');
+        if ($sharedStringsXml) {
+            $xml = @simplexml_load_string($sharedStringsXml);
+            if ($xml && isset($xml->si)) {
+                foreach ($xml->si as $si) {
+                    $sharedStrings[] = (string) ($si->t ?? ($si->r->t ?? ''));
+                }
+            }
+        }
+
+        $sheetXml = $zip->getFromName('xl/worksheets/sheet1.xml');
+        if (!$sheetXml) {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $entryName = $zip->getNameIndex($i);
+                if (preg_match('#^xl/worksheets/sheet\d+\.xml$#i', $entryName)) {
+                    $sheetXml = $zip->getFromName($entryName);
+                    break;
+                }
+            }
+        }
+        $zip->close();
+
+        if (!$sheetXml) {
+            return [];
+        }
+
+        $xml = @simplexml_load_string($sheetXml);
+        if (!$xml || !isset($xml->sheetData->row)) {
+            return [];
+        }
+
+        $rows = [];
+        foreach ($xml->sheetData->row as $r) {
+            $rowValues = [];
+            foreach ($r->c as $c) {
+                $type = (string) $c['t'];
+                $val = (string) $c->v;
+                if ($type === 's' && isset($sharedStrings[(int) $val])) {
+                    $rowValues[] = $sharedStrings[(int) $val];
+                } else {
+                    $rowValues[] = $val;
+                }
+            }
+            if (!empty(array_filter($rowValues, fn($v) => trim($v) !== ''))) {
+                $rows[] = $rowValues;
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Memetakan nama kolom header ke atribut model Teacher.
+     */
+    protected function mapImportHeaders(array $headerRow): array
+    {
+        $map = [];
+        foreach ($headerRow as $index => $col) {
+            $name = strtolower(trim(preg_replace('/[^a-zA-Z0-9]/', '', (string)$col)));
+
+            if (in_array($name, ['nama', 'namalengkap', 'name', 'fullname', 'namaguru', 'namagurustaf', 'namapendidik'])) {
+                $map['name'] = $index;
+            } elseif (in_array($name, ['sekolah', 'unit', 'school', 'unitsekolah', 'lembaga', 'penempatan'])) {
+                $map['school'] = $index;
+            } elseif (in_array($name, ['jabatan', 'position', 'posisi', 'tugas', 'role'])) {
+                $map['position'] = $index;
+            } elseif (in_array($name, ['matapelajaran', 'mapel', 'subject', 'pelajaran', 'mengajar'])) {
+                $map['subject'] = $index;
+            } elseif (in_array($name, ['kategori', 'category', 'kelompok', 'jenis', 'tipe'])) {
+                $map['category'] = $index;
+            } elseif (in_array($name, ['foto', 'photo', 'gambar', 'image', 'fotofile', 'fotoguru'])) {
+                $map['photo'] = $index;
+            }
+        }
+
+        return $map;
+    }
+
+    /**
+     * Normalisasi nilai unit/sekolah ke ENUM yang sah.
+     */
+    protected function normalizeSchool(string $val, string $category = '', string $position = ''): string
+    {
+        $lower = strtolower(trim($val));
+        $lowerCat = strtolower(trim($category));
+        $lowerPos = strtolower(trim($position));
+
+        if (str_contains($lower, 'staff') || str_contains($lower, 'staf') || str_contains($lower, 'tu') || str_contains($lower, 'kependidikan')) {
+            return 'Staff';
+        }
+        if (str_contains($lowerCat, 'staff') || str_contains($lowerCat, 'staf') || str_contains($lowerCat, 'tu') || str_contains($lowerCat, 'laboran') || str_contains($lowerCat, 'teknisi') || str_contains($lowerCat, 'perpustakaan') || str_contains($lowerCat, 'keamanan') || str_contains($lowerCat, 'kebersihan')) {
+            if ($val === '') {
+                return 'Staff';
+            }
+        }
+        if (str_contains($lowerPos, 'tata usaha') || str_contains($lowerPos, 'satpam') || str_contains($lowerPos, 'laboran') || str_contains($lowerPos, 'pustakawan')) {
+            if ($val === '') {
+                return 'Staff';
+            }
+        }
+        if (str_contains($lower, '1') && str_contains($lower, '2')) {
+            return 'Amaliah 1 & 2';
+        }
+        if (str_contains($lower, 'gabungan') || str_contains($lower, 'keduanya')) {
+            return 'Amaliah 1 & 2';
+        }
+        if (str_contains($lower, '2')) {
+            return 'Amaliah 2';
+        }
+        if ($val === '' && $category === 'Struktural') {
+            return 'Amaliah 1 & 2';
+        }
+        return 'Amaliah 1';
+    }
+
+    /**
+     * Normalisasi kategori ke opsi standar yang rapi.
+     */
+    protected function normalizeCategory(string $rawCat, string $school, string $position = '', ?string $subject = null): string
+    {
+        $c = strtolower(trim($rawCat));
+        $p = strtolower(trim($position));
+        $s = strtolower(trim($subject ?? ''));
+
+        // Cek kategori Staf
+        if (str_contains($c, 'tu') || str_contains($c, 'administrasi') || str_contains($p, 'tata usaha') || str_contains($p, 'administrasi')) {
+            return 'Administrasi / TU';
+        }
+        if (str_contains($c, 'laboran') || str_contains($c, 'lab') || str_contains($p, 'laboran') || str_contains($p, 'asisten lab')) {
+            return 'Laboran';
+        }
+        if (str_contains($c, 'teknisi') || str_contains($c, 'it') || str_contains($p, 'teknisi') || str_contains($p, 'maintenance') || str_contains($p, 'jaringan')) {
+            return 'Teknisi';
+        }
+        if (str_contains($c, 'perpus') || str_contains($c, 'pustaka') || str_contains($p, 'perpus') || str_contains($p, 'pustakawan')) {
+            return 'Perpustakaan';
+        }
+        if (str_contains($c, 'keuangan') || str_contains($c, 'bendahara') || str_contains($p, 'keuangan') || str_contains($p, 'kasir') || str_contains($p, 'bendahara')) {
+            return 'Keuangan';
+        }
+        if (str_contains($c, 'keamanan') || str_contains($c, 'satpam') || str_contains($c, 'security') || str_contains($p, 'satpam') || str_contains($p, 'keamanan')) {
+            return 'Keamanan';
+        }
+        if (str_contains($c, 'kebersihan') || str_contains($c, 'sarpras') || str_contains($c, 'caraka') || str_contains($c, 'ob') || str_contains($p, 'kebersihan') || str_contains($p, 'office boy')) {
+            return 'Kebersihan';
+        }
+        if ($school === 'Staff' || str_contains($c, 'staf') || str_contains($c, 'kependidikan')) {
+            return 'Staf';
+        }
+
+        // Cek kategori Guru
+        if (str_contains($c, 'struktur') || str_contains($c, 'pimpinan') || str_contains($p, 'kepala sekolah') || str_contains($p, 'wakasek')) {
+            return 'Struktural';
+        }
+        if (str_contains($c, 'produktif') || str_contains($c, 'kejuruan') || str_contains($p, 'produktif') || str_contains($s, 'rpl') || str_contains($s, 'tkj') || str_contains($s, 'dkv') || str_contains($s, 'akuntansi') || str_contains($s, 'pemrograman') || str_contains($s, 'jaringan')) {
+            return 'Produktif';
+        }
+        if (str_contains($c, 'normatif') || str_contains($s, 'agama') || str_contains($s, 'pai') || str_contains($s, 'ppkn') || str_contains($s, 'pancasila') || str_contains($s, 'sejarah') || str_contains($s, 'seni')) {
+            return 'Normatif';
+        }
+        if (str_contains($c, 'adaptif') || str_contains($s, 'matematika') || str_contains($s, 'bahasa') || str_contains($s, 'inggris') || str_contains($s, 'indonesia') || str_contains($s, 'ipa') || str_contains($s, 'pjok') || str_contains($s, 'olahraga')) {
+            return 'Adaptif';
+        }
+
+        return 'Umum';
     }
 }

@@ -12,7 +12,7 @@
 @php
     $dropId = 'dz-' . str_replace(['[', ']', '.'], ['-', '', '_'], (string) $name);
     $previewId = $preview ?? 'preview-' . str_replace(['[', ']', '.'], ['-', '', '_'], (string) $name);
-    $hasError = $errors->has($name);
+    $hasError = isset($errors) && $errors instanceof \Illuminate\Support\ViewErrorBag ? $errors->has($name) : false;
     $imgUrl = $current ? (str_starts_with($current, 'http') ? $current : asset('storage/' . $current)) : null;
 @endphp
 
@@ -25,7 +25,7 @@
         <input type="file" name="{{ $name }}" id="{{ $dropId }}-input" accept="{{ $accept }}"
             data-preview="{{ $previewId }}" class="@if($hasError) !border-rose-500 @endif" />
         <div class="dz-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-        <div class="dz-title">Tarik &amp; letakkan file di sini</div>
+        <div class="dz-title">Tarik & letakkan file di sini</div>
         <div class="dz-sub">atau klik untuk memilih · <span data-file-label="{{ $dropId }}-input">
                 @if($imgUrl)
                     file terpasang saat ini
