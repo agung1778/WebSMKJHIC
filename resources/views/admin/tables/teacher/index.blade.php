@@ -7,7 +7,7 @@
         $total = $teachers->count();
     @endphp
 
-    <div class="fade-up space-y-6" x-data="{ importModalOpen: false }">
+    <div class="fade-up space-y-6">
 
         <x-admin-components::page-header
             icon="fa-solid fa-chalkboard-user"
@@ -26,7 +26,6 @@
                 </a>
                 <button type="button" 
                     id="btnOpenTeacherImportModal"
-                    @click="importModalOpen = true" 
                     onclick="openTeacherImportModal()"
                     class="app-btn app-btn-secondary app-btn-lg cursor-pointer"
                     title="Buka jendela impor data guru & staf">
@@ -104,42 +103,32 @@
                 @endforelse
             </x-slot:body>
         </x-admin-components::table>
+    </div>
 
-        {{-- Modal Impor Massal Guru & Staf --}}
-        <div id="teacherImportModal"
-            x-show="importModalOpen" x-cloak
-            style="display: none;"
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity duration-200"
-            @keydown.escape.window="importModalOpen = false; closeTeacherImportModal()">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-5 border border-gray-100 relative"
-                @click.outside="importModalOpen = false; closeTeacherImportModal()"
-                x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 scale-95"
-                x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-150"
-                x-transition:leave-start="opacity-100 scale-100"
-                x-transition:leave-end="opacity-0 scale-95">
-
+    {{-- Modal Impor Massal Guru & Staf (diletakkan di luar .fade-up agar position: fixed mengunci viewport layar secara presisi) --}}
+    <div class="modal-overlay" id="teacherImportModal" style="display: none; z-index: 99999;">
+        <div class="modal-card w-full mx-3 sm:mx-auto" style="max-width: 540px; max-height: calc(100vh - 48px); overflow-y: auto;">
+            <div class="p-5 sm:p-6 space-y-4">
                 {{-- Header Modal --}}
-                <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-9 h-9 rounded-xl bg-[#63cd00]/15 text-[#3f8600] flex items-center justify-center text-base">
+                <div class="flex items-center justify-between pb-3 border-b" style="border-color: var(--border);">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-lg shrink-0">
                             <i class="fa-solid fa-file-import"></i>
                         </div>
                         <div>
-                            <h3 class="text-base font-bold text-gray-900 leading-tight">Impor Massal Guru & Staf</h3>
-                            <p class="text-xs text-gray-500">Unggah file Excel (.xlsx, .xls) atau CSV untuk menyinkronkan data.</p>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-gray-100 leading-tight">Impor Massal Guru & Staf</h3>
+                            <p class="text-xs text-gray-500">Unggah file Excel (.xlsx, .xls) atau CSV untuk sinkronisasi otomatis.</p>
                         </div>
                     </div>
-                    <button type="button" @click="importModalOpen = false" onclick="closeTeacherImportModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg cursor-pointer">
-                        <i class="fa-solid fa-times text-base"></i>
+                    <button type="button" class="icon-btn js-teacher-import-close" aria-label="Tutup">
+                        <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
 
                 {{-- Step 1: Download Template --}}
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex items-center justify-between gap-3">
+                <div class="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-3.5 flex items-center justify-between gap-3">
                     <div class="min-w-0">
-                        <p class="text-xs font-semibold text-gray-800">Format Template Resmi</p>
+                        <p class="text-xs font-semibold text-gray-800 dark:text-gray-200">Format Template Resmi</p>
                         <p class="text-[11px] text-gray-500">Gunakan template CSV/Excel resmi yang sudah menyertakan contoh data guru kejuruan, umum, hingga staf TU & teknisi.</p>
                     </div>
                     <a href="{{ route('admin.teachers.template') }}" class="app-btn app-btn-secondary text-xs flex-shrink-0" download>
@@ -148,11 +137,11 @@
                 </div>
 
                 {{-- Petunjuk Kolom --}}
-                <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl text-[11px] text-amber-900 space-y-1">
-                    <div class="font-semibold flex items-center gap-1.5 text-amber-950">
+                <div class="p-3 bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/50 rounded-xl text-[11px] text-amber-900 dark:text-amber-200 space-y-1">
+                    <div class="font-semibold flex items-center gap-1.5 text-amber-950 dark:text-amber-100">
                         <i class="fa-solid fa-lightbulb text-amber-600"></i> Kolom yang Didukung:
                     </div>
-                    <ul class="list-disc list-inside space-y-0.5 text-amber-800">
+                    <ul class="list-disc list-inside space-y-0.5 text-amber-800 dark:text-amber-300">
                         <li><strong class="font-semibold">Nama Lengkap</strong>: Wajib diisi beserta gelar akademik.</li>
                         <li><strong class="font-semibold">Unit / Sekolah</strong>: <code>Amaliah 1</code>, <code>Amaliah 2</code>, <code>Amaliah 1 & 2</code>, atau <code>Staff</code>.</li>
                         <li><strong class="font-semibold">Jabatan</strong>: Contoh: <em>Guru Kejuruan RPL</em>, <em>Kepala TU</em>, <em>Teknisi IT</em>.</li>
@@ -166,31 +155,31 @@
                     @csrf
 
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1.5">
+                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
                             Pilih File CSV atau Excel (.xlsx, .xls, .csv) <span class="text-red-500">*</span>
                         </label>
-                        <input type="file" name="file" accept=".csv, .xlsx, .xls, .txt" required
-                            class="block w-full text-xs text-gray-700 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#63cd00]/15 file:text-[#2d6600] hover:file:bg-[#63cd00]/25 border border-gray-200 rounded-xl p-2 bg-white cursor-pointer focus:outline-none">
+                        <input type="file" name="file" id="teacherImportFileInput" accept=".csv, .xlsx, .xls, .txt" required
+                            class="block w-full text-xs text-gray-700 dark:text-gray-300 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#63cd00]/15 file:text-[#2d6600] hover:file:bg-[#63cd00]/25 border border-gray-200 dark:border-gray-700 rounded-xl p-2 bg-white dark:bg-gray-800 cursor-pointer focus:outline-none">
                     </div>
 
                     {{-- Jaminan Keamanan Data & Foto --}}
-                    <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-3">
+                    <div class="bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 rounded-xl p-3 flex items-start gap-3">
                         <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <i class="fa-solid fa-shield-check text-base"></i>
                         </div>
-                        <div class="text-xs text-emerald-900 space-y-1">
-                            <div class="font-bold flex items-center gap-1.5 text-emerald-950">
+                        <div class="text-xs text-emerald-900 dark:text-emerald-200 space-y-1">
+                            <div class="font-bold flex items-center gap-1.5 text-emerald-950 dark:text-emerald-100">
                                 <span>Sinkronisasi Pintar & Proteksi Foto Aktif</span>
                                 <span class="bg-emerald-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">100% Aman</span>
                             </div>
-                            <p class="text-[11.5px] text-emerald-800 leading-relaxed">
+                            <p class="text-[11.5px] text-emerald-800 dark:text-emerald-300 leading-relaxed">
                                 Foto profil dan riwayat guru yang sudah ada <strong>tidak akan terhapus</strong>. Sistem otomatis memperbarui nama gelar, jabatan baru, tugas tambahan, mapel, dan menambahkan guru baru tanpa membuat data duplikat.
                             </p>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-gray-100">
-                        <button type="button" @click="importModalOpen = false" onclick="closeTeacherImportModal()" class="app-btn app-btn-secondary text-xs">
+                    <div class="flex items-center justify-end gap-2.5 pt-3 border-t" style="border-color: var(--border);">
+                        <button type="button" class="app-btn app-btn-secondary text-xs js-teacher-import-close">
                             Batal
                         </button>
                         <button type="submit" id="btnSubmitImport" class="app-btn app-btn-primary text-xs">
@@ -201,39 +190,74 @@
             </div>
         </div>
     </div>
+@endsection
 
-    <script>
-        function openTeacherImportModal() {
-            var modal = document.getElementById('teacherImportModal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                modal.style.removeProperty('display');
-                modal.style.display = 'flex';
-                modal.removeAttribute('x-cloak');
+@push('scripts')
+<script>
+    (function () {
+        function ensureModalInBody() {
+            var m = document.getElementById('teacherImportModal');
+            if (m && m.parentElement !== document.body) {
+                document.body.appendChild(m);
             }
+            return m;
         }
 
-        function closeTeacherImportModal() {
-            var modal = document.getElementById('teacherImportModal');
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.style.display = 'none';
+        window.openTeacherImportModal = function () {
+            var m = ensureModalInBody();
+            if (m) {
+                var card = m.querySelector('.modal-card');
+                if (card) card.scrollTop = 0;
+                m.style.display = 'flex';
+                document.body.classList.add('overflow-hidden');
             }
-        }
+        };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var modal = document.getElementById('teacherImportModal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        closeTeacherImportModal();
+        window.closeTeacherImportModal = function () {
+            var m = ensureModalInBody();
+            if (m) {
+                m.style.display = 'none';
+                document.body.classList.remove('overflow-hidden');
+            }
+        };
+
+        function initHandlers() {
+            ensureModalInBody();
+            var m = document.getElementById('teacherImportModal');
+            var btnOpen = document.getElementById('btnOpenTeacherImportModal');
+            var form = document.getElementById('teacherImportForm');
+
+            if (btnOpen) {
+                btnOpen.removeEventListener('click', openTeacherImportModal);
+                btnOpen.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.openTeacherImportModal();
+                });
+            }
+
+            document.querySelectorAll('.js-teacher-import-close').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.closeTeacherImportModal();
+                });
+            });
+
+            if (m) {
+                m.addEventListener('click', function (e) {
+                    if (e.target === m) {
+                        window.closeTeacherImportModal();
                     }
                 });
             }
 
-            var form = document.getElementById('teacherImportForm');
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && m && m.style.display === 'flex') {
+                    window.closeTeacherImportModal();
+                }
+            });
+
             if (form) {
-                form.addEventListener('submit', function() {
+                form.addEventListener('submit', function () {
                     var btn = document.getElementById('btnSubmitImport');
                     if (btn) {
                         btn.disabled = true;
@@ -241,7 +265,13 @@
                     }
                 });
             }
-        });
-    </script>
-    </div>
-@endsection
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initHandlers);
+        } else {
+            initHandlers();
+        }
+    })();
+</script>
+@endpush
