@@ -163,16 +163,20 @@
                             class="block w-full text-xs text-gray-700 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#63cd00]/15 file:text-[#2d6600] hover:file:bg-[#63cd00]/25 border border-gray-200 rounded-xl p-2 bg-white cursor-pointer focus:outline-none">
                     </div>
 
-                    <div class="space-y-2.5 pt-1">
-                        <label class="flex items-start gap-2.5 cursor-pointer text-xs text-gray-700 select-none bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200/60">
-                            <input type="checkbox" name="update_existing" value="1" checked class="mt-0.5 rounded border-gray-300 text-[#63cd00] focus:ring-[#63cd00]">
-                            <span><strong>Perbarui otomatis jika nama sudah ada</strong>: jabatan, mapel, tugas tambahan, dan urutan diperbarui otomatis tanpa membuat data ganda (tidak perlu edit satu per satu).</span>
-                        </label>
-
-                        <label class="flex items-start gap-2.5 cursor-pointer text-xs text-gray-600 select-none bg-gray-50 p-2.5 rounded-xl border border-gray-200">
-                            <input type="checkbox" name="replace_all" value="1" class="mt-0.5 rounded border-gray-300 text-red-600 focus:ring-red-500" onchange="if(this.checked){ if(!confirm('Peringatan: Opsi ini akan mengosongkan semua data guru & staf yang ada terlebih dahulu dan menggantinya dengan isi file yang baru diunggah. Lanjutkan?')) this.checked = false; }">
-                            <span><strong>Ganti Seluruh Data (Replace Master)</strong>: Kosongkan semua data lama terlebih dahulu, lalu masukkan semua data dari file ini secara bersih.</span>
-                        </label>
+                    {{-- Jaminan Keamanan Data & Foto --}}
+                    <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa-solid fa-shield-check text-base"></i>
+                        </div>
+                        <div class="text-xs text-emerald-900 space-y-1">
+                            <div class="font-bold flex items-center gap-1.5 text-emerald-950">
+                                <span>Sinkronisasi Pintar & Proteksi Foto Aktif</span>
+                                <span class="bg-emerald-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">100% Aman</span>
+                            </div>
+                            <p class="text-[11.5px] text-emerald-800 leading-relaxed">
+                                Foto profil dan riwayat guru yang sudah ada <strong>tidak akan terhapus</strong>. Sistem otomatis memperbarui nama gelar, jabatan baru, tugas tambahan, mapel, dan menambahkan guru baru tanpa membuat data duplikat.
+                            </p>
+                        </div>
                     </div>
 
                     <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-gray-100">

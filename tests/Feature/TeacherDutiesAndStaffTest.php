@@ -128,6 +128,7 @@ class TeacherDutiesAndStaffTest extends TestCase
             'subject' => 'Fisika',
             'category' => 'Adaptif',
             'order_column' => 200,
+            'photo' => 'photos/bambang_foto_lama.jpg',
         ]);
 
         $csvContent = "Nama Lengkap,Unit / Sekolah,Jabatan,Mata Pelajaran,Tugas Tambahan,Kategori\n"
@@ -137,16 +138,16 @@ class TeacherDutiesAndStaffTest extends TestCase
 
         $response = $this->post(route('admin.teachers.import'), [
             'file' => $file,
-            'update_existing' => '1',
         ]);
 
         $response->assertRedirect(route('admin.teachers.index'));
 
-        // Harus tetap ada 1 record, tapi datanya terupdate
+        // Harus tetap ada 1 record, jabatan & tugas terupdate, tapi foto lama tetap terjaga 100%
         $this->assertSame(1, Teacher::where('name', 'Bambang Kusuma, S.Pd.')->count());
         $updated = Teacher::where('name', 'Bambang Kusuma, S.Pd.')->first();
         $this->assertSame('Wakil Kepala Sekolah Bidang Kurikulum', $updated->position);
         $this->assertStringContainsString('Wali Kelas XII', $updated->additional_duties);
+        $this->assertSame('photos/bambang_foto_lama.jpg', $updated->photo);
     }
 
     public function test_deduplicate_route_merges_duplicate_names(): void

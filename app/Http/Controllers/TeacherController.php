@@ -268,8 +268,8 @@ class TeacherController extends Controller
 
         $file = $request->file('file');
         $ext = strtolower($file->getClientOriginalExtension());
-        $updateExisting = $request->boolean('update_existing', true);
-        $replaceAll = $request->boolean('replace_all', false);
+        // Selalu gunakan mode sinkronisasi pintar (upsert): data lama & foto aman, jabatan & mapel diperbarui otomatis
+        $updateExisting = true;
 
         if (!in_array($ext, ['csv', 'txt', 'xlsx', 'xls'])) {
             return redirect()->back()->with('error', 'Format file tidak didukung. Harap unggah file .csv atau .xlsx.');
@@ -301,10 +301,6 @@ class TeacherController extends Controller
 
         DB::beginTransaction();
         try {
-            if ($replaceAll) {
-                Teacher::query()->delete();
-            }
-
             foreach ($rows as $index => $row) {
                 $name = trim($row[$colMap['name']] ?? '');
 
