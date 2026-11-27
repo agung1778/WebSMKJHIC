@@ -150,6 +150,31 @@ class TeacherDutiesAndStaffTest extends TestCase
         $this->assertSame('photos/bambang_foto_lama.jpg', $updated->photo);
     }
 
+    public function test_import_handles_files_with_kop_surat_or_preamble_rows(): void
+    {
+        $this->authenticateAdmin();
+
+        $csvContent = "YAYASAN PUSAT STUDI PENGEMBANGAN ISLAM AMALIYAH INDONESIA\n"
+            . "SMK AMALIAH 1 & 2 CIAWI BOGOR\n"
+            . "DAFTAR ABSENSI DAN DATA GURU TAHUN 2026/2027\n"
+            . "\n"
+            . "No,Nama Lengkap,Unit / Sekolah,Jabatan,Mata Pelajaran,Tugas Tambahan\n"
+            . "1,\"Deni Hendriana, S.Pd.\",\"Amaliah 1\",\"Guru Produktif PPLG\",\"Pemrograman Web\",\"Kepala Bengkel PPLG\"\n";
+
+        $file = UploadedFile::fake()->createWithContent('data_guru_kop.csv', $csvContent);
+
+        $response = $this->post(route('admin.teachers.import'), [
+            'file' => $file,
+        ]);
+
+        $response->assertRedirect(route('admin.teachers.index'));
+        $this->assertDatabaseHas('teachers', [
+            'name' => 'Deni Hendriana, S.Pd.',
+            'position' => 'Guru Produktif PPLG',
+            'additional_duties' => 'Kepala Bengkel PPLG',
+        ]);
+    }
+
     public function test_deduplicate_route_merges_duplicate_names(): void
     {
         $this->authenticateAdmin();

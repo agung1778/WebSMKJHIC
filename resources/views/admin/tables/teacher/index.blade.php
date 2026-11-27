@@ -24,7 +24,12 @@
                 <a href="{{ route('admin.teachers.export') }}" class="app-btn app-btn-secondary app-btn-lg cursor-pointer" title="Unduh seluruh data guru & staf dalam format CSV / Excel">
                     <i class="fa-solid fa-file-arrow-down text-emerald-600"></i><span class="hide-mob">Ekspor Data</span>
                 </a>
-                <button type="button" @click="importModalOpen = true" class="app-btn app-btn-secondary app-btn-lg cursor-pointer">
+                <button type="button" 
+                    id="btnOpenTeacherImportModal"
+                    @click="importModalOpen = true" 
+                    onclick="openTeacherImportModal()"
+                    class="app-btn app-btn-secondary app-btn-lg cursor-pointer"
+                    title="Buka jendela impor data guru & staf">
                     <i class="fa-solid fa-file-import"></i><span class="hide-mob">Impor Data</span>
                 </button>
                 <a class="app-btn app-btn-primary app-btn-lg" href="{{ route('admin.teachers.create') }}">
@@ -101,11 +106,13 @@
         </x-admin-components::table>
 
         {{-- Modal Impor Massal Guru & Staf --}}
-        <div x-show="importModalOpen" x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs transition-opacity duration-200"
-            @keydown.escape.window="importModalOpen = false">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-5 border border-gray-100"
-                @click.outside="importModalOpen = false"
+        <div id="teacherImportModal"
+            x-show="importModalOpen" x-cloak
+            style="display: none;"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity duration-200"
+            @keydown.escape.window="importModalOpen = false; closeTeacherImportModal()">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-5 border border-gray-100 relative"
+                @click.outside="importModalOpen = false; closeTeacherImportModal()"
                 x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0 scale-95"
                 x-transition:enter-end="opacity-100 scale-100"
@@ -121,10 +128,10 @@
                         </div>
                         <div>
                             <h3 class="text-base font-bold text-gray-900 leading-tight">Impor Massal Guru & Staf</h3>
-                            <p class="text-xs text-gray-500">Unggah satu file CSV / Excel untuk membuat semua data sekaligus.</p>
+                            <p class="text-xs text-gray-500">Unggah file Excel (.xlsx, .xls) atau CSV untuk menyinkronkan data.</p>
                         </div>
                     </div>
-                    <button type="button" @click="importModalOpen = false" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg cursor-pointer">
+                    <button type="button" @click="importModalOpen = false" onclick="closeTeacherImportModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg cursor-pointer">
                         <i class="fa-solid fa-times text-base"></i>
                     </button>
                 </div>
@@ -155,12 +162,12 @@
                 </div>
 
                 {{-- Form Upload --}}
-                <form action="{{ route('admin.teachers.import') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <form id="teacherImportForm" action="{{ route('admin.teachers.import') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
 
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 mb-1.5">
-                            Pilih File CSV atau Excel (.xlsx, .csv) <span class="text-red-500">*</span>
+                            Pilih File CSV atau Excel (.xlsx, .xls, .csv) <span class="text-red-500">*</span>
                         </label>
                         <input type="file" name="file" accept=".csv, .xlsx, .xls, .txt" required
                             class="block w-full text-xs text-gray-700 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#63cd00]/15 file:text-[#2d6600] hover:file:bg-[#63cd00]/25 border border-gray-200 rounded-xl p-2 bg-white cursor-pointer focus:outline-none">
@@ -183,15 +190,58 @@
                     </div>
 
                     <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-gray-100">
-                        <button type="button" @click="importModalOpen = false" class="app-btn app-btn-secondary text-xs">
+                        <button type="button" @click="importModalOpen = false" onclick="closeTeacherImportModal()" class="app-btn app-btn-secondary text-xs">
                             Batal
                         </button>
-                        <button type="submit" class="app-btn app-btn-primary text-xs">
+                        <button type="submit" id="btnSubmitImport" class="app-btn app-btn-primary text-xs">
                             <i class="fa-solid fa-cloud-arrow-up"></i> Mulai Impor Data
                         </button>
                     </div>
                 </form>
             </div>
         </div>
+    </div>
+
+    <script>
+        function openTeacherImportModal() {
+            var modal = document.getElementById('teacherImportModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.style.removeProperty('display');
+                modal.style.display = 'flex';
+                modal.removeAttribute('x-cloak');
+            }
+        }
+
+        function closeTeacherImportModal() {
+            var modal = document.getElementById('teacherImportModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var modal = document.getElementById('teacherImportModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeTeacherImportModal();
+                    }
+                });
+            }
+
+            var form = document.getElementById('teacherImportForm');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    var btn = document.getElementById('btnSubmitImport');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sedang Mengimpor...';
+                    }
+                });
+            }
+        });
+    </script>
     </div>
 @endsection

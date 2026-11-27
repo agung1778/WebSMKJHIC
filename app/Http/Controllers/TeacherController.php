@@ -324,8 +324,16 @@ class TeacherController extends Controller
 
         $rows = [];
 
-        if ($ext === 'xlsx' || $ext === 'xls') {
+        if ($ext === 'xlsx') {
             $rows = $this->parseXlsxFile($file->getPathname());
+            if (empty($rows)) {
+                $rows = $this->parseXlsFile($file->getPathname());
+            }
+        } elseif ($ext === 'xls') {
+            $rows = $this->parseXlsFile($file->getPathname());
+            if (empty($rows)) {
+                $rows = $this->parseXlsxFile($file->getPathname());
+            }
         } else {
             $rows = $this->parseCsvFile($file->getPathname());
         }
@@ -334,12 +342,29 @@ class TeacherController extends Controller
             return redirect()->back()->with('error', 'File impor kosong atau format data tidak dapat dibaca.');
         }
 
-        $headerRow = array_shift($rows);
-        $colMap = $this->mapImportHeaders($headerRow);
+        // Cari baris header secara pintar di antara 15 baris pertama (menghindari kop surat / judul)
+        $headerRow = null;
+        $colMap = [];
+        $headerRowIndex = 0;
 
-        if (!isset($colMap['name'])) {
-            return redirect()->back()->with('error', 'Kolom "Nama" atau "Nama Lengkap" tidak ditemukan pada baris judul file.');
+        foreach ($rows as $rIdx => $candidateRow) {
+            $candidateMap = $this->mapImportHeaders($candidateRow);
+            if (isset($candidateMap['name'])) {
+                $headerRow = $candidateRow;
+                $colMap = $candidateMap;
+                $headerRowIndex = $rIdx;
+                break;
+            }
+            if ($rIdx >= 15) {
+                break;
+            }
         }
+
+        if (!$headerRow) {
+            return redirect()->back()->with('error', 'Kolom "Nama" atau "Nama Lengkap" tidak ditemukan pada file. Pastikan file memiliki baris judul kolom.');
+        }
+
+        $rows = array_slice($rows, $headerRowIndex + 1);
 
         $successCount = 0;
         $updatedCount = 0;
@@ -701,6 +726,26 @@ class TeacherController extends Controller
         }
 
         return $rows;
+    }
+
+    /**
+     * Baca baris-baris dari file format .xls (BIFF8 OLE2) menggunakan Python xlrd atau fallback.
+     */
+    protected function parseXlsFile(string $path): array
+    {
+        $escapedPath = escapeshellarg($path);
+        $pyCode = 'import xlrd, json, sys; wb = xlrd.open_workbook(sys.argv[1]); sheet = wb.sheet_by_index(0); rows = [[str(c).strip() for c in sheet.row_values(r)] for r in range(sheet.nrows)]; print(json.dumps(rows))';
+        $cmd = "python -c \"{$pyCode}\" {$escapedPath}";
+
+        $output = @shell_exec($cmd);
+        if ($output) {
+            $data = @json_decode($output, true);
+            if (is_array($data) && !empty($data)) {
+                return $data;
+            }
+        }
+
+        return $this->parseCsvFile($path);
     }
 
     /**
