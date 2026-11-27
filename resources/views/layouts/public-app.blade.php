@@ -5,10 +5,25 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta name="theme-color" content="#63cd00">
     <meta name="description"
-        content="@yield('description', 'Situs web resmi SMK Amaliah 1 & 2 Ciawi-Bogor. Temukan informasi tentang jurusan, pendaftaran, fasilitas, dan berita terbaru.')">
+        content="@yield('description', 'Situs web resmi SMK Amaliah 1 & 2 Ciawi-Bogor. Temukan informasi tentang jurusan kejuruan, pendaftaran siswa baru (SPMB), fasilitas, guru & staf, serta prestasi sekolah.')">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/webp" href="{{ asset('assets/logo/am.webp') }}">
+
+    {{-- Open Graph / WhatsApp / Facebook Sharing Preview --}}
+    <meta property="og:site_name" content="SMK Amaliah 1 & 2 Ciawi">
+    <meta property="og:title" content="@yield('title', 'SMK Amaliah 1 & 2 Ciawi-Bogor')">
+    <meta property="og:description" content="@yield('description', 'Situs web resmi SMK Amaliah 1 & 2 Ciawi-Bogor. Temukan informasi tentang jurusan kejuruan, pendaftaran siswa baru (SPMB), fasilitas, guru & staf, serta prestasi sekolah.')">
+    <meta property="og:image" content="@yield('og_image', asset('assets/logo/am.webp'))">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+
+    {{-- Twitter / X Sharing Card --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'SMK Amaliah 1 & 2 Ciawi-Bogor')">
+    <meta name="twitter:description" content="@yield('description', 'Situs web resmi SMK Amaliah 1 & 2 Ciawi-Bogor. Temukan informasi tentang jurusan kejuruan, pendaftaran siswa baru (SPMB), fasilitas, guru & staf, serta prestasi sekolah.')">
+    <meta name="twitter:image" content="@yield('og_image', asset('assets/logo/am.webp'))">
 
     <title>@yield('title', 'SMK Amaliah 1 & 2')</title>
 

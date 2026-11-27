@@ -209,8 +209,9 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
         // Rute untuk Fasilitas 
         Route::resource('programs', SchoolProgramController::class);
 
-        // Rute untuk Guru & Staf (termasuk impor massal)
+        // Rute untuk Guru & Staf (termasuk impor & ekspor massal)
         Route::get('/teachers/import/template', [TeacherController::class, 'downloadTemplate'])->name('teachers.template');
+        Route::get('/teachers/export', [TeacherController::class, 'export'])->name('teachers.export');
         Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
         Route::post('/teachers/deduplicate', [TeacherController::class, 'deduplicate'])->name('teachers.deduplicate');
         Route::resource('teachers', TeacherController::class);

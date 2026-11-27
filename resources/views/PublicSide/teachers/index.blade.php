@@ -137,14 +137,17 @@
             </div>
 
             {{-- Search Bar --}}
-            <div class="mt-8 mb-4 max-w-md">
-                <div class="relative">
+            <div class="mt-8 mb-4 max-w-lg">
+                <div class="relative flex items-center">
                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                         <i class="fa-solid fa-magnifying-glass text-sm"></i>
                     </span>
                     <input type="text" id="teacherSearchInput"
-                        placeholder="Cari nama guru atau mata pelajaran..."
-                        class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-full focus:bg-white focus:outline-none focus:border-[#63cd00] focus:ring-2 focus:ring-[#63cd00]/20 shadow-xs transition-all">
+                        placeholder="Cari nama guru, mapel, atau tugas tambahan..."
+                        class="w-full pl-10 pr-10 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-full focus:bg-white focus:outline-none focus:border-[#63cd00] focus:ring-2 focus:ring-[#63cd00]/20 shadow-xs transition-all">
+                    <button type="button" id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer">
+                        <i class="fa-solid fa-circle-xmark text-sm"></i>
+                    </button>
                 </div>
             </div>
 
@@ -208,7 +211,8 @@
                         <div class="fw-card" data-g="all {{ $g }}"
                             data-name="{{ strtolower($teacher->name) }}"
                             data-subject="{{ strtolower($teacher->subject ?? '') }}"
-                            data-position="{{ strtolower($teacher->position ?? '') }}">
+                            data-position="{{ strtolower($teacher->position ?? '') }}"
+                            data-duties="{{ strtolower($teacher->additional_duties ?? '') }}">
                             @include('PublicSide.teachers.card', ['teacher' => $teacher])
                         </div>
                     @empty
@@ -222,6 +226,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var searchInput = document.getElementById('teacherSearchInput');
+            var clearBtn = document.getElementById('clearSearchBtn');
             var cards = Array.from(document.querySelectorAll('.fw-card'));
             var noResult = document.getElementById('noTeacherSearchMessage');
             var radios = Array.from(document.querySelectorAll('.fw-input'));
@@ -237,13 +242,18 @@
                 var activeCat = getActiveCategory();
                 var matched = 0;
 
+                if (clearBtn) {
+                    clearBtn.classList.toggle('hidden', !q);
+                }
+
                 cards.forEach(function (card) {
                     var groups = (card.dataset.g || '').split(' ');
                     var matchCat = activeCat === 'all' || groups.indexOf(activeCat) !== -1;
                     var matchQuery = !q ||
                         (card.dataset.name || '').indexOf(q) !== -1 ||
                         (card.dataset.subject || '').indexOf(q) !== -1 ||
-                        (card.dataset.position || '').indexOf(q) !== -1;
+                        (card.dataset.position || '').indexOf(q) !== -1 ||
+                        (card.dataset.duties || '').indexOf(q) !== -1;
 
                     var isVisible = matchCat && matchQuery;
                     if (isVisible) matched++;
@@ -256,13 +266,22 @@
                 });
 
                 if (noResult) {
-                    // Hanya tampilkan pesan pencarian jika user memang sedang mengetik pencarian dan tidak ada hasil
                     noResult.classList.toggle('hidden', !q || matched > 0);
                 }
             }
 
             if (searchInput) {
                 searchInput.addEventListener('input', filter);
+            }
+
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function () {
+                    if (searchInput) {
+                        searchInput.value = '';
+                        searchInput.focus();
+                        filter();
+                    }
+                });
             }
 
             radios.forEach(function (radio) {

@@ -255,6 +255,53 @@ class TeacherController extends Controller
     }
 
     /**
+     * Ekspor seluruh data guru dan staf ke file CSV kompatibel Excel (UTF-8 BOM).
+     */
+    public function export()
+    {
+        $teachers = Teacher::ordered()->get();
+
+        $headers = [
+            'No',
+            'Nama Lengkap',
+            'Unit / Sekolah',
+            'Jabatan',
+            'Mata Pelajaran',
+            'Tugas Tambahan / Job Tambahan',
+            'Kategori',
+            'Urutan Hierarki',
+        ];
+
+        $handle = fopen('php://temp', 'w');
+        fputs($handle, "\xEF\xBB\xBF"); // BOM UTF-8 untuk Excel
+
+        fputcsv($handle, $headers);
+        foreach ($teachers as $idx => $t) {
+            fputcsv($handle, [
+                $idx + 1,
+                $t->name,
+                $t->school,
+                $t->position,
+                $t->subject ?? '-',
+                $t->additional_duties ?? '-',
+                $t->category ?? '-',
+                $t->order_column ?? ($idx + 1),
+            ]);
+        }
+
+        rewind($handle);
+        $csv = stream_get_contents($handle);
+        fclose($handle);
+
+        $filename = 'data_guru_dan_staf_smk_amaliah_' . date('Ymd_His') . '.csv';
+
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    /**
      * Impor massal data guru dan staf dari file CSV atau Excel (.xlsx).
      */
     public function import(Request $request)

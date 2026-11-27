@@ -21,6 +21,9 @@
                         <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i><span class="hide-mob">Satukan Duplikasi</span>
                     </button>
                 </form>
+                <a href="{{ route('admin.teachers.export') }}" class="app-btn app-btn-secondary app-btn-lg cursor-pointer" title="Unduh seluruh data guru & staf dalam format CSV / Excel">
+                    <i class="fa-solid fa-file-arrow-down text-emerald-600"></i><span class="hide-mob">Ekspor Data</span>
+                </a>
                 <button type="button" @click="importModalOpen = true" class="app-btn app-btn-secondary app-btn-lg cursor-pointer">
                     <i class="fa-solid fa-file-import"></i><span class="hide-mob">Impor Data</span>
                 </button>
@@ -43,7 +46,7 @@
         <x-admin-components::table
             :head="['Nama', ['label' => 'Sekolah', 'class' => 'hide-mob'], 'Kategori', ['label' => 'Diperbarui', 'class' => 'hide-mob'], ['label' => 'Aksi', 'right' => true, 'class' => 'has-3-actions']]"
             search-hint="Cari nama, jabatan, mapel…"
-            :export-url="route('admin.export', ['resource' => 'teachers'])">
+            :export-url="route('admin.teachers.export')">
             <x-slot:body>
                 @forelse ($teachers as $t)
                     @php $isStaff = ($t->school ?? '') === 'Staff'; @endphp
