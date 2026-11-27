@@ -355,14 +355,14 @@ class TeacherController extends Controller
 
         // Cari baris header secara pintar di antara 15 baris pertama (menghindari kop surat / judul)
         $headerRow = null;
-        $colMap = [];
+        $sections = [];
         $headerRowIndex = 0;
 
         foreach ($rows as $rIdx => $candidateRow) {
-            $candidateMap = $this->mapImportHeaders($candidateRow);
-            if (isset($candidateMap['name'])) {
+            $candidateSections = $this->buildTableSections($candidateRow);
+            if (!empty($candidateSections)) {
                 $headerRow = $candidateRow;
-                $colMap = $candidateMap;
+                $sections = $candidateSections;
                 $headerRowIndex = $rIdx;
                 break;
             }
@@ -371,7 +371,7 @@ class TeacherController extends Controller
             }
         }
 
-        if (!$headerRow) {
+        if (!$headerRow || empty($sections)) {
             \Illuminate\Support\Facades\Log::warning('Impor guru: kolom Nama tidak ditemukan.', [
                 'scanned_rows' => array_slice($rows, 0, 5),
             ]);
@@ -388,98 +388,119 @@ class TeacherController extends Controller
         DB::beginTransaction();
         try {
             foreach ($rows as $index => $row) {
-                $name = trim($row[$colMap['name']] ?? '');
+                foreach ($sections as $secIndex => $sec) {
+                    $colMap = $sec['colMap'];
+                    $name = trim($row[$colMap['name']] ?? '');
 
-                if ($name === '' || $name === '-') {
-                    continue;
-                }
+                    if ($name === '' || $name === '-' || $name === '--' || is_numeric($name)) {
+                        continue;
+                    }
 
-                $rawSchool = isset($colMap['school']) ? trim($row[$colMap['school']] ?? '') : '';
-                $rawCategory = isset($colMap['category']) ? trim($row[$colMap['category']] ?? '') : '';
-                $position = isset($colMap['position']) ? trim($row[$colMap['position']] ?? '') : '';
-                $subject = isset($colMap['subject']) ? trim($row[$colMap['subject']] ?? '') : null;
-                $photo = isset($colMap['photo']) ? trim($row[$colMap['photo']] ?? '') : null;
+                    $rawSchool = isset($colMap['school']) ? trim($row[$colMap['school']] ?? '') : '';
+                    $rawCategory = isset($colMap['category']) ? trim($row[$colMap['category']] ?? '') : '';
+                    $position = isset($colMap['position']) ? trim($row[$colMap['position']] ?? '') : '';
+                    $subject = isset($colMap['subject']) ? trim($row[$colMap['subject']] ?? '') : null;
+                    $photo = isset($colMap['photo']) ? trim($row[$colMap['photo']] ?? '') : null;
 
-                // Ekstrak tugas tambahan (mendukung single atau multiple kolom tugas tambahan)
-                $additionalDuties = null;
-                if (!empty($colMap['additional_duties'])) {
+                    // Ekstrak tugas tambahan
                     $dutyParts = [];
-                    foreach ((array) $colMap['additional_duties'] as $dIdx) {
-                        $val = trim($row[$dIdx] ?? '');
-                        if ($val !== '' && $val !== '-') {
-                            $dutyParts[] = $val;
+                    if (!empty($colMap['additional_duties'])) {
+                        foreach ((array) $colMap['additional_duties'] as $dIdx) {
+                            $val = trim($row[$dIdx] ?? '');
+                            if ($val !== '' && $val !== '-') {
+                                $dutyParts[] = $val;
+                            }
                         }
                     }
-                    if (!empty($dutyParts)) {
-                        $additionalDuties = implode(', ', $dutyParts);
+
+                    // Deteksi pintar mapel yang tertulis di dalam kolom tugas tambahan (misal: "Guru Produktif PPLG")
+                    if (empty($subject) && !empty($dutyParts)) {
+                        $remainingDuties = [];
+                        $extractedSubjects = [];
+                        foreach ($dutyParts as $duty) {
+                            if (preg_match('/^Guru\s+(.+)$/i', $duty, $m)) {
+                                $extractedSubjects[] = trim($m[1]);
+                            } else {
+                                $remainingDuties[] = $duty;
+                            }
+                        }
+                        if (!empty($extractedSubjects)) {
+                            $subject = implode(', ', $extractedSubjects);
+                            $dutyParts = $remainingDuties;
+                        }
                     }
-                }
 
-                $school = $this->normalizeSchool($rawSchool, $rawCategory, $position);
-                $category = $this->normalizeCategory($rawCategory, $school, $position, $subject);
+                    $additionalDuties = !empty($dutyParts) ? implode(', ', $dutyParts) : null;
 
-                if ($position === '') {
-                    $position = ($school === 'Staff') ? 'Staf Kependidikan' : 'Guru';
-                }
+                    // Tentukan unit sekolah: jika tidak ada kolom sekolah eksplisit, gunakan default seksi (Amaliah 1 / Amaliah 2)
+                    $school = $this->normalizeSchool($rawSchool ?: ($sec['defaultSchool'] ?? ''), $rawCategory, $position);
+                    $category = $this->normalizeCategory($rawCategory, $school, $position, $subject);
 
-                $orderColumn = isset($colMap['order_column']) && is_numeric(trim($row[$colMap['order_column']] ?? ''))
-                    ? (int) trim($row[$colMap['order_column']])
-                    : ($index + 1);
+                    if ($position === '' || $position === '-') {
+                        $position = ($school === 'Staff') ? 'Staf Kependidikan' : 'Guru';
+                    }
 
-                $baseKey = $this->normalizeBaseName($name);
+                    $orderColumn = isset($colMap['order_column']) && is_numeric(trim($row[$colMap['order_column']] ?? ''))
+                        ? (int) trim($row[$colMap['order_column']])
+                        : (($index * 2) + $secIndex + 1);
 
-                // Cek apakah guru ini sudah ada di sesi impor saat ini atau di database
-                $existing = $sessionMap[$baseKey] ?? $this->findTeacherForImport($name);
+                    $baseKey = $this->normalizeBaseName($name);
+                    $isSecondInSession = isset($sessionMap[$baseKey]);
+                    $existing = $sessionMap[$baseKey] ?? $this->findTeacherForImport($name);
 
-                if ($existing) {
-                    if ($updateExisting) {
-                        // Jika guru ini terdaftar di sekolah yang berbeda, jadikan 'Amaliah 1 & 2'
-                        $finalSchool = $existing->school;
-                        if ($existing->school !== $school && $existing->school !== 'Staff' && $school !== 'Staff') {
+                    if ($existing) {
+                        if ($isSecondInSession) {
+                            // Guru ini muncul di kedua tabel (Amaliah 1 dan Amaliah 2) dalam file yang sama!
                             $finalSchool = 'Amaliah 1 & 2';
-                        } elseif ($existing->school === 'Staff' && $school !== 'Staff') {
-                            $finalSchool = $school;
+                            $finalSubject = $this->combineCommaValues($existing->subject, $subject);
+                            $finalDuties = $this->combineCommaValues($existing->additional_duties, $additionalDuties);
+                            $finalPosition = $existing->position;
+                            if (str_contains(strtolower($existing->position), 'guru') && !str_contains(strtolower($position), 'guru') && $position !== '') {
+                                $finalPosition = $position;
+                            }
+                        } else {
+                            // Pertama kali ditemukan dalam file baru: TIMPA / PERBARUI dengan data terbaru dari file!
+                            $finalSchool = $school ?: $existing->school;
+                            $finalPosition = (!empty($position) && $position !== '-') ? $position : $existing->position;
+                            $finalSubject = (!empty($subject) && $subject !== '-') ? $subject : $existing->subject;
+                            $finalDuties = (!empty($additionalDuties) && $additionalDuties !== '-') ? $additionalDuties : $existing->additional_duties;
                         }
 
-                        // Gabungkan mata pelajaran dan tugas tambahan tanpa duplikasi
-                        $mergedSubject = $this->combineCommaValues($existing->subject, $subject);
-                        $mergedDuties = $this->combineCommaValues($existing->additional_duties, $additionalDuties);
-
-                        // Ambil nama terpanjang (yang menyertakan gelar lengkap)
                         $finalName = (strlen($name) > strlen($existing->name)) ? $name : $existing->name;
                         $finalOrder = min($existing->order_column ?? 999, $orderColumn ?? 999);
 
                         $updateData = [
                             'name' => $finalName,
                             'school' => $finalSchool,
-                            'position' => $position ?: $existing->position,
-                            'subject' => $mergedSubject,
-                            'additional_duties' => $mergedDuties,
+                            'position' => $finalPosition,
+                            'subject' => $finalSubject,
+                            'additional_duties' => $finalDuties,
                             'order_column' => $finalOrder,
                             'category' => $category ?: $existing->category,
                         ];
+
+                        // Foto profil lama selalu dipertahankan (100% aman)
                         if (!empty($photo)) {
                             $updateData['photo'] = $photo;
                         }
+
                         $existing->update($updateData);
                         $sessionMap[$baseKey] = $existing;
                         $updatedCount++;
                     } else {
-                        $skippedCount++;
+                        $created = Teacher::create([
+                            'name' => $name,
+                            'school' => $school,
+                            'position' => $position,
+                            'subject' => $subject,
+                            'additional_duties' => $additionalDuties,
+                            'order_column' => $orderColumn,
+                            'category' => $category,
+                            'photo' => !empty($photo) ? $photo : null,
+                        ]);
+                        $sessionMap[$baseKey] = $created;
+                        $successCount++;
                     }
-                } else {
-                    $created = Teacher::create([
-                        'name' => $name,
-                        'school' => $school,
-                        'position' => $position,
-                        'subject' => $subject,
-                        'additional_duties' => $additionalDuties,
-                        'order_column' => $orderColumn,
-                        'category' => $category,
-                        'photo' => !empty($photo) ? $photo : null,
-                    ]);
-                    $sessionMap[$baseKey] = $created;
-                    $successCount++;
                 }
             }
 
@@ -810,6 +831,86 @@ class TeacherController extends Controller
         }
 
         return $this->parseCsvFile($path);
+    }
+
+    /**
+     * Membangun daftar seksi tabel kolom (mendukung single-table maupun multi-tabel berdampingan seperti SMK Amaliah 1 & 2).
+     */
+    protected function buildTableSections(array $headerRow): array
+    {
+        $nameColIndices = [];
+        foreach ($headerRow as $index => $col) {
+            $colNorm = strtolower(trim(preg_replace('/[^a-zA-Z0-9]/', '', (string)$col)));
+            if (in_array($colNorm, ['nama', 'namalengkap', 'name', 'fullname', 'namaguru', 'namagurustaf', 'namapendidik'])) {
+                $nameColIndices[] = $index;
+            }
+        }
+
+        if (empty($nameColIndices)) {
+            return [];
+        }
+
+        $sections = [];
+        $totalCols = count($headerRow);
+        $numSections = count($nameColIndices);
+
+        for ($s = 0; $s < $numSections; $s++) {
+            $nameIdx = $nameColIndices[$s];
+            // Tentukan batas awal kolom untuk seksi ini (biasanya kolom No sebelum Nama jika ada)
+            $startCol = ($s === 0) ? 0 : max(0, $nameIdx - 1);
+            // Tentukan batas akhir kolom untuk seksi ini
+            $endCol = ($s + 1 < $numSections) ? max($nameIdx, $nameColIndices[$s + 1] - 1) : ($totalCols - 1);
+
+            $sectionColMap = [
+                'name' => $nameIdx,
+                'additional_duties' => [],
+            ];
+
+            for ($c = $startCol; $c <= $endCol; $c++) {
+                if ($c === $nameIdx) continue;
+                $colHeader = $headerRow[$c] ?? '';
+                $name = strtolower(trim(preg_replace('/[^a-zA-Z0-9]/', '', (string)$colHeader)));
+
+                if (in_array($name, ['sekolah', 'unit', 'school', 'unitsekolah', 'lembaga', 'penempatan'])) {
+                    $sectionColMap['school'] = $c;
+                } elseif (str_contains($name, 'tambahan') || in_array($name, ['jobtambahan', 'obtambahan', 'additionalduties', 'tugastambahan', 'tugasextra', 'duties'])) {
+                    $sectionColMap['additional_duties'][] = $c;
+                } elseif (in_array($name, ['jabatan', 'position', 'posisi', 'role'])) {
+                    $sectionColMap['position'] = $c;
+                } elseif (in_array($name, ['tugas'])) {
+                    if (!isset($sectionColMap['position'])) {
+                        $sectionColMap['position'] = $c;
+                    } else {
+                        $sectionColMap['additional_duties'][] = $c;
+                    }
+                } elseif (in_array($name, ['matapelajaran', 'mapel', 'subject', 'pelajaran', 'mengajar'])) {
+                    $sectionColMap['subject'] = $c;
+                } elseif (in_array($name, ['kategori', 'category', 'kelompok', 'jenis', 'tipe'])) {
+                    $sectionColMap['category'] = $c;
+                } elseif (in_array($name, ['urutan', 'order', 'ordercolumn', 'nomor', 'no', 'rank', 'hierarki', 'prioritas'])) {
+                    $sectionColMap['order_column'] = $c;
+                } elseif (in_array($name, ['foto', 'photo', 'gambar', 'image', 'fotofile', 'fotoguru'])) {
+                    $sectionColMap['photo'] = $c;
+                }
+            }
+
+            // Tentukan default school jika file adalah model tabel berdampingan (seperti SMK Amaliah 1 di kiri & SMK Amaliah 2 di kanan)
+            $defaultSchool = 'Amaliah 1 & 2';
+            if ($numSections >= 2) {
+                if ($s === 0) {
+                    $defaultSchool = 'Amaliah 1';
+                } elseif ($s === 1) {
+                    $defaultSchool = 'Amaliah 2';
+                }
+            }
+
+            $sections[] = [
+                'colMap' => $sectionColMap,
+                'defaultSchool' => $defaultSchool,
+            ];
+        }
+
+        return $sections;
     }
 
     /**

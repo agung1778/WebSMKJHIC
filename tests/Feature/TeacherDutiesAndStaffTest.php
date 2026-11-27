@@ -210,4 +210,47 @@ class TeacherDutiesAndStaffTest extends TestCase
         $this->assertStringContainsString('Wali Kelas X', $single->additional_duties);
         $this->assertStringContainsString('Pembina PMR', $single->additional_duties);
     }
+
+    public function test_import_handles_side_by_side_tables_and_replaces_old_data(): void
+    {
+        $this->authenticateAdmin();
+
+        // Data awal di database
+        $existing = Teacher::create([
+            'name' => 'Hendriawan Tansyah, S.T.',
+            'school' => 'Amaliah 1',
+            'position' => 'Guru Biasa Lama',
+            'subject' => 'Fisika Lama',
+            'additional_duties' => 'Tugas Lama',
+            'category' => 'Adaptif',
+            'order_column' => 200,
+        ]);
+
+        // File CSV berisi 2 tabel berdampingan (Amaliah 1 di kiri, Amaliah 2 di kanan)
+        $csvContent = "No,Nama,JABATAN,TUGAS TAMBAHAN,TUGAS TAMBAHAN,No,Nama,JABATAN,TUGAS TAMBAHAN,TUGAS TAMBAHAN\n"
+            . "1,\"Hendriawan Tansyah, S.T.\",\"Wakil Kepala Sekolah Bidang Kurikulum\",\"Guru Produktif PPLG\",\"Wali Kelas XII PPLG 3\",1,\"Siti Wadiah, SE.I.\",\"Wakil Kepala Sekolah Bidang Kurikulum\",\"Guru Produktif MP\",\"-\"\n";
+
+        $file = UploadedFile::fake()->createWithContent('side_by_side.csv', $csvContent);
+
+        $response = $this->post(route('admin.teachers.import'), [
+            'file' => $file,
+        ]);
+
+        $response->assertRedirect(route('admin.teachers.index'));
+
+        // Data Hendriawan harus terupdate jabatannya, mapel dari tugas tambahan, dan tugas tambahannya
+        $updatedHendri = Teacher::where('name', 'like', '%Hendriawan Tansyah%')->first();
+        $this->assertNotNull($updatedHendri);
+        $this->assertSame('Wakil Kepala Sekolah Bidang Kurikulum', $updatedHendri->position);
+        $this->assertStringContainsString('Produktif PPLG', $updatedHendri->subject);
+        $this->assertStringContainsString('Wali Kelas XII PPLG 3', $updatedHendri->additional_duties);
+        $this->assertSame('Amaliah 1', $updatedHendri->school);
+
+        // Data Siti Wadiah di tabel kanan harus masuk sebagai guru baru di Amaliah 2
+        $sitiWadiah = Teacher::where('name', 'like', '%Siti Wadiah%')->first();
+        $this->assertNotNull($sitiWadiah);
+        $this->assertSame('Amaliah 2', $sitiWadiah->school);
+        $this->assertSame('Wakil Kepala Sekolah Bidang Kurikulum', $sitiWadiah->position);
+        $this->assertStringContainsString('Produktif MP', $sitiWadiah->subject);
+    }
 }
