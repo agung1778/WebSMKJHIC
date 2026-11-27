@@ -266,9 +266,9 @@
 
                 <div class="topbar-actions">
                     {{-- Search / palette --}}
-                    <button type="button" class="icon-btn search-field" data-open-palette aria-label="Pencarian global (Ctrl+K)"
-                        style="width:auto;gap:8px;padding:0 13px;cursor:text">
-                        <i class="fa-solid fa-magnifying-glass" style="color:var(--text-3);font-size:13px"></i>
+                    <button type="button" class="icon-btn topbar-search-btn" data-open-palette aria-label="Pencarian global (Ctrl+K)"
+                        style="width:auto;display:inline-flex;align-items:center;gap:8px;padding:0 12px;cursor:pointer">
+                        <i class="fa-solid fa-magnifying-glass" style="color:var(--text-3);font-size:13px;position:static;transform:none"></i>
                         <span class="hide-mob" style="font-size:12.5px;color:var(--text-3)">Cari…</span>
                         <kbd class="hide-mob" style="font-size:10px;color:var(--text-3);border:1px solid var(--border);border-radius:7px;padding:2px 7px;font-family:inherit">Ctrl K</kbd>
                     </button>
