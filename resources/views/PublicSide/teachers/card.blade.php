@@ -37,8 +37,23 @@
         </h3>
 
         <p class="text-gray-600 text-sm line-clamp-2 leading-relaxed min-h-[2.6em] mb-2">
-            {{ $teacher->subject ?: $teacher->position }}
+            @if(!empty($teacher->subject))
+                {{ $teacher->subject }}
+            @elseif(!empty($teacher->additional_duties))
+                {{ $teacher->additional_duties }}
+            @else
+                {{ $teacher->position }}
+            @endif
         </p>
+
+        @if(!empty($teacher->additional_duties) && !empty($teacher->subject))
+            <div class="mb-2">
+                <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200/70 rounded-md px-2 py-0.5 line-clamp-1" title="{{ $teacher->additional_duties }}">
+                    <i class="fas fa-list-check text-[10px] text-[#2e7000] flex-shrink-0"></i>
+                    <span class="truncate">{{ $teacher->additional_duties }}</span>
+                </span>
+            </div>
+        @endif
 
         {{-- Footer kartu: selalu tampil di paling bawah agar semua card sejajar --}}
         <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between gap-2">

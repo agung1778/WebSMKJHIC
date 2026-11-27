@@ -94,6 +94,12 @@
                                 <span class="font-medium">{{ $teacher->position }}</span>
                             </div>
                         @endif
+                        @if (!empty($teacher->additional_duties))
+                            <div class="flex items-center gap-3 text-sm text-gray-600">
+                                <i class="fas fa-list-check text-[#63cd00] w-4 text-center"></i>
+                                <span class="font-medium">{{ $teacher->additional_duties }}</span>
+                            </div>
+                        @endif
                         @if (!empty($teacher->subject))
                             <div class="flex items-center gap-3 text-sm text-gray-600">
                                 <i class="fas fa-book-open text-[#63cd00] w-4 text-center"></i>
@@ -153,6 +159,16 @@
                                 <div class="min-w-0">
                                     <p class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{{ __('Mata Pelajaran') }}</p>
                                     <p class="text-sm font-bold text-gray-900 break-words">{{ $teacher->subject }}</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if (!empty($teacher->additional_duties))
+                            <div class="ts-info-card">
+                                <div class="ts-info-card__icon"><i class="fas fa-list-check"></i></div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{{ __('Tugas Tambahan') }}</p>
+                                    <p class="text-sm font-bold text-gray-900 break-words">{{ $teacher->additional_duties }}</p>
                                 </div>
                             </div>
                         @endif

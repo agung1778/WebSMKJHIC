@@ -19,7 +19,28 @@ class Teacher extends Model
         'photo',
         'position',
         'subject',
+        'additional_duties',
         'school',
         'category',
+        'order_column',
     ];
+
+    /**
+     * Scope to order teachers by hierarchy rank, then ID.
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('order_column', 'asc')->orderBy('id', 'asc');
+    }
+
+    /**
+     * Get duties as an array.
+     */
+    public function getDutiesListAttribute(): array
+    {
+        if (empty($this->additional_duties)) {
+            return [];
+        }
+        return array_values(array_filter(array_map('trim', explode(',', $this->additional_duties))));
+    }
 }

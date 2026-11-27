@@ -15,8 +15,8 @@ class PublicTeacherController extends Controller
      */
     public function index()
     {
-        // Semua tenaga pendidik & kependidikan aktif, dikelompokkan per sekolah/staf
-        $teachers = Teacher::orderBy('name')->get();
+        // Semua tenaga pendidik & kependidikan aktif, diurutkan berdasarkan hierarki jabatan (paling atas ke paling bawah)
+        $teachers = Teacher::ordered()->get();
 
         $counts = [
             'a1'     => $teachers->where('school', 'Amaliah 1')->count(),

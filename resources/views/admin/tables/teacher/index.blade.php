@@ -15,6 +15,12 @@
             title="Guru & Staf"
             subtitle="Kelola tenaga pendidik dan kependidikan SMK Amaliah.">
             <x-slot:actions>
+                <form action="{{ route('admin.teachers.deduplicate') }}" method="POST" class="inline" onsubmit="return confirm('Satukan data guru/staf yang memiliki nama sama? Tugas dan mata pelajaran dari nama yang sama akan otomatis digabungkan tanpa kehilangan data.')">
+                    @csrf
+                    <button type="submit" class="app-btn app-btn-secondary app-btn-lg cursor-pointer" title="Periksa dan satukan nama-nama yang terduplikasi">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i><span class="hide-mob">Satukan Duplikasi</span>
+                    </button>
+                </form>
                 <button type="button" @click="importModalOpen = true" class="app-btn app-btn-secondary app-btn-lg cursor-pointer">
                     <i class="fa-solid fa-file-import"></i><span class="hide-mob">Impor Data</span>
                 </button>
@@ -46,9 +52,15 @@
                             <div class="table-main">
                                 <img class="thumb thumb-round" src="{{ $t->photo ? asset('storage/' . $t->photo) : 'https://placehold.co/64x64/eff9e3/63cd00?text=GRU' }}" alt="{{ $t->name }}" loading="lazy">
                                 <div style="min-width:0">
-                                    <div class="cell-main truncate font-medium">{{ $t->name }}</div>
+                                    <div class="cell-main truncate font-medium flex items-center gap-2">
+                                        <span class="truncate">{{ $t->name }}</span>
+                                        <span class="text-[10px] font-bold text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200 shrink-0" title="Urutan Hierarki: #{{ $t->order_column ?? 999 }}">#{{ $t->order_column ?? 999 }}</span>
+                                    </div>
                                     <div class="cell-sub truncate text-xs">
                                         <span class="sm:hidden font-medium text-[var(--brand)]">{{ $t->school ? $t->school . ' · ' : '' }}</span>{{ trim(($t->subject ?? '') . (($t->subject && $t->position) ? ' · ' : '') . ($t->position ?? '')) ?: $t->position }}
+                                        @if(!empty($t->additional_duties))
+                                            <span class="text-xs text-gray-500 font-normal"> · <i class="fa-solid fa-list-check text-[10px] text-[var(--brand)]"></i> {{ $t->additional_duties }}</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -151,10 +163,17 @@
                             class="block w-full text-xs text-gray-700 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#63cd00]/15 file:text-[#2d6600] hover:file:bg-[#63cd00]/25 border border-gray-200 rounded-xl p-2 bg-white cursor-pointer focus:outline-none">
                     </div>
 
-                    <label class="flex items-start gap-2.5 cursor-pointer text-xs text-gray-600 select-none">
-                        <input type="checkbox" name="update_existing" value="1" class="mt-0.5 rounded border-gray-300 text-[#63cd00] focus:ring-[#63cd00]">
-                        <span>Perbarui data jika nama guru / staf sudah ada di sistem (jika tidak dicentang, nama yang sudah ada akan dilewati).</span>
-                    </label>
+                    <div class="space-y-2.5 pt-1">
+                        <label class="flex items-start gap-2.5 cursor-pointer text-xs text-gray-700 select-none bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200/60">
+                            <input type="checkbox" name="update_existing" value="1" checked class="mt-0.5 rounded border-gray-300 text-[#63cd00] focus:ring-[#63cd00]">
+                            <span><strong>Perbarui otomatis jika nama sudah ada</strong>: jabatan, mapel, tugas tambahan, dan urutan diperbarui otomatis tanpa membuat data ganda (tidak perlu edit satu per satu).</span>
+                        </label>
+
+                        <label class="flex items-start gap-2.5 cursor-pointer text-xs text-gray-600 select-none bg-gray-50 p-2.5 rounded-xl border border-gray-200">
+                            <input type="checkbox" name="replace_all" value="1" class="mt-0.5 rounded border-gray-300 text-red-600 focus:ring-red-500" onchange="if(this.checked){ if(!confirm('Peringatan: Opsi ini akan mengosongkan semua data guru & staf yang ada terlebih dahulu dan menggantinya dengan isi file yang baru diunggah. Lanjutkan?')) this.checked = false; }">
+                            <span><strong>Ganti Seluruh Data (Replace Master)</strong>: Kosongkan semua data lama terlebih dahulu, lalu masukkan semua data dari file ini secara bersih.</span>
+                        </label>
+                    </div>
 
                     <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-gray-100">
                         <button type="button" @click="importModalOpen = false" class="app-btn app-btn-secondary text-xs">

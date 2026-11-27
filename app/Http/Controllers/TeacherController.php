@@ -42,7 +42,7 @@ class TeacherController extends Controller
 
     public function index()
     {
-        $teachers = Teacher::latest()->get();
+        $teachers = Teacher::ordered()->get();
         return view('admin.tables.teacher.index', compact('teachers'));
     }
 
@@ -64,6 +64,8 @@ class TeacherController extends Controller
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5048',
             'position' => 'required|string|max:255',
             'subject' => 'nullable|string|max:255',
+            'additional_duties' => 'nullable|string|max:500',
+            'order_column' => 'nullable|integer|min:0',
             'school' => 'required|in:Amaliah 1,Amaliah 2,Amaliah 1 & 2,Staff',
             'category' => 'nullable|string|max:100',
         ], [
@@ -112,6 +114,8 @@ class TeacherController extends Controller
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5048',
             'position' => 'required|string|max:255',
             'subject' => 'nullable|string|max:255',
+            'additional_duties' => 'nullable|string|max:500',
+            'order_column' => 'nullable|integer|min:0',
             'school' => 'required|in:Amaliah 1,Amaliah 2,Amaliah 1 & 2,Staff',
             'category' => 'nullable|string|max:100',
         ], [
@@ -161,6 +165,7 @@ class TeacherController extends Controller
             'Unit / Sekolah',
             'Jabatan',
             'Mata Pelajaran',
+            'Tugas Tambahan / Job Tambahan',
             'Kategori',
             'Foto (Opsional)'
         ];
@@ -171,6 +176,7 @@ class TeacherController extends Controller
                 'Amaliah 1',
                 'Kepala Sekolah',
                 'Pendidikan Agama Islam',
+                '-',
                 'Struktural',
                 ''
             ],
@@ -179,6 +185,16 @@ class TeacherController extends Controller
                 'Amaliah 2',
                 'Kepala Sekolah',
                 'Bahasa Indonesia',
+                '-',
+                'Struktural',
+                ''
+            ],
+            [
+                'Rd. Hendriawan Tansyah, S.T., Gr., ACA., MTA.',
+                'Amaliah 1',
+                'Wakil Kepala Sekolah Bidang Kurikulum',
+                'Produktif PPLG',
+                'Guru Produktif PPLG, Wali Kelas XII PPLG 3',
                 'Struktural',
                 ''
             ],
@@ -187,23 +203,8 @@ class TeacherController extends Controller
                 'Amaliah 1 & 2',
                 'Guru Kejuruan RPL',
                 'Pemrograman Web & Perangkat Bergerak',
+                '-',
                 'Produktif',
-                ''
-            ],
-            [
-                'Drs. H. Mulyadi, M.M.',
-                'Amaliah 1',
-                'Guru Normatif',
-                'Pendidikan Pancasila & Kewarganegaraan',
-                'Normatif',
-                ''
-            ],
-            [
-                'Rina Marlina, S.Pd.',
-                'Amaliah 2',
-                'Guru Adaptif',
-                'Matematika Terapan',
-                'Adaptif',
                 ''
             ],
             [
@@ -211,30 +212,25 @@ class TeacherController extends Controller
                 'Staff',
                 'Kepala Tata Usaha',
                 '',
+                '-',
                 'Administrasi / TU',
                 ''
             ],
             [
-                'Rudi Hermawan, A.Md.',
+                'Herdiana',
                 'Staff',
-                'Teknisi & Maintenance Jaringan',
+                'Pramubakti',
                 '',
-                'Teknisi',
+                '-',
+                'Kebersihan',
                 ''
             ],
             [
-                'Siti Nurhaliza, S.I.Pust.',
+                'Hendi Wijaya',
                 'Staff',
-                'Pengelola Perpustakaan',
+                'Security',
                 '',
-                'Perpustakaan',
-                ''
-            ],
-            [
-                'Bambang Subagyo',
-                'Staff',
-                'Petugas Keamanan / Satpam',
-                '',
+                '-',
                 'Keamanan',
                 ''
             ],
@@ -272,7 +268,8 @@ class TeacherController extends Controller
 
         $file = $request->file('file');
         $ext = strtolower($file->getClientOriginalExtension());
-        $updateExisting = $request->boolean('update_existing', false);
+        $updateExisting = $request->boolean('update_existing', true);
+        $replaceAll = $request->boolean('replace_all', false);
 
         if (!in_array($ext, ['csv', 'txt', 'xlsx', 'xls'])) {
             return redirect()->back()->with('error', 'Format file tidak didukung. Harap unggah file .csv atau .xlsx.');
@@ -300,13 +297,18 @@ class TeacherController extends Controller
         $successCount = 0;
         $updatedCount = 0;
         $skippedCount = 0;
+        $sessionMap = [];
 
         DB::beginTransaction();
         try {
+            if ($replaceAll) {
+                Teacher::query()->delete();
+            }
+
             foreach ($rows as $index => $row) {
                 $name = trim($row[$colMap['name']] ?? '');
 
-                if ($name === '') {
+                if ($name === '' || $name === '-') {
                     continue;
                 }
 
@@ -316,6 +318,21 @@ class TeacherController extends Controller
                 $subject = isset($colMap['subject']) ? trim($row[$colMap['subject']] ?? '') : null;
                 $photo = isset($colMap['photo']) ? trim($row[$colMap['photo']] ?? '') : null;
 
+                // Ekstrak tugas tambahan (mendukung single atau multiple kolom tugas tambahan)
+                $additionalDuties = null;
+                if (!empty($colMap['additional_duties'])) {
+                    $dutyParts = [];
+                    foreach ((array) $colMap['additional_duties'] as $dIdx) {
+                        $val = trim($row[$dIdx] ?? '');
+                        if ($val !== '' && $val !== '-') {
+                            $dutyParts[] = $val;
+                        }
+                    }
+                    if (!empty($dutyParts)) {
+                        $additionalDuties = implode(', ', $dutyParts);
+                    }
+                }
+
                 $school = $this->normalizeSchool($rawSchool, $rawCategory, $position);
                 $category = $this->normalizeCategory($rawCategory, $school, $position, $subject);
 
@@ -323,33 +340,63 @@ class TeacherController extends Controller
                     $position = ($school === 'Staff') ? 'Staf Kependidikan' : 'Guru';
                 }
 
-                $existing = Teacher::where('name', $name)->first();
+                $orderColumn = isset($colMap['order_column']) && is_numeric(trim($row[$colMap['order_column']] ?? ''))
+                    ? (int) trim($row[$colMap['order_column']])
+                    : ($index + 1);
+
+                $baseKey = $this->normalizeBaseName($name);
+
+                // Cek apakah guru ini sudah ada di sesi impor saat ini atau di database
+                $existing = $sessionMap[$baseKey] ?? $this->findTeacherForImport($name);
 
                 if ($existing) {
                     if ($updateExisting) {
+                        // Jika guru ini terdaftar di sekolah yang berbeda, jadikan 'Amaliah 1 & 2'
+                        $finalSchool = $existing->school;
+                        if ($existing->school !== $school && $existing->school !== 'Staff' && $school !== 'Staff') {
+                            $finalSchool = 'Amaliah 1 & 2';
+                        } elseif ($existing->school === 'Staff' && $school !== 'Staff') {
+                            $finalSchool = $school;
+                        }
+
+                        // Gabungkan mata pelajaran dan tugas tambahan tanpa duplikasi
+                        $mergedSubject = $this->combineCommaValues($existing->subject, $subject);
+                        $mergedDuties = $this->combineCommaValues($existing->additional_duties, $additionalDuties);
+
+                        // Ambil nama terpanjang (yang menyertakan gelar lengkap)
+                        $finalName = (strlen($name) > strlen($existing->name)) ? $name : $existing->name;
+                        $finalOrder = min($existing->order_column ?? 999, $orderColumn ?? 999);
+
                         $updateData = [
-                            'school' => $school,
-                            'position' => $position,
-                            'subject' => $subject,
-                            'category' => $category,
+                            'name' => $finalName,
+                            'school' => $finalSchool,
+                            'position' => $position ?: $existing->position,
+                            'subject' => $mergedSubject,
+                            'additional_duties' => $mergedDuties,
+                            'order_column' => $finalOrder,
+                            'category' => $category ?: $existing->category,
                         ];
                         if (!empty($photo)) {
                             $updateData['photo'] = $photo;
                         }
                         $existing->update($updateData);
+                        $sessionMap[$baseKey] = $existing;
                         $updatedCount++;
                     } else {
                         $skippedCount++;
                     }
                 } else {
-                    Teacher::create([
+                    $created = Teacher::create([
                         'name' => $name,
                         'school' => $school,
                         'position' => $position,
                         'subject' => $subject,
+                        'additional_duties' => $additionalDuties,
+                        'order_column' => $orderColumn,
                         'category' => $category,
                         'photo' => !empty($photo) ? $photo : null,
                     ]);
+                    $sessionMap[$baseKey] = $created;
                     $successCount++;
                 }
             }
@@ -360,16 +407,150 @@ class TeacherController extends Controller
             return redirect()->back()->with('error', 'Gagal memproses data impor: ' . $e->getMessage());
         }
 
-        $msg = "Proses impor selesai: {$successCount} data baru berhasil ditambahkan";
+        $msg = "Proses impor selesai: {$successCount} data baru ditambahkan";
         if ($updatedCount > 0) {
-            $msg .= ", {$updatedCount} data diperbarui";
+            $msg .= ", {$updatedCount} data diperbarui / disinkronkan";
         }
         if ($skippedCount > 0) {
-            $msg .= ", {$skippedCount} data dilewati (sudah terdaftar)";
+            $msg .= ", {$skippedCount} data dilewati";
         }
-        $msg .= ".";
+        $msg .= " (tanpa duplikasi nama).";
 
         return redirect()->route('admin.teachers.index')->with('success', $msg);
+    }
+
+    /**
+     * Bersihkan duplikasi nama guru & staf di database dan tetapkan satu nama saja.
+     */
+    public function deduplicate()
+    {
+        $teachers = Teacher::all();
+        $groups = $teachers->groupBy(fn($t) => $this->normalizeBaseName($t->name));
+        $mergedCount = 0;
+        $deletedCount = 0;
+
+        DB::beginTransaction();
+        try {
+            foreach ($groups as $base => $records) {
+                if ($records->count() > 1) {
+                    $primary = $records->sortBy(fn($r) => $r->order_column ?? 999)->first();
+
+                    $allSubjects = [];
+                    $allDuties = [];
+                    $schools = [];
+
+                    foreach ($records as $r) {
+                        if (!empty($r->subject)) {
+                            foreach (explode(',', $r->subject) as $s) {
+                                $s = trim($s);
+                                if ($s !== '' && !in_array($s, $allSubjects)) $allSubjects[] = $s;
+                            }
+                        }
+                        if (!empty($r->additional_duties)) {
+                            foreach (explode(',', $r->additional_duties) as $d) {
+                                $d = trim($d);
+                                if ($d !== '' && !in_array($d, $allDuties)) $allDuties[] = $d;
+                            }
+                        }
+                        if (!empty($r->school)) {
+                            $schools[] = $r->school;
+                        }
+                    }
+
+                    $uniqueSchools = array_unique($schools);
+                    $finalSchool = $primary->school;
+                    if (count($uniqueSchools) > 1 || in_array('Amaliah 1 & 2', $uniqueSchools)) {
+                        $finalSchool = 'Amaliah 1 & 2';
+                    }
+
+                    $longestName = $records->sortByDesc(fn($r) => strlen($r->name))->first()->name;
+
+                    $primary->update([
+                        'name' => $longestName,
+                        'school' => $finalSchool,
+                        'subject' => !empty($allSubjects) ? implode(', ', $allSubjects) : $primary->subject,
+                        'additional_duties' => !empty($allDuties) ? implode(', ', $allDuties) : $primary->additional_duties,
+                    ]);
+
+                    foreach ($records as $r) {
+                        if ($r->id !== $primary->id) {
+                            $r->delete();
+                            $deletedCount++;
+                        }
+                    }
+                    $mergedCount++;
+                }
+            }
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal membersihkan duplikasi: ' . $e->getMessage());
+        }
+
+        if ($deletedCount > 0) {
+            return redirect()->route('admin.teachers.index')
+                ->with('success', "Pembersihan selesai: {$mergedCount} nama yang terduplikasi ({$deletedCount} data ganda) berhasil disatukan menjadi satu nama tetap!");
+        }
+
+        return redirect()->route('admin.teachers.index')
+            ->with('success', 'Semua data guru dan staf sudah bersih dan tidak ada nama yang terduplikasi.');
+    }
+
+    /**
+     * Cari guru yang cocok untuk impor, baik dari nama persis maupun nama dasar tanpa gelar.
+     */
+    protected function findTeacherForImport(string $name): ?Teacher
+    {
+        $name = trim($name);
+        $exact = Teacher::where('name', $name)->first();
+        if ($exact) {
+            return $exact;
+        }
+
+        $baseKey = $this->normalizeBaseName($name);
+        $all = Teacher::all();
+        foreach ($all as $t) {
+            if ($this->normalizeBaseName($t->name) === $baseKey) {
+                return $t;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Normalisasi nama dasar (tanpa gelar dan tanda baca) untuk pencocokan pintar.
+     */
+    protected function normalizeBaseName(string $name): string
+    {
+        $clean = explode(',', $name)[0];
+        $clean = preg_replace('/^(drs?|dra|dr|prof|h|hj)\.?\s+/i', '', trim($clean));
+        return strtolower(trim(preg_replace('/[^a-zA-Z]/', '', $clean)));
+    }
+
+    /**
+     * Gabungkan dua string nilai berpemisah koma tanpa duplikasi.
+     */
+    protected function combineCommaValues(?string $first, ?string $second): ?string
+    {
+        $items = [];
+        if (!empty($first)) {
+            foreach (explode(',', $first) as $item) {
+                $item = trim($item);
+                if ($item !== '' && !in_array($item, $items)) {
+                    $items[] = $item;
+                }
+            }
+        }
+        if (!empty($second)) {
+            foreach (explode(',', $second) as $item) {
+                $item = trim($item);
+                if ($item !== '' && !in_array($item, $items)) {
+                    $items[] = $item;
+                }
+            }
+        }
+        return !empty($items) ? implode(', ', $items) : null;
     }
 
     /**
@@ -484,7 +665,10 @@ class TeacherController extends Controller
      */
     protected function mapImportHeaders(array $headerRow): array
     {
-        $map = [];
+        $map = [
+            'additional_duties' => [],
+        ];
+
         foreach ($headerRow as $index => $col) {
             $name = strtolower(trim(preg_replace('/[^a-zA-Z0-9]/', '', (string)$col)));
 
@@ -492,12 +676,22 @@ class TeacherController extends Controller
                 $map['name'] = $index;
             } elseif (in_array($name, ['sekolah', 'unit', 'school', 'unitsekolah', 'lembaga', 'penempatan'])) {
                 $map['school'] = $index;
-            } elseif (in_array($name, ['jabatan', 'position', 'posisi', 'tugas', 'role'])) {
+            } elseif (str_contains($name, 'tambahan') || in_array($name, ['jobtambahan', 'obtambahan', 'additionalduties', 'tugastambahan', 'tugasextra', 'duties'])) {
+                $map['additional_duties'][] = $index;
+            } elseif (in_array($name, ['jabatan', 'position', 'posisi', 'role'])) {
                 $map['position'] = $index;
+            } elseif (in_array($name, ['tugas'])) {
+                if (!isset($map['position'])) {
+                    $map['position'] = $index;
+                } else {
+                    $map['additional_duties'][] = $index;
+                }
             } elseif (in_array($name, ['matapelajaran', 'mapel', 'subject', 'pelajaran', 'mengajar'])) {
                 $map['subject'] = $index;
             } elseif (in_array($name, ['kategori', 'category', 'kelompok', 'jenis', 'tipe'])) {
                 $map['category'] = $index;
+            } elseif (in_array($name, ['urutan', 'order', 'ordercolumn', 'nomor', 'no', 'rank', 'hierarki', 'prioritas'])) {
+                $map['order_column'] = $index;
             } elseif (in_array($name, ['foto', 'photo', 'gambar', 'image', 'fotofile', 'fotoguru'])) {
                 $map['photo'] = $index;
             }
@@ -553,25 +747,25 @@ class TeacherController extends Controller
         $s = strtolower(trim($subject ?? ''));
 
         // Cek kategori Staf
-        if (str_contains($c, 'tu') || str_contains($c, 'administrasi') || str_contains($p, 'tata usaha') || str_contains($p, 'administrasi')) {
+        if (str_contains($c, 'tu') || str_contains($c, 'administrasi') || str_contains($p, 'tata usaha') || str_contains($p, 'administrasi') || str_contains($p, 'persuratan') || str_contains($p, 'resepsionis') || str_contains($p, 'kesiswaan')) {
             return 'Administrasi / TU';
         }
-        if (str_contains($c, 'laboran') || str_contains($c, 'lab') || str_contains($p, 'laboran') || str_contains($p, 'asisten lab')) {
+        if (str_contains($c, 'laboran') || str_contains($c, 'lab') || str_contains($p, 'laboran') || str_contains($p, 'asisten lab') || str_contains($p, 'laboratorium')) {
             return 'Laboran';
         }
-        if (str_contains($c, 'teknisi') || str_contains($c, 'it') || str_contains($p, 'teknisi') || str_contains($p, 'maintenance') || str_contains($p, 'jaringan')) {
+        if (str_contains($c, 'teknisi') || str_contains($c, 'it') || str_contains($p, 'teknisi') || str_contains($p, 'maintenance') || str_contains($p, 'jaringan') || str_contains($p, 'web developer') || str_contains($p, 'videographer') || str_contains($p, 'fotographer') || str_contains($p, 'editor') || str_contains($p, 'operator') || str_contains($p, 'sarana')) {
             return 'Teknisi';
         }
-        if (str_contains($c, 'perpus') || str_contains($c, 'pustaka') || str_contains($p, 'perpus') || str_contains($p, 'pustakawan')) {
+        if (str_contains($c, 'perpus') || str_contains($c, 'pustaka') || str_contains($p, 'perpus') || str_contains($p, 'pustakawan') || str_contains($p, 'perpustakaan')) {
             return 'Perpustakaan';
         }
         if (str_contains($c, 'keuangan') || str_contains($c, 'bendahara') || str_contains($p, 'keuangan') || str_contains($p, 'kasir') || str_contains($p, 'bendahara')) {
             return 'Keuangan';
         }
-        if (str_contains($c, 'keamanan') || str_contains($c, 'satpam') || str_contains($c, 'security') || str_contains($p, 'satpam') || str_contains($p, 'keamanan')) {
+        if (str_contains($c, 'keamanan') || str_contains($c, 'satpam') || str_contains($c, 'security') || str_contains($p, 'satpam') || str_contains($p, 'keamanan') || str_contains($p, 'security')) {
             return 'Keamanan';
         }
-        if (str_contains($c, 'kebersihan') || str_contains($c, 'sarpras') || str_contains($c, 'caraka') || str_contains($c, 'ob') || str_contains($p, 'kebersihan') || str_contains($p, 'office boy')) {
+        if (str_contains($c, 'kebersihan') || str_contains($c, 'sarpras') || str_contains($c, 'caraka') || str_contains($c, 'ob') || str_contains($c, 'pramubakti') || str_contains($p, 'kebersihan') || str_contains($p, 'office boy') || str_contains($p, 'pramubakti') || str_contains($p, 'ob')) {
             return 'Kebersihan';
         }
         if ($school === 'Staff' || str_contains($c, 'staf') || str_contains($c, 'kependidikan')) {
@@ -579,7 +773,7 @@ class TeacherController extends Controller
         }
 
         // Cek kategori Guru
-        if (str_contains($c, 'struktur') || str_contains($c, 'pimpinan') || str_contains($p, 'kepala sekolah') || str_contains($p, 'wakasek')) {
+        if (str_contains($c, 'struktur') || str_contains($c, 'pimpinan') || str_contains($p, 'direktur') || str_contains($p, 'kepala sekolah') || str_contains($p, 'kepala smk') || str_contains($p, 'wakasek') || str_contains($p, 'wakil kepala') || str_contains($p, 'kepala kompetensi') || str_contains($p, 'kaprog') || str_contains($p, 'koordinator') || str_contains($p, 'pembina osis')) {
             return 'Struktural';
         }
         if (str_contains($c, 'produktif') || str_contains($c, 'kejuruan') || str_contains($p, 'produktif') || str_contains($s, 'rpl') || str_contains($s, 'tkj') || str_contains($s, 'dkv') || str_contains($s, 'akuntansi') || str_contains($s, 'pemrograman') || str_contains($s, 'jaringan')) {

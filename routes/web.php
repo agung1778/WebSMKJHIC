@@ -212,6 +212,7 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
         // Rute untuk Guru & Staf (termasuk impor massal)
         Route::get('/teachers/import/template', [TeacherController::class, 'downloadTemplate'])->name('teachers.template');
         Route::post('/teachers/import', [TeacherController::class, 'import'])->name('teachers.import');
+        Route::post('/teachers/deduplicate', [TeacherController::class, 'deduplicate'])->name('teachers.deduplicate');
         Route::resource('teachers', TeacherController::class);
 
         Route::post('/teachers/{teacher}/upload-photo', [App\Http\Controllers\TeacherController::class, 'uploadPhoto'])->name('teachers.uploadPhoto');

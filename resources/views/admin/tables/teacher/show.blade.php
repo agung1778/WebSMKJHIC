@@ -40,10 +40,12 @@
             <h4 class="form-section-title"><i class="fa-solid fa-circle-info" style="color:var(--brand)"></i> Detail</h4>
             <dl class="info-grid">
                 <div><dt>Nama Lengkap</dt><dd>{{ $teacher->name }}</dd></div>
-                <div><dt>Jabatan</dt><dd>{{ $teacher->position }}</dd></div>
+                <div><dt>Jabatan Utama</dt><dd>{{ $teacher->position }}</dd></div>
                 <div><dt>Mata Pelajaran</dt><dd>{{ $teacher->subject ?? '-' }}</dd></div>
+                <div><dt>Tugas Tambahan</dt><dd>{{ $teacher->additional_duties ?? '-' }}</dd></div>
                 <div><dt>Sekolah</dt><dd>{{ $teacher->school }}</dd></div>
                 <div><dt>Kategori</dt><dd>{{ $teacher->category ?? '-' }}</dd></div>
+                <div><dt>Urutan / Prioritas Tampil</dt><dd>#{{ $teacher->order_column ?? 999 }}</dd></div>
             </dl>
         </div>
 

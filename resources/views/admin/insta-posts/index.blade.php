@@ -105,7 +105,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td data-label="Caption & Link">
+                                        <td data-label="Caption">
                                             <div class="cell-main truncate max-w-[130px] sm:max-w-[280px] font-medium">{{ $caption }}</div>
                                             @if ($p->post_url)
                                                 <a class="cell-sub truncate d-block max-w-[130px] sm:max-w-[280px]" style="color:var(--blue,#1d6fd6)" href="{{ $p->post_url }}" target="_blank" rel="noopener">

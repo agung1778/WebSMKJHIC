@@ -2,20 +2,20 @@
     $item = $teacher ?? null;
     $categoryOptions = [
         'Tenaga Pendidik (Guru)' => [
-            'Produktif' => 'Produktif (Guru Kejuruan: TKJ, RPL, DKV, Akuntansi)',
-            'Normatif' => 'Normatif (Pendidikan Agama, PPKn, Sejarah, Seni Budaya)',
-            'Adaptif' => 'Adaptif (Matematika, B. Indonesia, B. Inggris, IPA, PJOK)',
-            'Umum' => 'Umum (BK / Bimbingan Konseling, Muatan Lokal)',
-            'Struktural' => 'Struktural (Kepala Sekolah, Wakasek, Kepala Program)',
+            'Produktif' => 'Produktif (Guru Kejuruan: TKJ, RPL, DKV, Akuntansi, Animasi, Busana, dll)',
+            'Normatif' => 'Normatif (Pendidikan Agama, PPKn, Sejarah, Seni Budaya, Akhlak Tauhid)',
+            'Adaptif' => 'Adaptif (Matematika, B. Indonesia, B. Inggris, IPA/IPAS, PJOK, B. Jepang)',
+            'Umum' => 'Umum (BK / Bimbingan Konseling, Informatika, KIK, Muatan Lokal)',
+            'Struktural' => 'Struktural (Kepala Sekolah, Wakasek, Kepala Program/Kompetensi, Koordinator, Pembina OSIS)',
         ],
         'Tenaga Kependidikan (Staff)' => [
-            'Administrasi / TU' => 'Tata Usaha / Administrasi Sekolah',
-            'Laboran' => 'Laboran / Asisten Lab Komputer & Sains',
-            'Teknisi' => 'Teknisi IT / Maintenance Jaringan & Sarpras',
+            'Administrasi / TU' => 'Tata Usaha / Administrasi / Persuratan / Kesiswaan',
+            'Laboran' => 'Laboran / Asisten Lab Komputer, Bahasa & Sains',
+            'Teknisi' => 'Teknisi IT / Maintenance / Multimedia / Web / Operator / Sarpras',
             'Perpustakaan' => 'Perpustakaan / Pustakawan',
-            'Keuangan' => 'Keuangan / Kasir / Bendahara',
-            'Keamanan' => 'Keamanan / Satpam',
-            'Kebersihan' => 'Kebersihan / Petugas Pelaksana Sarpras',
+            'Keuangan' => 'Keuangan / Bendahara / Kasir',
+            'Keamanan' => 'Keamanan / Satpam / Security',
+            'Kebersihan' => 'Kebersihan / Pramubakti (OB) / Pelaksana Sarpras',
             'Staf' => 'Staf Umum Lainnya',
         ],
     ];
@@ -35,16 +35,25 @@
                         :options="['Amaliah 1 & 2' => 'SMK Amaliah 1 & 2 (Gabungan)', 'Amaliah 1' => 'SMK Amaliah 1', 'Amaliah 2' => 'SMK Amaliah 2', 'Staff' => 'Tenaga Kependidikan / Staff']" :value="$item->school ?? 'Amaliah 1 & 2'" />
                 </div>
                 <div>
-                    <x-admin-components::field name="position" label="Jabatan" :required="true" :value="$item->position ?? null"
-                        placeholder="Contoh: Guru Kejuruan RPL, Kepala TU, Staf IT" icon="fa-solid fa-briefcase" />
+                    <x-admin-components::field name="position" label="Jabatan Utama" :required="true" :value="$item->position ?? null"
+                        placeholder="Contoh: Kepala Kompetensi TKJ, Guru Produktif, Pramubakti (OB), Security" icon="fa-solid fa-briefcase" />
                 </div>
                 <div>
-                    <x-admin-components::field name="subject" label="Mata Pelajaran" :required="false" :value="$item->subject ?? null"
-                        placeholder="Contoh: Pemrograman Web (Kosongkan jika staf)" icon="fa-solid fa-book-open" />
+                    <x-admin-components::field name="subject" label="Mata Pelajaran (Jika Guru)" :required="false" :value="$item->subject ?? null"
+                        placeholder="Contoh: Pemrograman Web, PAI (Kosongkan jika staf)" icon="fa-solid fa-book-open" />
                 </div>
                 <div>
                     <x-admin-components::field name="category" label="Kategori Kepegawaian" :required="false" type="select"
                         :options="$categoryOptions" :value="$item->category ?? 'Produktif'" />
+                </div>
+                <div>
+                    <x-admin-components::field name="order_column" label="Urutan / Prioritas Tampil" :required="false" type="number" :value="$item->order_column ?? 999"
+                        placeholder="Contoh: 1, 10, 50..." icon="fa-solid fa-arrow-down-1-9"
+                        hint="Angka lebih kecil tampil paling atas di website (1 = Paling Atas / Pimpinan)." />
+                </div>
+                <div style="grid-column:1/-1">
+                    <x-admin-components::field name="additional_duties" label="Tugas Tambahan / Job Tambahan (Opsional)" :required="false" :value="$item->additional_duties ?? null"
+                        placeholder="Contoh: Wali Kelas XII PPLG 1, Pembina OSIS, Operator, Laboran PPLG" icon="fa-solid fa-list-check" />
                 </div>
             </div>
         </div>
