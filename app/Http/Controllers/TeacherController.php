@@ -326,16 +326,12 @@ class TeacherController extends Controller
             $rows = [];
 
             if ($ext === 'xlsx') {
-                if (!class_exists('ZipArchive')) {
-                    \Illuminate\Support\Facades\Log::warning('Impor guru: Ekstensi ZipArchive (php-zip) belum aktif di server PHP ini.');
-                    return redirect()->back()->with('error', 'Ekstensi PHP ZipArchive (php-zip) belum aktif di web server cPanel Anda. Silakan unggah file format .csv (DATA_GURU_DAN_STAF_SMK_AMALIAH_RESMI.csv) yang dapat diproses langsung.');
-                }
                 $rows = $this->parseXlsxFile($file->getPathname());
                 if (empty($rows)) {
-                    \Illuminate\Support\Facades\Log::warning('Impor guru: file .xlsx tidak dapat dibuka di server.', [
+                    \Illuminate\Support\Facades\Log::warning('Impor guru: berkas .xlsx tidak dapat dibuka di server.', [
                         'filename' => $file->getClientOriginalName(),
                     ]);
-                    return redirect()->back()->with('error', 'Gagal membaca berkas .xlsx. Format berkas Excel tidak dapat diekstrak. Silakan unggah file format .csv (DATA_GURU_DAN_STAF_SMK_AMALIAH_RESMI.csv) yang dapat langsung diproses tanpa kendala di server.');
+                    return redirect()->back()->with('error', 'Gagal membaca berkas .xlsx. Format berkas Excel tidak dapat diekstrak. Silakan periksa kembali berkas atau unggah berkas versi format .csv (DATA_GURU_DAN_STAF_SMK_AMALIAH_RESMI.csv).');
                 }
             } elseif ($ext === 'xls') {
                 $rows = $this->parseXlsFile($file->getPathname());
@@ -724,23 +720,60 @@ class TeacherController extends Controller
     }
 
     /**
-     * Baca baris-baris dari file .xlsx menggunakan native ZipArchive & SimpleXML.
+     * Baca baris-baris dari file .xlsx menggunakan ZipArchive (jika ada) atau fallback parser ZIP murni PHP.
      */
     protected function parseXlsxFile(string $path): array
     {
-        if (!class_exists('ZipArchive')) {
-            \Illuminate\Support\Facades\Log::warning('Impor guru: Ekstensi ZipArchive (php-zip) belum aktif di server PHP ini.');
-            return [];
+        $sharedStringsXml = null;
+        $sheetXml = null;
+
+        // 1. Coba menggunakan ekstensi ZipArchive jika terpasang di PHP server
+        if (class_exists('ZipArchive')) {
+            $zip = new \ZipArchive();
+            if ($zip->open($path) === true) {
+                $sharedStringsXml = $zip->getFromName('xl/sharedStrings.xml');
+
+                $maxRowCount = -1;
+                for ($i = 0; $i < $zip->numFiles; $i++) {
+                    $entryName = $zip->getNameIndex($i);
+                    if (preg_match('#^xl/worksheets/sheet\d+\.xml$#i', $entryName)) {
+                        $content = $zip->getFromName($entryName);
+                        if ($content) {
+                            $rowCount = substr_count($content, '<row');
+                            if ($rowCount > $maxRowCount) {
+                                $maxRowCount = $rowCount;
+                                $sheetXml = $content;
+                            }
+                        }
+                    }
+                }
+                $zip->close();
+            }
         }
 
-        $zip = new \ZipArchive();
-        if ($zip->open($path) !== true) {
-            \Illuminate\Support\Facades\Log::warning('Impor guru: Gagal membuka zip file .xlsx.', ['path' => $path]);
+        // 2. Jika ZipArchive tidak aktif atau gagal membuka file, gunakan parser ZIP murni (Pure PHP PKZIP)
+        if (!$sheetXml) {
+            $entries = $this->extractZipEntriesPurePhp($path);
+            if (!empty($entries)) {
+                $sharedStringsXml = $entries['xl/sharedStrings.xml'] ?? null;
+                $maxRowCount = -1;
+                foreach ($entries as $entryName => $content) {
+                    if (preg_match('#^xl/worksheets/sheet\d+\.xml$#i', $entryName)) {
+                        $rowCount = substr_count($content, '<row');
+                        if ($rowCount > $maxRowCount) {
+                            $maxRowCount = $rowCount;
+                            $sheetXml = $content;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!$sheetXml) {
             return [];
         }
 
         $sharedStrings = [];
-        $sharedStringsXml = $zip->getFromName('xl/sharedStrings.xml');
         if ($sharedStringsXml) {
             $xml = @simplexml_load_string($sharedStringsXml);
             if ($xml && isset($xml->si)) {
@@ -758,28 +791,6 @@ class TeacherController extends Controller
                     }
                 }
             }
-        }
-
-        $sheetXml = null;
-        $maxRowCount = -1;
-
-        for ($i = 0; $i < $zip->numFiles; $i++) {
-            $entryName = $zip->getNameIndex($i);
-            if (preg_match('#^xl/worksheets/sheet\d+\.xml$#i', $entryName)) {
-                $content = $zip->getFromName($entryName);
-                if ($content) {
-                    $rowCount = substr_count($content, '<row');
-                    if ($rowCount > $maxRowCount) {
-                        $maxRowCount = $rowCount;
-                        $sheetXml = $content;
-                    }
-                }
-            }
-        }
-        $zip->close();
-
-        if (!$sheetXml) {
-            return [];
         }
 
         $xml = @simplexml_load_string($sheetXml);
@@ -831,6 +842,79 @@ class TeacherController extends Controller
         }
 
         return $rows;
+    }
+
+    /**
+     * Ekstraksi berkas PKZIP secara murni (Pure PHP) menggunakan zlib gzinflate tanpa ekstensi ZipArchive.
+     */
+    protected function extractZipEntriesPurePhp(string $filePath): array
+    {
+        $data = @file_get_contents($filePath);
+        if ($data === false || strlen($data) < 22) {
+            return [];
+        }
+
+        $entries = [];
+        $pos = 0;
+        $len = strlen($data);
+
+        while ($pos + 30 <= $len) {
+            if (substr($data, $pos, 4) !== "PK\x03\x04") {
+                $nextPos = strpos($data, "PK\x03\x04", $pos + 1);
+                if ($nextPos === false) {
+                    break;
+                }
+                $pos = $nextPos;
+                if ($pos + 30 > $len) {
+                    break;
+                }
+            }
+
+            $header = unpack('vversion/vflags/vmethod/vmtime/vmdate/Vcrc/VcompSize/VuncompSize/vnameLen/vextraLen', substr($data, $pos + 4, 26));
+            $method = $header['method'];
+            $compSize = $header['compSize'];
+            $nameLen = $header['nameLen'];
+            $extraLen = $header['extraLen'];
+
+            $filename = substr($data, $pos + 30, $nameLen);
+            $dataOffset = $pos + 30 + $nameLen + $extraLen;
+
+            if ($compSize > 0 && $dataOffset + $compSize <= $len) {
+                $rawContent = substr($data, $dataOffset, $compSize);
+                if ($method === 0) {
+                    $entries[$filename] = $rawContent;
+                } elseif ($method === 8) {
+                    $unpacked = @gzinflate($rawContent);
+                    if ($unpacked !== false) {
+                        $entries[$filename] = $unpacked;
+                    }
+                }
+                $pos = $dataOffset + $compSize;
+            } else {
+                $nextPos = strpos($data, "PK\x03\x04", $dataOffset);
+                if ($nextPos === false) {
+                    $nextPos = strpos($data, "PK\x01\x02", $dataOffset);
+                }
+                if ($nextPos !== false) {
+                    $compLength = $nextPos - $dataOffset;
+                    $rawContent = substr($data, $dataOffset, $compLength);
+                    $unpacked = @gzinflate($rawContent);
+                    if ($unpacked !== false) {
+                        $entries[$filename] = $unpacked;
+                    } else {
+                        $unpacked2 = @gzinflate(substr($rawContent, 0, -12));
+                        if ($unpacked2 !== false) {
+                            $entries[$filename] = $unpacked2;
+                        }
+                    }
+                    $pos = $nextPos;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        return $entries;
     }
 
     /**

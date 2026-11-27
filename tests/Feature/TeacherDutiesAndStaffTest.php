@@ -274,4 +274,33 @@ class TeacherDutiesAndStaffTest extends TestCase
         $response2->assertStatus(302);
         $response2->assertSessionHas('error');
     }
+
+    public function test_import_real_xlsx_file_succeeds(): void
+    {
+        $this->authenticateAdmin();
+
+        $xlsxPath = base_path('DATA_GURU_DAN_STAF_SMK_AMALIAH_RESMI.xlsx');
+        if (!file_exists($xlsxPath)) {
+            $this->markTestSkipped('DATA_GURU_DAN_STAF_SMK_AMALIAH_RESMI.xlsx does not exist.');
+        }
+
+        $uploadedFile = new UploadedFile(
+            $xlsxPath,
+            'DATA_GURU_DAN_STAF_SMK_AMALIAH_RESMI.xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            null,
+            true
+        );
+
+        $response = $this->post(route('admin.teachers.import'), [
+            'file' => $uploadedFile,
+        ]);
+
+        $response->assertRedirect(route('admin.teachers.index'));
+        $response->assertSessionHas('success');
+        $this->assertDatabaseHas('teachers', [
+            'name' => 'Yolanda Yursal Rustam, SH',
+            'school' => 'Amaliah 1 & 2',
+        ]);
+    }
 }
