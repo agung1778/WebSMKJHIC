@@ -334,12 +334,23 @@ class TeacherController extends Controller
             if (empty($rows)) {
                 $rows = $this->parseXlsxFile($file->getPathname());
             }
+            if (empty($rows)) {
+                \Illuminate\Support\Facades\Log::warning('Impor guru: parser XLS gagal membaca file di lingkungan server.', [
+                    'filename' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                ]);
+                return redirect()->back()->with('error', 'Format .xls (Excel 97-2003 lama) tidak dapat diproses oleh lingkungan server ini. Harap buka file tersebut di Excel/Spreadsheet, pilih "Save As" / Simpan Sebagai format .xlsx (Excel Workbook) atau .csv, lalu unggah kembali.');
+            }
         } else {
             $rows = $this->parseCsvFile($file->getPathname());
         }
 
         if (empty($rows)) {
-            return redirect()->back()->with('error', 'File impor kosong atau format data tidak dapat dibaca.');
+            \Illuminate\Support\Facades\Log::warning('Impor guru: file kosong atau format tidak terbaca.', [
+                'filename' => $file->getClientOriginalName(),
+                'ext' => $ext,
+            ]);
+            return redirect()->back()->with('error', 'File impor kosong atau format data tidak dapat dibaca. Pastikan menggunakan format .xlsx atau .csv.');
         }
 
         // Cari baris header secara pintar di antara 15 baris pertama (menghindari kop surat / judul)
@@ -361,6 +372,9 @@ class TeacherController extends Controller
         }
 
         if (!$headerRow) {
+            \Illuminate\Support\Facades\Log::warning('Impor guru: kolom Nama tidak ditemukan.', [
+                'scanned_rows' => array_slice($rows, 0, 5),
+            ]);
             return redirect()->back()->with('error', 'Kolom "Nama" atau "Nama Lengkap" tidak ditemukan pada file. Pastikan file memiliki baris judul kolom.');
         }
 
@@ -663,6 +677,20 @@ class TeacherController extends Controller
     }
 
     /**
+     * Konversi kode kolom Excel (A, B, ..., Z, AA, AB) ke index integer 0-based.
+     */
+    protected function colLetterToIndex(string $col): int
+    {
+        $col = strtoupper(trim($col));
+        $len = strlen($col);
+        $index = 0;
+        for ($i = 0; $i < $len; $i++) {
+            $index = $index * 26 + (ord($col[$i]) - ord('A') + 1);
+        }
+        return max(0, $index - 1);
+    }
+
+    /**
      * Baca baris-baris dari file .xlsx menggunakan native ZipArchive & SimpleXML.
      */
     protected function parseXlsxFile(string $path): array
@@ -682,7 +710,17 @@ class TeacherController extends Controller
             $xml = @simplexml_load_string($sharedStringsXml);
             if ($xml && isset($xml->si)) {
                 foreach ($xml->si as $si) {
-                    $sharedStrings[] = (string) ($si->t ?? ($si->r->t ?? ''));
+                    if (isset($si->t)) {
+                        $sharedStrings[] = (string) $si->t;
+                    } elseif (isset($si->r)) {
+                        $combined = '';
+                        foreach ($si->r as $rPart) {
+                            $combined .= (string) ($rPart->t ?? '');
+                        }
+                        $sharedStrings[] = $combined;
+                    } else {
+                        $sharedStrings[] = '';
+                    }
                 }
             }
         }
@@ -711,17 +749,43 @@ class TeacherController extends Controller
         $rows = [];
         foreach ($xml->sheetData->row as $r) {
             $rowValues = [];
+            $maxColIdx = 0;
+
             foreach ($r->c as $c) {
-                $type = (string) $c['t'];
-                $val = (string) $c->v;
-                if ($type === 's' && isset($sharedStrings[(int) $val])) {
-                    $rowValues[] = $sharedStrings[(int) $val];
-                } else {
-                    $rowValues[] = $val;
+                $cellRef = (string) ($c['r'] ?? '');
+                $colLetter = preg_replace('/[^A-Za-z]/', '', $cellRef);
+                $colIdx = !empty($colLetter) ? $this->colLetterToIndex($colLetter) : count($rowValues);
+
+                $type = (string) ($c['t'] ?? '');
+                $val = '';
+
+                if ($type === 's') {
+                    $vIdx = (int) ($c->v ?? -1);
+                    $val = $sharedStrings[$vIdx] ?? '';
+                } elseif ($type === 'inlineStr' && isset($c->is)) {
+                    if (isset($c->is->t)) {
+                        $val = (string) $c->is->t;
+                    } elseif (isset($c->is->r)) {
+                        foreach ($c->is->r as $rPart) {
+                            $val .= (string) ($rPart->t ?? '');
+                        }
+                    }
+                } elseif (isset($c->v)) {
+                    $val = (string) $c->v;
+                }
+
+                $rowValues[$colIdx] = trim($val);
+                if ($colIdx > $maxColIdx) {
+                    $maxColIdx = $colIdx;
                 }
             }
-            if (!empty(array_filter($rowValues, fn($v) => trim($v) !== ''))) {
-                $rows[] = $rowValues;
+
+            if (!empty(array_filter($rowValues, fn($v) => (string)$v !== ''))) {
+                $normalizedRow = [];
+                for ($ci = 0; $ci <= $maxColIdx; $ci++) {
+                    $normalizedRow[$ci] = $rowValues[$ci] ?? '';
+                }
+                $rows[] = $normalizedRow;
             }
         }
 
