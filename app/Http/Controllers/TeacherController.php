@@ -306,97 +306,92 @@ class TeacherController extends Controller
      */
     public function import(Request $request)
     {
-        $request->validate([
-            'file' => 'required|file|max:10240',
-        ], [
-            'file.required' => 'Pilih file CSV atau Excel yang akan diimpor.',
-            'file.max' => 'Ukuran file tidak boleh lebih dari 10MB.',
-        ]);
-
-        $file = $request->file('file');
-        $ext = strtolower($file->getClientOriginalExtension());
-        // Selalu gunakan mode sinkronisasi pintar (upsert): data lama & foto aman, jabatan & mapel diperbarui otomatis
-        $updateExisting = true;
-
-        if (!in_array($ext, ['csv', 'txt', 'xlsx', 'xls'])) {
-            return redirect()->back()->with('error', 'Format file tidak didukung. Harap unggah file .csv atau .xlsx.');
-        }
-
-        $rows = [];
-
-        if ($ext === 'xlsx') {
-            $rows = $this->parseXlsxFile($file->getPathname());
-            if (empty($rows)) {
-                $rows = $this->parseXlsFile($file->getPathname());
-            }
-            if (empty($rows)) {
-                \Illuminate\Support\Facades\Log::warning('Impor guru: file .xlsx tidak dapat dibuka di server.', [
-                    'filename' => $file->getClientOriginalName(),
-                    'has_zip' => class_exists('ZipArchive'),
-                ]);
-                $hint = !class_exists('ZipArchive')
-                    ? 'Ekstensi PHP ZipArchive (php-zip) belum aktif di server hosting Anda.'
-                    : 'Format berkas Excel tidak dapat diekstrak.';
-                return redirect()->back()->with('error', "Gagal membaca file .xlsx: {$hint} Silakan unggah file format .csv (DATA_GURU_DAN_STAF_SMK_AMALIAH_RESMI.csv) yang dapat langsung diproses tanpa kendala di server.");
-            }
-        } elseif ($ext === 'xls') {
-            $rows = $this->parseXlsFile($file->getPathname());
-            if (empty($rows)) {
-                $rows = $this->parseXlsxFile($file->getPathname());
-            }
-            if (empty($rows)) {
-                \Illuminate\Support\Facades\Log::warning('Impor guru: parser XLS gagal membaca file di lingkungan server.', [
-                    'filename' => $file->getClientOriginalName(),
-                    'size' => $file->getSize(),
-                ]);
-                return redirect()->back()->with('error', 'Format .xls (Excel 97-2003 lama) tidak dapat diproses oleh lingkungan server ini. Harap buka file tersebut di Excel/Spreadsheet, pilih "Save As" / Simpan Sebagai format .xlsx (Excel Workbook) atau .csv, lalu unggah kembali.');
-            }
-        } else {
-            $rows = $this->parseCsvFile($file->getPathname());
-        }
-
-        if (empty($rows)) {
-            \Illuminate\Support\Facades\Log::warning('Impor guru: file kosong atau format tidak terbaca.', [
-                'filename' => $file->getClientOriginalName(),
-                'ext' => $ext,
-            ]);
-            return redirect()->back()->with('error', 'File impor kosong atau format data tidak dapat dibaca. Pastikan menggunakan format .xlsx atau .csv.');
-        }
-
-        // Cari baris header secara pintar di antara 30 baris pertama (menghindari kop surat / judul / lampiran)
-        $headerRow = null;
-        $sections = [];
-        $headerRowIndex = 0;
-
-        foreach ($rows as $rIdx => $candidateRow) {
-            $candidateSections = $this->buildTableSections($candidateRow);
-            if (!empty($candidateSections)) {
-                $headerRow = $candidateRow;
-                $sections = $candidateSections;
-                $headerRowIndex = $rIdx;
-                break;
-            }
-            if ($rIdx >= 30) {
-                break;
-            }
-        }
-
-        if (!$headerRow || empty($sections)) {
-            \Illuminate\Support\Facades\Log::warning('Impor guru: kolom Nama tidak ditemukan.', [
-                'scanned_rows' => array_slice($rows, 0, 5),
-            ]);
-            return redirect()->back()->with('error', 'Kolom "Nama" atau "Nama Lengkap" tidak ditemukan pada file. Pastikan file memiliki baris judul kolom.');
-        }
-
-        $rows = array_slice($rows, $headerRowIndex + 1);
-
-        $successCount = 0;
-        $updatedCount = 0;
-        $skippedCount = 0;
-        $sessionMap = [];
-
-        DB::beginTransaction();
         try {
+            $request->validate([
+                'file' => 'required|file|max:10240',
+            ], [
+                'file.required' => 'Pilih file CSV atau Excel yang akan diimpor.',
+                'file.max' => 'Ukuran file tidak boleh lebih dari 10MB.',
+            ]);
+
+            $file = $request->file('file');
+            $ext = strtolower($file->getClientOriginalExtension());
+            // Selalu gunakan mode sinkronisasi pintar (upsert): data lama & foto aman, jabatan & mapel diperbarui otomatis
+            $updateExisting = true;
+
+            if (!in_array($ext, ['csv', 'txt', 'xlsx', 'xls'])) {
+                return redirect()->back()->with('error', 'Format file tidak didukung. Harap unggah file .csv atau .xlsx.');
+            }
+
+            $rows = [];
+
+            if ($ext === 'xlsx') {
+                if (!class_exists('ZipArchive')) {
+                    \Illuminate\Support\Facades\Log::warning('Impor guru: Ekstensi ZipArchive (php-zip) belum aktif di server PHP ini.');
+                    return redirect()->back()->with('error', 'Ekstensi PHP ZipArchive (php-zip) belum aktif di web server cPanel Anda. Silakan unggah file format .csv (DATA_GURU_DAN_STAF_SMK_AMALIAH_RESMI.csv) yang dapat diproses langsung.');
+                }
+                $rows = $this->parseXlsxFile($file->getPathname());
+                if (empty($rows)) {
+                    \Illuminate\Support\Facades\Log::warning('Impor guru: file .xlsx tidak dapat dibuka di server.', [
+                        'filename' => $file->getClientOriginalName(),
+                    ]);
+                    return redirect()->back()->with('error', 'Gagal membaca berkas .xlsx. Format berkas Excel tidak dapat diekstrak. Silakan unggah file format .csv (DATA_GURU_DAN_STAF_SMK_AMALIAH_RESMI.csv) yang dapat langsung diproses tanpa kendala di server.');
+                }
+            } elseif ($ext === 'xls') {
+                $rows = $this->parseXlsFile($file->getPathname());
+                if (empty($rows)) {
+                    \Illuminate\Support\Facades\Log::warning('Impor guru: parser XLS gagal membaca file di lingkungan server.', [
+                        'filename' => $file->getClientOriginalName(),
+                        'size' => $file->getSize(),
+                    ]);
+                    return redirect()->back()->with('error', 'Format .xls (Excel 97-2003 lama) tidak dapat diproses oleh lingkungan server ini. Harap buka file tersebut di Excel/Spreadsheet, pilih "Save As" / Simpan Sebagai format .xlsx (Excel Workbook) atau .csv, lalu unggah kembali.');
+                }
+            } else {
+                $rows = $this->parseCsvFile($file->getPathname());
+            }
+
+            if (empty($rows)) {
+                \Illuminate\Support\Facades\Log::warning('Impor guru: file kosong atau format tidak terbaca.', [
+                    'filename' => $file->getClientOriginalName(),
+                    'ext' => $ext,
+                ]);
+                return redirect()->back()->with('error', 'File impor kosong atau format data tidak dapat dibaca. Pastikan menggunakan format .xlsx atau .csv.');
+            }
+
+            // Cari baris header secara pintar di antara 30 baris pertama (menghindari kop surat / judul / lampiran)
+            $headerRow = null;
+            $sections = [];
+            $headerRowIndex = 0;
+
+            foreach ($rows as $rIdx => $candidateRow) {
+                $candidateSections = $this->buildTableSections($candidateRow);
+                if (!empty($candidateSections)) {
+                    $headerRow = $candidateRow;
+                    $sections = $candidateSections;
+                    $headerRowIndex = $rIdx;
+                    break;
+                }
+                if ($rIdx >= 30) {
+                    break;
+                }
+            }
+
+            if (!$headerRow || empty($sections)) {
+                \Illuminate\Support\Facades\Log::warning('Impor guru: kolom Nama tidak ditemukan.', [
+                    'scanned_rows' => array_slice($rows, 0, 5),
+                ]);
+                return redirect()->back()->with('error', 'Kolom "Nama" atau "Nama Lengkap" tidak ditemukan pada file. Pastikan file memiliki baris judul kolom.');
+            }
+
+            $rows = array_slice($rows, $headerRowIndex + 1);
+
+            $successCount = 0;
+            $updatedCount = 0;
+            $skippedCount = 0;
+            $sessionMap = [];
+
+            DB::beginTransaction();
+
             foreach ($rows as $index => $row) {
                 foreach ($sections as $secIndex => $sec) {
                     $colMap = $sec['colMap'];
@@ -515,21 +510,28 @@ class TeacherController extends Controller
             }
 
             DB::commit();
+
+            $msg = "Proses impor selesai: {$successCount} data baru ditambahkan";
+            if ($updatedCount > 0) {
+                $msg .= ", {$updatedCount} data diperbarui / disinkronkan";
+            }
+            if ($skippedCount > 0) {
+                $msg .= ", {$skippedCount} data dilewati";
+            }
+            $msg .= " (tanpa duplikasi nama).";
+
+            return redirect()->route('admin.teachers.index')->with('success', $msg);
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            throw $ve;
         } catch (\Throwable $e) {
-            DB::rollBack();
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+            \Illuminate\Support\Facades\Log::error('Teacher import error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
             return redirect()->back()->with('error', 'Gagal memproses data impor: ' . $e->getMessage());
         }
-
-        $msg = "Proses impor selesai: {$successCount} data baru ditambahkan";
-        if ($updatedCount > 0) {
-            $msg .= ", {$updatedCount} data diperbarui / disinkronkan";
-        }
-        if ($skippedCount > 0) {
-            $msg .= ", {$skippedCount} data dilewati";
-        }
-        $msg .= " (tanpa duplikasi nama).";
-
-        return redirect()->route('admin.teachers.index')->with('success', $msg);
     }
 
     /**
@@ -832,23 +834,37 @@ class TeacherController extends Controller
     }
 
     /**
-     * Baca baris-baris dari file format .xls (BIFF8 OLE2) menggunakan Python xlrd atau fallback.
+     * Baca baris-baris dari file format .xls (BIFF8 OLE2) menggunakan Python xlrd jika lingkungan server mengizinkan.
      */
     protected function parseXlsFile(string $path): array
     {
-        $escapedPath = escapeshellarg($path);
-        $pyCode = 'import xlrd, json, sys; wb = xlrd.open_workbook(sys.argv[1]); sheet = wb.sheet_by_index(0); rows = [[str(c).strip() for c in sheet.row_values(r)] for r in range(sheet.nrows)]; print(json.dumps(rows))';
-        $cmd = "python -c \"{$pyCode}\" {$escapedPath}";
-
-        $output = @shell_exec($cmd);
-        if ($output) {
-            $data = @json_decode($output, true);
-            if (is_array($data) && !empty($data)) {
-                return $data;
-            }
+        if (!function_exists('shell_exec')) {
+            return [];
         }
 
-        return $this->parseCsvFile($path);
+        $disabled = array_map('trim', explode(',', (string) ini_get('disable_functions')));
+        if (in_array('shell_exec', $disabled)) {
+            return [];
+        }
+
+        try {
+            $escapedPath = escapeshellarg($path);
+            $pyCode = 'import xlrd, json, sys; wb = xlrd.open_workbook(sys.argv[1]); sheet = wb.sheet_by_index(0); rows = [[str(c).strip() for c in sheet.row_values(r)] for r in range(sheet.nrows)]; print(json.dumps(rows))';
+            $cmd = "python -c \"{$pyCode}\" {$escapedPath}";
+
+            $output = @shell_exec($cmd);
+            if ($output) {
+                $data = @json_decode($output, true);
+                if (is_array($data) && !empty($data)) {
+                    return $data;
+                }
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Impor guru: shell_exec parseXlsFile gagal: ' . $e->getMessage());
+            return [];
+        }
+
+        return [];
     }
 
     /**

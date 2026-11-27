@@ -253,4 +253,25 @@ class TeacherDutiesAndStaffTest extends TestCase
         $this->assertSame('Wakil Kepala Sekolah Bidang Kurikulum', $sitiWadiah->position);
         $this->assertStringContainsString('Produktif MP', $sitiWadiah->subject);
     }
+
+    public function test_import_gracefully_handles_invalid_or_corrupt_file_without_500(): void
+    {
+        $this->authenticateAdmin();
+
+        // 1. File kosong / tanpa header
+        $invalidFile = UploadedFile::fake()->createWithContent('invalid.csv', "Col1,Col2\nVal1,Val2\n");
+        $response = $this->post(route('admin.teachers.import'), [
+            'file' => $invalidFile,
+        ]);
+        $response->assertStatus(302);
+        $response->assertSessionHas('error');
+
+        // 2. File palsu .xls binary random yang tidak bisa di-shell_exec
+        $corruptXls = UploadedFile::fake()->createWithContent('corrupt.xls', "\x00\x01\x02\x03\xFF\xFE\xFD");
+        $response2 = $this->post(route('admin.teachers.import'), [
+            'file' => $corruptXls,
+        ]);
+        $response2->assertStatus(302);
+        $response2->assertSessionHas('error');
+    }
 }
