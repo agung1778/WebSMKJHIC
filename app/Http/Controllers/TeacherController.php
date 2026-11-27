@@ -329,6 +329,16 @@ class TeacherController extends Controller
             if (empty($rows)) {
                 $rows = $this->parseXlsFile($file->getPathname());
             }
+            if (empty($rows)) {
+                \Illuminate\Support\Facades\Log::warning('Impor guru: file .xlsx tidak dapat dibuka di server.', [
+                    'filename' => $file->getClientOriginalName(),
+                    'has_zip' => class_exists('ZipArchive'),
+                ]);
+                $hint = !class_exists('ZipArchive')
+                    ? 'Ekstensi PHP ZipArchive (php-zip) belum aktif di server hosting Anda.'
+                    : 'Format berkas Excel tidak dapat diekstrak.';
+                return redirect()->back()->with('error', "Gagal membaca file .xlsx: {$hint} Silakan unggah file format .csv (DATA_GURU_DAN_STAF_SMK_AMALIAH_RESMI.csv) yang dapat langsung diproses tanpa kendala di server.");
+            }
         } elseif ($ext === 'xls') {
             $rows = $this->parseXlsFile($file->getPathname());
             if (empty($rows)) {
@@ -717,11 +727,13 @@ class TeacherController extends Controller
     protected function parseXlsxFile(string $path): array
     {
         if (!class_exists('ZipArchive')) {
-            return $this->parseCsvFile($path);
+            \Illuminate\Support\Facades\Log::warning('Impor guru: Ekstensi ZipArchive (php-zip) belum aktif di server PHP ini.');
+            return [];
         }
 
         $zip = new \ZipArchive();
         if ($zip->open($path) !== true) {
+            \Illuminate\Support\Facades\Log::warning('Impor guru: Gagal membuka zip file .xlsx.', ['path' => $path]);
             return [];
         }
 
