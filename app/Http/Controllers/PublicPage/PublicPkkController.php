@@ -13,10 +13,20 @@ class PublicPkkController extends Controller
      */
     public function index(Request $request)
     {
-        // Ambil data project terbaru, load relasi jurusan, dan paginasi 9 item per halaman
-        $projects = PkkProject::with('major')
-            ->latest()
-            ->paginate(9);
+        $query = PkkProject::with('major');
+
+        if ($q = trim($request->input('q', ''))) {
+            $query->where(function ($sub) use ($q) {
+                $sub->where('title', 'like', "%{$q}%")
+                    ->orWhere('brand_name', 'like', "%{$q}%")
+                    ->orWhere('description', 'like', "%{$q}%")
+                    ->orWhere('student_names', 'like', "%{$q}%")
+                    ->orWhere('category', 'like', "%{$q}%")
+                    ->orWhereHas('major', fn ($m) => $m->where('name', 'like', "%{$q}%"));
+            });
+        }
+
+        $projects = $query->latest()->paginate(9)->withQueryString();
 
         return view('PublicSide.PKK.index', compact('projects'));
     }

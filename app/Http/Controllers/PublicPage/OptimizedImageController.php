@@ -102,6 +102,10 @@ class OptimizedImageController extends Controller
             return '';
         }
 
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
         $width = (int) $width;
         $height = (int) $height;
 

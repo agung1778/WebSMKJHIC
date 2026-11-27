@@ -48,6 +48,7 @@ use App\Http\Controllers\PublicPage\PublicTrafficController;
 use App\Http\Controllers\PublicPage\InfoSPMBController;
 use App\Http\Controllers\PublicPage\AIChatbotController;
 use App\Http\Controllers\PublicPage\PublicDownloadController;
+use App\Http\Controllers\PublicPage\PublicPkkController;
 use App\Http\Controllers\DownloadController;
 
 
@@ -114,6 +115,11 @@ Route::get('/programs/{program}', [PublicProgramController::class, 'show'])->nam
 
 Route::get('/extracurriculars', [PublicExtracurricularController::class, 'index'])->name('public.extracurricular.index');
 Route::get('/extracurriculars/{extracurricular}', [PublicExtracurricularController::class, 'show'])->name('public.extracurricular.show');
+
+// Rute Halaman Publik Projek Kreatif & Kewirausahaan (Karya Siswa)
+Route::get('/karya-siswa', [PublicPkkController::class, 'index'])->name('public.pkk.index');
+Route::get('/karya-siswa/{id}', [PublicPkkController::class, 'show'])->name('public.pkk.detail');
+Route::get('/pkk', fn () => redirect()->route('public.pkk.index'));
 
 Route::get('/help/faq', [PublicHelpcenterController::class, 'faq'])->name('public.help.faq');
 Route::get('/help/feedback', [PublicHelpcenterController::class, 'feedback'])->name('public.help.feedback');

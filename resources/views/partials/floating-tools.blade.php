@@ -139,7 +139,7 @@
         
         <div class="w-full max-w-md bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-gray-100 text-left relative overflow-hidden"
             @click.stop>
-            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-500 via-[#25D366] to-[#63cd00]"></div>
+            <div class="absolute top-0 left-0 right-0 h-2 bg-[#25D366]"></div>
 
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
@@ -244,14 +244,15 @@
         </div>
 
         {{-- 2. Tombol WhatsApp Terarah --}}
-        <div class="fl-sub-item"
-            @click="waModal = true; open = false"
+        <a href="https://wa.me/{{ $whatsappNumber ?? '6285649011449' }}?text={{ urlencode($whatsappMessage ?? 'Halo sekolah') }}"
+            @click.prevent="waModal = true; open = false"
+            class="fl-sub-item"
             title="{{ __('Hubungi via WhatsApp') }}">
             <span class="fl-sub-label">WhatsApp</span>
             <div class="fl-sub-btn fl-btn--wa fl-float-btn--whatsapp" aria-label="WhatsApp Kami">
                 <i class="fab fa-whatsapp text-base sm:text-lg"></i>
             </div>
-        </div>
+        </a>
 
         {{-- 3. Tombol Traffic Website --}}
         <a href="{{ route('public.traffic.index') }}" target="_blank" rel="noopener noreferrer"

@@ -351,6 +351,8 @@
                         <div class="absolute dropdown-content bg-white shadow-lg mt-2 rounded-md py-1 w-48 z-10">
                             <a href="{{ route('public.achievement.index') }}"
                                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Achievements</a>
+                            <a href="{{ route('public.pkk.index') }}"
+                                class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">Karya Siswa (PKK)</a>
                             <a href="{{ route('public.program.index') }}"
                                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#59E300]">School
                                 Programs</a>
@@ -444,6 +446,8 @@
                         <div x-show="open" x-transition class="pl-6 pt-2 pb-1 space-y-1">
                             <a href="{{ route('public.achievement.index') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Achievements</a>
+                            <a href="{{ route('public.pkk.index') }}"
+                                class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">Karya Siswa (PKK)</a>
                             <a href="{{ route('public.program.index') }}"
                                 class="block px-4 py-2 text-gray-600 rounded-md hover:bg-gray-100 hover:text-[#59E300]">School
                                 Programs</a>
@@ -952,6 +956,8 @@
                                         class="fas fa-chevron-right"></i>Berita</a></li>
                             <li><a href="{{ route('public.majors.index') }}" class="ft-link"><i
                                         class="fas fa-chevron-right"></i>Jurusan</a></li>
+                            <li><a href="{{ route('public.pkk.index') }}" class="ft-link"><i
+                                        class="fas fa-chevron-right"></i>Karya Siswa (PKK)</a></li>
                         </ul>
                     </div>
 

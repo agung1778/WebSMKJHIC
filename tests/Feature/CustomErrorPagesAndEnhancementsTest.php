@@ -83,4 +83,16 @@ class CustomErrorPagesAndEnhancementsTest extends TestCase
         $response->assertSee('SPMB SMK Amaliah 2');
         $response->assertSee('Tata Usaha & Informasi Umum', false);
     }
+
+    public function test_karya_siswa_page_loads(): void
+    {
+        $response = $this->get('/karya-siswa');
+        $response->assertStatus(200);
+
+        $first = \App\Models\PkkProject::first();
+        if ($first) {
+            $detailResponse = $this->get(route('public.pkk.detail', $first->id));
+            $detailResponse->assertStatus(200);
+        }
+    }
 }
