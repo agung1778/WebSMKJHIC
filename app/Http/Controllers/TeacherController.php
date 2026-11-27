@@ -353,7 +353,7 @@ class TeacherController extends Controller
             return redirect()->back()->with('error', 'File impor kosong atau format data tidak dapat dibaca. Pastikan menggunakan format .xlsx atau .csv.');
         }
 
-        // Cari baris header secara pintar di antara 15 baris pertama (menghindari kop surat / judul)
+        // Cari baris header secara pintar di antara 30 baris pertama (menghindari kop surat / judul / lampiran)
         $headerRow = null;
         $sections = [];
         $headerRowIndex = 0;
@@ -366,7 +366,7 @@ class TeacherController extends Controller
                 $headerRowIndex = $rIdx;
                 break;
             }
-            if ($rIdx >= 15) {
+            if ($rIdx >= 30) {
                 break;
             }
         }
@@ -746,13 +746,19 @@ class TeacherController extends Controller
             }
         }
 
-        $sheetXml = $zip->getFromName('xl/worksheets/sheet1.xml');
-        if (!$sheetXml) {
-            for ($i = 0; $i < $zip->numFiles; $i++) {
-                $entryName = $zip->getNameIndex($i);
-                if (preg_match('#^xl/worksheets/sheet\d+\.xml$#i', $entryName)) {
-                    $sheetXml = $zip->getFromName($entryName);
-                    break;
+        $sheetXml = null;
+        $maxRowCount = -1;
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $entryName = $zip->getNameIndex($i);
+            if (preg_match('#^xl/worksheets/sheet\d+\.xml$#i', $entryName)) {
+                $content = $zip->getFromName($entryName);
+                if ($content) {
+                    $rowCount = substr_count($content, '<row');
+                    if ($rowCount > $maxRowCount) {
+                        $maxRowCount = $rowCount;
+                        $sheetXml = $content;
+                    }
                 }
             }
         }
@@ -841,7 +847,10 @@ class TeacherController extends Controller
         $nameColIndices = [];
         foreach ($headerRow as $index => $col) {
             $colNorm = strtolower(trim(preg_replace('/[^a-zA-Z0-9]/', '', (string)$col)));
-            if (in_array($colNorm, ['nama', 'namalengkap', 'name', 'fullname', 'namaguru', 'namagurustaf', 'namapendidik'])) {
+            $isNameCol = (str_starts_with($colNorm, 'nama') || str_contains($colNorm, 'namalengkap') || str_contains($colNorm, 'fullname') || $colNorm === 'name')
+                && !str_contains($colNorm, 'sekolah') && !str_contains($colNorm, 'mapel') && !str_contains($colNorm, 'pelajaran') && !str_contains($colNorm, 'jabatan');
+
+            if ($isNameCol) {
                 $nameColIndices[] = $index;
             }
         }
